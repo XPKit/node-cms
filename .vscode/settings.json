@@ -1,0 +1,35 @@
+{
+  "emmet.includeLanguages": {
+    "vue-html": "html"
+  },
+  "eslint.codeActionsOnSave": true,
+  "eslint.enable": true,
+  "eslint.options": {
+    "configFile": "./.eslintrc.json"
+  },
+  "eslint.run": "onSave",
+  "eslint.validate": [
+    "vue",
+    "html",
+    "javascript",
+    "javascriptreact"
+  ],
+  "eslint.workingDirectories": [
+    "."
+  ],
+  "files.exclude": {
+    "**/db_assets": true,
+    "**/node_modules*": true,
+    "**/npm-debug.log": true,
+    "dev-release": true,
+    "tmp": true
+  },
+  "javascript.format.enable": false,
+  "javascript.validate.enable": false,
+  "files.associations": {
+    "*.wpy": "vue"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+}

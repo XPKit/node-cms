@@ -1,0 +1,50 @@
+@import "./components/vue-recycle-scroller";
+@import "./components/vue-multiselect";
+@import "./components/vue-form-generator";
+@import "./components/vue-croppa";
+@import "./components/LocaleList";
+@import "./components/ResourceList";
+@import "./components/RecordList";
+@import "./components/RecordEditor";
+@import "./components/RecordTable";
+@import "./components/Wysiwyg";
+@import "./components/ImageView";
+@import "./components/AttachmentView";
+@import "./components/DatetimePicker";
+@import "./components/Loading";
+@import "./components/JsonEditor";
+@import "./components/foundation-icons";
+@import "./components/ColorPicker";
+@import "./components/PluginPage.scss";
+@import "./components/LoginApp.scss";
+@import "./components/Pager.scss";
+
+body {
+  margin: 0px;
+  padding: 0px;
+  font-family: 'Helvetica Neue', Arial;
+  color: #4f5f4f;
+  height: 100%;
+  overflow: hidden;
+}
+
+html {
+  height: 100%;
+}
+
+ul, li {
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+.cms-layout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+      position: relative;
+}
+
+nav-bar {
+  border-bottom: 1px solid #c7c7c7;
+}

@@ -1,0 +1,35 @@
+{
+  "extends": [
+    "standard",
+    "plugin:vue/recommended"
+  ],
+  "plugins": [
+  ],
+  "rules": {
+    "no-return-await": "off",
+    "vue/no-use-v-if-with-v-for": ["error", {
+      "allowUsingIterationVar": false
+    }],
+    "vue/require-v-for-key": "off",
+    "vue/no-v-html": "off",
+    "vue/require-prop-types": "off",
+    "vue/require-default-prop": "off",
+    "no-return-assign": "off",
+    "vue/max-attributes-per-line": ["error", {
+      "singleline": 6,
+      "multiline": {
+        "max": 6,
+        "allowFirstLine": true
+      }
+    }],
+    "vue/singleline-html-element-content-newline": 0
+  },
+  "globals": {
+    "unitTest": "writable",
+    "it": "readonly",
+    "describe": "readonly",
+    "Vue": "readonly",
+    "before": "readonly",
+    "after": "readonly"
+  }
+}

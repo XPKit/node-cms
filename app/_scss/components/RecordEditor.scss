@@ -1,0 +1,184 @@
+.record-editor {
+  $buttons-height: 86px;
+  $margin-left: 722px;
+  margin: 0px;
+  display: block;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex: 1 1 0;
+
+  *:focus {
+    outline: none;
+  }
+
+  .vue-form-generator .form-group > label {
+    color: #4c4c4c;
+    font-weight: bold;
+    &::first-letter {
+      text-transform: capitalize;
+    }
+  }
+
+  input[type=text]:focus, input[type=email]:focus, input[type=number]:focus, input[type=url]:focus, input[type=password]:focus {
+    border-color: #008a00;
+    box-shadow: inset 0 1px 1px rgba(0, 138, 0, 0.075);
+  }
+
+  .form-group {
+    label {
+      padding: 4px 0;
+      display: inline-block;
+
+      &.dirty + .field-wrap{
+        input[type=text], input[type=email], input[type=number], input[type=url], input[type=password] {
+          border-color: #e48900;
+          box-shadow: inset 0 1px 1px rgba(138, 67, 0, 0.075);
+        }
+      }
+    }
+
+    fieldset {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  }
+
+  .multiselect input:focus,
+  .select input:focus {
+    box-shadow: none;
+  }
+
+  .datetime-picker input[type='text'] {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    color: #555;
+  }
+
+  .multiselect {
+    .multiselect__tags,
+    .multiselect__content-wrapper {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+      color: #555;
+    }
+    input[type='text'] {
+      color: #555;
+    }
+  }
+  .vue-form-generator .field-customChecklist {
+    .wrapper {
+      width: 100%;
+    }
+
+    .listbox {
+      width: 100%;
+      height: inherit;
+      max-height: inherit;
+      overflow: inherit;
+    }
+  }
+
+  .locales {
+    height: 39px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    align-content: stretch;
+    margin-bottom: 0px;
+    li {
+      width: 100%;
+      flex: 0 1 auto;
+      align-self: auto;
+      text-align: center;
+      line-height: 38px;
+      border-left: 1px solid #c7c7c7;
+      background: #f9f9f9;
+      border-bottom: 1px solid #c7c7c7;
+      &:first-child {
+        border-left: 0;
+      }
+      &.selected {
+        background: none;
+        border-bottom: none;
+      }
+    }
+  }
+  >.vue-form-generator {
+    flex: 1 1 0;
+    padding-bottom: 50px;
+    overflow: auto;
+    >fieldset {
+      margin: 0px;
+      width: 100%;
+      padding: 20px;
+      border-width: 0px;
+      .form-group.disabled {
+        .wrapper>input[type=text], input[type=email], input[type=number], input[type=url], input[type=password] {
+          background-color: #f0f0f0;
+        }
+        textarea {
+          background-color: #f0f0f0;
+        }
+      }
+    }
+    .multiselect.multiselect--disabled .multiselect__tags {
+      background-color: #f0f0f0;
+      >input {
+        background-color: #f0f0f0;
+      }
+    }
+
+  }
+
+  .buttons {
+    padding: 18px 15px 19px 15px;
+    position: absolute;
+    box-sizing: border-box;
+    width: 100%;
+    border-top: 1px solid #f0f0f0;
+    bottom: 0px;
+    background-color: white;
+    transition-duration: 0s;
+    z-index: 1000;
+
+    button {
+      cursor: pointer;
+      padding: 5px 12px;
+      margin: 5px;
+      line-height: 28px;
+      box-sizing: border-box;
+      background: #f0f0f0;
+      display: inline-block;
+      text-decoration: none;
+      color: #999;
+      border-width: 0px;
+
+      &.delete {
+        float: right
+      }
+      &.back {
+        display: none;
+      }
+    }
+  }
+
+  &.has-back-button {
+    .buttons {
+      button.back {
+        display: inline-block;
+      }
+    }
+
+  }
+
+  &.frozen {
+    .buttons {
+      display: none;
+    }
+  }
+}
