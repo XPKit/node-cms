@@ -1,0 +1,15 @@
+node_modules
+.DS_Store
+app/components
+npm-debug.log
+test/data
+test/world.png
+test/disk.dmg
+test/disk2.dmg
+test/small2.jpg
+test/rp2.png
+test/www.png
+data
+/cms.json
+cached/
+view-edit-spreadsheets.pem
