@@ -13,6 +13,7 @@ const helper = Helper.getInstance(8002, true)
 
 let cms = null
 const DB = path.join(__dirname, 'data')
+const baseConfig = require(path.join(__dirname, '../cms.json'))
 const CONFIG = path.join(__dirname, 'cms.json')
 
 const resourcesToClean = ['articles', 'authors', 'comments', 'pages', 'querytest']
@@ -50,7 +51,8 @@ before(async () => {
     dbEngine: {
       type: 'xpkit',
       url: `${process.env.XPKIT_HOST || 'localhost'}/node-cms`
-    }
+    },
+    xptoolkit: _.get(baseConfig, 'xptoolkit', false)
   }
 
   try {
@@ -211,7 +213,7 @@ describe('HTTP', async () => {
     })
 
     it('should reflect deletions in the list', async () => {
-      const body = helper.getRequest('/api/articles?unpublished=true')
+      const body = await helper.getRequest('/api/articles?unpublished=true')
       body.should.have.length(0)
     })
   })
@@ -225,7 +227,7 @@ describe('HTTP', async () => {
     })
 
     before(async () => {
-      seeds = await helper.createDummyRecords('api/comments', 10, { name: `comment-[INDEX]`, content: `[INDEX]` })
+      seeds = await helper.createDummyRecords('/api/comments', 10, { name: `comment-[INDEX]`, content: `[INDEX]` })
     })
 
     it('should reflect changes when "limit" and "page" are set', async () => {
@@ -236,13 +238,10 @@ describe('HTTP', async () => {
       ids = _.map(seeds.slice(0, 5), '_id')
       returnedIds = _.map(body, '_id')
       returnedIds.should.deep.equal(ids)
-      const commentsFound = await request(helper.MASTER_URL)
-        .get('/api/comments?unpublished=true&limit=5&page=2&x__order_by=name_asc')
-        .auth('localAdmin', 'localAdmin')
-        .expect(200)
-      commentsFound.body.should.have.length(5)
+      const commentsFound = await helper.getRequest('/api/comments?unpublished=true&limit=5&page=2&x__order_by=name_asc')
+      commentsFound.should.have.length(5)
       ids = _.map(seeds.slice(5, 10), '_id')
-      _.map(commentsFound.body, '_id').should.deep.equal(ids)
+      _.map(commentsFound, '_id').should.deep.equal(ids)
     })
 
     it('should reture all record when "limit" are not set', async () => {
@@ -253,7 +252,7 @@ describe('HTTP', async () => {
     })
   })
 
-  helper.importTests('Attachment', './unit/attachmentsTests')
+  helper.importTests('Attachment', './unit/tests/attachments')
 
   // describe('Access Control List', async () => {
   //   let article = null
@@ -325,10 +324,10 @@ describe('HTTP', async () => {
   //       .expect(401)
   //   })
   // })
-  helper.importTests('Access Control List', './unit/accessControlListTests')
-  helper.importTests('Localisation', './unit/localisationTests')
-  helper.importTests('Query language', './unit/queryLanguageTests')
-  helper.importTests('JS', './unit/jsTests')
+  helper.importTests('Access Control List', './unit/tests/accessControlList')
+  helper.importTests('Localisation', './unit/tests/localisation')
+  helper.importTests('Query language', './unit/tests/queryLanguage')
+  helper.importTests('JS', './unit/tests/js')
 
   describe('ResolveDependency', async () => {
     let comments = []

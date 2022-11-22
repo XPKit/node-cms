@@ -1,6 +1,6 @@
 const path = require('path')
 const request = require('supertest')
-const Helper = require('../helper')
+const Helper = require('../../helper')
 const helper = Helper.getInstance()
 
 exports.suite = () => {
@@ -23,7 +23,7 @@ exports.suite = () => {
     const retreivedAttachment = await request(helper.MASTER_URL)
       .post(`/api/articles/${article._id}/attachments`)
       .auth('localAdmin', 'localAdmin')
-      .attach('file', path.join(__dirname, '../', '_large.png'))
+      .attach('file', path.join(__dirname, '../../', '_large.png'))
       .expect(200)
     attachment = retreivedAttachment.body
   })

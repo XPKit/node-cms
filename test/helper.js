@@ -36,9 +36,8 @@ class Helper {
       let content = customContent ? {} : {content: i}
       if (customContent) {
         _.each(customContent, (val, key) => {
-          _.set(content, 'key', _.replace(_.get(customContent, 'key', undefined), /\[INDEX\]/g, i))
+          _.set(content, key, _.replace(val, /\[INDEX\]/g, i))
         })
-        console.warn(`TODO: hugo - createDummyRecords - content will be:`, content)
       }
       const {body} = await request(this.MASTER_URL)
         .post(url)

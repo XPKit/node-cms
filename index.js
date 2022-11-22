@@ -57,7 +57,6 @@ const defaultConfig = () =>
 class CMS {
   constructor (options) {
     /* get config path */
-
     this.resource = this.resource.bind(this)
     this.api = this.api.bind(this)
     this.use = this.use.bind(this)

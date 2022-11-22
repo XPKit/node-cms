@@ -1,7 +1,7 @@
 const request = require('supertest')
 const path = require('path')
 const fs = require('fs-extra')
-const Helper = require('../helper')
+const Helper = require('../../helper')
 const helper = Helper.getInstance()
 
 exports.suite = () => {
@@ -20,7 +20,7 @@ exports.suite = () => {
   it('should upload a new attachment', async () => {
     const {body} = await request(helper.MASTER_URL)
       .post(`/api/articles/${article._id}/attachments`)
-      .attach('file', path.join(__dirname, '../', '_large.png'))
+      .attach('file', path.join(__dirname, '../../', '_large.png'))
       .auth('localAdmin', 'localAdmin')
       .expect(200)
     attachment = body
@@ -36,11 +36,11 @@ exports.suite = () => {
   it('should be able to retrieve attachment immediately', async () => {
     const {body} = await request(helper.MASTER_URL)
       .post(`/api/articles/${article._id}/attachments`)
-      .attach('file', path.join(__dirname, '../', '_large.png'))
+      .attach('file', path.join(__dirname, '../../', '_large.png'))
       .auth('localAdmin', 'localAdmin')
       .expect(200)
     const result = await helper.getRequest(`/api/articles/${article._id}/attachments/${body._id}`, 200, 'image/png')
-    fs.writeFileSync(path.join(__dirname, '../', '_large_copy2.png'), result)
+    fs.writeFileSync(path.join(__dirname, '../../', '_large_copy2.png'), result)
     return helper.compareChecksum('_large.png', '_large_copy2.png')
   })
 
@@ -49,7 +49,7 @@ exports.suite = () => {
       .post(`/api/articles/${article._id}/attachments`)
       .auth('localAdmin', 'localAdmin')
       .field('_locale', 'enUS')
-      .attach('file', path.join(__dirname, '../', '_large.png'))
+      .attach('file', path.join(__dirname, '../../', '_large.png'))
       .expect(200)
     body._id.should.be.a('string')
     body._filename.should.equal('_large.png')
@@ -63,7 +63,7 @@ exports.suite = () => {
 
   it('should download a new attachment', async () => {
     const body = await helper.getRequest(`/api/articles/${article._id}/attachments/${attachment._id}`, 200, 'image/png')
-    fs.writeFileSync(path.join(__dirname, '../', '_large_copy.png'), body)
+    fs.writeFileSync(path.join(__dirname, '../../', '_large_copy.png'), body)
     return helper.compareChecksum('_large.png', '_large_copy.png')
   })
 
@@ -93,7 +93,7 @@ exports.suite = () => {
       .post(`/api/articles/${article._id}/attachments`)
       .auth('localAdmin', 'localAdmin')
       .field('_locale', 'enUS')
-      .attach('file', path.join(__dirname, '../', '_large.png'))
+      .attach('file', path.join(__dirname, '../../', '_large.png'))
       .expect(200)
     const {body} = await request(helper.MASTER_URL)
       .del(`/api/articles/${article._id}`)

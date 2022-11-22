@@ -207,11 +207,11 @@ describe('HTTP', async () => {
     })
   })
 
-  helper.importTests('Attachment', './unit/attachmentsTests')
-  helper.importTests('Access Control List', './unit/accessControlListTests')
-  helper.importTests('Localisation', './unit/localisationTests')
-  helper.importTests('Query language', './unit/queryLanguageTests')
-  helper.importTests('JS', './unit/jsTests')
+  helper.importTests('Attachment', './unit/tests/attachments')
+  helper.importTests('Access Control List', './unit/tests/accessControlList')
+  helper.importTests('Localisation', './unit/tests/localisation')
+  helper.importTests('Query language', './unit/tests/queryLanguage')
+  helper.importTests('JS', './unit/tests/js')
 
   describe('ResolveDependency', async () => {
     let comments = []

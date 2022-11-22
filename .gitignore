@@ -11,5 +11,7 @@ test/rp2.png
 test/www.png
 data
 /cms.json
+/test/cms.json
 cached/
 view-edit-spreadsheets.pem
+logs/*

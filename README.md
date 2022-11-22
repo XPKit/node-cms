@@ -9,7 +9,7 @@ It installs a CMS called node-cms in your path, that developer can run a CMS or 
 
 `node-cms` is a content management system, in which `resources` [`documents` and `attachments`] are described using plain javascript. It uses a well-defined schema files to dynamically build admin ui and HTTP REST API.
 
--   [Getting Started](docs/GETTING_STARTED.md): start here
+-   [Getting Started](docs/GETTING_STARTED.md): Start here
 -   [API](docs/API.md)
 -   [Configuring node-cms](docs/CONFIG.md)
 -   [Field Types](docs/FIELDS.md): Existing field types used by node-cms

@@ -1,7 +1,7 @@
 const chai = require('chai')
 const should = chai.should()
 const request = require('supertest')
-const Helper = require('../helper')
+const Helper = require('../../helper')
 const helper = Helper.getInstance()
 
 exports.suite = () => {

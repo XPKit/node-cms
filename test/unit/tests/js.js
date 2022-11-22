@@ -1,6 +1,6 @@
 const chai = require('chai')
 const should = chai.should()
-const Helper = require('../helper')
+const Helper = require('../../helper')
 const helper = Helper.getInstance()
 
 exports.suite = () => {
