@@ -1,0 +1,26 @@
+.locale-list {
+  box-sizing: border-box;
+  white-space: nowrap;
+  display: flex;
+  .locale {
+    display: inline-block;
+    box-sizing: border-box;
+    text-align: center;
+    height: 40px;
+    width: 100%;
+    line-height: 40px;
+    border-bottom: 1px #c7c7c7 solid;
+    border-right: 1px #c7c7c7 solid;
+    background-color: #f9f9f9;
+    border-bottom-width: 1px;
+    cursor: pointer;
+    &:last-child {
+      border-right-width: 0px;
+    }
+
+    &.active {
+      background-color: white;
+      border-bottom-width: 0px;
+    }
+  }
+}
