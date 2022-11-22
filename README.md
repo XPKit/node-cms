@@ -20,16 +20,14 @@ It installs a CMS called node-cms in your path, that developer can run a CMS or 
 
 ### Prerequsites
 
-1. have **read** access to the [imagination/node-cms](https://bitbucket.org/imagination/node-cms) repository
-2. have your machine **ssh keys** installed in [Bitbucket](https://bitbucket.org/)
-3. goto [git-scm.com](http://git-scm.com/), download and install **GIT**
-4. download and install `nodejs` from [nodejs.org](http://nodejs.org/)
+1. goto [git-scm.com](http://git-scm.com/), download and install **GIT**
+2. download and install `nodejs` from [nodejs.org](http://nodejs.org/)
 
 ### Installation
 
 #### Development
 
-    $ git clone git@bitbucket.org:imagination/node-cms.git
+    $ git clone https://github.com/XPKit/node-cms.git
     $ cd node-cms
     $ npm install
     $ npm test
@@ -37,7 +35,7 @@ It installs a CMS called node-cms in your path, that developer can run a CMS or 
 #### As a dependency in existing `nodejs` project
 
 ```
-npm install git+https://bitbucket.org/imagination/node-cms.git --save
+npm install git+https://github.com/XPKit/node-cms.git --save
 ```
 In your server.js, running `expressjs`
 ``` Javascript
@@ -54,7 +52,7 @@ app.listen()
 #### As a standalone CMS application, in an empty folder
 
 ```
-npm install -g git+ssh://git@bitbucket.org/imagination/node-cms.git
+npm install -g git+https://git@https://github.com/XPKit/node-cms.git
 cms
 ```
 

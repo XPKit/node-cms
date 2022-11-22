@@ -34,7 +34,7 @@
 
 1.  install cms-import command
 ```
-    $ npm install -g git+ssh://git@bitbucket.org/imagination/node-cms.git
+    $ npm install -g git+https://github.com/XPKit/node-cms.git
 ```
 
 1.  run cms-import command to import gsheet data to cms
