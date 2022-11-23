@@ -132,7 +132,6 @@ before(async () => {
   await Q.ninvoke(cms, 'bootstrap')
   await Q.ninvoke(cms, 'allow', 'anonymous', 'articles')
   await Q.ninvoke(cms, 'allow', 'anonymous', '_sync')
-
   await Q.ninvoke(cms.express(), 'listen', MASTER_HTTP_PORT)
 })
 
@@ -160,7 +159,6 @@ before(async () => {
   await Q.ninvoke(cms, 'bootstrap')
   await Q.ninvoke(cms, 'allow', 'anonymous', 'articles')
   await Q.ninvoke(cms, 'allow', 'anonymous', '_sync')
-
   await Q.ninvoke(cms.express(), 'listen', SLAVE_HTTP_PORT)
 })
 
@@ -183,13 +181,10 @@ before(async () => {
       url: SLAVE_URL
     }
   })
-
   article = await createRecord(master, 'articles', {string: 'first'})
-
   await uploadArticleAttachment(master, article._id, '_large.png')
   await createRecord(master, 'articles', {string: 'second'})
   await createRecord(master, 'articles', {string: 'third'})
-
   await createRecord(slave, '_sync', {
     allows: ['read', 'write'],
     local: {
@@ -234,12 +229,9 @@ it('should push sync data to slave', async () => {
   response = await slave.request.put(`/sync/articles?token=${slaveToken}`)
     .send(pushData)
     .expect(200)
-
   await delay(1000)
-
   response = await slave.request.get(`/sync/articles?token=${slaveToken}`)
     .expect(200)
-
   response.body.should.have.length(3)
   const remoteArticle = _.find(response.body, {string: article.string})
   remoteArticle._attachments[0]._filename.should.equal('_large.png')
@@ -248,16 +240,12 @@ it('should push sync data to slave', async () => {
 it('should update master aricle recod attachment and sync to slave', async () => {
   await removeArticleAttachment(master, article._id)
   await uploadArticleAttachment(master, article._id, '_small.jpg')
-
   await slave.request.post('/sync/articles/from/remote/to/local')
     .auth('localAdmin', 'localAdmin')
     .expect(200)
-
   await delay(1000 * 2)
-
   const response = await slave.request.get(`/sync/articles?token=${slaveToken}`)
     .expect(200)
-
   response.body.should.have.length(3)
   const remoteArticle = _.find(response.body, {string: article.string})
   remoteArticle._attachments.should.be.an('array').of.length(1)
@@ -266,19 +254,14 @@ it('should update master aricle recod attachment and sync to slave', async () =>
 
 it('should sync master aricle recod localised attachment and sync to slave', async () => {
   await uploadArticleLocalisedAttachment(master, article._id, '_small.jpg')
-
   await slave.request.post('/sync/articles/from/remote/to/local')
     .auth('localAdmin', 'localAdmin')
     .expect(200)
-
   await delay(1000 * 2)
-
   const response = await slave.request.get(`/sync/articles?token=${slaveToken}`)
     .expect(200)
-
   response.body.should.have.length(3)
   const remoteArticle = _.find(response.body, {string: article.string})
-
   remoteArticle._attachments.should.be.an('array').of.length(2)
   remoteArticle._attachments[1]._name.should.equal('localisedFile')
   remoteArticle._attachments[1]._filename.should.equal('_small.jpg')

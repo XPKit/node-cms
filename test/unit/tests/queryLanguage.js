@@ -4,6 +4,7 @@ const helper = Helper.getInstance()
 
 exports.suite = () => {
   before(async () => {
+    await helper.deleteAllRecords('querytest')
     await request(helper.MASTER_URL)
       .post('/api/querytest')
       .send({
