@@ -1,5 +1,6 @@
 const fs = require('fs-extra')
 const _ = require('lodash')
+const path = require('path')
 const request = require('supertest')
 const md5File = require('md5-file')
 const crypto = require('crypto')
@@ -9,6 +10,12 @@ class Helper {
     this.port = port
     this.MASTER_URL = `http://localhost:${this.port}`
     this.cms = false
+
+    // For replication unit tests
+    this.master = null
+    this.slave = null
+    this.article = null
+    this.article2 = null
   }
 
   importTests (name, path) {
@@ -22,10 +29,38 @@ class Helper {
       fs.removeSync(file)
     })
   }
+
+  async createArticle (machine, content) {
+    const {body} = await machine.request.post('/api/articles')
+      .send(content)
+      .expect(200)
+    return body
+  }
+
+  async uploadArticleAttachment (machine, articleId, filename) {
+    const {body} = await machine.request.post(`/api/articles/${articleId}/attachments`)
+      .attach('file', path.join(__dirname, filename))
+      .expect(200)
+    return body
+  }
+
+  async compareChecksumForArticle (machine, articleId, attachment, filename) {
+    const tmpPath = path.join(__dirname, 'tmp')
+    const filePath = path.join(__dirname, filename)
+    const {body} = await machine.request
+      .get(`/api/articles/${articleId}/attachments/${attachment._id}`)
+      .expect(200)
+      .expect('Content-Type', attachment._contentType)
+    fs.writeFileSync(tmpPath, body)
+    let hex = await md5File(tmpPath)
+    hex.should.have.length.above(0)
+    let origin = await md5File(filePath)
+    hex.should.equal(origin)
+  }
+
   async compareChecksum (srcFile, distFile) {
     const hex = await md5File(`${__dirname}/${srcFile}`)
     hex.should.have.length.above(0)
-
     const origin = await md5File(`${__dirname}/${distFile}`)
     hex.should.equal(origin)
   }

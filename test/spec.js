@@ -8,9 +8,9 @@
 // require('./unit/driver')
 // require('./unit/driver-promise')
 // require('./helper')
-// describe('Replication', () => require('./replication'))
+describe('Replication', () => require('./replication'))
 
-// describe('Replication MongoDB', () => require('./replicationMongoDb'))
+describe('Replication MongoDB', () => require('./replicationMongoDb'))
 
 // describe('FileStore', () => require('./file_store'))
 
@@ -18,7 +18,7 @@
 
 // describe('API V2', () => require('./apiV2'))
 
-describe('API MongoDB', () => require('./apiMongoDb'))
+// describe('API MongoDB', () => require('./apiMongoDb'))
 
 // describe('API XPKIT', () => require('./apiXPKIT'))
 
