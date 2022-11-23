@@ -1,9 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS201: Simplify complex destructure assignments
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const CMS = require('../')
 const chai = require('chai')
 const _ = require('lodash')
@@ -35,32 +29,26 @@ const remove = (...files) => {
   })
 }
 
-const createRecord = (machine, resource, content) => {
-  return machine.request.post(`/api/${resource}`)
+const createRecord = async (machine, resource, content) => {
+  const {body} = await machine.request.post(`/api/${resource}`)
     .send(content)
     .expect(200)
-    .then(({body}) => {
-      return body
-    })
+  return body
 }
 
-const uploadArticleAttachment = (machine, articleId, filename, cb) => {
-  return machine.request.post(`/api/articles/${articleId}/attachments`)
+const uploadArticleAttachment = async (machine, articleId, filename, cb) => {
+  const {body} = await machine.request.post(`/api/articles/${articleId}/attachments`)
     .attach('file', `${__dirname}/${filename}`)
     .expect(200)
-    .then(({body}) => {
-      return body
-    })
+  return body
 }
 
-const uploadArticleLocalisedAttachment = (machine, articleId, filename, cb) => {
-  return machine.request.post(`/api/articles/${articleId}/attachments`)
+const uploadArticleLocalisedAttachment = async (machine, articleId, filename, cb) => {
+  const {body} = await machine.request.post(`/api/articles/${articleId}/attachments`)
     .attach('localisedFile', `${__dirname}/${filename}`)
     .field('_locale', 'enUS')
     .expect(200)
-    .then(({body}) => {
-      return body
-    })
+  return body
 }
 
 const removeArticleAttachment = async (machine, articleId, cb) => {
@@ -71,20 +59,6 @@ const removeArticleAttachment = async (machine, articleId, cb) => {
     }
   }), {concurrency: 1})
 }
-
-// const compareChecksum = function (machine, articleId, attachment, filename) {
-//   return machine.request
-//     .get(`/api/articles/${articleId}/attachments/${attachment._id}`)
-//     .expect(200)
-//     .expect('Content-Type', attachment._contentType)
-//     .then(async ({body}) => {
-//       fs.writeFileSync(`${__dirname}/tmp`, body)
-//       let hex = await md5File(`${__dirname}/tmp`)
-//       hex.should.have.length.above(0)
-//       let origin = await md5File(`${__dirname}/${filename}`)
-//       hex.should.equal(origin)
-//     })
-// }
 
 const articleSchema = {
   schema: [

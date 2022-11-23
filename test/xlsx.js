@@ -1,5 +1,4 @@
 /* //eslint-disable no-unused-expressions */
-
 const CMS = require('../')
 const chai = require('chai')
 const _ = require('lodash')
