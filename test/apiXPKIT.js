@@ -9,7 +9,7 @@ const path = require('path')
 const Helper = require('./helper')
 
 const should = chai.should()
-const helper = Helper.getInstance(8002, true)
+const helper = Helper.getInstance(8004, true)
 
 let cms = null
 const DB = path.join(__dirname, 'data')
