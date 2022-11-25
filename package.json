@@ -16,7 +16,9 @@
     "cms",
     "node.js",
     "express",
-    "leveldb"
+    "leveldb",
+    "mongodb",
+    "xpkit"
   ],
   "pkg": {
     "assets": [
