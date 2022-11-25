@@ -18,14 +18,6 @@ const CONFIG = path.join(__dirname, 'cms.json')
 
 const resourcesToClean = ['articles', 'authors', 'comments', 'pages', 'querytest']
 
-// const doRequest = async (method, url, expect = false) => {
-//   const {body} = request(helper.MASTER_URL)
-//     .post(url)
-//     .auth('localAdmin', 'localAdmin')
-//     .expect(200)
-//   return body
-// }
-
 before(() => helper.removeFiles(
   DB,
   CONFIG,
@@ -90,6 +82,10 @@ before(async () => {
 
 before(() => {
   return Q.ninvoke(cms, 'allow', 'anonymous', ['pages', 'querytest'])
+})
+
+before(async () => {
+  helper.cms = cms
 })
 
 describe('HTTP', async () => {
@@ -232,13 +228,12 @@ describe('HTTP', async () => {
 
     it('should reflect changes when "limit" and "page" are set', async () => {
       seeds = _.orderBy(seeds, ['name'], ['asc'])
-      // TODO: hugo - check why the x__order_by params isn't passed to xpkit
-      const body = await helper.getRequest('/api/comments?unpublished=true&limit=5&page=1&x__order_by=name_asc')
+      const body = await helper.getRequest('/api/comments?unpublished=true&limit=5&page=1&x__order_by=name__asc')
       body.should.have.length(5)
       ids = _.map(seeds.slice(0, 5), '_id')
       returnedIds = _.map(body, '_id')
       returnedIds.should.deep.equal(ids)
-      const commentsFound = await helper.getRequest('/api/comments?unpublished=true&limit=5&page=2&x__order_by=name_asc')
+      const commentsFound = await helper.getRequest('/api/comments?unpublished=true&limit=5&page=2&x__order_by=name__asc')
       commentsFound.should.have.length(5)
       ids = _.map(seeds.slice(5, 10), '_id')
       _.map(commentsFound, '_id').should.deep.equal(ids)
