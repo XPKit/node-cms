@@ -4,7 +4,7 @@
   "description": "Content management system, written in node.js, uses leveldb as an asset and content store.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -R spec -b -t 40000 test/spec.js",
+    "test": "mocha --exit -R spec -b -t 40000 test/spec.js",
     "unit": "mocha -R spec -b -w -t 10000 test/unit",
     "mongodb": "ulimit -n 1000 && mongod --dbpath=../node-cms-mongodb-data"
   },
