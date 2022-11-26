@@ -1,0 +1,33 @@
+// Generate ca certificate
+$ openssl req -nodes -x509 -newkey rsa:4096 -keyout ca.key -out ca.crt -subj "/C=US/ST=California/L=SanFrancisco/O=Percona/OU=root/CN=localhost"
+
+// Generate server certificate
+$ openssl req -nodes -newkey rsa:4096 -keyout server.key -out server.csr -subj "/C=US/ST=California/L=SanFrancisco/O=Percona/OU=server/CN=localhost"
+$ openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out server.crt
+$ cat server.key server.crt > server.pem
+
+// Generate client certificates
+$ openssl req -nodes -newkey rsa:4096 -keyout client.key -out client.csr -subj "/DC=com/DC=percona/CN=John Doe"
+$ openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key -set_serial 02 -out client.crt
+$ cat client.key client.crt > client.pem
+
+// create user
+db.getSiblingDB('$external').runCommand(
+  {
+    createUser: 'CN=John Doe,DC=percona,DC=com',
+    roles: [
+      { role: 'readWrite', db: 'node-cms' },
+      { role: 'userAdminAnyDatabase', db: 'admin' }
+    ],
+    writeConcern: { w: 'majority', wtimeout: 5000 }
+  }
+)
+
+// start server with tls
+mongod --tlsMode requireTLS --tlsCertificateKeyFile ./ssl/server.pem --tlsCAFile ./ssl/ca.pem --bind_ip localhost --dbpath=../node-cms-mongodb-data
+
+
+mongo --tls --tlsCertificateKeyFile ./ssl/client.pem --tlsCAFile ./ssl/ca.pem --authenticationDatabase '$external' --authenticationMechanism MONGODB-X509
+
+
+mongo 'mongodb://localhost/?authenticationDatabase=\$external&authenticationMechanism=MONGODB-X509&tls=true&tlsCertificateKeyFile=./ssl/client.pem&tlsCAFile=./ssl/ca.pem'
