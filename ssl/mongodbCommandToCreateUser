@@ -1,5 +1,6 @@
 // Generate ca certificate
 $ openssl req -nodes -x509 -newkey rsa:4096 -keyout ca.key -out ca.crt -subj "/C=US/ST=California/L=SanFrancisco/O=Percona/OU=root/CN=localhost"
+$ cat ca.key ca.crt > ca.pem
 
 // Generate server certificate
 $ openssl req -nodes -newkey rsa:4096 -keyout server.key -out server.csr -subj "/C=US/ST=California/L=SanFrancisco/O=Percona/OU=server/CN=localhost"
