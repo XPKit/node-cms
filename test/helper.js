@@ -3,7 +3,9 @@ const _ = require('lodash')
 const path = require('path')
 const request = require('supertest')
 const md5File = require('md5-file')
+const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
+const config = require('../cms.json')
 
 class Helper {
   constructor (port) {
@@ -22,6 +24,23 @@ class Helper {
     describe(name, async () => {
       await require(path).suite()
     })
+  }
+
+  async login (user, expect = 200) {
+    const token = jwt.sign(user, config.auth.secret)
+    const {body} = await request(this.MASTER_URL)
+      .post('/admin/login')
+      .query({ jwt: token })
+      .send(user)
+      .expect(expect)
+    return body
+  }
+
+  async logout (user, expect = 200) {
+    console.warn(`Helper logout`)
+    await request(this.MASTER_URL)
+      .get('/admin/logout')
+      .expect(expect)
   }
 
   removeFiles (...files) {

@@ -5,7 +5,9 @@
       <div>
         <nav-bar />
       </div>
-      <div class="cms-inner-layout">
+      <login-app v-if="!user" />
+      <denied-page v-else-if="!user.group" :user="user" />
+      <div v-else class="cms-inner-layout">
         <div class="resources">
           <locale-list v-if="localeList" :locale-list="localeList" />
           <resource-list :class="{locale:localeList && localeList.length > 1}" :list="resourceList" :plugins="pluginList" :selected-item="selectedResource || selectedPlugin" @selectItem="selectResource" />
@@ -24,9 +26,9 @@
           <plugin-page v-if="selectedPlugin" :plugin="selectedPlugin" />
           <button-counter />
         </div>
+        <loading :class="{active:LoadingService.isShow}" />
       </div>
     </div>
-    <loading :class="{active:LoadingService.isShow}" />
   </v-app>
 </template>
 
@@ -94,8 +96,9 @@ export default {
       await ConfigService.init()
       await TranslateService.init()
       try {
-        const userResponse = await axios.get('./me')
+        const userResponse = await axios.get('./login')
         this.user = userResponse.data
+        console.warn(`User is: `, this.user)
       } catch (error) {
         const errorMessage = _.get(error, 'response.data.message', error.message)
         this.$notify({

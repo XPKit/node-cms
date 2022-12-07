@@ -43,7 +43,7 @@ export default {
       await TranslateService.init()
       this.localeList = ConfigService.config.locales
     } catch (error) {
-      console.error('Error happen durign mounted:', error)
+      console.error('Error happen during mounted:', error)
     }
     this.$loading.stop('init')
   },

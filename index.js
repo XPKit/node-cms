@@ -16,7 +16,8 @@ const mkdirp = require('mkdirp')
 const session = require('express-session')
 const spawn = require('child_process').spawn
 const osu = require('node-os-utils')
-const basicAuth = require('basic-auth-connect')
+// const log4js = require('log4js')
+// let logger = log4js.getLogger()
 const cpu = osu.cpu
 const mem = osu.mem
 const netstat = osu.netstat
@@ -123,16 +124,23 @@ class CMS {
 
     /* Enable session */
     if (!options.disableAdminLogin) {
+      console.warn(`disableAdminLogin = false, will use session`)
       this._app.use(session({
         secret: 'keyboard cat',
         cookie: {}
       }))
       this._app.use((req, res, next) => {
-        if (req.session.user && !req.headers.authorization) {
-          req.headers.authorization = 'Basic ' + Buffer.from(req.session.user.username + ':' + req.session.user.password).toString('base64')
+        console.warn(`disableAdminLogin = false, nodeCmsUser =`, _.get(req, 'session.nodeCmsUser', {}))
+        if (_.get(req, 'session.nodeCmsUser.token', false) && !req.headers.authorization) {
+          console.warn(`disableAdminLogin = false, set header auth`, req.session.nodeCmsUser.token)
+          req.headers.authorization = req.session.nodeCmsUser.token
         }
         next()
       })
+    }
+    /* Authentication API */
+    if (!options.disableAuthentication) {
+      this.use(require('./lib/plugins/authentication')(options))
     }
 
     // handle syslog
@@ -178,30 +186,10 @@ class CMS {
       }, 2000)
       this._app.get('/api/_syslog',
         (req, res, next) => {
-          basicAuth((username, password, callback) => {
-            this.authenticate(username, password, req, (error, result) => {
-              if (error && error.code === 500) {
-                return res.status(500).send(error)
-              }
-              callback(error, result)
-            })
-          })(req, res, next)
-        }, (req, res, next) => {
           res.send(syslogData)
         })
     }
-
     this._app.get('/api/system',
-      (req, res, next) => {
-        basicAuth((username, password, callback) => {
-          this.authenticate(username, password, req, (error, result) => {
-            if (error && error.code === 500) {
-              return res.status(500).send(error)
-            }
-            callback(error, result)
-          })
-        })(req, res, next)
-      },
       async (req, res, next) => {
         let driveUsage = 'not supported'
         try {
@@ -250,11 +238,6 @@ class CMS {
     /* Replication API */
     if (!options.disableReplication) {
       this.use(require('./lib/plugins/replicator')())
-    }
-
-    /* Authentication API */
-    if (!options.disableAuthentication) {
-      this.use(require('./lib/plugins/authentication')(options))
     }
 
     /* Migration API */

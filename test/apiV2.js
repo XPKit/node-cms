@@ -25,7 +25,12 @@ after(() => helper.removeFiles(
   `${__dirname}/_large_copy2.png`
 ))
 before(async () => {
-  cms = new CMS({data: DB, config: CONFIG, autoload: true, apiVersion: 2})
+  cms = new CMS({data: DB,
+    config: CONFIG,
+    autoload: true,
+    apiVersion: 2,
+    auth: { secret: 'auth.jwt.secret' }}
+  )
 
   cms.resource('articles',
     // acl:
@@ -62,12 +67,12 @@ before(async () => {
 })
 
 describe('HTTP', async () => {
-  helper.importTests('Resource', './unit/tests/resource')
-  helper.importTests('Pagination', './unit/tests/pagination')
-  helper.importTests('Attachment', './unit/tests/attachments')
+  // helper.importTests('Resource', './unit/tests/resource')
+  // helper.importTests('Pagination', './unit/tests/pagination')
+  // helper.importTests('Attachment', './unit/tests/attachments')
   helper.importTests('Access Control List', './unit/tests/accessControlList')
-  helper.importTests('Localisation', './unit/tests/localisation')
-  helper.importTests('Query language', './unit/tests/queryLanguage')
-  helper.importTests('JS', './unit/tests/js')
-  helper.importTests('ResolveDependency', './unit/tests/resolveDependency')
+  // helper.importTests('Localisation', './unit/tests/localisation')
+  // helper.importTests('Query language', './unit/tests/queryLanguage')
+  // helper.importTests('JS', './unit/tests/js')
+  // helper.importTests('ResolveDependency', './unit/tests/resolveDependency')
 })
