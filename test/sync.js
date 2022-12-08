@@ -119,6 +119,8 @@ before(async () => {
     config: path.join(__dirname, 'slave.json'),
     resources: path.join(__dirname, 'resources'),
     netPort: SLAVE_NET_PORT,
+    disableAdminLogin: false,
+    auth: { secret: 'auth.jwt.secret' },
     apiVersion: 2,
     sync: {
       resources: [
