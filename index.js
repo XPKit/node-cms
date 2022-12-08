@@ -8,6 +8,7 @@ const os = require('os')
 const pAll = require('p-all')
 const Q = require('q')
 const compression = require('compression')
+const cookieParser = require('cookie-parser')
 const express = require('express')
 const helmet = require('helmet')
 const _ = require('underscore')
@@ -124,17 +125,26 @@ class CMS {
 
     /* Enable session */
     if (!options.disableAdminLogin) {
-      console.warn(`disableAdminLogin = false, will use session`)
+      this._app.use(cookieParser())
       this._app.use(session({
         secret: 'keyboard cat',
         cookie: {}
       }))
       this._app.use((req, res, next) => {
-        console.warn(`disableAdminLogin = false, nodeCmsUser =`, _.get(req, 'session.nodeCmsUser', {}))
-        if (_.get(req, 'session.nodeCmsUser.token', false) && !req.headers.authorization) {
-          console.warn(`disableAdminLogin = false, set header auth`, req.session.nodeCmsUser.token)
-          req.headers.authorization = req.session.nodeCmsUser.token
+        // console.warn(`disableAdminLogin = false, nodeCmsUser =`, _.get(req, 'session.nodeCmsUser', {}))
+        // console.warn(`disableAdminLogin, query jwt token =`, _.get(req, 'query', false))
+        if (!req.headers.authorization) {
+          if (_.get(req, 'session.nodeCmsUser.token', false)) {
+            console.warn(`global use - 1`)
+            req.headers.authorization = req.session.nodeCmsUser.token
+          } else if (_.get(req, 'query.jwt', false)) {
+            console.warn(`global use - 3`)
+            req.headers.authorization = req.query.jwt
+          // } else {
+          //   console.warn(`global use - no jwt token`)
+          }
         }
+        // console.warn(`global use - req.headers.authorization = `, req.headers.authorization)
         next()
       })
     }

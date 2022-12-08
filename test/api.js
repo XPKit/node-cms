@@ -26,7 +26,11 @@ after(() => helper.removeFiles(
 ))
 
 before(async () => {
-  cms = new CMS({data: DB, config: CONFIG, autoload: true})
+  cms = new CMS({data: DB,
+    config: CONFIG,
+    autoload: true,
+    disableAdminLogin: false,
+    auth: { secret: 'auth.jwt.secret' }})
   cms.resource('articles',
     // acl:
     //   'hello': '1111' # give 'hello' user full access to 'articles' resource

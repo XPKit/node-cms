@@ -91,6 +91,8 @@ before(async () => {
     resources: path.join(__dirname, 'resources'),
     netPort: MASTER_NET_PORT,
     apiVersion: 2,
+    disableAdminLogin: false,
+    auth: { secret: 'auth.jwt.secret' },
     sync: {
       resources: [
         'articles'

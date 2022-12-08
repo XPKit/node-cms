@@ -3,9 +3,7 @@ const _ = require('lodash')
 const path = require('path')
 const request = require('supertest')
 const md5File = require('md5-file')
-const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
-const config = require('../cms.json')
 
 class Helper {
   constructor (port) {
@@ -27,13 +25,11 @@ class Helper {
   }
 
   async login (user, expect = 200) {
-    const token = jwt.sign(user, config.auth.secret)
-    const {body} = await request(this.MASTER_URL)
+    const {body, headers} = await request(this.MASTER_URL)
       .post('/admin/login')
-      .query({ jwt: token })
       .send(user)
       .expect(expect)
-    return body
+    return {user: body, cookie: _.get(headers, 'set-cookie')}
   }
 
   async logout (user, expect = 200) {
@@ -144,22 +140,30 @@ class Helper {
     return body
   }
 
-  async getRequest (url, expect = false, contentType = false, noAuth = false) {
+  async getRequest (url, expect = 200, contentType = false, basicAuth = true, jwtToken = false) {
     contentType = contentType || 'application/json; charset=utf-8'
-    expect = expect || 200
-    if (noAuth) {
+    if (!jwtToken && !basicAuth) {
       const {body} = await request(this.MASTER_URL)
         .get(url)
         .expect('Content-Type', contentType)
         .expect(expect)
       return body
     }
-    const {body} = await request(this.MASTER_URL)
-      .get(url)
-      .auth('localAdmin', 'localAdmin')
-      .expect('Content-Type', contentType)
-      .expect(expect)
-    return body
+    if (jwtToken) {
+      const {body} = await request(this.MASTER_URL)
+        .get(url)
+        .set('Cookie', [jwtToken])
+        .expect('Content-Type', contentType)
+        .expect(expect)
+      return body
+    } else if (basicAuth) {
+      const {body} = await request(this.MASTER_URL)
+        .get(url)
+        .auth('localAdmin', 'localAdmin')
+        .expect('Content-Type', contentType)
+        .expect(expect)
+      return body
+    }
   }
 
   async deleteAllRecords (resource) {
