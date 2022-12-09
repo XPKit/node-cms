@@ -40,6 +40,8 @@ before(async () => {
     autoload: true,
     apiVersion: 2,
     mid: 'lajgdwf0',
+    disableAdminLogin: false,
+    auth: { secret: 'auth.jwt.secret' },
     dbEngine: {
       type: 'xpkit',
       url: `${process.env.XPKIT_HOST || 'localhost'}/node-cms`

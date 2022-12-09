@@ -119,8 +119,6 @@ window.addEventListener('load', async function (event) {
     })
   }
 
-  // TODO: hugo - if dbEngine = xpkit, add a plugin to list profiles
-
   const router = new VueRouter({})
   // eslint-disable-next-line no-new
   new Vue({
