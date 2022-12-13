@@ -3366,9 +3366,16 @@ fieldset[disabled] .multiselect {
   align-items: stretch; }
 
 .login-canvas {
-  margin-top: 50px;
-  width: 267px;
-  text-align: center; }
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 1.5vw;
+  text-align: center;
+  max-width: 374px; }
+  .login-canvas .title, .login-canvas .actions {
+    display: block;
+    text-align: center; }
   .login-canvas input {
     border: 1px #c7c7c7 solid;
     display: block;
@@ -3377,6 +3384,8 @@ fieldset[disabled] .multiselect {
     font-size: 16px;
     padding-left: 20px;
     margin-top: 10px; }
+  .login-canvas .user-id {
+    font-style: italic; }
   .login-canvas button {
     cursor: pointer;
     padding: 5px 12px;

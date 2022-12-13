@@ -83,7 +83,6 @@ export default {
   },
   async mounted () {
     let response
-
     response = await axios.get('./resources')
     _.each(response.data, resource => {
       let uniqueKeyField = _.find(resource.schema, {unique: true})

@@ -1,12 +1,11 @@
 <template>
   <v-app>
     <notifications group="notification" position="bottom left" />
-    <div class="cms-layout">
+    <div v-if="user" class="cms-layout">
       <div>
         <nav-bar />
       </div>
-      <login-app v-if="!user" />
-      <denied-page v-else-if="!user.group" :user="user" />
+      <denied-page v-if="!user.group" :user="user" />
       <div v-else class="cms-inner-layout">
         <div class="resources">
           <locale-list v-if="localeList" :locale-list="localeList" />
@@ -40,6 +39,7 @@ import pAll from 'p-all'
 import Loading from './Loading.vue'
 import LocaleList from './LocaleList.vue'
 import ResourceList from './ResourceList.vue'
+import DeniedPage from './DeniedPage.vue'
 import RecordList from './RecordList.vue'
 import RecordEditor from './RecordEditor.vue'
 import RecordTable from './RecordTable.vue'
@@ -55,7 +55,8 @@ export default {
     RecordEditor,
     Loading,
     LocaleList,
-    RecordTable
+    RecordTable,
+    DeniedPage
   },
   data () {
     return {
@@ -99,6 +100,7 @@ export default {
         const userResponse = await axios.get('./login')
         this.user = userResponse.data
         console.warn(`User is: `, this.user)
+        this.$forceUpdate()
       } catch (error) {
         const errorMessage = _.get(error, 'response.data.message', error.message)
         this.$notify({
@@ -108,19 +110,24 @@ export default {
         })
         throw error
       }
-      const resourcesResponse = await axios.get('./resources')
-      this.$loading.stop('init')
-      this.resourceList = _.sortBy(resourcesResponse.data, item => item.title)
-      this.resourceList = _.filter(this.resourceList, resource => {
-        if (_.isUndefined(resource.allowed)) {
-          return true
+      try {
+        // TODO: hugo - get resources only after logged in
+        const resourcesResponse = await axios.get('./resources')
+        this.$loading.stop('init')
+        this.resourceList = _.sortBy(resourcesResponse.data, item => item.title)
+        this.resourceList = _.filter(this.resourceList, resource => {
+          if (_.isUndefined(resource.allowed)) {
+            return true
+          }
+          return _.includes(resource.allowed, this.user.group)
+        })
+        ResourceService.setSchemas(this.resourceList)
+        this.localeList = TranslateService.config.locales
+        if (this.$route.query.id != null) {
+          this.selectResource(_.find(_.union(this.pluginList, this.resourceList), {title: this.$route.query.id}))
         }
-        return _.includes(resource.allowed, this.user.group)
-      })
-      ResourceService.setSchemas(this.resourceList)
-      this.localeList = TranslateService.config.locales
-      if (this.$route.query.id != null) {
-        this.selectResource(_.find(_.union(this.pluginList, this.resourceList), {title: this.$route.query.id}))
+      } catch (error) {
+        console.error(`Error while getting resources: `, error)
       }
     })
   },

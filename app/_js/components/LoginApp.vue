@@ -2,11 +2,16 @@
   <v-app>
     <notifications group="notification" position="bottom left" />
     <div class="cms-layout">
-      <locale-list v-if="localeList" :locale-list="localeList" />
+      <locale-list v-if="localeList && localeList.length > 0" :locale-list="localeList" />
       <div class="login-canvas">
-        <input v-model="username" :placeholder="'TL_USERNAME' | translate">
-        <input v-model="password" :placeholder="'TL_PASSWORD' | translate">
-        <button @click="login()">{{ 'TL_LOGIN' | translate }}</button>
+        <form @submit.prevent="login">
+          <input v-model="username" autofocus type="test" name="nodeCmsUsername" :placeholder="'TL_USERNAME' | translate" autocomplete="on">
+          <input v-model="password" type="password" name="nodeCmsPassword" :placeholder="'TL_PASSWORD' | translate" autocomplete="on">
+          <template v-if="loginFailed">
+            <span class="error-message">{{ 'TL_LOGIN_FAILED_PLEASE_TRY_AGAIN' | translate }}</span>
+          </template>
+          <button @click="login()">{{ 'TL_LOGIN' | translate }}</button>
+        </form>
       </div>
     </div>
     <loading :class="{active:LoadingService.isShow}" />
@@ -30,6 +35,7 @@ export default {
     return {
       username: null,
       password: null,
+      loginFailed: false,
       locale: 'enUS',
       localeList: [],
       LoadingService,
@@ -60,8 +66,17 @@ export default {
           type: 'error',
           text: TranslateService.get('TL_LOGIN_FAIL')
         })
+        this.loginFailed = true
+        this.$loading.stop('login')
       }
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.error-message {
+  color: red;
+  font-style: italic;
+}
+</style>

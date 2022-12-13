@@ -125,11 +125,8 @@ window.addEventListener('load', async function (event) {
     el: '#app',
     router,
     render: function (createElement) {
-      if (this.$el.getAttribute('type') === 'login') {
-        return createElement(LoginApp)
-      } else {
-        return createElement(App)
-      }
+      console.warn(`ELEMENT = `, this.$el)
+      return createElement(this.$el.getAttribute('type') === 'login' ? LoginApp : App)
     }
   })
 })
