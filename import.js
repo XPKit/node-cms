@@ -15,7 +15,6 @@ const pAll = require('p-all')
 const got = require('got')
 const delay = require('delay')
 const { JWT } = require('google-auth-library')
-const axios = require('axios')
 
 const h = require('./lib-import/helper')
 const Api = require('./lib-import/api')
@@ -233,8 +232,8 @@ class ImportManager {
         authorization: `Bearer ${jwtClient.credentials.access_token}`
       }
     }
-    const response = await axios.get(`https://www.googleapis.com/drive/v3/files/${gsheetId}?fields=modifiedTime`, options)
-    return new Date(response.data.modifiedTime)
+    const data = await got.get(`https://www.googleapis.com/drive/v3/files/${gsheetId}?fields=modifiedTime`, options).json()
+    return new Date(data.modifiedTime)
   }
 
   async loadDataFromCachedJson (resourceList) {
