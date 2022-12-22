@@ -11,7 +11,7 @@ const compression = require('compression')
 const cookieParser = require('cookie-parser')
 const express = require('express')
 const helmet = require('helmet')
-const _ = require('underscore')
+const _ = require('lodash')
 const requireDir = require('require-dir')
 const mkdirp = require('mkdirp')
 const session = require('express-session')
@@ -135,7 +135,7 @@ class CMS {
         // console.warn(`disableAdminLogin, query jwt token =`, _.get(req, 'query', false))
         if (!req.headers.authorization) {
           if (_.get(req, 'session.nodeCmsUser.token', false)) {
-            console.warn(`global use - 1`)
+            // console.warn(`global use - 1`)
             req.headers.authorization = req.session.nodeCmsUser.token
           } else if (_.get(req, 'query.jwt', false)) {
             console.warn(`global use - 3`)
@@ -279,6 +279,18 @@ class CMS {
     }
   }
 
+  underscoreObject (list, values) {
+    var result = {}
+    for (var i = 0, length = _.get(list, 'length', 0); i < length; i++) {
+      if (values) {
+        result[list[i]] = values[i]
+      } else {
+        result[list[i][0]] = list[i][1]
+      }
+    }
+    return result
+  }
+
   resource (name, config, resolves) {
     resolves = _.intersection(resolves, this._resourceNames)
 
@@ -293,14 +305,13 @@ class CMS {
         const referenceKey = JSON.stringify({ name, resolves: undefined })
         opts = this._tempResources[referenceKey].options
       }
-
-      const resolveMap = _.object(_.map(resolves, item => [item,
+      const resolveMap = this.underscoreObject(_.map(resolves, item => [item,
         this.resource(item)]))
       this._tempResources[key] = new Resource(name, opts, resolveMap, this)
       if (_.isEmpty(resolves)) {
         this._resources[name] = this._tempResources[key]
       }
-      if (!_.contains(this._resourceNames, name)) {
+      if (!_.includes(this._resourceNames, name)) {
         this._resourceNames.push(name)
       }
     }
