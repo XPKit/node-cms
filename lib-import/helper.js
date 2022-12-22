@@ -9,12 +9,12 @@ let logger = log4js.getLogger()
 logger.level = log4js.levels.DEBUG
 
 let startProcess = function () {
-  var done, label
+  let done, label
   label = util.format.apply(util, arguments)
   logger.info(label)
   done = measure.measure('timeconsumingoperation')
   return function () {
-    var totalTime, totalTimeStr
+    let totalTime, totalTimeStr
     totalTime = done()
     totalTimeStr = ''
     totalTimeStr = util.format('(%s.%s)', numeral(totalTime / 1000).format('hh:mm:ss'), totalTime % 1000)
@@ -68,7 +68,7 @@ let convertData = function (value, type) {
 }
 
 let convertKeyToId = function (value, type, records, name, uniqueKeys, errors) {
-  var v
+  let v
   const uniqueKey = _.first(uniqueKeys)
   switch (type) {
     case 'select':

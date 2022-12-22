@@ -14,7 +14,7 @@ describe('API V2', () => require('./apiV2'))
 
 describe('API MongoDB', () => require('./apiMongoDb'))
 
-describe.skip('API XPKIT', () => require('./apiXPKIT'))
+describe('API XPKIT', () => require('./apiXPKIT'))
 
 describe('Synchonization', () => require('./sync'))
 

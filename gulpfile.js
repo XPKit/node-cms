@@ -135,7 +135,7 @@ class CreateTasks {
         .transform('vueify-babel-7-support')
         .transform('babelify')
         .on('update', this.gulpBundle)
-      var doBundle = promisify(this.bundler.bundle.bind(this.bundler))
+      let doBundle = promisify(this.bundler.bundle.bind(this.bundler))
       await doBundle()
       return this.gulpBundle()
     })

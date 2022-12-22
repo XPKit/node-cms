@@ -160,10 +160,10 @@ export default {
       return _.extend(_.get(this.resource, 'extraSources', {}), _.get(this.resource, 'schema[0].options.extraSources'))
     },
     dive (currentKey, into, target) {
-      for (var i in into) {
+      for (let i in into) {
         if (into.hasOwnProperty(i)) {
-          var newKey = i
-          var newVal = into[i]
+          let newKey = i
+          let newVal = into[i]
 
           if (currentKey.length > 0) {
             newKey = currentKey + '.' + i
@@ -179,7 +179,7 @@ export default {
     },
 
     flatten (arr) {
-      var newObj = {}
+      let newObj = {}
       this.dive('', arr, newObj)
       return newObj
     },

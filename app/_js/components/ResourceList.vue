@@ -192,10 +192,10 @@ export default {
     },
     timeAgo (current) {
       const elapsed = parseInt(current, 10)
-      var secondsPerMinute = 60
-      var secondsPerHour = secondsPerMinute * 60
-      var secondsPerDay = secondsPerHour * 24
-      var secondsPerMonth = secondsPerDay * 30
+      let secondsPerMinute = 60
+      let secondsPerHour = secondsPerMinute * 60
+      let secondsPerDay = secondsPerHour * 24
+      let secondsPerMonth = secondsPerDay * 30
 
       if (elapsed < secondsPerMinute) {
         return Math.round(elapsed) + ' seconds ago'

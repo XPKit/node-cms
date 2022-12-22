@@ -280,8 +280,8 @@ class CMS {
   }
 
   underscoreObject (list, values) {
-    var result = {}
-    for (var i = 0, length = _.get(list, 'length', 0); i < length; i++) {
+    let result = {}
+    for (let i = 0, length = _.get(list, 'length', 0); i < length; i++) {
       if (values) {
         result[list[i]] = values[i]
       } else {
@@ -323,8 +323,8 @@ class CMS {
    * Use CMS resources on the backend
    *
    * @example
-   *   var cms = new CMS();
-   *   var api = cms.api();
+   *   let cms = new CMS();
+   *   let api = cms.api();
    *
    *   api('articles').find('abc123xz', function(error, result) {
    *     if (error) return console.log(error);

@@ -31,7 +31,7 @@ exports = module.exports = (config, auth) => {
         }).json()
       },
       createAttachment: (id, fieldname, filepath, cb) => {
-        var formData, message, obj
+        let formData, message, obj
         message = `uploading ${path.relative(path.resolve('.'), path.normalize(filepath))} ... ....`
         console.log(message)
         formData = (
@@ -45,7 +45,7 @@ exports = module.exports = (config, auth) => {
         }).json()
       },
       removeAttachment: async (id, aid, cb) => {
-        var message
+        let message
         message = 'remove ' + aid + ' ... ....'
         console.log(message)
 
