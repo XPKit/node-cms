@@ -85,6 +85,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.login-canvas {
+  padding: 5vw;
+  border: 1px solid #c7c7c7;
+  border-radius: 16px;
+  box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
+}
 .error-message {
   color: red;
   font-style: italic;
