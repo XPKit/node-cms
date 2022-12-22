@@ -33,13 +33,22 @@ logger.level = log4js.levels.DEBUG
 //   }
 // }
 
-// start with dbEngine
+// // start with dbEngine
+// let options = {
+//   apiVersion: 1
+//   // dbEngine: {
+//   //   type: 'xpkit',
+//   //   url: `${process.env.XPKIT_HOST || 'localhost'}/node-cms`
+//   // }
+// }
+
+// start with mongo dbEngine
 let options = {
-  apiVersion: 1
-  // dbEngine: {
-  //   type: 'xpkit',
-  //   url: `${process.env.XPKIT_HOST || 'localhost'}/node-cms`
-  // }
+  apiVersion: 2,
+  dbEngine: {
+    type: 'mongodb',
+    url: `${process.env.XPKIT_HOST || 'localhost'}/node-cms`
+  }
 }
 
 const cms = new CMS(options)

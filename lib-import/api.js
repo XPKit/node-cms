@@ -1,4 +1,4 @@
-const request = require('request-promise')
+const got = require('got')
 const path = require('path')
 const fs = require('fs-extra')
 const _ = require('lodash')
@@ -9,30 +9,26 @@ exports = module.exports = (config, auth) => {
   return (resource) => {
     return {
       create: (item) => {
-        return request.post(`${config.protocol}${config.host}${config.prefix}/api/${resource}`, {
-          auth: auth,
-          json: true,
-          body: item
-        })
+        return got.post(`${config.protocol}${config.host}${config.prefix}/api/${resource}`, {
+          ...auth,
+          json: item
+        }).json()
       },
       list: (query) => {
-        return request.get(`${config.protocol}${config.host}${config.prefix}/api/${resource}?query=${JSON.stringify(query) || ''}`, {
-          auth: auth,
-          json: true
-        })
+        return got.get(`${config.protocol}${config.host}${config.prefix}/api/${resource}?query=${JSON.stringify(query) || ''}`, {
+          ...auth
+        }).json()
       },
       update: (id, item, cb) => {
-        return request.put(`${config.protocol}${config.host}${config.prefix}/api/${resource}/${id}`, {
-          auth: auth,
-          json: true,
-          body: item
-        })
+        return got.put(`${config.protocol}${config.host}${config.prefix}/api/${resource}/${id}`, {
+          ...auth,
+          json: item
+        }).json()
       },
       remove: (id, cb) => {
-        return request.del(`${config.protocol}${config.host}${config.prefix}/api/${resource}/${id}`, {
-          auth: auth,
-          json: true
-        })
+        return got.del(`${config.protocol}${config.host}${config.prefix}/api/${resource}/${id}`, {
+          ...auth
+        }).json()
       },
       createAttachment: (id, fieldname, filepath, cb) => {
         var formData, message, obj
@@ -43,30 +39,27 @@ exports = module.exports = (config, auth) => {
           obj['' + fieldname] = fs.createReadStream(filepath),
           obj
         )
-        return request.post(`${config.protocol}${config.host}${config.prefix}/api/${resource}/${id}/attachments`, {
-          auth: auth,
-          json: true,
-          formData: formData
-        })
+        return got.post(`${config.protocol}${config.host}${config.prefix}/api/${resource}/${id}/attachments`, {
+          ...auth,
+          formData
+        }).json()
       },
       removeAttachment: async (id, aid, cb) => {
         var message
         message = 'remove ' + aid + ' ... ....'
         console.log(message)
 
-        let body = await request.del(`${config.protocol}${config.host}${config.prefix}/api/${resource}/${id}/attachments/${aid}`, {
-          auth: auth,
-          json: true
-        })
+        let body = await got.del(`${config.protocol}${config.host}${config.prefix}/api/${resource}/${id}/attachments/${aid}`, {
+          ...auth
+        }).json()
 
         console.log(message + 'done')
         return body
       },
       resources: async (cb) => {
-        const resources = await request.get(`${config.protocol}${config.host}${config.prefix}/admin/resources`, {
-          auth: auth,
-          json: true
-        })
+        const resources = await got.get(`${config.protocol}${config.host}${config.prefix}/admin/resources`, {
+          ...auth
+        }).json()
         _.each(resources, resource => {
           schemaMap[resource.name] = resource.schema
         })
