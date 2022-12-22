@@ -4,6 +4,7 @@
     <div v-if="user" class="cms-layout">
       <div>
         <nav-bar />
+        <user-nav-bar />
       </div>
       <denied-page v-if="!user.group" :user="user" />
       <div v-else class="cms-inner-layout">
@@ -25,7 +26,7 @@
           <plugin-page v-if="selectedPlugin" :plugin="selectedPlugin" />
           <button-counter />
         </div>
-        <loading :class="{active:LoadingService.isShow}" />
+        <loading v-if="LoadingService.isShow" />
       </div>
     </div>
   </v-app>
@@ -36,6 +37,7 @@ import axios from 'axios/dist/axios.min'
 import _ from 'lodash'
 import pAll from 'p-all'
 
+import UserNavBar from './UserNavBar.vue'
 import Loading from './Loading.vue'
 import LocaleList from './LocaleList.vue'
 import ResourceList from './ResourceList.vue'
@@ -50,6 +52,7 @@ import ResourceService from '../services/ResourceService'
 
 export default {
   components: {
+    UserNavBar,
     ResourceList,
     RecordList,
     RecordEditor,
@@ -99,7 +102,7 @@ export default {
       try {
         const userResponse = await axios.get('./login')
         this.user = userResponse.data
-        console.warn(`User is: `, this.user)
+        // console.warn(`User is: `, this.user)
         this.$forceUpdate()
       } catch (error) {
         const errorMessage = _.get(error, 'response.data.message', error.message)
@@ -111,7 +114,6 @@ export default {
         throw error
       }
       try {
-        // TODO: hugo - get resources only after logged in
         const resourcesResponse = await axios.get('./resources')
         this.$loading.stop('init')
         this.resourceList = _.sortBy(resourcesResponse.data, item => item.title)

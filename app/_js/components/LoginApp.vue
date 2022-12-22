@@ -8,13 +8,13 @@
           <input v-model="username" autofocus type="test" name="nodeCmsUsername" :placeholder="'TL_USERNAME' | translate" autocomplete="on">
           <input v-model="password" type="password" name="nodeCmsPassword" :placeholder="'TL_PASSWORD' | translate" autocomplete="on">
           <template v-if="loginFailed">
-            <span class="error-message">{{ 'TL_LOGIN_FAILED_PLEASE_TRY_AGAIN' | translate }}</span>
+            <span class="error-message">{{ 'TL_LOGIN_FAIL' | translate }}</span>
           </template>
-          <button @click="login()">{{ 'TL_LOGIN' | translate }}</button>
+          <button :disabled="!username || !password || loggingIn">{{ 'TL_LOGIN' | translate }}</button>
         </form>
       </div>
     </div>
-    <loading :class="{active:LoadingService.isShow}" />
+    <loading v-if="LoadingService.isShow" />
   </v-app>
 </template>
 
@@ -36,6 +36,7 @@ export default {
       username: null,
       password: null,
       loginFailed: false,
+      loggingIn: false,
       locale: 'enUS',
       localeList: [],
       LoadingService,
@@ -55,9 +56,17 @@ export default {
   },
   methods: {
     async login () {
+      if (this.loggingIn) {
+        return
+      }
+      this.loggingIn = true
       this.$loading.start('login')
+      if (!this.username || !this.password) {
+        return
+      }
       try {
-        await axios.post('.', {username: this.username, password: this.password})
+        await axios.post('/admin/login', {username: this.username, password: this.password})
+        this.$loading.stop('login')
         window.location.reload()
       } catch (error) {
         console.error('Error happen during login:', error)
@@ -69,6 +78,7 @@ export default {
         this.loginFailed = true
         this.$loading.stop('login')
       }
+      this.loggingIn = false
     }
   }
 }
@@ -78,5 +88,14 @@ export default {
 .error-message {
   color: red;
   font-style: italic;
+  text-align: center;
+}
+button {
+  // background-color: aqua;
+  &:disabled {
+    opacity: 0.5;
+    touch-action: none;
+    pointer-events: none;
+  }
 }
 </style>

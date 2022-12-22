@@ -125,7 +125,6 @@ window.addEventListener('load', async function (event) {
     el: '#app',
     router,
     render: function (createElement) {
-      console.warn(`ELEMENT = `, this.$el)
       return createElement(this.$el.getAttribute('type') === 'login' ? LoginApp : App)
     }
   })

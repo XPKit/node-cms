@@ -2103,15 +2103,16 @@ fieldset[disabled] .multiselect {
   background: rgba(0, 0, 0, 0.5);
   opacity: 0;
   transition: opacity 0.2s;
-  padding: 5%;
   pointer-events: none;
-  z-index: 2000; }
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center; }
   .showbox.active {
     pointer-events: all;
     opacity: 1; }
   .showbox .loader {
     position: relative;
-    margin: 0 auto;
     width: 150px; }
     .showbox .loader:before {
       content: '';
@@ -3454,4 +3455,5 @@ ul, li {
   position: relative; }
 
 nav-bar {
-  border-bottom: 1px solid #c7c7c7; }
+  border-bottom: 1px solid #c7c7c7;
+}

@@ -73,6 +73,7 @@
     "TL_PASSWORD": "Password",
     "TL_LOGIN": "Login",
     "TL_LOGIN_FAIL": "Login Fail",
+    "TL_LOGOUT": "Logout",
     "TL_PLUGINS": "Plugins",
     "TL_OTHERS": "Others",
     "TL_MULTISELECT_SELECT_LABEL": "Press enter to select",

@@ -140,8 +140,6 @@ class CMS {
           } else if (_.get(req, 'query.jwt', false)) {
             console.warn(`global use - 3`)
             req.headers.authorization = req.query.jwt
-          // } else {
-          //   console.warn(`global use - no jwt token`)
           }
         }
         // console.warn(`global use - req.headers.authorization = `, req.headers.authorization)

@@ -15,9 +15,12 @@ $width: 150px;
   background: rgba(0,0,0,0.5);
   opacity: 0;
   transition: opacity 0.2s;
-  padding: 5%;
+  // padding: 5%;
   pointer-events: none;
   z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   &.active {
     pointer-events: all;
     opacity: 1;
@@ -27,7 +30,6 @@ $width: 150px;
 
 .loader {
   position: relative;
-  margin: 0 auto;
   width: $width;
   &:before {
     content: '';
