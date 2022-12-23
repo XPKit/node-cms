@@ -13,7 +13,7 @@ class LoginService {
 
   async getStatus () {
     try {
-      const { data } = await axios.get('/admin/login')
+      const { data } = await axios.get('./login')
       this.user = data
       return data
     } catch (error) {
@@ -36,7 +36,7 @@ class LoginService {
   async logout () {
     this.user = null
     try {
-      await axios.get('/admin/logout')
+      await axios.get('./logout')
     } catch (error) {
     }
     _.each(this.logoutCallbackList, callback => {

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-const axios = require('axios')
+import LoginService from '../services/LoginService'
 
 export default {
   data () {
@@ -15,8 +15,7 @@ export default {
   },
   methods: {
     async logout () {
-      console.warn(`test`)
-      await axios.get('/admin/logout')
+      await LoginService.logout()
       window.location.reload()
     }
   }

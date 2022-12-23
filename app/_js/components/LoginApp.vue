@@ -56,16 +56,13 @@ export default {
   },
   methods: {
     async login () {
-      if (this.loggingIn) {
+      if (this.loggingIn || !this.username || !this.password) {
         return
       }
-      this.loggingIn = true
       this.$loading.start('login')
-      if (!this.username || !this.password) {
-        return
-      }
+      this.loggingIn = true
       try {
-        await axios.post('/admin/login', {username: this.username, password: this.password})
+        await axios.post('./login', {username: this.username, password: this.password})
         this.$loading.stop('login')
         window.location.reload()
       } catch (error) {
