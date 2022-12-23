@@ -7,9 +7,7 @@
         <form @submit.prevent="login">
           <input v-model="username" autofocus type="test" name="nodeCmsUsername" :placeholder="'TL_USERNAME' | translate" autocomplete="on">
           <input v-model="password" type="password" name="nodeCmsPassword" :placeholder="'TL_PASSWORD' | translate" autocomplete="on">
-          <template v-if="loginFailed">
-            <span class="error-message">{{ 'TL_LOGIN_FAIL' | translate }}</span>
-          </template>
+          <span v-if="loginFailed" class="error-message">{{ 'TL_LOGIN_FAIL' | translate }}</span>
           <button :disabled="!username || !password || loggingIn">{{ 'TL_LOGIN' | translate }}</button>
         </form>
       </div>
@@ -92,6 +90,7 @@ export default {
   color: red;
   font-style: italic;
   text-align: center;
+  padding-top: 10px;
 }
 button {
   // background-color: aqua;
