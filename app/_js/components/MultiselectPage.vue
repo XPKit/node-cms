@@ -1,12 +1,12 @@
 <template>
   <div class="multiselect-page">
-    <button class="close-button" @click="onClickCancel">X</button>
+    <!-- <button class="close-button" @click="onClickCancel">X</button> -->
     <div>
-      <button @click="onClickSelectAll">Select all items</button>
-      <button @click="onClickDeselectAll">Deselect all items</button>
+      <button @click="onClickSelectAll">{{ 'TL_SELECT_ALL_ITEMS'|translate }}</button>
+      <button @click="onClickDeselectAll">{{ 'TL_DESELECT_ALL_ITEMS'|translate }}</button>
     </div>
-    You have selected {{ size(multiselectItems) }} items:
-    <br>
+    {{ 'TL_YOU_HAVE_SELECTED_NUM_ITEMS' | translate(null, { num: size(multiselectItems) }) }}
+    <br><br>
     <ul>
       <li v-for="item in multiselectItems" :key="item._id">
         {{ getName(item) }}
@@ -14,7 +14,9 @@
       </li>
     </ul>
     <hr>
-    <button :disabled="isEmpty(multiselectItems)" @click="onClickDelete">Delete</button>
+    <button @click="onClickCancel">{{ 'TL_CANCEL'|translate }}</button>
+    <button :disabled="isEmpty(multiselectItems)" @click="onClickDelete">{{ 'TL_DELETE'|translate }}</button>
+    <!-- <button :disabled="isEmpty(multiselectItems)" @click="onClickClone">Clone</button> -->
   </div>
 </template>
 
@@ -84,6 +86,40 @@ export default {
       this.$emit('updateRecordList', null)
       this.$emit('cancel')
     }
+    // async onClickClone () {
+    //   if (!window.confirm(
+    //     TranslateService.get('TL_ARE_YOU_SURE_TO_CLONE_RECORDS', null, {num: _.size(this.multiselectItems)}),
+    //     TranslateService.get('TL_YES'),
+    //     TranslateService.get('TL_NO')
+    //   )) {
+    //     return
+    //   }
+
+    //   this.$loading.start('onCloneMultiselectedItems')
+    //   try {
+    //     await pAll(_.map(this.multiselectItems, item => {
+    //       return async () => {
+    //         try {
+    //           const {data} = await axios.post(`../api/${this.resource.title}`, item)
+    //           this.$notify({
+    //             group: 'notification',
+    //             text: TranslateService.get('TL_RECORD_CREATED', null, { id: data._id })
+    //           })
+    //         } catch (error) {
+    //           console.error(error)
+    //           this.manageError(error, 'create')
+    //         }
+    //       }
+    //     }), {concurrency: 1})
+    //   } catch (error) {
+    //     console.error(error)
+    //   }
+    //   this.multiselect = false
+    //   this.$loading.stop('onCloneMultiselectedItems')
+
+    //   this.$emit('updateRecordList', null)
+    //   this.$emit('cancel')
+    // }
   }
 }
 </script>

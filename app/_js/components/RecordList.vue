@@ -4,10 +4,12 @@
       <div class="search" :class="{'is-query': sift.isQuery, 'is-valid': sift.isQuery && sift.isValid == true, 'is-invalid': sift.isQuery && sift.isValid == false}">
         <input v-model="search" :placeholder="'TL_SEARCH' | translate" type="text" name="search">
       </div>
-      <tempalte v-if="maxCount <= 0 || listCount < maxCount">
+      <div class="search-buttons">
         <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect">S</div>
-        <div class="new" @click="onClickNew">+</div>
-      </tempalte>
+        <tempalte v-if="maxCount <= 0 || listCount < maxCount">
+          <div class="new" @click="onClickNew">+</div>
+        </tempalte>
+      </div>
     </div>
     <div class="records">
       <RecycleScroller

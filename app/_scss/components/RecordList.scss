@@ -41,11 +41,17 @@
       }
     }
   }
-  .new, .multiselect {
-    $width: 38px;
+  .search-buttons {
     position: absolute;
     right: 0;
     top: 0;
+    word-wrap: nowrap;
+    display: flex;
+    justify-content: end;
+  }
+  .new, .multiselect {
+    display: inline-block;
+    $width: 38px;
     width: $width;
     height: 40px;
     line-height: 35px;
@@ -55,6 +61,7 @@
     border-bottom: 1px solid #c7c7c7;
     color: #aaa;
     box-sizing: border-box;
+    border-left: 1px solid #c7c7c7;
     cursor: pointer;
     &:hover {
       color: #69f;
@@ -64,9 +71,6 @@
       background: #69f;
     }
     &.multiselect {
-      right: $width;
-      border-right: 1px solid #c7c7c7;
-
       &.active {
         background-color: #69f;
         color: #c7c7c7;
