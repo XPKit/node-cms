@@ -60,7 +60,7 @@ export default {
       this.$loading.start('login')
       this.loggingIn = true
       try {
-        await axios.post('/admin/login', {username: this.username, password: this.password})
+        await axios.post('./login', {username: this.username, password: this.password})
         this.$loading.stop('login')
         window.location.reload()
       } catch (error) {
@@ -87,6 +87,7 @@ export default {
   box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
 }
 .error-message {
+  display: block;
   color: red;
   font-style: italic;
   text-align: center;

@@ -100,7 +100,7 @@ export default {
       await ConfigService.init()
       await TranslateService.init()
       try {
-        const userResponse = await axios.get('/admin/login')
+        const userResponse = await axios.get('./login')
         this.user = userResponse.data
         // console.warn(`User is: `, this.user)
         this.$forceUpdate()
