@@ -12,7 +12,14 @@
         </div>
         <div class="records">
           <template v-if="selectedResource && (!selectedResource.view || selectedResource.view == 'list')">
-            <record-list v-if="selectedResource" :list="recordList" :locale="locale" :selected-item="selectedRecord" :resource="selectedResource" @selectItem="selectRecord" />
+            <record-list v-if="selectedResource" :list="recordList" :locale="locale" :selected-item="selectedRecord"
+                         :resource="selectedResource"
+                         :multiselect="multiselect"
+                         :multiselect-items="multiselectItems"
+                         @selectItem="selectRecord"
+                         @changeMultiselectItems="onChangeMultiselectItems"
+                         @selectMultiselect="onSelectMultiselect"
+            />
             <record-editor v-if="selectedRecord" :key="selectedRecord._id" :resource-list="resourceList" :record.sync="selectedRecord" :resource="selectedResource" :locale.sync="locale"
                            :user-locale="TranslateService.locale" @updateRecordList="updateRecordList"
             />
@@ -22,6 +29,17 @@
                         @unsetRecord="unsetSelectedRecord" @updateRecordList="updateRecordList"
           />
           <plugin-page v-if="selectedPlugin" :plugin="selectedPlugin" />
+
+          <multiselect-page v-if="selectedResource && multiselect"
+                            :multiselect-items="multiselectItems"
+                            :locale="locale"
+                            :resource="selectedResource"
+                            :record-list="recordList"
+                            @cancel="onCancelMultiselectPage"
+                            @changeMultiselectItems="onChangeMultiselectItems"
+                            @updateRecordList="updateRecordList"
+          />
+
           <button-counter />
         </div>
       </div>
@@ -66,7 +84,9 @@ export default {
       selectedPlugin: null,
       LoadingService,
       TranslateService,
-      user: null
+      user: null,
+      multiselect: false,
+      multiselectItems: []
     }
   },
   computed: {
@@ -208,6 +228,15 @@ export default {
     selectRecord (record) {
       this.selectedRecord = record
     },
+    onSelectMultiselect (isMultiselect) {
+      this.multiselect = isMultiselect
+      if (isMultiselect) {
+        this.unsetSelectedRecord()
+      }
+    },
+    onChangeMultiselectItems (items) {
+      this.multiselectItems = _.clone(items)
+    },
     async updateRecordList (record) {
       try {
         this.$loading.start('updateRecordList')
@@ -221,6 +250,10 @@ export default {
     },
     unsetSelectedRecord () {
       this.selectedRecord = null
+    },
+    onCancelMultiselectPage () {
+      this.multiselect = false
+      this.multiselectItems = []
     }
   }
 }

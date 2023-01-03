@@ -26,6 +26,7 @@ import CustomChecklist from './components/CustomChecklist.vue'
 import CustomInputTag from './components/CustomInputTag.vue'
 import Group from './components/Group.vue'
 import PluginPage from './components/PluginPage.vue'
+import MultiselectPage from './components/MultiselectPage.vue'
 import Syslog from './components/Syslog.vue'
 import CmsImport from './components/CmsImport.vue'
 import SyncResource from './components/SyncResource.vue'
@@ -53,6 +54,7 @@ Vue.component('fieldCustomInputTag', CustomInputTag)
 Vue.component('fieldCustomMultiSelect', CustomMultiSelect)
 Vue.component('multiselect', Multiselect)
 Vue.component('pluginPage', PluginPage)
+Vue.component('multiselectPage', MultiselectPage)
 Vue.component('Syslog', Syslog)
 Vue.component('CmsImport', CmsImport)
 Vue.component('SyncResource', SyncResource)

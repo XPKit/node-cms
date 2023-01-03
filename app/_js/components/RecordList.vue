@@ -4,7 +4,10 @@
       <div class="search" :class="{'is-query': sift.isQuery, 'is-valid': sift.isQuery && sift.isValid == true, 'is-invalid': sift.isQuery && sift.isValid == false}">
         <input v-model="search" :placeholder="'TL_SEARCH' | translate" type="text" name="search">
       </div>
-      <div v-if="maxCount <= 0 || listCount < maxCount" class="new" @click="createRecord">+</div>
+      <tempalte v-if="maxCount <= 0 || listCount < maxCount">
+        <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect">S</div>
+        <div class="new" @click="onClickNew">+</div>
+      </tempalte>
     </div>
     <div class="records">
       <RecycleScroller
@@ -14,7 +17,10 @@
         :item-size="80"
         key-field="_id"
       >
-        <div class="item" :class="{selected: item == selectedItem, frozen:!item._local}" @click="select(item)">
+        <div class="item"
+             :class="{selected: (item == selectedItem) || (multiselect && includes(multiselectItems, item)), frozen:!item._local}"
+             @click="select(item)"
+        >
           <div v-if="item" class="main">
             <span class="icon">
               <span v-if="item._searchable" class="serchable">
@@ -44,19 +50,20 @@
 <script>
 import _ from 'lodash'
 import TranslateService from '../services/TranslateService'
-import ResourceService from '../services/ResourceService'
+import RecordNameHelper from './RecordNameHelper'
 import qs from 'qs'
-import pAll from 'p-all'
 import sift from 'sift'
 import JSON5 from 'json5'
-import * as Mustache from 'mustache'
 
 export default {
+  mixins: [RecordNameHelper],
   props: [
     'list',
     'selectedItem',
     'resource',
-    'locale'
+    'locale',
+    'multiselect',
+    'multiselectItems'
   ],
   data () {
     return {
@@ -67,7 +74,8 @@ export default {
         isQuery: false,
         isValid: false
       },
-      query: {}
+      query: {},
+      includes: _.includes
     }
   },
   computed: {
@@ -156,9 +164,6 @@ export default {
     //     item._recordDisplayName = this.getName(item)
     //   })
     // },
-    getExtraRessources () {
-      return _.extend(_.get(this.resource, 'extraSources', {}), _.get(this.resource, 'schema[0].options.extraSources'))
-    },
     dive (currentKey, into, target) {
       for (var i in into) {
         if (into.hasOwnProperty(i)) {
@@ -185,64 +190,27 @@ export default {
     },
 
     select (item) {
-      this.$emit('selectItem', item)
+      if (this.multiselect) {
+        if (_.includes(this.multiselectItems, item)) {
+          this.multiselectItems = _.difference(this.multiselectItems, [item])
+        } else {
+          this.multiselectItems.push(item)
+        }
+        this.$emit('changeMultiselectItems', this.multiselectItems)
+      } else {
+        this.$emit('selectItem', item)
+      }
     },
-    createRecord () {
+    onClickMultiselect () {
+      this.multiselectItems = []
+      this.$emit('changeMultiselectItems', this.multiselectItems)
+      this.$emit('selectMultiselect', !this.multiselect)
+    },
+    onClickNew () {
+      this.multiselectItems = []
+      this.$emit('changeMultiselectItems', this.multiselectItems)
+      this.$emit('selectMultiselect', false)
       this.$emit('selectItem', { _local: true })
-    },
-    getValue (item, field, template) {
-      let displayname = ''
-      if (field) {
-        if (field.input === 'file') {
-          const attachment = _(item).get('_attachments', []).find(file => file._name === field.field)
-          displayname = attachment && attachment._filename
-        } if (field.input === 'select') {
-          let value = _.get(item, field.field)
-          if (_.isString(value)) {
-            value = _.find(ResourceService.get(field.source), {_id: value})
-            if (value) {
-              _.each(field.options && field.options.extraSources, (source, field) => {
-                const subId = _.get(value, field)
-                if (_.isString(subId)) {
-                  _.set(value, field, _.find(ResourceService.get(source), {_id: subId}))
-                }
-              })
-            }
-          }
-          if (field.options && field.options.customLabel) {
-            displayname = Mustache.render(field.options.customLabel, value || {})
-          } else {
-            displayname = _.get(value, _.chain(value).keys().first().value(), '')
-          }
-        }
-        if (displayname === '') {
-          const isLocalised = this.resource.locales && (field.localised || _.isUndefined(field.localised))
-          if (isLocalised) {
-            displayname = _.get(item, `${this.locale}.${field.field}`)
-          } else {
-            displayname = _.get(item, field.field)
-          }
-        }
-      }
-      if (template) {
-        const itemCached = _.clone(item)
-        _.each(this.getExtraRessources(), (extraSource, extraField) => {
-          const cache = ResourceService.get(extraSource)
-          if (cache) {
-            const value = _.find(cache, {_id: _.get(itemCached, extraField)})
-            if (value) {
-              _.set(itemCached, extraField, value)
-            }
-          }
-        })
-        displayname = Mustache.render(template, itemCached)
-      }
-      return displayname
-    },
-    getName (item) {
-      const field = _.first(this.resource.schema)
-      let value = this.getValue(item, field, this.resource.displayItem)
-      return value
     },
     getSearchableFields () {
       return _.filter(this.resource.schema, item => item.searchable === true)

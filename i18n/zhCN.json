@@ -17,6 +17,7 @@
     "TL_THAILANDESE": "TH",
     "TL_VIETNAMESE": "VI",
     "TL_ARE_YOU_SURE_TO_DELETE": "您確定要刪除此記錄嗎？",
+    "TL_ARE_YOU_SURE_TO_DELETE_RECORDS": "您確定要刪除<%=num%>筆記錄嗎？",
     "TL_YES": "是",
     "TL_NO": "否",
     "TL_UPDATED": "更改在",
