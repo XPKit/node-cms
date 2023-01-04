@@ -60,7 +60,8 @@ export default {
       this.updateSysLog()
     },
     onClickClearSearch () {
-      this.searchKey = ''
+      this.searchKey = null
+      this.updateSysLog()
     },
     onClickMute () {
       this.muted = !this.muted
