@@ -89,7 +89,7 @@ export default {
         this.error = true
       }
       if (!this.destroyed) {
-        this.timer = setTimeout(this.refreshLog, this.error ? 5000 : 3000)
+        this.timer = setTimeout(this.refreshLog, this.error ? 2000 : 200)
       }
     },
     updateSysLog () {
