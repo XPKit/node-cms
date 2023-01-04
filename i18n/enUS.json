@@ -86,5 +86,8 @@
     "TL_MULTISELECT_SELECTED_LABEL": "Selected",
     "TL_MULTISELECT_DESELECT_LABEL": "Press enter to remove",
     "TL_MULTISELECT_DESELECT_GROUP_LABEL": "Press enter to deselect group",
-    "TL_MULTISELECT_TAG_PLACEHOLDER": "Press enter to create a tag"
+    "TL_MULTISELECT_TAG_PLACEHOLDER": "Press enter to create a tag",
+    "TL_MUTE": "Mute",
+    "TL_UNMUTE": "Unmute",
+    "TL_CLEAR_SEARCH": "Clear Search"
 }

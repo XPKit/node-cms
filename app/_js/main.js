@@ -10,6 +10,7 @@ import Croppa from 'vue-croppa'
 import wysiwyg from 'vue-wysiwyg'
 import axios from 'axios'
 import draggable from 'vuedraggable'
+import LogViewer from '@femessage/log-viewer'
 
 import App from './components/App.vue'
 import LoginApp from './components/LoginApp.vue'
@@ -54,6 +55,7 @@ Vue.component('fieldGroup', Group)
 Vue.component('fieldCustomInputTag', CustomInputTag)
 Vue.component('fieldCustomMultiSelect', CustomMultiSelect)
 Vue.component('multiselect', Multiselect)
+Vue.component('logViewer', LogViewer)
 Vue.component('pluginPage', PluginPage)
 Vue.component('multiselectPage', MultiselectPage)
 Vue.component('Syslog', Syslog)
@@ -88,7 +90,6 @@ window.addEventListener('load', async function (event) {
 
   const response = await axios.get('./config')
   const config = response.data
-
   if (config.syslog) {
     // await axios.get('../api/_syslog')
     window.plugins = window.plugins || []

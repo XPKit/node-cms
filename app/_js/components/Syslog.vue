@@ -1,19 +1,20 @@
 <template>
   <div class="syslog">
-    <template v-if="isLoading">Loading...</template>
-    <template v-if="!isLoading">
-      <div v-if="syslog === undefined">
-        sorry, syslog is not support
-      </div>
-      <div v-if="syslog" class="actions">
-        <button @click="toggleScroll()"><i :class="{'fi-link': scrollBottom, 'fi-unlink': !scrollBottom}" /></button>
-      </div>
-      <pre v-if="syslog" id="log" v-html="syslog" />
-    </template>
+    <div class="buttons">
+      <button @click="onClickMute">{{ (muted? 'TL_UNMUTE': 'TL_MUTE') | translate }}</button>
+      <button @click="onClickClear">{{ 'TL_CLEAR' | translate }}</button>
+      <input v-model="searchKey" :placeholder="'TL_SEARCH' | translate" @input="onInputSearch">
+      <button @click="onClickClearSearch">{{ 'TL_CLEAR_SEARCH' | translate }}</button>
+    </div>
+    <div v-if="error" class="error">
+      {{ 'TL_ERROR_RETRIEVE_SYSLOG'| translate }}
+    </div>
+    <log-viewer :log="sysLog" :loading="isLoading" />
   </div>
 </template>
 
 <script>
+import _ from 'lodash'
 import axios from 'axios'
 import ansiHTML from 'ansi-html'
 
@@ -35,13 +36,16 @@ export default {
     return {
       timer: null,
       isLoading: true,
-      muted: false,
-      syslog: undefined,
+      sysLog: '',
       error: false,
       scrollBottom: true,
       data: '',
       count: 0,
-      destroyed: false
+      destroyed: false,
+      muted: false,
+      lastIndex: -1,
+      logLines: [],
+      searchKey: null
     }
   },
   async mounted () {
@@ -52,20 +56,32 @@ export default {
     clearTimeout(this.timer)
   },
   methods: {
-    toggleScroll () {
+    onInputSearch () {
+      this.updateSysLog()
+    },
+    onClickClearSearch () {
+      this.searchKey = ''
+    },
+    onClickMute () {
       this.muted = !this.muted
-      this.scrollBottom = !this.scrollBottom
+    },
+    onClickClear () {
+      this.logLines = []
+      this.sysLog = ''
     },
     async refreshLog () {
       try {
-        if (this.muted === false) {
-          const response = await axios.get('../api/_syslog')
+        if (!this.muted) {
+          const response = await axios.get('../api/_syslog', {params: {index: this.lastIndex}})
           this.isLoading = false
           this.error = false
-          const container = this.$el.querySelector('#log')
-          this.syslog = ansiHTML(response.data)
-          if (container && this.scrollBottom) {
-            container.scrollTop = container.scrollHeight
+          // this.sysLog = response.data
+
+          if (!_.isEmpty(response.data)) {
+            this.logLines.push(...response.data)
+            this.lastIndex = _.last(this.logLines).index
+
+            this.updateSysLog()
           }
         }
       } catch (error) {
@@ -73,8 +89,17 @@ export default {
         this.error = true
       }
       if (!this.destroyed) {
-        this.timer = setTimeout(this.refreshLog, this.error ? 2000 : 200)
+        this.timer = setTimeout(this.refreshLog, this.error ? 5000 : 3000)
       }
+    },
+    updateSysLog () {
+      let lines = this.logLines
+      if (!_.isEmpty(this.searchKey)) {
+        lines = _.filter(lines, lineItem => {
+          return _.includes(_.toLower(lineItem.line), _.toLower(this.searchKey))
+        })
+      }
+      this.sysLog = _.map(lines, 'line').join('\n')
     }
   }
 }
@@ -82,26 +107,9 @@ export default {
 
 <style lang="scss" scoped>
 .syslog {
-  flex: 1 1 0;
-  display: flex;
-  align-items: stretch;
-  flex-direction: column;
-  position: relative;
-  .actions {
-    flex-grow: 0;
-    text-align: right;
-    margin-right: 20px;
-  }
-  background: #282a36;
-  color: #f8f8f2;
-
-  pre {
-    flex: 1 1 0;
-    white-space: break-spaces;
-    word-break: break-all;
+  .error {
     padding: 10px;
-    margin: 0px;
-    overflow-y: auto;
+    background-color: pink;
   }
 }
 </style>

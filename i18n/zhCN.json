@@ -80,5 +80,8 @@
     "TL_MULTISELECT_SELECTED_LABEL": "已选中",
     "TL_MULTISELECT_DESELECT_LABEL": "按Enter键删除",
     "TL_MULTISELECT_DESELECT_GROUP_LABEL": "按Enter键取消选择组",
-    "TL_MULTISELECT_TAG_PLACEHOLDER": "按Enter键创建标签"
+    "TL_MULTISELECT_TAG_PLACEHOLDER": "按Enter键创建标签",
+    "TL_MUTE": "靜音",
+    "TL_UNMUTE": "取消靜音",
+    "TL_CLEAR_SEARCH": "清除搜寻"
 }

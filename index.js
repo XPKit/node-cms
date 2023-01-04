@@ -10,7 +10,7 @@ const Q = require('q')
 const compression = require('compression')
 const express = require('express')
 const helmet = require('helmet')
-const _ = require('underscore')
+const _ = require('lodash')
 const requireDir = require('require-dir')
 const mkdirp = require('mkdirp')
 const session = require('express-session')
@@ -136,8 +136,8 @@ class CMS {
     }
 
     // handle syslog
-    if (options.syslog && options.syslog.identifier && os.platform() === 'linux') {
-      let syslogData = ''
+    if (options.syslog && options.syslog.identifier && _.includes(['darwin', 'linux'], os.platform())) {
+      let syslogData = []
       let cmd = {
         exitCode: 1
       }
@@ -155,20 +155,35 @@ class CMS {
           commandLine = commandLine.split(' ')
           cmd = spawn(commandLine.shift(), commandLine)
           cmd.stdout.on('data', (data) => {
-            data = data.toString()
-            const doubleDate = RegExp(`^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z)\\ (.*)\\ \\d{4}/\\d{2}/\\d{2}\\ \\d{2}:\\d{2}:\\d{2}\\.\\d{4}`, `g`)
-            const startingDate = RegExp(`^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z)\\ `, `g`)
-            if (doubleDate.test(data)) {
-              data = data.replace(startingDate, '')
+            try {
+              data = data.toString()
+              const doubleDate = RegExp(`^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z)\\ (.*)\\ \\d{4}/\\d{2}/\\d{2}\\ \\d{2}:\\d{2}:\\d{2}\\.\\d{4}`, `g`)
+              const startingDate = RegExp(`^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z)\\ `, `g`)
+              if (doubleDate.test(data)) {
+                data = data.replace(startingDate, '')
+              }
+              const regex = new RegExp(`\\w{3}\\s+\\d+\\s+\\d{2}:\\d{2}:\\d{2} .* ${options.syslog.identifier}\\[\\d+\\]: `, 'g')
+              if (regex.test(data)) {
+                data = data.replace(regex, '')
+              }
+              let lines = data.split('\n')
+              if (_.last(lines) === '') {
+                lines = _.dropRight(lines, 1)
+              }
+
+              let lastIndex = _.get(_.last(syslogData), 'index', -1)
+              lines = _.map(lines, (line, idx) => {
+                return {
+                  index: lastIndex + idx + 1,
+                  line
+                }
+              })
+              syslogData.push(...lines)
+              syslogData = _.takeRight(syslogData, options.syslog.max || 2000)
+            } catch (error) {
+              console.error(error)
+              throw error
             }
-            const regex = new RegExp(`\\w{3}\\s+\\d+\\s+\\d{2}:\\d{2}:\\d{2} .* ${options.syslog.identifier}\\[\\d+\\]: `, 'g')
-            if (regex.test(data)) {
-              data = data.replace(regex, '')
-            }
-            syslogData += data
-            let lines = syslogData.split('\n')
-            lines = _.last(lines, options.syslog.max || 2000)
-            syslogData = lines.join('\n')
           })
 
           cmd.on('error', (error) => {
@@ -187,8 +202,16 @@ class CMS {
             })
           })(req, res, next)
         }, (req, res, next) => {
+          if (req.query.index) {
+            const item = _.find(syslogData, {index: _.toNumber(req.query.index)})
+            if (item) {
+              const currentIndex = _.indexOf(syslogData, item)
+              return res.send(_.drop(syslogData, currentIndex + 1))
+            }
+          }
           res.send(syslogData)
-        })
+        }
+      )
     }
 
     this._app.get('/api/system',
@@ -303,13 +326,13 @@ class CMS {
         opts = this._tempResources[referenceKey].options
       }
 
-      const resolveMap = _.object(_.map(resolves, item => [item,
+      const resolveMap = _.zipObject(_.map(resolves, item => [item,
         this.resource(item)]))
       this._tempResources[key] = new Resource(name, opts, resolveMap, this)
       if (_.isEmpty(resolves)) {
         this._resources[name] = this._tempResources[key]
       }
-      if (!_.contains(this._resourceNames, name)) {
+      if (!_.includes(this._resourceNames, name)) {
         this._resourceNames.push(name)
       }
     }
