@@ -5,13 +5,13 @@
         <input v-model="search" :placeholder="'TL_SEARCH' | translate" type="text" name="search">
       </div>
       <div class="search-buttons">
-        <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect">S</div>
+        <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect"><i class="fi-list-thumbnails"></i></div>
         <tempalte v-if="maxCount <= 0 || listCount < maxCount">
           <div class="new" @click="onClickNew">+</div>
         </tempalte>
       </div>
     </div>
-    <div class="records">
+    <div class="records" v-shortkey="['ctrl', 'a']" @shortkey="selectAll()">
       <RecycleScroller
         v-slot="{ item }"
         class="list"
@@ -21,7 +21,7 @@
       >
         <div class="item"
              :class="{selected: (item == selectedItem) || (multiselect && includes(multiselectItems, item)), frozen:!item._local}"
-             @click="select(item)"
+             @click="select(item)" @click.shift="selectTo(item)"
         >
           <div v-if="item" class="main">
             <span class="icon">
@@ -166,6 +166,17 @@ export default {
     //     item._recordDisplayName = this.getName(item)
     //   })
     // },
+    selectAll () {
+      if (!this.multiselect) {
+        return
+      }
+      if (this.multiselectItems.length == this.filteredList.length) {
+        this.multiselectItems = []
+      } else {
+        this.multiselectItems = this.filteredList
+      }
+      this.$emit('changeMultiselectItems', this.multiselectItems)
+    },
     dive (currentKey, into, target) {
       for (var i in into) {
         if (into.hasOwnProperty(i)) {
@@ -203,6 +214,29 @@ export default {
         this.$emit('selectItem', item)
       }
     },
+    selectTo (item) {
+      if (this.multiselect) {
+        const start = _.first(this.multiselectItems)
+        let found = false
+        for (const iterator of this.filteredList) {
+          if (iterator === start) {
+            this.multiselectItems = [iterator]
+          }
+          if (found === true) {
+            this.multiselectItems.push(iterator)
+          }
+          if (iterator === start) {
+            found = true
+          }
+          if (iterator === item) {
+            found = false
+          }
+        }
+        this.$emit('changeMultiselectItems', this.multiselectItems)
+      } else {
+        this.$emit('selectItem', item)
+      }
+    },
     onClickMultiselect () {
       this.multiselectItems = []
       this.$emit('changeMultiselectItems', this.multiselectItems)
@@ -230,3 +264,14 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.search-buttons {
+  .multiselect i:before {
+    color: #aaa;
+    line-height: 40px;
+  }
+  .new {
+    line-height: 40px;
+  }
+}
+</style>

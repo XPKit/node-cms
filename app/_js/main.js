@@ -1,5 +1,6 @@
 import Vue from 'vue/dist/vue.min'
 import VueRouter from 'vue-router'
+import VueShortkey from 'vue-shortkey'
 import VueTimeago from 'vue-timeago'
 import Multiselect from 'vue-multiselect'
 import JsonTreeView from 'vue-json-tree-view'
@@ -72,6 +73,7 @@ Vue.use(Notifications)
 Vue.use(JsonTreeView)
 Vue.use(VueVirtualScroller)
 Vue.use(VueRouter)
+Vue.use(VueShortkey)
 Vue.use(VueTimeago, {
   name: 'timeago',
   locale: 'enUS',

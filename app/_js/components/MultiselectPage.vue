@@ -1,18 +1,17 @@
 <template>
   <div class="multiselect-page">
-    <!-- <button class="close-button" @click="onClickCancel">X</button> -->
-    <div>
-      <button @click="onClickSelectAll">{{ 'TL_SELECT_ALL_ITEMS'|translate }}</button>
-      <button @click="onClickDeselectAll">{{ 'TL_DESELECT_ALL_ITEMS'|translate }}</button>
-    </div>
-    {{ 'TL_YOU_HAVE_SELECTED_NUM_ITEMS' | translate(null, { num: size(multiselectItems) }) }}
-    <br><br>
+    <h3>{{ 'TL_YOU_HAVE_SELECTED_NUM_ITEMS' | translate(null, { num: size(multiselectItems) }) }}</h3>
     <ul>
       <li v-for="item in multiselectItems" :key="item._id">
         {{ getName(item) }}
         ({{ item._id }})
       </li>
     </ul>
+    <br>
+    <div>
+      <button @click="onClickSelectAll">{{ 'TL_SELECT_ALL_ITEMS'|translate }}</button>
+      <button @click="onClickDeselectAll">{{ 'TL_DESELECT_ALL_ITEMS'|translate }}</button>
+    </div>
     <hr>
     <button @click="onClickCancel">{{ 'TL_CANCEL'|translate }}</button>
     <button :disabled="isEmpty(multiselectItems)" @click="onClickDelete">{{ 'TL_DELETE'|translate }}</button>
@@ -123,3 +122,13 @@ export default {
   }
 }
 </script>
+<style scoped lang="scss">
+ul {
+  list-style-type: circle;
+  li {
+    margin-left: 20px;
+    padding-left: 10px;
+    list-style: circle;
+  }
+}
+</style>
