@@ -5,13 +5,13 @@
         <input v-model="search" :placeholder="'TL_SEARCH' | translate" type="text" name="search">
       </div>
       <div class="search-buttons">
-        <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect"><i class="fi-list-thumbnails"></i></div>
+        <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect"><i class="fi-list-thumbnails" /></div>
         <tempalte v-if="maxCount <= 0 || listCount < maxCount">
           <div class="new" @click="onClickNew">+</div>
         </tempalte>
       </div>
     </div>
-    <div class="records" v-shortkey="['ctrl', 'a']" @shortkey="selectAll()">
+    <div v-shortkey="['ctrl', 'a']" class="records" @shortkey="selectAll()">
       <RecycleScroller
         v-slot="{ item }"
         class="list"
@@ -21,7 +21,7 @@
       >
         <div class="item"
              :class="{selected: (item == selectedItem) || (multiselect && includes(multiselectItems, item)), frozen:!item._local}"
-             @click="select(item)" @click.shift="selectTo(item)"
+             @click.exact="select(item)" @click.shift="selectTo(item)"
         >
           <div v-if="item" class="main">
             <span class="icon">
@@ -44,7 +44,7 @@
             <span class="ts"> {{ 'TL_UPDATED' | translate }} <timeago :since="item._updatedAt" :locale="TranslateService.locale" /></span>
           </div>
         </div>
-      </recyclescroller>
+      </RecycleScroller>
     </div>
   </div>
 </template>
@@ -170,7 +170,7 @@ export default {
       if (!this.multiselect) {
         return
       }
-      if (this.multiselectItems.length == this.filteredList.length) {
+      if (this.multiselectItems.length === this.filteredList.length) {
         this.multiselectItems = []
       } else {
         this.multiselectItems = this.filteredList

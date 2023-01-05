@@ -1,16 +1,38 @@
 <template>
   <div class="syslog">
     <div class="buttons">
-      <button class="item" @click="onClickMute">{{ (muted? 'TL_UNMUTE': 'TL_MUTE') | translate }}</button>
-      <button class="item" @click="onClickClear">{{ 'TL_CLEAR' | translate }}</button>
-      <input class="item search" v-model="searchKey" :placeholder="'TL_SEARCH' | translate" @input="onInputSearch">
-      <button class="item" @click="onClickClearSearch">{{ 'TL_CLEAR_SEARCH' | translate }}</button>
+      <button class="item autoscroll" :class="{active: autoscroll}" @click="onClickAutoscroll">{{ 'TL_AUTO_SCROLL' | translate }}</button>
+      <button class="item clear" @click="onClickClear">{{ 'TL_CLEAR' | translate }}</button>
+      <input v-model="searchKey" class="item search" :placeholder="'TL_SEARCH' | translate" @input="onInputSearch">
+      <button class="item clear-search" @click="onClickClearSearch">{{ 'TL_CLEAR_SEARCH' | translate }}</button>
     </div>
     <div v-if="error" class="error">
-        {{ 'TL_ERROR_RETRIEVE_SYSLOG'| translate }}
+      {{ 'TL_ERROR_RETRIEVE_SYSLOG'| translate }}
     </div>
-    <div class="log-viewer-wrapper" ref="log-viewer">
-      <log-viewer :log="sysLog" :loading="isLoading" :height="getLogViewerHeight()" />
+    <div ref="log-viewer" class="log-viewer-wrapper">
+      <DynamicScroller
+        ref="scroller"
+        :items="sysLog"
+        :min-item-size="14"
+        class="scroller"
+      >
+        <template v-slot="{ item, index, active }">
+          <DynamicScrollerItem
+            :item="item"
+            :active="active"
+            :size-dependencies="[
+              calculateLineNumberSpacing(item.id),
+              item.line
+            ]"
+            :data-index="index"
+          >
+            <div class="line-wrapper">
+              <div class="line-number">{{ item.id }}</div>
+              <div class="line-content" v-html="item.line" />
+            </div>
+          </DynamicScrollerItem>
+        </template>
+      </DynamicScroller>
     </div>
   </div>
 </template>
@@ -38,16 +60,17 @@ export default {
     return {
       timer: null,
       isLoading: true,
-      sysLog: '',
+      sysLog: [],
       error: false,
       scrollBottom: true,
       data: '',
       count: 0,
       destroyed: false,
-      muted: false,
-      lastIndex: -1,
+      autoscroll: true,
+      lastId: -1,
       logLines: [],
-      searchKey: null
+      searchKey: null,
+      fakeData: []
     }
   },
   async mounted () {
@@ -68,27 +91,28 @@ export default {
       this.searchKey = null
       this.updateSysLog()
     },
-    onClickMute () {
-      this.muted = !this.muted
+    onClickAutoscroll () {
+      this.autoscroll = !this.autoscroll
     },
     onClickClear () {
       this.logLines = []
-      this.sysLog = ''
+      this.sysLog = []
+    },
+    calculateLineNumberSpacing (line) {
+      return _.padStart(line, 8, '0') + ' |'
     },
     async refreshLog () {
       try {
-        if (!this.muted) {
-          const response = await axios.get('../api/_syslog', {params: {index: this.lastIndex}})
-          this.isLoading = false
-          this.error = false
-          this.sysLog = response.data
-
-          if (!_.isEmpty(response.data)) {
-            this.logLines.push(...response.data)
-            this.lastIndex = _.last(this.logLines).index
-
-            this.updateSysLog()
-          }
+        const response = await axios.get('../api/_syslog', {params: {id: this.lastId}})
+        this.isLoading = false
+        this.error = false
+        if (!_.isEmpty(response.data)) {
+          this.logLines.push(...response.data)
+          this.lastId = _.last(this.logLines).id
+          this.updateSysLog()
+        }
+        if (this.autoscroll) {
+          this.$refs.scroller.scrollToBottom()
         }
       } catch (error) {
         console.error(error)
@@ -105,7 +129,7 @@ export default {
           return _.includes(_.toLower(lineItem.line), _.toLower(this.searchKey))
         })
       }
-      this.sysLog = _.map(lines, 'line').join('\n')
+      this.sysLog = lines
     }
   }
 }
@@ -138,6 +162,10 @@ export default {
       height: 100%;
       box-sizing: border-box;
 
+      &.autoscroll.active {
+        background: black;
+      }
+
       &.search {
         background-color: #35363A;
         padding-left: 10px;
@@ -159,16 +187,57 @@ export default {
   .log-viewer-wrapper {
     position: relative;
     background-color: #222;
-    display: flex;
     flex-grow: 1;
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    padding: 20px 0;
-    .log-viewer {
-      padding: 0;
+    &:before {
+      position: absolute;
+      left:0;
+      top: 0;
+      bottom: 0;
       height: 100%;
-      width: 100%;
+      background: rgba(72,72,72,0.2);
+      width: 74px;
+      display: block;
+      content: '';
+    }
+}
+  .vue-recycle-scroller {
+    position: absolute;
+    box-sizing: border-box;
+    display: block;
+    margin: 0;
+    padding: 20px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    width: 100%;
+  }
+  .line-wrapper {
+    font-size: 12px;
+    font-family: monospace;
+    position: relative;
+    .line-number {
+      display: inline-block;
+      color: #666;
+      padding-right: 10px;
+      min-width: 42px;
+      text-align: right;
+      border-right: 2px solid #666;
+      margin-right: 10px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      font-weight: bold;
+    }
+    .line-content {
+      margin-left: 70px;
+      color: white;
+      text-align: left;
+      white-space: break-spaces;
     }
   }
 }

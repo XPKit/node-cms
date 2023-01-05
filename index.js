@@ -171,10 +171,10 @@ class CMS {
                 lines = _.dropRight(lines, 1)
               }
 
-              let lastIndex = _.get(_.last(syslogData), 'index', -1)
+              let lastId = _.get(_.last(syslogData), 'id', -1)
               lines = _.map(lines, (line, idx) => {
                 return {
-                  index: lastIndex + idx + 1,
+                  id: lastId + idx + 1,
                   line
                 }
               })

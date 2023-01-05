@@ -91,15 +91,15 @@ window.addEventListener('load', async function (event) {
   const response = await axios.get('./config')
   const config = response.data
   // if (config.syslog) {
-    // await axios.get('../api/_syslog')
-    window.plugins = window.plugins || []
-    window.plugins.push({
-      title: 'Syslog',
-      displayname: 'Syslog',
-      component: 'Syslog',
-      group: '- System -',
-      allowed: ['admins', 'imagination']
-    })
+  // await axios.get('../api/_syslog')
+  window.plugins = window.plugins || []
+  window.plugins.push({
+    title: 'Syslog',
+    displayname: 'Syslog',
+    component: 'Syslog',
+    group: '- System -',
+    allowed: ['admins', 'imagination']
+  })
   // }
 
   if (config.import) {
