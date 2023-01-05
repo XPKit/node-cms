@@ -203,7 +203,7 @@ class CMS {
           })(req, res, next)
         }, (req, res, next) => {
           if (req.query.index) {
-            const item = _.find(syslogData, {index: _.toNumber(req.query.index)})
+            const item = _.find(syslogData, {id: _.toNumber(req.query.index)})
             if (item) {
               const currentIndex = _.indexOf(syslogData, item)
               return res.send(_.drop(syslogData, currentIndex + 1))
