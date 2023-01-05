@@ -4,7 +4,6 @@
 
 const path = require('path')
 const fs = require('fs')
-const os = require('os')
 const pAll = require('p-all')
 const Q = require('q')
 const compression = require('compression')
@@ -14,15 +13,10 @@ const _ = require('lodash')
 const requireDir = require('require-dir')
 const mkdirp = require('mkdirp')
 const session = require('express-session')
-const spawn = require('child_process').spawn
-const osu = require('node-os-utils')
-const basicAuth = require('basic-auth-connect')
-const cpu = osu.cpu
-const mem = osu.mem
-const netstat = osu.netstat
-const drive = osu.drive
 
 const UUID = require('./lib/util/uuid')
+const SyslogManager = require('./lib/SyslogManager')
+const SystemManager = require('./lib/SystemManager')
 let Resource = null
 
 /*
@@ -135,125 +129,11 @@ class CMS {
       })
     }
 
-    // handle syslog
-    if (options.syslog && options.syslog.identifier && _.includes(['darwin', 'linux'], os.platform())) {
-      let syslogData = []
-      let cmd = {
-        exitCode: 1
-      }
-      if (!options.syslog.method) {
-        options.syslog.method = 'syslog'
-      }
-      setInterval(() => {
-        if (cmd.exitCode !== null) {
-          let commandLine = `tail -q -n0 -f /var/log/syslog`
-          if (options.syslog.method === 'journalctl') {
-            commandLine = `journalctl -f -u ${options.syslog.identifier}.service --output cat -n 0`
-          } else if (options.syslog.method === 'command' && options.syslog.command !== false) {
-            commandLine = options.syslog.command
-          }
-          commandLine = commandLine.split(' ')
-          cmd = spawn(commandLine.shift(), commandLine)
-          cmd.stdout.on('data', (data) => {
-            try {
-              data = data.toString()
-              const doubleDate = RegExp(`^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z)\\ (.*)\\ \\d{4}/\\d{2}/\\d{2}\\ \\d{2}:\\d{2}:\\d{2}\\.\\d{4}`, `g`)
-              const startingDate = RegExp(`^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z)\\ `, `g`)
-              if (doubleDate.test(data)) {
-                data = data.replace(startingDate, '')
-              }
-              const regex = new RegExp(`\\w{3}\\s+\\d+\\s+\\d{2}:\\d{2}:\\d{2} .* ${options.syslog.identifier}\\[\\d+\\]: `, 'g')
-              if (regex.test(data)) {
-                data = data.replace(regex, '')
-              }
-              let lines = data.split('\n')
-              if (_.last(lines) === '') {
-                lines = _.dropRight(lines, 1)
-              }
-
-              let lastId = _.get(_.last(syslogData), 'id', -1)
-              lines = _.map(lines, (line, idx) => {
-                return {
-                  id: lastId + idx + 1,
-                  line
-                }
-              })
-              syslogData.push(...lines)
-              syslogData = _.takeRight(syslogData, options.syslog.max || 2000)
-            } catch (error) {
-              console.error(error)
-              throw error
-            }
-          })
-
-          cmd.on('error', (error) => {
-            console.log('spawn syslog error:', error)
-          })
-        }
-      }, 2000)
-      this._app.get('/api/_syslog',
-        (req, res, next) => {
-          basicAuth((username, password, callback) => {
-            this.authenticate(username, password, req, (error, result) => {
-              if (error && error.code === 500) {
-                return res.status(500).send(error)
-              }
-              callback(error, result)
-            })
-          })(req, res, next)
-        }, (req, res, next) => {
-          if (req.query.id) {
-            const item = _.find(syslogData, {id: _.toNumber(req.query.id)})
-            if (item) {
-              const currentId = _.indexOf(syslogData, item)
-              return res.send(_.drop(syslogData, currentId + 1))
-            }
-          }
-          res.send(syslogData)
-        }
-      )
-    }
-
-    this._app.get('/api/system',
-      (req, res, next) => {
-        basicAuth((username, password, callback) => {
-          this.authenticate(username, password, req, (error, result) => {
-            if (error && error.code === 500) {
-              return res.status(500).send(error)
-            }
-            callback(error, result)
-          })
-        })(req, res, next)
-      },
-      async (req, res, next) => {
-        let driveUsage = 'not supported'
-        try {
-          driveUsage = await drive.used()
-        } catch (e) {}
-        let cpuUsage = 0
-        try {
-          cpuUsage = await cpu.usage()
-        } catch (e) {}
-        let memory = 0
-        try {
-          memory = await mem.info()
-        } catch (e) {}
-        let network = 'not supported'
-        try {
-          network = await netstat.inOut()
-        } catch (e) {}
-        res.json({
-          cpu: {
-            count: cpu.count(),
-            usage: cpuUsage,
-            model: cpu.model()
-          },
-          memory: memory,
-          network: network,
-          drive: driveUsage,
-          uptime: Math.floor(process.uptime())
-        })
-      })
+    // handle syslog and system
+    SyslogManager.init(this, options)
+    SystemManager.init(this, options)
+    this._app.use(SyslogManager.express())
+    this._app.use(SystemManager.express())
 
     /* REST API */
     if (!options.disableREST) {
