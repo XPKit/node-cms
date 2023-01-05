@@ -89,5 +89,6 @@
     "TL_MULTISELECT_TAG_PLACEHOLDER": "Press enter to create a tag",
     "TL_MUTE": "Mute",
     "TL_UNMUTE": "Unmute",
-    "TL_CLEAR_SEARCH": "Clear Search"
+    "TL_CLEAR_SEARCH": "Clear Search",
+    "TL_ERROR_RETRIEVE_SYSLOG": "Failed to retreive syslog"
 }

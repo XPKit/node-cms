@@ -83,5 +83,6 @@
     "TL_MULTISELECT_TAG_PLACEHOLDER": "按Enter键创建标签",
     "TL_MUTE": "靜音",
     "TL_UNMUTE": "取消靜音",
-    "TL_CLEAR_SEARCH": "清除搜寻"
+    "TL_CLEAR_SEARCH": "清除搜寻",
+    "TL_ERROR_RETRIEVE_SYSLOG": "Failed to retreive syslog"
 }

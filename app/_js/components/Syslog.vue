@@ -1,15 +1,17 @@
 <template>
   <div class="syslog">
     <div class="buttons">
-      <button @click="onClickMute">{{ (muted? 'TL_UNMUTE': 'TL_MUTE') | translate }}</button>
-      <button @click="onClickClear">{{ 'TL_CLEAR' | translate }}</button>
-      <input v-model="searchKey" :placeholder="'TL_SEARCH' | translate" @input="onInputSearch">
-      <button @click="onClickClearSearch">{{ 'TL_CLEAR_SEARCH' | translate }}</button>
+      <button class="item" @click="onClickMute">{{ (muted? 'TL_UNMUTE': 'TL_MUTE') | translate }}</button>
+      <button class="item" @click="onClickClear">{{ 'TL_CLEAR' | translate }}</button>
+      <input class="item search" v-model="searchKey" :placeholder="'TL_SEARCH' | translate" @input="onInputSearch">
+      <button class="item" @click="onClickClearSearch">{{ 'TL_CLEAR_SEARCH' | translate }}</button>
     </div>
     <div v-if="error" class="error">
-      {{ 'TL_ERROR_RETRIEVE_SYSLOG'| translate }}
+        {{ 'TL_ERROR_RETRIEVE_SYSLOG'| translate }}
     </div>
-    <log-viewer :log="sysLog" :loading="isLoading" />
+    <div class="log-viewer-wrapper" ref="log-viewer">
+      <log-viewer :log="sysLog" :loading="isLoading" :height="getLogViewerHeight()" />
+    </div>
   </div>
 </template>
 
@@ -56,6 +58,9 @@ export default {
     clearTimeout(this.timer)
   },
   methods: {
+    getLogViewerHeight () {
+      return _.get(this.$refs['log-viewer'], 'offsetHeight', 100)
+    },
     onInputSearch () {
       this.updateSysLog()
     },
@@ -76,7 +81,7 @@ export default {
           const response = await axios.get('../api/_syslog', {params: {index: this.lastIndex}})
           this.isLoading = false
           this.error = false
-          // this.sysLog = response.data
+          this.sysLog = response.data
 
           if (!_.isEmpty(response.data)) {
             this.logLines.push(...response.data)
@@ -108,9 +113,63 @@ export default {
 
 <style lang="scss" scoped>
 .syslog {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  position: relative;
+  height: 100%;
+  .buttons {
+    background: #292A2D;
+    border-bottom: 1px solid #494C50;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    height: 30px;
+
+    .item {
+      color: #9AA0A6;
+      background: transparent;
+      border: 0;
+      border-right: 1px solid #494C50;
+      height: 100%;
+      box-sizing: border-box;
+
+      &.search {
+        background-color: #35363A;
+        padding-left: 10px;
+        outline: none;
+        width: 250px;
+        &:focus {
+          outline: none;
+        }
+      }
+      &:focus, &:hover {
+        background-color: #35363A;
+      }
+    }
+  }
   .error {
     padding: 10px;
     background-color: pink;
+  }
+  .log-viewer-wrapper {
+    position: relative;
+    background-color: #222;
+    display: flex;
+    flex-grow: 1;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    padding: 20px 0;
+    .log-viewer {
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
   }
 }
 </style>
