@@ -206,8 +206,8 @@ class CMS {
         opts = this._tempResources[referenceKey].options
       }
 
-      const resolveMap = _.zipObject(_.map(resolves, item => [item,
-        this.resource(item)]))
+      const resolveMap = _.zipObject(resolves, _.map(resolves, item => this.resource(item)))
+
       this._tempResources[key] = new Resource(name, opts, resolveMap, this)
       if (_.isEmpty(resolves)) {
         this._resources[name] = this._tempResources[key]
