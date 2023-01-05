@@ -28,7 +28,7 @@
           >
             <div class="line-wrapper">
               <div class="line-number">{{ item.id }}</div>
-              <div class="line-content" v-html="item.line" />
+              <div class="line-content" v-html="convertColor(item.line)" />
             </div>
           </DynamicScrollerItem>
         </template>
@@ -81,6 +81,9 @@ export default {
     clearTimeout(this.timer)
   },
   methods: {
+    convertColor(line) {
+      return ansiHTML(line)
+    },
     getLogViewerHeight () {
       return _.get(this.$refs['log-viewer'], 'offsetHeight', 100)
     },
