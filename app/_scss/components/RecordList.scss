@@ -41,11 +41,18 @@
       }
     }
   }
-  .new {
+  .search-buttons {
     position: absolute;
     right: 0;
     top: 0;
-    width: 38px;
+    word-wrap: nowrap;
+    display: flex;
+    justify-content: end;
+  }
+  .new, .multiselect {
+    display: inline-block;
+    $width: 38px;
+    width: $width;
     height: 40px;
     line-height: 35px;
     text-align: center;
@@ -54,6 +61,7 @@
     border-bottom: 1px solid #c7c7c7;
     color: #aaa;
     box-sizing: border-box;
+    border-left: 1px solid #c7c7c7;
     cursor: pointer;
     &:hover {
       color: #69f;
@@ -61,6 +69,12 @@
     &:active {
       color: #f0f0f0;
       background: #69f;
+    }
+    &.multiselect {
+      &.active {
+        background-color: #69f;
+        color: #c7c7c7;
+      }
     }
   }
 

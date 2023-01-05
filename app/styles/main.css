@@ -954,10 +954,15 @@ fieldset[disabled] .multiselect {
     background: #f1ffee; }
   .record-list .search.is-query.is-invalid {
     background: #ffeeee; }
-  .record-list .new {
+  .record-list .search-buttons {
     position: absolute;
     right: 0;
     top: 0;
+    word-wrap: nowrap;
+    display: flex;
+    justify-content: end; }
+  .record-list .new, .record-list .multiselect {
+    display: inline-block;
     width: 38px;
     height: 40px;
     line-height: 35px;
@@ -967,12 +972,16 @@ fieldset[disabled] .multiselect {
     border-bottom: 1px solid #c7c7c7;
     color: #aaa;
     box-sizing: border-box;
+    border-left: 1px solid #c7c7c7;
     cursor: pointer; }
-    .record-list .new:hover {
+    .record-list .new:hover, .record-list .multiselect:hover {
       color: #69f; }
-    .record-list .new:active {
+    .record-list .new:active, .record-list .multiselect:active {
       color: #f0f0f0;
       background: #69f; }
+    .record-list .new.multiselect.active, .record-list .multiselect.multiselect.active {
+      background-color: #69f;
+      color: #c7c7c7; }
   .record-list .records {
     margin: 0px;
     padding: 0px;
@@ -3365,6 +3374,19 @@ fieldset[disabled] .multiselect {
   display: flex;
   flex-direction: column;
   align-items: stretch; }
+
+.multiselect-page {
+  padding: 20px; }
+  .multiselect-page .close-button {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    line-height: 30px;
+    padding: 0px;
+    margin: 0px; }
 
 .login-canvas {
   position: absolute;

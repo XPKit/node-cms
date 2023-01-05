@@ -5,6 +5,7 @@
 const path = require('path')
 const fs = require('fs')
 const os = require('os')
+const basicAuth = require('basic-auth-connect')
 const pAll = require('p-all')
 const Q = require('q')
 const compression = require('compression')
@@ -152,8 +153,8 @@ class CMS {
     }
 
     // handle syslog
-    if (options.syslog && options.syslog.identifier && os.platform() === 'linux') {
-      let syslogData = ''
+    if (options.syslog && options.syslog.identifier && _.includes(['darwin', 'linux'], os.platform())) {
+      let syslogData = []
       let cmd = {
         exitCode: 1
       }
@@ -171,20 +172,35 @@ class CMS {
           commandLine = commandLine.split(' ')
           cmd = spawn(commandLine.shift(), commandLine)
           cmd.stdout.on('data', (data) => {
-            data = data.toString()
-            const doubleDate = RegExp(`^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z)\\ (.*)\\ \\d{4}/\\d{2}/\\d{2}\\ \\d{2}:\\d{2}:\\d{2}\\.\\d{4}`, `g`)
-            const startingDate = RegExp(`^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z)\\ `, `g`)
-            if (doubleDate.test(data)) {
-              data = data.replace(startingDate, '')
+            try {
+              data = data.toString()
+              const doubleDate = RegExp(`^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z)\\ (.*)\\ \\d{4}/\\d{2}/\\d{2}\\ \\d{2}:\\d{2}:\\d{2}\\.\\d{4}`, `g`)
+              const startingDate = RegExp(`^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z)\\ `, `g`)
+              if (doubleDate.test(data)) {
+                data = data.replace(startingDate, '')
+              }
+              const regex = new RegExp(`\\w{3}\\s+\\d+\\s+\\d{2}:\\d{2}:\\d{2} .* ${options.syslog.identifier}\\[\\d+\\]: `, 'g')
+              if (regex.test(data)) {
+                data = data.replace(regex, '')
+              }
+              let lines = data.split('\n')
+              if (_.last(lines) === '') {
+                lines = _.dropRight(lines, 1)
+              }
+
+              let lastId = _.get(_.last(syslogData), 'id', -1)
+              lines = _.map(lines, (line, idx) => {
+                return {
+                  id: lastId + idx + 1,
+                  line
+                }
+              })
+              syslogData.push(...lines)
+              syslogData = _.takeRight(syslogData, options.syslog.max || 2000)
+            } catch (error) {
+              console.error(error)
+              throw error
             }
-            const regex = new RegExp(`\\w{3}\\s+\\d+\\s+\\d{2}:\\d{2}:\\d{2} .* ${options.syslog.identifier}\\[\\d+\\]: `, 'g')
-            if (regex.test(data)) {
-              data = data.replace(regex, '')
-            }
-            syslogData += data
-            let lines = syslogData.split('\n')
-            lines = _.last(lines, options.syslog.max || 2000)
-            syslogData = lines.join('\n')
           })
 
           cmd.on('error', (error) => {
@@ -194,8 +210,26 @@ class CMS {
       }, 2000)
       this._app.get('/api/_syslog',
         (req, res, next) => {
+          console.warn(`SYSLOG`)
+          basicAuth((username, password, callback) => {
+            this.authenticate(username, password, req, (error, result) => {
+              if (error && error.code === 500) {
+                return res.status(500).send(error)
+              }
+              callback(error, result)
+            })
+          })(req, res, next)
+        }, (req, res, next) => {
+          if (req.query.id) {
+            const item = _.find(syslogData, {id: _.toNumber(req.query.id)})
+            if (item) {
+              const currentId = _.indexOf(syslogData, item)
+              return res.send(_.drop(syslogData, currentId + 1))
+            }
+          }
           res.send(syslogData)
-        })
+        }
+      )
     }
     this._app.get('/api/system',
       async (req, res, next) => {
@@ -305,7 +339,8 @@ class CMS {
         const referenceKey = JSON.stringify({ name, resolves: undefined })
         opts = this._tempResources[referenceKey].options
       }
-      const resolveMap = this.underscoreObject(_.map(resolves, item => [item,
+
+      const resolveMap = _.zipObject(_.map(resolves, item => [item,
         this.resource(item)]))
       this._tempResources[key] = new Resource(name, opts, resolveMap, this)
       if (_.isEmpty(resolves)) {

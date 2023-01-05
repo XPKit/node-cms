@@ -1,5 +1,6 @@
 import Vue from 'vue/dist/vue.min'
 import VueRouter from 'vue-router'
+import VueShortkey from 'vue-shortkey'
 import VueTimeago from 'vue-timeago'
 import Multiselect from 'vue-multiselect'
 import JsonTreeView from 'vue-json-tree-view'
@@ -9,6 +10,7 @@ import Croppa from 'vue-croppa'
 import wysiwyg from 'vue-wysiwyg'
 import axios from 'axios'
 import draggable from 'vuedraggable'
+import LogViewer from '@femessage/log-viewer'
 
 import App from './components/App.vue'
 import LoginApp from './components/LoginApp.vue'
@@ -26,6 +28,7 @@ import CustomChecklist from './components/CustomChecklist.vue'
 import CustomInputTag from './components/CustomInputTag.vue'
 import Group from './components/Group.vue'
 import PluginPage from './components/PluginPage.vue'
+import MultiselectPage from './components/MultiselectPage.vue'
 import Syslog from './components/Syslog.vue'
 import CmsImport from './components/CmsImport.vue'
 import SyncResource from './components/SyncResource.vue'
@@ -52,7 +55,9 @@ Vue.component('fieldGroup', Group)
 Vue.component('fieldCustomInputTag', CustomInputTag)
 Vue.component('fieldCustomMultiSelect', CustomMultiSelect)
 Vue.component('multiselect', Multiselect)
+Vue.component('logViewer', LogViewer)
 Vue.component('pluginPage', PluginPage)
+Vue.component('multiselectPage', MultiselectPage)
 Vue.component('Syslog', Syslog)
 Vue.component('CmsImport', CmsImport)
 Vue.component('SyncResource', SyncResource)
@@ -70,6 +75,7 @@ Vue.use(Notifications)
 Vue.use(JsonTreeView)
 Vue.use(VueVirtualScroller)
 Vue.use(VueRouter)
+Vue.use(VueShortkey)
 Vue.use(VueTimeago, {
   name: 'timeago',
   locale: 'enUS',
@@ -84,18 +90,17 @@ window.addEventListener('load', async function (event) {
 
   const response = await axios.get('./config')
   const config = response.data
-
-  if (config.syslog) {
-    // await axios.get('../api/_syslog')
-    window.plugins = window.plugins || []
-    window.plugins.push({
-      title: 'Syslog',
-      displayname: 'Syslog',
-      component: 'Syslog',
-      group: '- System -',
-      allowed: ['admins', 'imagination']
-    })
-  }
+  // if (config.syslog) {
+  // await axios.get('../api/_syslog')
+  window.plugins = window.plugins || []
+  window.plugins.push({
+    title: 'Syslog',
+    displayname: 'Syslog',
+    component: 'Syslog',
+    group: '- System -',
+    allowed: ['admins', 'imagination']
+  })
+  // }
 
   if (config.import) {
     window.plugins = window.plugins || []
