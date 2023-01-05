@@ -202,7 +202,7 @@ class CMS {
             })
           })(req, res, next)
         }, (req, res, next) => {
-          if (req.query.index) {
+          if (req.query.id) {
             const item = _.find(syslogData, {id: _.toNumber(req.query.id)})
             if (item) {
               const currentId = _.indexOf(syslogData, item)
