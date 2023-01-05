@@ -68,19 +68,45 @@ export default {
       destroyed: false,
       autoscroll: true,
       lastId: -1,
+      tempId: 0,
       logLines: [],
       searchKey: null,
+      lastScrollPosition: 0,
+      ignoreNextScrollEvent: false,
       fakeData: []
     }
   },
   async mounted () {
-    this.refreshLog()
+    this.$nextTick(() => {
+      this.refreshLog()
+      if (this.$refs.scroller) {
+        const element = this.$refs.scroller.$el
+        element.addEventListener('scroll', this.detectScroll)
+      }
+    })
   },
   async destroyed () {
     this.destroyed = true
+    if (this.$refs.scroller) {
+        const element = this.$refs.scroller.$el
+        element.removeEventListener('scroll', this.detectScroll)
+      }
     clearTimeout(this.timer)
   },
   methods: {
+    detectScroll(event) {
+      const currentPosition = _.get(event, 'srcElement.scrollTop', 0)
+      if (this.ignoreNextScrollEvent) {
+        this.ignoreNextScrollEvent = false
+        return
+      }
+      if (event.target) {
+        if (currentPosition - this.lastScrollPosition < this.lastScrollPosition) {
+          this.autoscroll = false
+        }
+      }
+      this.lastScrollPosition = _.get(event, 'srcElement.scrollTop', 0)
+    },
     convertColor(line) {
       return ansiHTML(line)
     },
@@ -107,6 +133,7 @@ export default {
     async refreshLog () {
       try {
         const response = await axios.get('../api/_syslog', {params: {id: this.lastId}})
+
         this.isLoading = false
         this.error = false
         if (!_.isEmpty(response.data)) {
@@ -115,6 +142,7 @@ export default {
           this.updateSysLog()
         }
         if (this.autoscroll) {
+          this.ignoreNextScrollEvent = true
           this.$refs.scroller.scrollToBottom()
         }
       } catch (error) {
@@ -126,7 +154,7 @@ export default {
       }
     },
     updateSysLog () {
-      let lines = this.logLines
+      let lines = _.uniqBy(this.logLines, 'id')
       if (!_.isEmpty(this.searchKey)) {
         lines = _.filter(lines, lineItem => {
           return _.includes(_.toLower(lineItem.line), _.toLower(this.searchKey))
