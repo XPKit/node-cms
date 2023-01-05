@@ -141,7 +141,6 @@ class Helper {
   }
 
   async getRequest (url, expect = 200, contentType = false, basicAuth = true, jwtToken = false) {
-    console.warn(`GET REQUEST !`)
     contentType = contentType || 'application/json; charset=utf-8'
     if (!jwtToken && !basicAuth) {
       const {body} = await request(this.MASTER_URL)

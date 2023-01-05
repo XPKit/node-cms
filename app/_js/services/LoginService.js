@@ -38,6 +38,7 @@ class LoginService {
     try {
       await axios.get('./logout')
     } catch (error) {
+      console.error(`Failed to logout: `, error)
     }
     _.each(this.logoutCallbackList, callback => {
       callback()

@@ -24,6 +24,7 @@ import LocaleList from './LocaleList.vue'
 import LoadingService from '../services/LoadingService'
 import ConfigService from '../services/ConfigService'
 import TranslateService from '../services/TranslateService'
+import LoginService from '../services/LoginService'
 export default {
   components: {
     Loading,
@@ -46,6 +47,7 @@ export default {
     try {
       await ConfigService.init()
       await TranslateService.init()
+      console.warn(await LoginService.getStatus())
       this.localeList = ConfigService.config.locales
     } catch (error) {
       console.error('Error happen during mounted:', error)
