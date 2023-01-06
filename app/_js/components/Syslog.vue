@@ -232,6 +232,8 @@ export default {
         padding-left: 10px;
         outline: none;
         width: 250px;
+        color: white;
+        padding-right: 20px;
         &:focus {
           outline: none;
         }
