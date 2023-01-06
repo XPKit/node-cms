@@ -4,9 +4,13 @@
       <button class="item autoscroll" :class="{active: autoscroll}" @click="onClickAutoscroll"><i v-if="autoscroll" class="fi-lock" /><i v-else class="fi-unlock" /></button>
       <button class="item clear" @click="onClickClear"><i class="fi-trash" /></button>
       <button class="item refresh" @click="onClickRefresh"><i class="fi-refresh" /></button>
-      <input v-model="searchKey" class="item search" :placeholder="'TL_SEARCH' | translate" @input="onInputSearch">
+      <input v-model="searchKey" :class="{'is-sift': searchKey && searchKey.search('sift:') === 0}" class="item search" :placeholder="'TL_SEARCH' | translate" @input="onInputSearch">
       <button v-if="searchKey && searchKey.length > 0" class="item clear-search" @click="onClickClearSearch"><i class="fi-x" /></button>
       <div v-if="filterOutLines > 0" class="item filter-out"><i class="fi-target-two" />{{ filterOutLines }} lines are filter out</div>
+      <div class="item logs-raised-flags">
+        <span v-if="warningQty >= 0" class="flag-item flag-warning" @click="filterLevel(1)"><i class="fi-flag" /> {{ warningQty }}</span>
+        <span v-if="errorQty >= 0" class="flag-item flag-error" @click="filterLevel(2)"><i class="fi-alert" /> {{ errorQty }}</span>
+      </div>
     </div>
     <div v-if="error" class="error">
       {{ 'TL_ERROR_RETRIEVE_SYSLOG'| translate }}
@@ -42,6 +46,8 @@
 <script>
 import _ from 'lodash'
 import axios from 'axios'
+import sift from 'sift'
+import JSON5 from 'json5'
 
 export default {
   data () {
@@ -60,6 +66,8 @@ export default {
       tempId: 0,
       logLines: [],
       searchKey: null,
+      warningQty: 0,
+      errorQty: 0,
       ignoreNextScrollEvent: false,
       fakeData: []
     }
@@ -82,6 +90,10 @@ export default {
     clearTimeout(this.timer)
   },
   methods: {
+    filterLevel (level) {
+      this.searchKey = `sift:{level: {$gte: ${level}}}`
+      this.updateSysLog()
+    },
     detectScroll (event) {
       const scrollHeight = _.get(event, 'srcElement.scrollHeight', 0)
       const scrollTop = _.get(event, 'srcElement.scrollTop', 0)
@@ -173,10 +185,20 @@ export default {
     },
     updateSysLog () {
       let lines = _.uniqBy(this.logLines, 'id')
+      const byLevel = _.groupBy(this.logLines, 'level')
+      this.warningQty = _.get(byLevel, '[1].length', 0)
+      this.errorQty = _.get(byLevel, '[2].length', 0)
       if (!_.isEmpty(this.searchKey)) {
-        lines = _.filter(lines, lineItem => {
-          return _.includes(_.toLower(lineItem.line), _.toLower(this.searchKey))
-        })
+        if (this.searchKey.search('sift:') === 0) {
+          try {
+            const query = JSON5.parse(this.searchKey.substr(5))
+            lines = lines.filter(sift(query))
+          } catch (e) { /* muted */ }
+        } else {
+          lines = _.filter(lines, lineItem => {
+            return _.includes(_.toLower(lineItem.line), _.toLower(this.searchKey))
+          })
+        }
       }
       this.sysLog = lines
       this.filterOutLines = _.get(this.logLines, 'length', 0) - _.get(this.sysLog, 'length', 0)
@@ -251,6 +273,40 @@ export default {
         }
       }
 
+      &.logs-raised-flags {
+        font-size: 11px;
+        border: 1px solid #494C50;
+        padding: 5px;
+        margin: 5px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-content: center;
+        justify-content: center;
+        align-items: center;
+        height: 80%;
+        i:before {
+          font-size: 14px;
+          color: #F29900;
+          margin-left: 0px;
+          margin-right: 4px;
+        }
+        .flag-item {
+          cursor: pointer;
+          &.flag-error {
+            i:before {
+              color: #fa5050;
+            }
+          }
+          &.flag-warning {
+            margin-right: 8px;
+            i:before {
+              color: #fab650;
+            }
+          }
+        }
+      }
+
       &.autoscroll.active {
         background: black;
       }
@@ -262,6 +318,9 @@ export default {
         width: 250px;
         color: white;
         padding-right: 20px;
+        &.is-sift {
+          color: #50fa7b;
+        }
         &:focus {
           outline: none;
         }
