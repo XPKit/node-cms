@@ -1211,6 +1211,7 @@ fieldset[disabled] .multiselect {
     border-bottom: 1px solid #c7c7c7;
     color: #aaa;
     box-sizing: border-box;
+    user-select: none;
     cursor: pointer; }
     .record-table .new:hover {
       color: #69f; }

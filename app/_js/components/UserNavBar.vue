@@ -31,5 +31,8 @@ export default {
   min-height: 50px;
   border-bottom: 1px solid #c7c7c7;
   padding: 0 2.5vw;
+  button {
+    user-select: none;
+  }
 }
 </style>

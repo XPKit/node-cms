@@ -272,6 +272,7 @@ export default {
   }
   .new {
     line-height: 40px;
+    user-select: none;
   }
 }
 </style>
