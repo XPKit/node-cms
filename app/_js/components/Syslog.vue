@@ -28,7 +28,7 @@
           >
             <div class="line-wrapper">
               <div class="line-number">{{ item.id }}</div>
-              <div class="line-content" v-html="convertColor(item.line)" />
+              <div class="line-content" v-html="item.html" />
             </div>
           </DynamicScrollerItem>
         </template>
@@ -40,20 +40,6 @@
 <script>
 import _ from 'lodash'
 import axios from 'axios'
-import ansiHTML from 'ansi-html'
-
-ansiHTML.setColors({
-  reset: ['f8f8f2', '282a36'],
-  black: 'd6d6d6',
-  red: 'ff5555',
-  green: '50fa7b',
-  yellow: 'f1fa8c',
-  blue: '6272a4',
-  magenta: 'ff79c6',
-  cyan: '8be9fd',
-  lightgrey: 'a0a0a0',
-  darkgrey: '808080'
-})
 
 export default {
   data () {
@@ -71,7 +57,6 @@ export default {
       tempId: 0,
       logLines: [],
       searchKey: null,
-      lastScrollPosition: 0,
       ignoreNextScrollEvent: false,
       fakeData: []
     }
@@ -95,20 +80,14 @@ export default {
   },
   methods: {
     detectScroll(event) {
-      const currentPosition = _.get(event, 'srcElement.scrollTop', 0)
+      const scrollHeight = _.get(event, 'srcElement.scrollHeight', 0)
+      const scrollTop = _.get(event, 'srcElement.scrollTop', 0)
+      const clientHeight = _.get(event, 'srcElement.clientHeight', 0)
       if (this.ignoreNextScrollEvent) {
         this.ignoreNextScrollEvent = false
         return
       }
-      if (event.target) {
-        if (currentPosition - this.lastScrollPosition < this.lastScrollPosition) {
-          this.autoscroll = false
-        }
-      }
-      this.lastScrollPosition = _.get(event, 'srcElement.scrollTop', 0)
-    },
-    convertColor(line) {
-      return ansiHTML(line)
+      this.$nextTick(() => this.autoscroll = scrollTop + clientHeight >= scrollHeight)
     },
     getLogViewerHeight () {
       return _.get(this.$refs['log-viewer'], 'offsetHeight', 100)
