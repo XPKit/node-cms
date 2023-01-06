@@ -6,7 +6,7 @@ const program = require('commander')
 const _ = require('lodash')
 const path = require('path')
 const fs = require('fs-extra')
-const log4js = require('log4js')
+const logger = new (require('./lib/logger'))()
 const { GoogleSpreadsheet } = require('google-spreadsheet')
 const md5File = require('md5-file')
 const prompt = require('prompt')
@@ -20,10 +20,6 @@ const h = require('./lib-import/helper')
 const Api = require('./lib-import/api')
 
 const pkg = require('./package.json')
-
-let logger = log4js.getLogger()
-
-logger.level = log4js.levels.DEBUG
 
 program.on('--help', () => {
   console.log('')

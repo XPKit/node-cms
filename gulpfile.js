@@ -13,7 +13,6 @@ const promisify = require('util').promisify
 const source = require('vinyl-source-stream')
 const express = require('express')
 const injectReload = require('connect-livereload')
-const log4js = require('log4js')
 const _ = require('lodash')
 const watchify = require('watchify')
 const clean = require('semver').clean
@@ -23,8 +22,7 @@ const childExec = require('child_process').exec
 const pkg = require('./package.json')
 const CMS = require('./')
 
-const logger = log4js.getLogger()
-logger.level = log4js.levels.DEBUG
+const logger = new (require('./lib/logger'))()
 
 const exec = (command) => {
   return new Promise((resolve, reject) => {
@@ -229,8 +227,7 @@ class MainTask {
       app.use(cms.express())
       return server = app.listen(pkg.config.port, () =>
         cms.bootstrap(() => {
-          logger.info('########### server started #################')
-          logger.info('%s started at http://localhost:%s/admin', pkg.name, server.address().port)
+          logger.info(`${pkg.name} started at http://localhost:${server.address().port}/admin`)
           return done()
         }))
     })

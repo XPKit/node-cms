@@ -3,14 +3,12 @@
 'use strict'
 
 const express = require('express')
-const log4js = require('log4js')
 const Q = require('q')
 
 const CMS = require('./')
 const pkg = require('./package.json')
 
-const logger = log4js.getLogger()
-logger.level = log4js.levels.DEBUG
+const logger = new (require('./lib/logger'))()
 
 // start with leveldb
 // let options = {
