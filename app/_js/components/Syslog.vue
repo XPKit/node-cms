@@ -98,6 +98,7 @@ export default {
       this.updateSysLog()
     },
     onClickRefresh () {
+      this.error = false
       this.searchKey = null
       this.logLines = []
       this.sysLog = []
@@ -127,6 +128,7 @@ export default {
         this.isLoading = false
         this.error = false
         if (!_.isEmpty(response.data)) {
+          this.error = false
           this.logLines.push(...response.data)
           this.lastId = _.last(this.logLines).id
           this.updateSysLog()
