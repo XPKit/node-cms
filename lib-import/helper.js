@@ -1,7 +1,8 @@
 const util = require('util')
 const measure = require('measure')
 const numeral = require('numeral')
-const logger = new (require('./../../logger'))()
+const path = require('path')
+const logger = new (require(path.join(__dirname, '..', '..', 'logger')))()
 const moment = require('moment')
 const _ = require('lodash')
 

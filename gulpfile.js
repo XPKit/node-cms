@@ -22,7 +22,8 @@ const childExec = require('child_process').exec
 const pkg = require('./package.json')
 const CMS = require('./')
 
-const logger = new (require('./lib/logger'))()
+const path = require('path')
+const logger = new (require(path.join(__dirname, 'lib/logger')))()
 
 const exec = (command) => {
   return new Promise((resolve, reject) => {
