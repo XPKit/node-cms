@@ -28,8 +28,8 @@
             ]"
             :data-index="index"
           >
-            <div class="line-wrapper">
-              <div class="line-number">{{ item.id }}</div>
+            <div class="line-wrapper" :data-line-id="item.id" :data-is-active="active">
+              <div class="line-number" :class="{stickId: stickyId === item.id, search: searchKey}" @click="jumpTo(item.id)">{{ item.id }}</div>
               <div class="line-content" v-html="item.html" />
             </div>
           </DynamicScrollerItem>
@@ -52,6 +52,7 @@ export default {
       error: false,
       scrollBottom: true,
       data: '',
+      stickyId: -1,
       count: 0,
       destroyed: false,
       autoscroll: true,
@@ -89,7 +90,12 @@ export default {
         this.ignoreNextScrollEvent = false
         return
       }
-      this.$nextTick(() => this.autoscroll = scrollTop + clientHeight >= scrollHeight)
+      this.$nextTick(() => {
+        if (this.autoscroll === false && scrollTop + clientHeight >= scrollHeight) {
+          this.stickyId = -1
+        }
+        this.autoscroll = scrollTop + clientHeight >= scrollHeight
+      })
     },
     getLogViewerHeight () {
       return _.get(this.$refs['log-viewer'], 'offsetHeight', 100)
@@ -120,6 +126,26 @@ export default {
     },
     calculateLineNumberSpacing (line) {
       return _.padStart(line, 8, '0') + ' |'
+    },
+    jumpTo (id) {
+      if (!this.searchKey && this.stickyId !== id) {
+        return
+      }
+      if (this.stickyId === id) {
+        this.stickyId = -1
+        this.autoscroll = true
+        return
+      }
+      this.ignoreNextScrollEvent = true
+      this.autoscroll = false
+      this.onClickClearSearch()
+      this.$nextTick(() => {
+        const isActive = document.querySelector(`[data-line-id='${id}'][data-is-active='true']`)
+        if (!isActive) {
+          this.$refs.scroller.scrollToItem(_.findIndex(this.logLines, item => item.id === id) - 14)
+        }
+        this.stickyId = id
+      })
     },
     async refreshLog () {
       try {
@@ -274,6 +300,7 @@ export default {
     display: block;
     margin: 0;
     padding: 20px;
+    padding-left: 0px;
     top: 0;
     left: 0;
     right: 0;
@@ -288,19 +315,35 @@ export default {
     .line-number {
       display: inline-block;
       color: #666;
+      padding-left: 20px;
       padding-right: 10px;
       min-width: 42px;
       text-align: right;
       border-right: 2px solid #666;
-      margin-right: 10px;
+      margin-right: 20px;
       position: absolute;
       top: 0;
       left: 0;
       font-weight: bold;
       user-select: none;
+
+      &.stickId {
+        color: #F29900;
+        border-right: 2px solid #F29900;
+        background-color: #666;
+        cursor: pointer;
+      }
+      &.search {
+        &:hover {
+          cursor: pointer;
+          color: #F29900;
+          border-right: 2px solid #F29900;
+          background-color: #666;
+        }
+      }
     }
     .line-content {
-      margin-left: 70px;
+      margin-left: 100px;
       color: white;
       text-align: left;
       white-space: break-spaces;
