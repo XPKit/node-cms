@@ -1,10 +1,12 @@
 <template>
   <div class="syslog">
     <div class="buttons">
-      <button class="item autoscroll" :class="{active: autoscroll}" @click="onClickAutoscroll">{{ 'TL_AUTO_SCROLL' | translate }}</button>
-      <button class="item clear" @click="onClickClear">{{ 'TL_CLEAR' | translate }}</button>
+      <button class="item autoscroll" :class="{active: autoscroll}" @click="onClickAutoscroll"><i v-if="autoscroll" class="fi-lock" /><i v-else class="fi-unlock" /></button>
+      <button class="item clear" @click="onClickClear"><i class="fi-trash" /></button>
+      <button class="item refresh" @click="onClickRefresh"><i class="fi-refresh" /></button>
       <input v-model="searchKey" class="item search" :placeholder="'TL_SEARCH' | translate" @input="onInputSearch">
-      <button class="item clear-search" @click="onClickClearSearch">{{ 'TL_CLEAR_SEARCH' | translate }}</button>
+      <button v-if="searchKey && searchKey.length > 0" class="item clear-search" @click="onClickClearSearch"><i class="fi-x" /></button>
+      <div v-if="filterOutLines > 0" class="item filter-out"><i class="fi-target-two" />{{ filterOutLines }} lines are filter out</div>
     </div>
     <div v-if="error" class="error">
       {{ 'TL_ERROR_RETRIEVE_SYSLOG'| translate }}
@@ -73,13 +75,13 @@ export default {
   async destroyed () {
     this.destroyed = true
     if (this.$refs.scroller) {
-        const element = this.$refs.scroller.$el
-        element.removeEventListener('scroll', this.detectScroll)
-      }
+      const element = this.$refs.scroller.$el
+      element.removeEventListener('scroll', this.detectScroll)
+    }
     clearTimeout(this.timer)
   },
   methods: {
-    detectScroll(event) {
+    detectScroll (event) {
       const scrollHeight = _.get(event, 'srcElement.scrollHeight', 0)
       const scrollTop = _.get(event, 'srcElement.scrollTop', 0)
       const clientHeight = _.get(event, 'srcElement.clientHeight', 0)
@@ -95,6 +97,13 @@ export default {
     onInputSearch () {
       this.updateSysLog()
     },
+    onClickRefresh () {
+      this.searchKey = null
+      this.logLines = []
+      this.sysLog = []
+      this.updateSysLog()
+      this.lastId = -1
+    },
     onClickClearSearch () {
       this.searchKey = null
       this.updateSysLog()
@@ -103,8 +112,10 @@ export default {
       this.autoscroll = !this.autoscroll
     },
     onClickClear () {
+      this.searchKey = null
       this.logLines = []
       this.sysLog = []
+      this.updateSysLog()
     },
     calculateLineNumberSpacing (line) {
       return _.padStart(line, 8, '0') + ' |'
@@ -140,6 +151,7 @@ export default {
         })
       }
       this.sysLog = lines
+      this.filterOutLines = _.get(this.logLines, 'length', 0) - _.get(this.sysLog, 'length', 0)
     }
   }
 }
@@ -163,6 +175,7 @@ export default {
     justify-content: flex-start;
     align-items: center;
     height: 30px;
+    font-size: 10px;
 
     .item {
       color: #9AA0A6;
@@ -171,6 +184,44 @@ export default {
       border-right: 1px solid #494C50;
       height: 100%;
       box-sizing: border-box;
+
+      i {
+        &:before {
+          font-size: 12px;
+          color: white;
+          margin-left: 6px;
+          margin-right: 4px;
+        }
+      }
+
+      &.clear-search {
+        margin-left: -23px;
+        i:before {
+          margin: 0;
+          font-size: 12px;
+          color: white;
+        }
+      }
+
+      &.filter-out {
+        font-size: 11px;
+        border: 1px solid #494C50;
+        padding: 5px;
+        margin: 5px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-content: center;
+        justify-content: center;
+        align-items: center;
+        height: 80%;
+        i:before {
+          font-size: 14px;
+          color: #F29900;
+          margin-left: 0px;
+          margin-right: 4px;
+        }
+      }
 
       &.autoscroll.active {
         background: black;
