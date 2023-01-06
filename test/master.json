@@ -1,0 +1,20 @@
+{
+  "ns": [],
+  "resources": "F:\\dev\\node-cms\\test\\resources",
+  "data": "F:\\dev\\node-cms\\test\\master",
+  "autoload": true,
+  "mode": "normal",
+  "mid": "lck7xdb2",
+  "disableREST": false,
+  "disableAdmin": false,
+  "disableAdminLogin": true,
+  "disableReplication": false,
+  "disableAuthentication": false,
+  "disableAnonymous": false,
+  "apiVersion": 2,
+  "netPort": 6100,
+  "tag": "master",
+  "dbEngine": {
+    "type": "mongodb"
+  }
+}

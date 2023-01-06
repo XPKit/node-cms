@@ -2,7 +2,9 @@
   "emmet.includeLanguages": {
     "vue-html": "html"
   },
-  "eslint.codeActionsOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
   "eslint.enable": true,
   "eslint.options": {
     "configFile": "./.eslintrc.json"
@@ -28,8 +30,5 @@
   "javascript.validate.enable": false,
   "files.associations": {
     "*.wpy": "vue"
-  },
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
   },
 }

@@ -8,13 +8,14 @@
       </li>
     </ul>
     <br>
-    <div>
+    <div class="actions">
       <button @click="onClickSelectAll">{{ 'TL_SELECT_ALL_ITEMS'|translate }}</button>
-      <button @click="onClickDeselectAll">{{ 'TL_DESELECT_ALL_ITEMS'|translate }}</button>
+      <button :disabled="multiselectItems.length === 0" @click="onClickDeselectAll">{{ 'TL_DESELECT_ALL_ITEMS'|translate }}</button>
     </div>
-    <hr>
-    <button @click="onClickCancel">{{ 'TL_CANCEL'|translate }}</button>
-    <button :disabled="isEmpty(multiselectItems)" @click="onClickDelete">{{ 'TL_DELETE'|translate }}</button>
+    <div class="buttons">
+      <button class="back" @click="onClickCancel">{{ 'TL_CANCEL'|translate }}</button>
+      <button class="delete right" :disabled="isEmpty(multiselectItems)" @click="onClickDelete">{{ 'TL_DELETE'|translate }}</button>
+    </div>
     <!-- <button :disabled="isEmpty(multiselectItems)" @click="onClickClone">Clone</button> -->
   </div>
 </template>
@@ -123,6 +124,52 @@ export default {
 }
 </script>
 <style scoped lang="scss">
+.multiselect-page {
+    margin: 0px;
+    display: block;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex: 1 1 0;
+}
+h3 {
+  margin-top: 0;
+}
+button {
+  cursor: pointer;
+  padding: 5px 12px;
+  margin: 5px;
+  line-height: 28px;
+  box-sizing: border-box;
+  background: #f0f0f0;
+  text-decoration: none;
+  color: #999;
+  border-width: 0px;
+  display: inline;
+  &:disabled {
+    opacity: 0.5;
+  }
+  i:before {
+    color: grey;
+  }
+}
+.buttons {
+  padding: 18px 15px 19px 15px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
+  width: 100%;
+  border-top: 1px solid #f0f0f0;
+  bottom: 0px;
+  background-color: white;
+  transition-duration: 0s;
+  z-index: 1000;
+  .right {
+    float: right;
+  }
+}
 ul {
   list-style-type: circle;
   li {

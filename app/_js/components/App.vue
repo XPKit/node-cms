@@ -164,6 +164,7 @@ export default {
           this.selectedPlugin = resource
           return
         }
+        this.onCancelMultiselectPage()
         this.selectedResource = resource
         this.selectedPlugin = null
         this.recordList = null
