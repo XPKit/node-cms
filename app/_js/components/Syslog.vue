@@ -242,6 +242,7 @@ export default {
       top: 0;
       left: 0;
       font-weight: bold;
+      user-select: none;
     }
     .line-content {
       margin-left: 70px;
