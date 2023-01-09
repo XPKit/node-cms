@@ -8,7 +8,8 @@ const Q = require('q')
 const CMS = require('./')
 const pkg = require('./package.json')
 
-const logger = new (require('./lib/logger'))()
+const path = require('path')
+const logger = new (require(path.join(__dirname, 'lib/logger')))()
 
 // start with leveldb
 // let options = {
