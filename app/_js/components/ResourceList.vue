@@ -13,7 +13,7 @@
       </template>
     </div>
     <div class="system">
-      <div class="title">{{ 'TL_SYSTEM' | translate }}</div>
+      <div class="title flex">{{ 'TL_SYSTEM' | translate }} <button v-if="showLogoutButton" @click="logout()"><i class="fi-unlink" />{{ 'TL_LOGOUT' | translate }}</button></div>
       <div class="stats cpu">
         <div class="title"><small><b>CPU Usage</b></small></div>
         <div class="progress">
@@ -54,6 +54,7 @@
 import _ from 'lodash'
 import axios from 'axios'
 import TranslateService from '../services/TranslateService'
+import LoginService from '../services/LoginService'
 
 export default {
   props: [
@@ -86,6 +87,9 @@ export default {
     }
   },
   computed: {
+    showLogoutButton () {
+      return !_.get(window, 'noJwtLogin', false)
+    },
     groupedList () {
       const others = { name: 'TL_OTHERS' }
       const plugins = { name: 'TL_PLUGINS' }
@@ -176,6 +180,11 @@ export default {
     clearTimeout(this.timer)
   },
   methods: {
+
+    async logout () {
+      await LoginService.logout()
+      window.location.reload()
+    },
     async getSystemData () {
       try {
         const response = await axios.get('../api/system')
@@ -294,6 +303,28 @@ export default {
       color: #fff;
       background-color: #4799eb;
     }
+  }
+}
+button {
+  user-select: none;
+      display: inline-block;
+    line-height: 20px;
+    text-align: center;
+    background: #f0f0f0;
+    font-size: 12px;
+    color: black;
+    box-sizing: border-box;
+    border: 1px solid #c7c7c7;
+    cursor: pointer;
+  i {
+    margin-right: 5px;
+  }
+}
+.title {
+  &.flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 }
 

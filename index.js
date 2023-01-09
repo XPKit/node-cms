@@ -34,7 +34,7 @@ const defaultConfig = () =>
     mid: Date.now().toString(36),
     disableREST: false,
     disableAdmin: false,
-    disableAdminLogin: true,
+    disableJwtLogin: true,
     disableReplication: false,
     disableAuthentication: false,
     disableAnonymous: false,
@@ -116,22 +116,34 @@ class CMS {
       }
     }))
 
-    /* Enable session */
-    if (!options.disableAdminLogin) {
+    if (!options.disableAuthentication) {
+      /* Enables session with basic auth */
+      this._app.use(session({
+        secret: 'keyboard cat',
+        cookie: {}
+      }))
+      this._app.use((req, res, next) => {
+        if (req.session.user && !req.headers.authorization) {
+          req.headers.authorization = 'Basic ' + Buffer.from(req.session.user.username + ':' + req.session.user.password).toString('base64')
+        }
+        next()
+      })
+    } else if (!options.disableJwtLogin) {
+      /* Enables session with jwt token auth */
       this._app.use(cookieParser())
       this._app.use(session({
         secret: 'keyboard cat',
         cookie: {}
       }))
       this._app.use((req, res, next) => {
-        // console.warn(`disableAdminLogin = false, nodeCmsUser =`, _.get(req, 'session.nodeCmsUser', {}))
-        // console.warn(`disableAdminLogin, query jwt token =`, _.get(req, 'query', false))
+        // console.warn(`disableJwtLogin = false, nodeCmsUser =`, _.get(req, 'session.nodeCmsUser', {}))
+        // console.warn(`disableJwtLogin, query jwt token =`, _.get(req, 'query', false))
         if (!req.headers.authorization) {
-          if (_.get(req, 'session.nodeCmsUser.token', false)) {
+          const token = _.get(req, 'session.nodeCmsUser.token', false)
+          if (token) {
             // console.warn(`global use - 1`)
-            req.headers.authorization = req.session.nodeCmsUser.token
+            req.headers.authorization = token
           } else if (_.get(req, 'query.jwt', false)) {
-            console.warn(`global use - 3`)
             req.headers.authorization = req.query.jwt
           }
         }
@@ -139,10 +151,7 @@ class CMS {
         next()
       })
     }
-    /* Authentication API */
-    if (!options.disableAuthentication) {
-      this.use(require('./lib/plugins/authentication')(options))
-    }
+    this.use(require('./lib/plugins/authentication')(options))
 
     // handle syslog and system
     SyslogManager.init(this, options)

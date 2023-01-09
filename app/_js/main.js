@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import Vue from 'vue/dist/vue.min'
 import VueRouter from 'vue-router'
 import VueShortkey from 'vue-shortkey'
@@ -123,6 +124,7 @@ window.addEventListener('load', async function (event) {
       allowed: ['admins', 'imagination']
     })
   }
+  window.noJwtLogin = _.get(config, 'disableJwtLogin', false)
 
   const router = new VueRouter({})
   // eslint-disable-next-line no-new

@@ -3390,16 +3390,23 @@ fieldset[disabled] .multiselect {
     margin: 0px; }
 
 .login-canvas {
-  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  padding: 1.5vw;
   text-align: center;
-  max-width: 374px; }
+  max-width: 374px;
+  position: relative;
+  background: #ffffff;
+  border-radius: 5px;
+  padding: 60px 30px 40px 30px;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: 0.3s ease; }
   .login-canvas .title, .login-canvas .actions {
     display: block;
     text-align: center; }
+  .login-canvas .title {
+    margin-bottom: 20px; }
   .login-canvas input {
     border: 1px #c7c7c7 solid;
     display: block;
@@ -3408,22 +3415,29 @@ fieldset[disabled] .multiselect {
     font-size: 16px;
     padding-left: 20px;
     margin-top: 10px; }
+    .login-canvas input:-webkit-autofill, .login-canvas input:-webkit-autofill:hover, .login-canvas input:-webkit-autofill:focus, .login-canvas input:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 30px white inset !important; }
   .login-canvas .user-id {
     font-style: italic; }
   .login-canvas button {
+    width: auto;
     cursor: pointer;
-    padding: 5px 12px;
+    padding: 5px 15px;
     margin: 0px;
     margin-top: 10px;
     line-height: 28px;
     box-sizing: border-box;
-    background: #f0f0f0;
+    background: white;
     display: inline-block;
     text-decoration: none;
-    color: #999;
-    border-width: 0px;
-    width: 270px;
-    font-size: 16px; }
+    color: black;
+    border: 1px solid black;
+    font-size: 16px;
+    user-select: none; }
+    .login-canvas button:disabled {
+      opacity: 0.5;
+      touch-action: none;
+      pointer-events: none; }
 
 ul.pager {
   display: flex;

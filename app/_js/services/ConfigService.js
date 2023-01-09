@@ -1,5 +1,5 @@
 import axios from 'axios/dist/axios.min'
-
+import _ from 'lodash'
 class ConfigService {
   constructor () {
     this.config = {}

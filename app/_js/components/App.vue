@@ -4,10 +4,8 @@
     <div v-if="user" class="cms-layout">
       <div>
         <nav-bar />
-        <user-nav-bar />
       </div>
-      <denied-page v-if="!user.group" :user="user" />
-      <div v-else class="cms-inner-layout">
+      <div class="cms-inner-layout">
         <div class="resources">
           <locale-list v-if="localeList" :locale-list="localeList" />
           <resource-list :class="{locale:localeList && localeList.length > 1}" :list="resourceList" :plugins="pluginList" :selected-item="selectedResource || selectedPlugin" @selectItem="selectResource" />
@@ -55,29 +53,26 @@ import axios from 'axios/dist/axios.min'
 import _ from 'lodash'
 import pAll from 'p-all'
 
-import UserNavBar from './UserNavBar.vue'
 import Loading from './Loading.vue'
 import LocaleList from './LocaleList.vue'
 import ResourceList from './ResourceList.vue'
-import DeniedPage from './DeniedPage.vue'
 import RecordList from './RecordList.vue'
 import RecordEditor from './RecordEditor.vue'
 import RecordTable from './RecordTable.vue'
 import LoadingService from '../services/LoadingService'
+import LoginService from '../services/LoginService'
 import ConfigService from '../services/ConfigService'
 import TranslateService from '../services/TranslateService'
 import ResourceService from '../services/ResourceService'
 
 export default {
   components: {
-    UserNavBar,
     ResourceList,
     RecordList,
     RecordEditor,
     Loading,
     LocaleList,
-    RecordTable,
-    DeniedPage
+    RecordTable
   },
   data () {
     return {
@@ -117,21 +112,28 @@ export default {
   mounted () {
     this.$loading.start('init')
     this.$nextTick(async () => {
+      if (!_.get(window, 'noJwtLogin', false)) {
+        LoginService.init()
+      } else {
+        this.user = {}
+      }
       await ConfigService.init()
       await TranslateService.init()
-      try {
-        const userResponse = await axios.get('./login')
-        this.user = userResponse.data
-        // console.warn(`User is: `, this.user)
-        this.$forceUpdate()
-      } catch (error) {
-        const errorMessage = _.get(error, 'response.data.message', error.message)
-        this.$notify({
-          group: 'notification',
-          type: 'error',
-          text: errorMessage
-        })
-        throw error
+      if (!window.noJwtLogin) {
+        try {
+          const userResponse = await axios.get('./login')
+          this.user = userResponse.data
+          // console.warn(`User is: `, this.user)
+          this.$forceUpdate()
+        } catch (error) {
+          const errorMessage = _.get(error, 'response.data.message', error.message)
+          this.$notify({
+            group: 'notification',
+            type: 'error',
+            text: errorMessage
+          })
+          throw error
+        }
       }
       try {
         const resourcesResponse = await axios.get('./resources')

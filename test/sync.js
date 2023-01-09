@@ -91,7 +91,7 @@ before(async () => {
     resources: path.join(__dirname, 'resources'),
     netPort: MASTER_NET_PORT,
     apiVersion: 2,
-    disableAdminLogin: false,
+    disableJwtLogin: false,
     auth: { secret: 'auth.jwt.secret' },
     sync: {
       resources: [
@@ -119,7 +119,7 @@ before(async () => {
     config: path.join(__dirname, 'slave.json'),
     resources: path.join(__dirname, 'resources'),
     netPort: SLAVE_NET_PORT,
-    disableAdminLogin: false,
+    disableJwtLogin: false,
     auth: { secret: 'auth.jwt.secret' },
     apiVersion: 2,
     sync: {

@@ -14,7 +14,7 @@ Add sync field in config like this
   "mid": "kb90zalx",
   "disableREST": false,
   "disableAdmin": false,
-  "disableAdminLogin": true,
+  "disableJwtLogin": true,
   "disableReplication": false,
   "disableAuthentication": false,
   "disableAnonymous": false,

@@ -1,14 +1,22 @@
 .login-canvas {
-  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  padding: 1.5vw;
   text-align: center;
   max-width: 374px;
+  position: relative;
+  background: #ffffff;
+  border-radius: 5px;
+  padding: 60px 30px 40px 30px;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: 0.3s ease;
   .title, .actions {
     display: block;
     text-align: center;
+  }
+  .title {
+    margin-bottom: 20px;
   }
   input {
     border: 1px #c7c7c7 solid;
@@ -18,23 +26,35 @@
     font-size: 16px;
     padding-left: 20px;
     margin-top: 10px;
+    &:-webkit-autofill,
+      &:-webkit-autofill:hover,
+      &:-webkit-autofill:focus,
+      &:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px white inset !important;
+      }
   }
   .user-id {
     font-style: italic;
   }
   button {
+    width: auto;
     cursor: pointer;
-    padding: 5px 12px;
+    padding: 5px 15px;
     margin: 0px;
     margin-top: 10px;
     line-height: 28px;
     box-sizing: border-box;
-    background: #f0f0f0;
+    background: white;
     display: inline-block;
     text-decoration: none;
-    color: #999;
-    border-width: 0px;
-    width: 270px;
+    color: black;
+    border: 1px solid black;
     font-size: 16px;
+    user-select: none;
+    &:disabled {
+      opacity: 0.5;
+      touch-action: none;
+      pointer-events: none;
+    }
   }
 }

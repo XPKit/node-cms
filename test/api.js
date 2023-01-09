@@ -29,7 +29,7 @@ before(async () => {
   cms = new CMS({data: DB,
     config: CONFIG,
     autoload: true,
-    disableAdminLogin: false,
+    disableJwtLogin: false,
     auth: { secret: 'auth.jwt.secret' }})
   cms.resource('articles',
     // acl:
