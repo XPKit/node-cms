@@ -3427,17 +3427,22 @@ fieldset[disabled] .multiselect {
     margin-top: 10px;
     line-height: 28px;
     box-sizing: border-box;
-    background: white;
+    background-color: white;
     display: inline-block;
     text-decoration: none;
     color: black;
     border: 1px solid black;
     font-size: 16px;
-    user-select: none; }
+    user-select: none;
+    transition: all 0.3s; }
     .login-canvas button:disabled {
+      background-color: #c1c1c1;
+      border: 1px solid #c1c1c1;
       opacity: 0.5;
       touch-action: none;
       pointer-events: none; }
+    .login-canvas button:not(:disabled):hover {
+      filter: invert(1); }
 
 ul.pager {
   display: flex;
