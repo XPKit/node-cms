@@ -121,7 +121,8 @@ window.addEventListener('load', async function (event) {
       allowed: ['admins', 'imagination']
     })
   }
-  window.noJwtLogin = _.get(config, 'disableJwtLogin', false)
+  window.disableJwtLogin = _.get(config, 'disableJwtLogin', false)
+  window.noLogin = window.disableJwtLogin && _.get(config, 'disableAuthentication', false)
 
   const router = new VueRouter({})
   // eslint-disable-next-line no-new

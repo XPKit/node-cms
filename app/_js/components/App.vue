@@ -112,14 +112,13 @@ export default {
   mounted () {
     this.$loading.start('init')
     this.$nextTick(async () => {
-      if (!_.get(window, 'noJwtLogin', false)) {
-        LoginService.init()
-      } else {
-        this.user = {}
-      }
       await ConfigService.init()
       await TranslateService.init()
-      if (!window.noJwtLogin) {
+      const noLogin = _.get(window, 'noLogin', false)
+      if (noLogin) {
+        this.user = {}
+      } else {
+        LoginService.init()
         try {
           const userResponse = await axios.get('./login')
           this.user = userResponse.data
@@ -135,6 +134,7 @@ export default {
           throw error
         }
       }
+
       try {
         const resourcesResponse = await axios.get('./resources')
         this.$loading.stop('init')

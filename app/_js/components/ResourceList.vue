@@ -88,7 +88,7 @@ export default {
   },
   computed: {
     showLogoutButton () {
-      return !_.get(window, 'noJwtLogin', false)
+      return !_.get(window, 'disableJwtLogin', false)
     },
     groupedList () {
       const others = { name: 'TL_OTHERS' }

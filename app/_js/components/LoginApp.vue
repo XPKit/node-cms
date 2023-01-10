@@ -50,12 +50,12 @@ export default {
   async mounted () {
     this.$loading.start('init')
     try {
-      if (!_.get(window, 'noJwtLogin', false)) {
+      const noLogin = _.get(window, 'noLogin', false)
+      if (!noLogin) {
         LoginService.init()
       }
       await ConfigService.init()
       await TranslateService.init()
-      console.warn(await LoginService.getStatus())
       this.localeList = ConfigService.config.locales
     } catch (error) {
       console.error('Error happen during mounted:', error)
