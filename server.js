@@ -43,11 +43,11 @@ const logger = new (require(path.join(__dirname, 'lib/logger')))()
 
 // start with mongo dbEngine
 let options = {
-  apiVersion: 2,
-  dbEngine: {
-    type: 'mongodb',
-    url: `${process.env.XPKIT_HOST || 'localhost'}/node-cms`
-  }
+  apiVersion: 2
+  // dbEngine: {
+  //   type: 'mongodb',
+  //   url: `${process.env.XPKIT_HOST || 'localhost'}/node-cms`
+  // }
 }
 
 const cms = new CMS(options)

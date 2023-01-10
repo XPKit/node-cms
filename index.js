@@ -115,13 +115,14 @@ class CMS {
         } return compression.filter(req, res)
       }
     }))
-
-    if (!options.disableAuthentication) {
-      /* Enables session with basic auth */
+    if (!options.disableAuthentication || !options.disableJwtLogin) {
       this._app.use(session({
         secret: 'keyboard cat',
         cookie: {}
       }))
+    }
+    if (!options.disableAuthentication) {
+      /* Enables session with basic auth */
       this._app.use((req, res, next) => {
         if (req.session.user && !req.headers.authorization) {
           req.headers.authorization = 'Basic ' + Buffer.from(req.session.user.username + ':' + req.session.user.password).toString('base64')
@@ -131,23 +132,15 @@ class CMS {
     } else if (!options.disableJwtLogin) {
       /* Enables session with jwt token auth */
       this._app.use(cookieParser())
-      this._app.use(session({
-        secret: 'keyboard cat',
-        cookie: {}
-      }))
       this._app.use((req, res, next) => {
-        // console.warn(`disableJwtLogin = false, nodeCmsUser =`, _.get(req, 'session.nodeCmsUser', {}))
-        // console.warn(`disableJwtLogin, query jwt token =`, _.get(req, 'query', false))
         if (!req.headers.authorization) {
           const token = _.get(req, 'session.nodeCmsUser.token', false)
           if (token) {
-            // console.warn(`global use - 1`)
             req.headers.authorization = token
           } else if (_.get(req, 'query.jwt', false)) {
             req.headers.authorization = req.query.jwt
           }
         }
-        // console.warn(`global use - req.headers.authorization = `, req.headers.authorization)
         next()
       })
     }
