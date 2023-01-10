@@ -6,11 +6,13 @@
       <div class="login-canvas">
         <form @submit.prevent="login">
           <div class="title">{{ 'TL_LOGIN' | translate }} </div>
-          <input v-model="username" autofocus type="test" name="nodeCmsUsername" autocomplete="on" :placeholder="'TL_USERNAME' | translate">
-          <input v-model="password" type="password" name="nodeCmsPassword" autocomplete="on" :placeholder="'TL_PASSWORD' | translate">
+          <input ref="username" v-model="username" autofocus type="test" name="nodeCmsUsername" autocomplete="on"
+                 :placeholder="'TL_USERNAME' | translate"
+          >
+          <input ref="password" v-model="password" type="password" name="nodeCmsPassword" autocomplete="on" :placeholder="'TL_PASSWORD' | translate">
           <span v-if="loginFailed" class="error-message">{{ 'TL_LOGIN_FAIL' | translate }}</span>
-          <div class="login-btn-wrapper">
-            <button :disabled="!username || !password || loggingIn">{{ 'TL_CONFIRM' | translate }}</button>
+          <div class="login-btn-wrapper" :class="{disabled: !username || !password || loggingIn}">
+            <button :disabled="loggingIn">{{ 'TL_CONFIRM' | translate }}</button>
           </div>
         </form>
       </div>
@@ -64,8 +66,16 @@ export default {
   },
   methods: {
     async login () {
-      if (this.loggingIn || !this.username || !this.password) {
+      if (this.loggingIn) {
         return
+      }
+      if (!this.username) {
+        console.warn(`bleh 1`)
+        return this.$refs.username.focus()
+      }
+      if (!this.password) {
+        console.warn(`bleh`)
+        return this.$refs.password.focus()
       }
       this.$loading.start('login')
       this.loggingIn = true

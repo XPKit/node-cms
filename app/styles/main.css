@@ -3438,11 +3438,13 @@ fieldset[disabled] .multiselect {
     .login-canvas button:disabled {
       background-color: #c1c1c1;
       border: 1px solid #c1c1c1;
-      opacity: 0.5;
-      touch-action: none;
-      pointer-events: none; }
+      opacity: 0.25; }
     .login-canvas button:not(:disabled):hover {
       filter: invert(1); }
+  .login-canvas .login-btn-wrapper.disabled button {
+    background-color: #c1c1c1;
+    border: 1px solid #c1c1c1;
+    opacity: 0.25; }
 
 ul.pager {
   display: flex;

@@ -78,7 +78,7 @@
     "TL_USERNAME": "Username",
     "TL_PASSWORD": "Password",
     "TL_LOGIN": "Login",
-    "TL_LOGIN_FAIL": "Login Fail",
+    "TL_LOGIN_FAIL": "Login or password is invalid.",
     "TL_CONFIRM": "Confirm",
     "TL_LOGOUT": "Logout",
     "TL_PLUGINS": "Plugins",

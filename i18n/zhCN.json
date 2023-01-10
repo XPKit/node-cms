@@ -72,7 +72,7 @@
     "TL_USERNAME": "登入名称",
     "TL_PASSWORD": "登入密码",
     "TL_LOGIN": "登入",
-    "TL_LOGIN_FAIL": "登录失败",
+    "TL_LOGIN_FAIL": "登录名或密码无效.",
     "TL_CONFIRM": "Confirm",
     "TL_LOGOUT": "登出",
     "TL_PLUGINS": "外挂",
