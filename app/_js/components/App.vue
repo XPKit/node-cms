@@ -111,6 +111,10 @@ export default {
   },
   mounted () {
     this.$loading.start('init')
+    LoginService.onLogout(() => {
+      console.warn(`User logged out`)
+      window.location.reload()
+    })
     this.$nextTick(async () => {
       await ConfigService.init()
       await TranslateService.init()
