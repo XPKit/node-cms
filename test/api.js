@@ -30,6 +30,7 @@ before(async () => {
     config: CONFIG,
     autoload: true,
     disableJwtLogin: false,
+    disableAuthentication: true,
     auth: { secret: 'auth.jwt.secret' }})
   cms.resource('articles',
     // acl:

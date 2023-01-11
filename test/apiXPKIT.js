@@ -41,6 +41,7 @@ before(async () => {
     apiVersion: 2,
     mid: 'lajgdwf0',
     disableJwtLogin: false,
+    disableAuthentication: true,
     auth: { secret: 'auth.jwt.secret' },
     dbEngine: {
       type: 'xpkit',

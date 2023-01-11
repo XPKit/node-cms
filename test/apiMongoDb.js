@@ -34,6 +34,7 @@ before(async () => {
     autoload: true,
     apiVersion: 2,
     disableJwtLogin: false,
+    disableAuthentication: true,
     auth: { secret: 'auth.jwt.secret' },
     dbEngine: {
       type: 'mongodb',

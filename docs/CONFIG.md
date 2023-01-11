@@ -38,6 +38,29 @@ When using `node-cms` as a library, it's possbile to provide configuration in co
     const cms = new CMS([options]);
 ```
 
+## Authentication Configuration
+
+In your cms.json, you can also customize the type of authentication you want `node-cms` to use:
+``` Javascript
+/* default cms.json */
+{
+  "disableJwtLogin": true, // JWT token auth
+  "disableAuthentication": false, // basic HTTP auth
+}
+```
+
+### disableJwtLogin
+If enabled, the `node-cms` user will be redirected to a login page on first load.
+Once logged, a `nodeCmsJwt` HTTP only cookie will be created for authentication.
+
+### disableAuthentication
+Basic HTTP authentication
+
+### Important notes
+If both options are disabled:
+- `node-cms` will assume you are connected as the `anonymous` user
+- when editing records which the `anonymous` user isn't allowed to, `node-cms` will prompt user to identify via basic HTTP authentication
+
 ## Admin interface
 
 check `localhost:port/admin` for default content authoring inteface.

@@ -84,7 +84,7 @@ exports.suite = () => {
     jwtToken = data.cookie
   })
 
-  it('should allow to create article after log in', async () => {
+  it('should allow to create article with JWT token cookie', async () => {
     const {body} = await request(helper.MASTER_URL)
       .post('/api/articles')
       .set('Cookie', [jwtToken])
