@@ -183,7 +183,6 @@ export default {
 
     async logout () {
       await LoginService.logout()
-      window.location.reload()
     },
     async getSystemData () {
       try {

@@ -32,7 +32,6 @@ export default {
   methods: {
     async onClickLogout () {
       await LoginService.logout()
-      window.location.reload()
     }
   }
 }

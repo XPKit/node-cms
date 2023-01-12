@@ -31,7 +31,7 @@ class LoginService {
     } catch (error) {
     }
     if (_.isEmpty(status)) {
-      console.info('will logout')
+      // console.info('will logout')
       await this.logout()
     }
   }

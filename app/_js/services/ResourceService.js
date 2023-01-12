@@ -8,6 +8,11 @@ class ResourceService {
 
   async cache (resource) {
     const {data} = await axios.get(`../api/${resource}`)
+    if (_.get(data, 'userLoggedOut', false)) {
+      console.info(`Received userLoggedOut from server, will redirect to login page`)
+      window.location.reload()
+      return []
+    }
     this.cacheMap[resource] = data
     return this.get(resource)
   }

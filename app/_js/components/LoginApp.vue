@@ -70,11 +70,9 @@ export default {
         return
       }
       if (!this.username) {
-        console.warn(`bleh 1`)
         return this.$refs.username.focus()
       }
       if (!this.password) {
-        console.warn(`bleh`)
         return this.$refs.password.focus()
       }
       this.$loading.start('login')
