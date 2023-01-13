@@ -50,6 +50,14 @@ In your cms.json, you can also customize the type of authentication you want `no
 ```
 
 ### disableJwtLogin
+By default, basic HTTP auth is activated, if you wish to use JWT token authentication, you need to change the configuration to the following:
+``` Javascript
+/* cms.json */
+{
+  "disableJwtLogin": false, // JWT token auth
+  "disableAuthentication": true, // basic HTTP auth
+}
+```
 If enabled, the `node-cms` user will be redirected to a login page on first load.
 Once logged, a `nodeCmsJwt` HTTP only cookie will be created for authentication.
 
