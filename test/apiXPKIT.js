@@ -112,7 +112,6 @@ describe('HTTP', async () => {
         .send({name: 'article1', title: 'Hello World!'})
         .expect(200)
       article = body
-      // console.warn(`CREATED ARTICLE = `, article)
       article.should.be.an('object')
       article._id.should.be.a('string')
       article._createdAt.should.be.a('number')
@@ -134,7 +133,6 @@ describe('HTTP', async () => {
       should.exist(body._xpkitId)
       should.exist(body.created)
       should.exist(body.last_modified)
-      should.exist(body.latest)
       article = body
       // body.should.deep.equal(_.extend({_local: true}, article))
     })

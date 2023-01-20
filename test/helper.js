@@ -4,6 +4,7 @@ const path = require('path')
 const request = require('supertest')
 const md5File = require('md5-file')
 const crypto = require('crypto')
+const uuid = require('uuid/v4')
 
 class Helper {
   constructor (port) {
@@ -184,7 +185,11 @@ module.exports = {
   id: null,
   getInstance (port, forceInit = false) {
     if (this.self === null || forceInit) {
-      this.id = crypto.randomUUID()
+      if (_.isFunction(crypto.randomUUID)) {
+        this.id = crypto.randomUUID()
+      } else {
+        this.id = uuid()
+      }
       this.self = new Helper(port)
     }
     return this.self
