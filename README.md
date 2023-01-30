@@ -56,6 +56,14 @@ npm install -g git+https://git@https://github.com/XPKit/node-cms.git
 cms
 ```
 
+#### npm install error in M1
+
+if your npm install failed in node-sass with some error with c++ and node-gyp, try
+
+```
+CXXFLAGS="--std=c++17" npm install
+```
+
 #### Authors
 
 Edouard Durand<edouard.durand@imagination.com>
