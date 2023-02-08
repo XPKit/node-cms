@@ -38,7 +38,10 @@ const defaultConfig = () =>
     disableReplication: false,
     disableAuthentication: false,
     disableAnonymous: false,
-    apiVersion: 1
+    apiVersion: 1,
+    session: {
+      secret: 'MdjIwFRi9ezT'
+    }
   })
 
 /*
