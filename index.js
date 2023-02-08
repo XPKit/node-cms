@@ -116,10 +116,11 @@ class CMS {
       }
     }))
     if (!options.disableAuthentication || !options.disableJwtLogin) {
-      this._app.use(session({
-        secret: 'keyboard cat',
-        cookie: {}
-      }))
+      const secret = _.get(this.options, 'session.secret')
+      if (_.isEmpty(secret)) {
+        throw new Error('config.session.secret is missing')
+      }
+      this._app.use(session(_.extend({cookie: {}}, this.options.session)))
     }
     if (!options.disableAuthentication) {
       /* Enables session with basic auth */
