@@ -4,7 +4,7 @@ const path = require('path')
 const request = require('supertest')
 const md5File = require('md5-file')
 const crypto = require('crypto')
-const uuid = require('uuid/v4')
+const {v4: uuid} = require('uuid')
 
 class Helper {
   constructor (port) {

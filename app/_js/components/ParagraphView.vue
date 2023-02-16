@@ -38,7 +38,7 @@ import _ from 'lodash'
 import SchemaService from '../services/SchemaService'
 import VueFormGenerator, { abstractField } from 'vue-form-generator'
 import ResourceService from '../services/ResourceService'
-import uuid from 'uuid/v4'
+import {v4 as uuid} from 'uuid'
 
 const defaultTypes = [
   'string',

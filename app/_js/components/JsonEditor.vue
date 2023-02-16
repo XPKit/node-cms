@@ -5,7 +5,7 @@
 <script>
 import _ from 'lodash'
 import { abstractField } from 'vue-form-generator'
-import uuid from 'uuid/v4'
+import {v4 as uuid} from 'uuid'
 
 // By importing it, it inject JSONEditor to window
 // eslint-disable-next-line no-unused-vars
