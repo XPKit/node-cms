@@ -1,8 +1,7 @@
 <template>
   <v-app>
     <notifications group="notification" position="bottom left" />
-    <div class="cms-layout">
-      <locale-list v-if="localeList && localeList.length > 0" :locale-list="localeList" />
+    <div v-if="loaded" class="cms-layout" :class="{displayed: showLoginForm}">
       <div class="login-canvas">
         <form @submit.prevent="login">
           <div class="title">{{ 'TL_LOGIN' | translate }} </div>
@@ -26,15 +25,13 @@ import axios from 'axios/dist/axios.min'
 import _ from 'lodash'
 
 import Loading from './Loading.vue'
-import LocaleList from './LocaleList.vue'
 import LoadingService from '../services/LoadingService'
 import ConfigService from '../services/ConfigService'
 import TranslateService from '../services/TranslateService'
 import LoginService from '../services/LoginService'
 export default {
   components: {
-    Loading,
-    LocaleList
+    Loading
   },
   data () {
     return {
@@ -43,14 +40,15 @@ export default {
       activeField: false,
       loginFailed: false,
       loggingIn: false,
-      locale: 'enUS',
-      localeList: [],
+      showLoginForm: false,
+      loaded: false,
       LoadingService,
       TranslateService
     }
   },
   async mounted () {
     this.$loading.start('init')
+
     try {
       const noLogin = _.get(window, 'noLogin', false)
       if (!noLogin) {
@@ -58,10 +56,16 @@ export default {
       }
       await ConfigService.init()
       await TranslateService.init()
-      this.localeList = ConfigService.config.locales
+      this.loaded = true
     } catch (error) {
       console.error('Error happen during mounted:', error)
     }
+    this.loaded = true
+    this.$nextTick(() => {
+      setTimeout(() => {
+        this.showLoginForm = true
+      }, 100)
+    })
     this.$loading.stop('init')
   },
   methods: {
@@ -101,7 +105,11 @@ export default {
 .cms-layout {
   background-color: #e9e9e9;
   color: black;
-
+  opacity: 0;
+  transition: opacity 0.3s;
+  &.displayed {
+    opacity: 1;
+  }
 }
 .title {
   text-align: left;
