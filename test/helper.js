@@ -34,7 +34,7 @@ class Helper {
   }
 
   async logout (user, expect = 200) {
-    console.warn(`Helper logout`)
+    console.warn('Helper logout')
     await request(this.MASTER_URL)
       .get('/admin/logout')
       .expect(expect)

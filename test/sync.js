@@ -177,6 +177,7 @@ before(async () => {
   })
 })
 
+// eslint-disable-next-line no-undef
 after(async () => {
   await remove(
     path.join(__dirname, 'master'),

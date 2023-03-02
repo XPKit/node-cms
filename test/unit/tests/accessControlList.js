@@ -26,41 +26,41 @@ exports.suite = () => {
     return await helper.getRequest('/api/articles')
   })
 
-  it(`shouldn't allow anonymous write access`, async () => {
+  it('shouldn\'t allow anonymous write access', async () => {
     await request(helper.MASTER_URL)
       .post('/api/articles')
       .send({ hello: 'unauthorized request' })
       .expect(401)
   })
 
-  it(`shouldn't allow anonymous read write to attachments`, async () => {
+  it('shouldn\'t allow anonymous read write to attachments', async () => {
     await request(helper.MASTER_URL)
       .post('/api/articles/123/attachments')
       .send('hello')
       .expect(401)
   })
 
-  it(`shouldn't allow anonymous update access`, async () => {
+  it('shouldn\'t allow anonymous update access', async () => {
     await request(helper.MASTER_URL)
       .put('/api/articles/123')
       .send({ hello: 'unauthorized request' })
       .expect(401)
   })
 
-  it(`shouldn't allow anonymous delete access`, async () => {
+  it('shouldn\'t allow anonymous delete access', async () => {
     await request(helper.MASTER_URL)
       .del('/api/articles/123')
       .expect(401)
   })
 
-  it(`shouldn't allow anonymous delete access to attachments`, async () => {
+  it('shouldn\'t allow anonymous delete access to attachments', async () => {
     await request(helper.MASTER_URL)
       .del('/api/articles/123/attachments/123')
       .expect(401)
   })
 
   it('should return no user info', async () => {
-    user = await helper.getRequest(`/admin/login`, 200)
+    user = await helper.getRequest('/admin/login', 200)
     user.should.be.an('object')
     should.not.exist(user.token)
     _.keys(user).should.have.lengthOf(0)
@@ -120,11 +120,11 @@ exports.suite = () => {
   })
 
   it('should log out user', async () => {
-    await helper.getRequest(`/admin/logout`)
+    await helper.getRequest('/admin/logout')
   })
 
   it('should return no user info after logout', async () => {
-    user = await helper.getRequest(`/admin/login`, 200)
+    user = await helper.getRequest('/admin/login', 200)
     user.should.be.an('object')
     should.not.exist(user.token)
     _.keys(user).should.have.lengthOf(0)

@@ -18,6 +18,7 @@ before(() => helper.removeFiles(
   `${__dirname}/_large_copy2.png`
 ))
 
+// eslint-disable-next-line no-undef
 after(() => helper.removeFiles(
   DB,
   CONFIG,
@@ -42,11 +43,7 @@ before(async () => {
     }
   }
 
-  try {
-    cms = new CMS(options)
-  } catch (error) {
-    throw error
-  }
+  cms = new CMS(options)
 
   cms.resource('articles',
     // acl:

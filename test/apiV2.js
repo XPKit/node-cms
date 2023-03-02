@@ -17,6 +17,7 @@ before(() => helper.removeFiles(
   `${__dirname}/_large_copy2.png`
 ))
 
+// eslint-disable-next-line no-undef
 after(() => helper.removeFiles(
   DB,
   CONFIG,

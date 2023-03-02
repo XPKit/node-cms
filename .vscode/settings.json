@@ -7,7 +7,7 @@
   },
   "eslint.enable": true,
   "eslint.options": {
-    "configFile": "./.eslintrc.json"
+    "overrideConfigFile": "./.eslintrc.js"
   },
   "eslint.run": "onSave",
   "eslint.validate": [
@@ -27,8 +27,5 @@
     "tmp": true
   },
   "javascript.format.enable": false,
-  "javascript.validate.enable": false,
-  "files.associations": {
-    "*.wpy": "vue"
-  },
+  "javascript.validate.enable": false
 }

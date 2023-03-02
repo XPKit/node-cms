@@ -40,7 +40,9 @@ const defaultConfig = () =>
     disableAnonymous: false,
     apiVersion: 1,
     session: {
-      secret: 'MdjIwFRi9ezT'
+      secret: 'MdjIwFRi9ezT',
+      resave: true,
+      saveUninitialized: true
     }
   })
 

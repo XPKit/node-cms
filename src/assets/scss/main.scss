@@ -1,0 +1,50 @@
+@import "@a/scss/components/vue-recycle-scroller";
+@import "@a/scss/components/vue-multiselect";
+@import "@a/scss/components/vue-form-generator";
+@import "@a/scss/components/vue-croppa";
+@import "@a/scss/components/LocaleList";
+@import "@a/scss/components/ResourceList";
+@import "@a/scss/components/RecordList";
+@import "@a/scss/components/RecordEditor";
+@import "@a/scss/components/RecordTable";
+@import "@a/scss/components/Wysiwyg";
+@import "@a/scss/components/ImageView";
+@import "@a/scss/components/AttachmentView";
+@import "@a/scss/components/DatetimePicker";
+@import "@a/scss/components/Loading";
+@import "@a/scss/components/JsonEditor";
+@import "@a/scss/components/ColorPicker";
+@import "@a/scss/components/PluginPage.scss";
+@import "@a/scss/components/MultiselectPage.scss";
+@import "@a/scss/components/LoginApp.scss";
+@import "@a/scss/components/Pager.scss";
+
+body {
+  margin: 0px;
+  padding: 0px;
+  font-family: 'Helvetica Neue', Arial;
+  color: #4f5f4f;
+  height: 100%;
+  overflow: hidden;
+}
+
+html {
+  height: 100%;
+}
+
+ul, li {
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+.cms-layout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+      position: relative;
+}
+
+nav-bar {
+  border-bottom: 1px solid #c7c7c7;
+}

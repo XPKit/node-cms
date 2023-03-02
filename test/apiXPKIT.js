@@ -25,6 +25,7 @@ before(() => helper.removeFiles(
   `${__dirname}/_large_copy2.png`
 ))
 
+// eslint-disable-next-line no-undef
 after(() => helper.removeFiles(
   DB,
   CONFIG,
@@ -50,11 +51,7 @@ before(async () => {
     xptoolkit: _.get(baseConfig, 'xptoolkit', false)
   }
 
-  try {
-    cms = new CMS(options)
-  } catch (error) {
-    throw error
-  }
+  cms = new CMS(options)
 
   cms.resource('articles',
     // acl:
@@ -224,7 +221,7 @@ describe('HTTP', async () => {
     })
 
     before(async () => {
-      seeds = await helper.createDummyRecords('/api/comments', 10, { name: `comment-[INDEX]`, content: `[INDEX]` })
+      seeds = await helper.createDummyRecords('/api/comments', 10, { name: 'comment-[INDEX]', content: '[INDEX]' })
     })
 
     it('should reflect changes when "limit" and "page" are set', async () => {

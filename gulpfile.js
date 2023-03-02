@@ -18,7 +18,6 @@ const watchify = require('watchify')
 const clean = require('semver').clean
 const zip = require('gulp-zip')
 const childExec = require('child_process').exec
-
 const pkg = require('./package.json')
 const CMS = require('./')
 
@@ -98,6 +97,7 @@ class CreateTasks {
   }
 
   createStyleTask () {
+    // TODO: hugo - to change
     gulp.task(this.stylesTask, () => gulp.src(`./${this.name}/_scss/main.scss`)
       .pipe(scss())
       .on('error', scss.logError)
@@ -106,6 +106,7 @@ class CreateTasks {
   }
 
   createMinStyleTask () {
+    // TODO: hugo - to change
     gulp.task(this.minStylesTask, () => gulp.src(`./${this.name}/_scss/main.scss`)
       .pipe(scss())
       .on('error', scss.logError)
@@ -168,6 +169,7 @@ class CreateTasks {
   createWatchTask () {
     gulp.task(this.watchTask, () => {
       livereload.listen({ port: pkg.config.port + this.liveReloadPort })
+      // TODO: hugo - to change
       gulp.watch([`./${this.name}/_scss/**/*.scss`], gulp.series(this.stylesTask))
       gulp.watch([`./${this.name}/**/*.html`], gulp.series(this.browserifyTask))
       gulp.watch([`./${this.name}/styles/main.css`], gulp.series(this.reloadCssTask))
@@ -185,13 +187,9 @@ class CreateTasks {
     )
   }
 
-  async gitAddFiles (callback) {
-    try {
-      await exec(`git add ./${this.name}/styles/main.css`)
-      await exec(`git add ./${this.name}/scripts/bundle.js`)
-    } catch (error) {
-      throw error
-    }
+  async gitAddFiles () {
+    await exec(`git add ./${this.name}/styles/main.css`)
+    await exec(`git add ./${this.name}/scripts/bundle.js`)
   }
 }
 
@@ -303,17 +301,17 @@ class MainTask {
   }
 
   createNewRelease () {
-    gulp.task('git-release', async (done) => {
+    gulp.task('git-release', async () => {
       try {
         for (const task of this.subTasks) {
           await task.gitAddFiles()
         }
-        await exec(`git add package.json`)
-        await exec(`git add package-lock.json`)
+        await exec('git add package.json')
+        await exec('git add package-lock.json')
         await exec(`git commit -m "Bump to version ${pkg.version}"`)
-        await exec(`git push origin`)
+        await exec('git push origin')
         await exec(`git tag -a "${pkg.version}" -m "\`git log -1 --format=%s\`"`)
-        await exec(`git push origin --tags`)
+        await exec('git push origin --tags')
       } catch (error) {
         console.error(error)
         process.exit(1)

@@ -32,6 +32,7 @@ before(() => remove(
   `${__dirname}/xlsxRecords.xlsx`
 ))
 
+// eslint-disable-next-line no-undef
 after(() => remove(
   DB,
   CONFIG,

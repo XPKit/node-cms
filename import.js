@@ -165,7 +165,7 @@ class ImportManager {
       return async () => {
         let endProcess = h.startProcess(`Download data from gsheet (${sheet.id}) ... ... `)
         if (_.isEmpty(config.gsheetId)) {
-          throw new Error(`gsheetId or gsheet is not defined in config file`)
+          throw new Error('gsheetId or gsheet is not defined in config file')
         }
         if (program.skip) {
           return endProcess('skip')
@@ -381,7 +381,7 @@ class ImportManager {
             fs.ensureDirSync(folderPath)
           })
         })
-        endProcess(`done`)
+        endProcess('done')
       }
     })
     return await pAll(funcs, {concurrency: 1})
