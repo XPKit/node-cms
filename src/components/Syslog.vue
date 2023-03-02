@@ -1,15 +1,18 @@
 <template>
   <div class="syslog">
     <div class="buttons">
-      <button class="item autoscroll" :class="{active: autoscroll}" @click="onClickAutoscroll"><i v-if="autoscroll" class="fi-lock" /><i v-else class="fi-unlock" /></button>
-      <button class="item clear" @click="onClickClear"><i class="fi-trash" /></button>
-      <button class="item refresh" @click="onClickRefresh"><i class="fi-refresh" /></button>
+      <button class="item autoscroll" :class="{active: autoscroll}" @click="onClickAutoscroll">
+        <v-icon v-if="autoscroll">mdi-lock-outline</v-icon>
+        <v-icon v-else>mdi-unlock</v-icon>
+      </button>
+      <button class="item clear" @click="onClickClear"><v-icon>mdi-trash-can-outline</v-icon></button>
+      <button class="item refresh" @click="onClickRefresh"><v-icon>mdi-refresh</v-icon></button>
       <input v-model="searchKey" :class="{'is-sift': searchKey && searchKey.search('sift:') === 0}" class="item search" :placeholder="'TL_SEARCH' | translate" @input="onInputSearch">
-      <button v-if="searchKey && searchKey.length > 0" class="item clear-search" @click="onClickClearSearch"><i class="fi-x" /></button>
-      <div v-if="filterOutLines > 0" class="item filter-out"><i class="fi-target-two" />{{ filterOutLines }} lines are filter out</div>
+      <button v-if="searchKey && searchKey.length > 0" class="item clear-search" @click="onClickClearSearch"><v-icon>mdi-close</v-icon></button>
+      <div v-if="filterOutLines > 0" class="item filter-out"><v-icon>mdi-target</v-icon>{{ filterOutLines }} lines are filter out</div>
       <div class="item logs-raised-flags">
-        <span v-if="warningQty >= 0" class="flag-item flag-warning" @click="filterLevel(1)"><i class="fi-flag" /> {{ warningQty }}</span>
-        <span v-if="errorQty >= 0" class="flag-item flag-error" @click="filterLevel(2)"><i class="fi-alert" /> {{ errorQty }}</span>
+        <span v-if="warningQty >= 0" class="flag-item flag-warning" @click="filterLevel(1)"><v-icon>mdi-flag-outline</v-icon> {{ warningQty }}</span>
+        <span v-if="errorQty >= 0" class="flag-item flag-error" @click="filterLevel(2)"><v-icon>mdi-alert-box-outline</v-icon> {{ errorQty }}</span>
       </div>
     </div>
     <div v-if="error" class="error">

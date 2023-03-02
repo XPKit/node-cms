@@ -13,7 +13,7 @@
       </template>
     </div>
     <div class="system">
-      <div class="title flex">{{ 'TL_SYSTEM' | translate }} <button v-if="showLogoutButton" @click="logout()"><i class="fi-unlink" />{{ 'TL_LOGOUT' | translate }}</button></div>
+      <div class="title flex">{{ 'TL_SYSTEM' | translate }} <button v-if="showLogoutButton" @click="logout()"><v-icon>mdi-link-variant-off</v-icon>{{ 'TL_LOGOUT' | translate }}</button></div>
       <div class="stats cpu">
         <div class="title"><small><b>CPU Usage</b></small></div>
         <div class="progress">
@@ -38,7 +38,7 @@
       <div class="stats two-by-two">
         <div v-if="system.network != 'not supported'" class="stats network">
           <div class="title"><small><b>Network Usage</b></small></div>
-          <small class="text">{{ convertBytes(system.network.total.outputMb) }} <i class="fi-arrow-up" /> / {{ convertBytes(system.network.total.inputMb) }} <i class="fi-arrow-down" /></small>
+          <small class="text">{{ convertBytes(system.network.total.outputMb) }} <v-icon>mdi-arrow-up</v-icon> / {{ convertBytes(system.network.total.inputMb) }} <v-icon>mdi-arrow-down</v-icon></small>
         </div>
         <div class="stats uptime">
           <div class="title"><small><b>Uptime</b></small></div>

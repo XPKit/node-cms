@@ -36,8 +36,8 @@
         </template>
         <div v-if="isDisplay('_updatedAt')" :style="getSize('_updatedAt')" class="cell input-update"><timeago :since="item._updatedAt || Date.now()" :locale="TranslateService.locale" /></div>
         <div class="cell actions">
-          <button v-if="item._local" @click="edit(item)"><i class="fi-pencil" /></button>
-          <button v-if="item._local" @click="remove(item)"><i class="fi-trash" /></button>
+          <button v-if="item._local" @click="edit(item)"><v-icon>mdi-pencil-box-outline</v-icon></button>
+          <button v-if="item._local" @click="remove(item)"><v-icon>mdi-trash-can-outline</v-icon></button>
         </div>
       </div>
     </template>

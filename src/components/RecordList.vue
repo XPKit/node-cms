@@ -5,7 +5,7 @@
         <input v-model="search" :placeholder="'TL_SEARCH' | translate" type="text" name="search">
       </div>
       <div class="search-buttons">
-        <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect"><v-icon large color="black">mdi-list-box</v-icon></div>
+        <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect"><v-icon color="black">mdi-list-box</v-icon></div>
         <template v-if="maxCount <= 0 || listCount < maxCount">
           <div class="new" @click="onClickNew">+</div>
         </template>
@@ -26,11 +26,11 @@
         >
           <div v-if="item" class="main">
             <span class="icon">
-              <span v-if="item._searchable" class="serchable">
-                <i v-if="item._searchable.query == true" class="fi-target-two" />
-                <i v-else-if="item._searchable.id == true" class="fi-key" />
-                <i v-else-if="item._searchable.keyFields == true" class="fi-results" />
-                <i v-else class="default fi-results" />
+              <span v-if="item._searchable" class="searchable">
+                <v-icon v-if="item._searchable.query == true">mdi-target</v-icon>
+                <v-icon v-else-if="item._searchable.id == true">mdi-key</v-icon>
+                <v-icon v-else-if="item._searchable.keyFields == true">mdi-format-list-bulleted</v-icon>
+                <v-icon v-else class="default">mdi-format-list-bulleted</v-icon>
               </span>
             </span>
             <span>
