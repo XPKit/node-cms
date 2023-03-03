@@ -296,8 +296,8 @@ export default {
       width: 270px;
       border-right: 1px solid #c7c7c7;
       overflow: hidden;
-      .title {
-        padding: 4px;
+      .node-cms-title {
+        padding: 2px;
         text-transform: capitalize;
         font-weight: bold;
         color: black;
@@ -306,7 +306,7 @@ export default {
         border-bottom: 1px solid #c7c7c7;
         padding: 1px;
         li {
-          padding: 4px 12px;
+          padding: 0px 12px;
           cursor: pointer;
           user-select: none;
           .icon {

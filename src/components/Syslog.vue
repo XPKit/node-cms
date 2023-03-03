@@ -68,6 +68,7 @@ export default {
       lastId: -1,
       tempId: 0,
       logLines: [],
+      filterOutLines: [],
       searchKey: null,
       warningQty: 0,
       errorQty: 0,

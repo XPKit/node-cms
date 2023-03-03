@@ -1,15 +1,20 @@
 <template>
   <div v-if="record" class="record-editor" :class="{frozen:!record._local}">
-    <ul v-show="resource.locales" class="locale-list">
-      <li
+    <v-tabs
+      v-show="resource.locales"
+      fixed-tabs
+      background-color="white"
+      dark
+    >
+      <v-tab
         v-for="item in resource.locales" :key="item"
         :class="{ active: item == locale }" class="locale"
         @click="selectLocale(item)"
       >
         {{ 'TL_'+item.toUpperCase() | translate }}
-      </li>
-    </ul>
-    <vue-form-generator
+      </v-tab>
+    </v-tabs>
+    <!-- <vue-form-generator
       v-if="isReady"
       ref="vfg"
       :schema="schema"
@@ -17,13 +22,23 @@
       :options="formOptions"
       @error="onError"
       @model-updated="onModelUpdated"
+    /> -->
+    <vuetify-form-base-ssr
+      v-if="isReady"
+      ref="vfg"
+      :schema="schema.fields"
+      :model="editingRecord"
+      :options="formOptions"
+      :row="rowOptions"
+      @error="onError"
+      @model-updated="onModelUpdated"
     />
     <!-- <vuetify-form-base-ssr
       v-if="isReady"
       ref="vfg"
-      :schema="schema"
-      :model="editingRecord"
+      :schema="testFormSchema"
       :options="formOptions"
+      :row="rowOptions"
       @error="onError"
       @model-updated="onModelUpdated"
     /> -->
@@ -39,16 +54,16 @@
 <script>
 import axios from 'axios/dist/axios.min'
 import _ from 'lodash'
-import VueFormGenerator from 'vue-form-generator'
-// import VuetifyFormBaseSsr from 'vuetify-form-base-ssr/src/vuetify-form-base-ssr.vue'
+// import VueFormGenerator from 'vue-form-generator'
+import VuetifyFormBaseSsr from 'vuetify-form-base-ssr/src/vuetify-form-base-ssr.vue'
 
 import TranslateService from '@s/TranslateService'
 import AbstractEditorView from './AbstractEditorView'
 
 export default {
   components: {
-    'vue-form-generator': VueFormGenerator.component
-    // VuetifyFormBaseSsr
+    // 'vue-form-generator': VueFormGenerator.component
+    'vuetify-form-base-ssr': VuetifyFormBaseSsr
   },
   mixins: [AbstractEditorView],
   props: [
@@ -68,6 +83,18 @@ export default {
       formOptions: {
         validateAfterLoad: true,
         validateAfterChanged: true
+      },
+      rowOptions: { justify: 'start', align: 'start', noGutters: false },
+      testFormSchema: {
+        name: { type: 'text', label: 'Name' },
+        position: { type: 'text', label: 'Position' },
+        tasks: {
+          type: 'array',
+          schema: {
+            done: { type: 'checkbox', label: 'done', col: 4 },
+            title: { type: 'text', col: 4 }
+          }
+        }
       }
     }
   },
@@ -95,6 +122,9 @@ export default {
     this.removeDirtyFlags()
     this.updateValidationMessage()
     this.isReady = true
+    console.warn('SCHEMA = ', this.schema)
+    console.warn('EDITING RECORD = ', this.editingRecord)
+    console.warn('FORM OPTIONS = ', this.formOptions)
   },
   methods: {
     back () {
@@ -305,8 +335,9 @@ export default {
       })
     },
     updateValidationMessage () {
-      VueFormGenerator.validators.resources.fieldIsRequired = TranslateService.get('TL_FIELD_IS_REQUIRED')
-      VueFormGenerator.validators.resources.invalidFormat = TranslateService.get('TL_INVALID_FORMAT')
+      console.warn('updateValidationMessage - TEST')
+      // VueFormGenerator.validators.resources.fieldIsRequired = TranslateService.get('TL_FIELD_IS_REQUIRED')
+      // VueFormGenerator.validators.resources.invalidFormat = TranslateService.get('TL_INVALID_FORMAT')
     },
     getKeyLocale (schema) {
       const options = {}

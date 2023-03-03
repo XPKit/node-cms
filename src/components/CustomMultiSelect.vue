@@ -14,10 +14,14 @@
   </multiselect>
 </template>
 <script>
+import Multiselect from 'vue-multiselect'
 import _ from 'lodash'
 import { abstractField } from 'vue-form-generator'
 
 export default {
+  components: {
+    Multiselect
+  },
   mixins: [abstractField],
   data () {
     return {
@@ -52,9 +56,9 @@ export default {
   },
   created () {
     // Check if the component is loaded globally
-    if (!this.$root.$options.components['multiselect']) {
-      console.error('\'vue-multiselect\' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!')
-    }
+    // if (!this.$root.$options.components['multiselect']) {
+    //   console.error('\'vue-multiselect\' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!')
+    // }
   },
   methods: {
     updateSelected (value /* , id */) {

@@ -1,9 +1,30 @@
 <template>
   <div class="resources-content">
-    <div class="resource-list">
+    <v-navigation-drawer
+      permanent
+      class="resource-list"
+    >
+      <v-list
+        dense
+        subheader
+        rounded
+      >
+        <template v-for="(group, index) in groupedList">
+          <div v-if="group.list && group.list.length > 0" :key="index">
+            <div class="node-cms-title">{{ group.name | translate }}</div>
+            <ul>
+              <li v-for="item in group.list" :key="item.title" :class="{selected: item == selectedItem}" @click="select(item, 'resource')">
+                <span class="icon" />{{ item.displayname ? TranslateService.get(item.displayname) : item.title }}
+              </li>
+            </ul>
+          </div>
+        </template>
+      </v-list>
+    </v-navigation-drawer>
+    <!-- <div class="resource-list">
       <template v-for="(group, index) in groupedList">
         <div v-if="group.list && group.list.length > 0" :key="index">
-          <div class="title">{{ group.name | translate }}</div>
+          <div class="node-cms-title">{{ group.name | translate }}</div>
           <ul>
             <li v-for="item in group.list" :key="item.title" :class="{selected: item == selectedItem}" @click="select(item, 'resource')">
               <span class="icon" />{{ item.displayname ? TranslateService.get(item.displayname) : item.title }}
@@ -11,37 +32,31 @@
           </ul>
         </div>
       </template>
-    </div>
+    </div> -->
     <div class="system">
-      <div class="title flex">{{ 'TL_SYSTEM' | translate }} <button v-if="showLogoutButton" @click="logout()"><v-icon>mdi-link-variant-off</v-icon>{{ 'TL_LOGOUT' | translate }}</button></div>
+      <div class="title flex">{{ 'TL_SYSTEM' | translate }} <button v-if="showLogoutButton" @click="logout()"><v-icon small color="black">mdi-link-variant-off</v-icon>{{ 'TL_LOGOUT' | translate }}</button></div>
       <div class="stats cpu">
-        <div class="title"><small><b>CPU Usage</b></small></div>
-        <div class="progress">
-          <div class="progress-bar" role="progressbar" :style="`width: ${system.cpu.usage}%`" />
-        </div>
+        <div class="node-cms-title"><small><b>CPU Usage</b></small></div>
+        <v-progress-linear color="#6af" rounded :value="system.cpu.usage" />
         <small class="text">{{ system.cpu.count }} cores ({{ system.cpu.model }})</small>
       </div>
       <div class="stats ram">
-        <div class="title"><small><b>Memory Usage</b></small></div>
-        <div class="progress">
-          <div class="progress-bar" role="progressbar" :style="`width: ${100 - system.memory.freeMemPercentage}%`" />
-        </div>
+        <div class="node-cms-title"><small><b>Memory Usage</b></small></div>
+        <v-progress-linear color="#6af" rounded :value="100 - system.memory.freeMemPercentage" />
         <small class="text">{{ convertBytes(system.memory.usedMemMb) }} / {{ convertBytes(system.memory.totalMemMb) }}</small>
       </div>
       <div v-if="system.drive != 'not supported'" class="stats drive">
-        <div class="title"><small><b>Disk Usage</b></small></div>
-        <div class="progress">
-          <div class="progress-bar" role="progressbar" :style="`width: ${system.drive.usedPercentage}%`" />
-        </div>
+        <div class="node-cms-title"><small><b>Disk Usage</b></small></div>
+        <v-progress-linear color="#6af" rounded :value="100 - system.drive.usedPercentage" />
         <small class="text">{{ convertBytes(system.drive.usedGb * 1024) }} / {{ convertBytes(system.drive.totalGb * 1024) }}</small>
       </div>
       <div class="stats two-by-two">
         <div v-if="system.network != 'not supported'" class="stats network">
-          <div class="title"><small><b>Network Usage</b></small></div>
+          <div class="node-cms-title"><small><b>Network Usage</b></small></div>
           <small class="text">{{ convertBytes(system.network.total.outputMb) }} <v-icon>mdi-arrow-up</v-icon> / {{ convertBytes(system.network.total.inputMb) }} <v-icon>mdi-arrow-down</v-icon></small>
         </div>
         <div class="stats uptime">
-          <div class="title"><small><b>Uptime</b></small></div>
+          <div class="node-cms-title"><small><b>Uptime</b></small></div>
           <small class="text">{{ timeAgo(system.uptime) }}</small>
         </div>
       </div>
@@ -284,24 +299,24 @@ export default {
     }
   }
   .progress {
-    height: 4px;
-    display: flex;
-    overflow: hidden;
-    line-height: 0;
-    font-size: .65625rem;
-    border-radius: .25rem;
-    background-color: #ebedef;
-    .progress-bar {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      overflow: hidden;
-      text-align: center;
-      white-space: nowrap;
-      transition: width .6s ease;
-      color: #fff;
-      background-color: #4799eb;
-    }
+    // height: 4px;
+    // display: flex;
+    // overflow: hidden;
+    // line-height: 0;
+    // font-size: .65625rem;
+    // border-radius: .25rem;
+    // background-color: #ebedef;
+    // .progress-bar {
+    //   display: flex;
+    //   flex-direction: column;
+    //   justify-content: center;
+    //   overflow: hidden;
+    //   text-align: center;
+    //   white-space: nowrap;
+    //   transition: width .6s ease;
+    //   color: #fff;
+    //   background-color: #4799eb;
+    // }
   }
 }
 button {
@@ -319,7 +334,7 @@ button {
     margin-right: 5px;
   }
 }
-.title {
+.node-cms-title {
   &.flex {
     display: flex;
     align-items: center;

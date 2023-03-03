@@ -48,3 +48,38 @@ ul, li {
 nav-bar {
   border-bottom: 1px solid #c7c7c7;
 }
+
+body {
+  .v-application {
+    .error, .info {
+      background-color: inherit !important;
+      border-color: inherit !important;
+    }
+  }
+}
+
+
+body {
+  .theme--light.v-application {
+    background: #FFFFFF;
+    color: rgba(0, 0, 0, 0.87);
+  }
+  .theme--dark.v-application {
+    background: #4e4e4e;
+    color: rgba(255, 255, 255, 0.87);
+  }
+
+  .theme--dark.v-tabs> {
+    .v-tabs-bar {
+      .v-tab {
+        max-width: 100%;
+        color: black;
+        &:not(.v-tab--active) {
+          color: grey;
+        }
+      }
+    }
+  }
+
+}
+

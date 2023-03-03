@@ -5,7 +5,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VueShortkey from 'vue-shortkey'
 import VueTimeago from 'vue-timeago'
-import Multiselect from 'vue-multiselect'
 import JsonTreeView from 'vue-json-tree-view'
 import VueVirtualScroller from 'vue-virtual-scroller'
 import Notifications from 'vue-notification'
@@ -45,19 +44,25 @@ window.Vue = Vue
 // Debug purpose
 // Vue.config.devtools = false
 Vue.component('FieldAttachmentView', AttachmentView)
+Vue.component('VAttachmentView', AttachmentView)
 Vue.component('FieldImageView', ImageView)
+Vue.component('VImageView', ImageView)
 Vue.component('FieldParagraphAttachmentView', ParagraphAttachmentView)
 Vue.component('FieldParagraphView', ParagraphView)
+Vue.component('VParagraphView', ParagraphView)
 Vue.component('FieldTreeView', TreeView)
 Vue.component('FieldColorPicker', ColorPicker)
 Vue.component('FieldJsonEditor', JsonEditor)
+Vue.component('VJsonEditor', JsonEditor)
 Vue.component('FieldWysiwyg', WysiwygField)
+Vue.component('VWysiwyg', WysiwygField)
 Vue.component('FieldCustomDatetimePicker', CustomDatetimePicker)
 Vue.component('FieldCustomChecklist', CustomChecklist)
+Vue.component('VCustomChecklist', CustomChecklist)
 Vue.component('FieldGroup', Group)
 Vue.component('FieldCustomInputTag', CustomInputTag)
 Vue.component('FieldCustomMultiSelect', CustomMultiSelect)
-Vue.component('Multiselect', Multiselect)
+Vue.component('VCustomMultiSelect', CustomMultiSelect)
 Vue.component('LogViewer', LogViewer)
 Vue.component('PluginPage', PluginPage)
 Vue.component('MultiselectPage', MultiselectPage)

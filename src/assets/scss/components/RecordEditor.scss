@@ -4,10 +4,11 @@
   margin: 0px;
   display: block;
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  flex: 1 1 0;
+  width: 100%;
+  // display: flex;
+  // flex-direction: column;
+  // align-items: stretch;
+  // flex: 1 1 0;
 
   *:focus {
     outline: none;
@@ -69,7 +70,7 @@
       color: #555;
     }
   }
-  .vue-form-generator .field-customChecklist {
+  #form-base .field-customChecklist {
     .wrapper {
       width: 100%;
     }

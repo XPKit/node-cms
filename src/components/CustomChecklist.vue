@@ -3,8 +3,9 @@
     <div v-if="schema.listBox" class="listbox form-control" :disabled="disabled">
       <div v-for="(item, i) in items" :key="i" class="list-row" :class="{'is-checked': isItemChecked(item)}">
         <label>
-          <input :id="getFieldID(schema)" type="checkbox" :checked="isItemChecked(item)" :disabled="disabled" :name="getInputName(item)" @change="onChanged($event, item)">{{ getItemName(item) }}
-        </label>
+          <!-- TODO: hugo - change to v-simple-checkbox -->
+          <v-simple-checkbox :id="getFieldID(schema)" type="checkbox" :checked="isItemChecked(item)" :disabled="disabled" :name="getInputName(item)" @change="onChanged($event, item)">{{ getItemName(item) }}
+          </v-simple-checkbox></label>
       </div>
     </div>
     <div v-if="!schema.listBox" class="combobox form-control" :disabled="disabled">
@@ -15,8 +16,8 @@
       <div v-if="comboExpanded" class="dropList">
         <div v-for="(item, y) in items" :key="y" class="list-row" :class="{'is-checked': isItemChecked(item)}">
           <label>
-            <input :id="getFieldID(schema)" type="checkbox" :checked="isItemChecked(item)" :disabled="disabled" :name="getInputName(item)" @change="onChanged($event, item)">{{ getItemName(item) }}
-          </label>
+            <v-simple-checkbox :id="getFieldID(schema)" type="checkbox" :checked="isItemChecked(item)" :disabled="disabled" :name="getInputName(item)" @change="onChanged($event, item)">{{ getItemName(item) }}
+            </v-simple-checkbox></label>
         </div>
       </div>
     </div>

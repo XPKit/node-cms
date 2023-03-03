@@ -24,13 +24,13 @@
       outline: none;
       line-height: 18px;
       display: block;
-      border-bottom: 1px solid #c7c7c7;
+      // border-bottom: 1px solid #c7c7c7;
       background: transparent;
       cursor: pointer;
       transition: all .3s;
-      &:hover, &:focus {
-        box-shadow: 0px 0px 3px 0px #eee inset;
-      }
+      // &:hover, &:focus {
+      //   box-shadow: 0px 0px 3px 0px #eee inset;
+      // }
     }
     &.is-query {
       &.is-valid {

@@ -2,7 +2,7 @@
   <div v-if="maxCount != 1" class="record-list">
     <div class="top-bar">
       <div class="search" :class="{'is-query': sift.isQuery, 'is-valid': sift.isQuery && sift.isValid == true, 'is-invalid': sift.isQuery && sift.isValid == false}">
-        <input v-model="search" :placeholder="'TL_SEARCH' | translate" type="text" name="search">
+        <v-text-field v-model="search" outlined :placeholder="'TL_SEARCH' | translate" type="text" name="search" />
       </div>
       <div class="search-buttons">
         <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect"><v-icon color="black">mdi-list-box</v-icon></div>

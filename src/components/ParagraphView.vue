@@ -11,21 +11,28 @@
       <div v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" class="item">
         <span class="handle" />
         <div class="item-main">
-          <vue-form-generator
+          <vuetify-form-base-ssr
             ref="vfg"
             :schema="getSchema(item)"
             :model="item"
             :options="formOptions"
             @model-updated="onModelUpdated"
           />
+          <!-- <vue-form-generator
+            ref="vfg"
+            :schema="getSchema(item)"
+            :model="item"
+            :options="formOptions"
+            @model-updated="onModelUpdated"
+          /> -->
         </div>
-        <button @click="onClickRemoveItem(item)">remove</button>
+        <v-btn @click="onClickRemoveItem(item)">remove</v-btn>
       </div>
       <div slot="header">
-        <select v-model="selectedType">
+        <v-select v-model="selectedType">
           <option v-for="item in types" :key="`option-${item.input}`" :value="item">{{ item.label }}</option>
-        </select>
-        <button @click="onClickAddNewItem">Add</button>
+        </v-select>
+        <v-btn @click="onClickAddNewItem">Add</v-btn>
       </div>
     </draggable>
   </div>
@@ -34,7 +41,8 @@
 <script>
 import _ from 'lodash'
 import SchemaService from '@s/SchemaService'
-import VueFormGenerator, { abstractField } from 'vue-form-generator'
+import { abstractField } from 'vue-form-generator'
+import VuetifyFormBaseSsr from 'vuetify-form-base-ssr/src/vuetify-form-base-ssr.vue'
 import ResourceService from '@s/ResourceService'
 import {v4 as uuid} from 'uuid'
 
@@ -63,7 +71,7 @@ const defaultTypes = [
 
 export default {
   components: {
-    'vue-form-generator': VueFormGenerator.component
+    VuetifyFormBaseSsr
   },
   mixins: [abstractField],
   data () {
@@ -83,7 +91,8 @@ export default {
     }
   },
   mounted () {
-    this.types = _.map(this.schema.types || defaultTypes, type => {
+    const types = _.get(this, 'schema.types', defaultTypes)
+    this.types = _.map(types, type => {
       if (_.isString(type)) {
         type = {
           input: type

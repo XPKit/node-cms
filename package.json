@@ -186,7 +186,7 @@
     "vuejs-datetimepicker": "^1.1.13",
     "vuejs-paginate": "^2.1.0",
     "vuetify": "^2.6.14",
-    "vuetify-form-base-ssr": "^1.0.1",
+    "vuetify-form-base-ssr": "git+https://github.com/Zegfault/vuetify-form-base-ssr.git",
     "vuetify-loader": "^1.7.0",
     "watchify": "^4.0.0"
   },

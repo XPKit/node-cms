@@ -4,7 +4,7 @@
     <div v-if="loaded" class="cms-layout" :class="{displayed: showLoginForm}">
       <div class="login-canvas">
         <form @submit.prevent="login">
-          <div class="title">
+          <div class="node-cms-title">
             {{ 'TL_LOGIN' | translate }}
           </div>
           <input
@@ -118,7 +118,7 @@ export default {
     opacity: 1;
   }
 }
-.title {
+.node-cms-title {
   text-align: left;
   font-size: 24px;
   font-weight: 600;

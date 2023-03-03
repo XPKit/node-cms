@@ -314,6 +314,36 @@ class SchemaService {
     return fields
   }
 
+  formatSchemaForFormGenerator (fields) {
+    // console.warn('formatSchemaForFormGenerator - before - fields:', fields)
+    const formattedFields = _.map(fields, (field) => {
+      const inputType = _.get(field, 'inputType', false)
+      if (inputType === 'text') {
+        field.type = 'text'
+      }
+      if (inputType === 'number') {
+        field.type = 'number'
+      }
+      if (inputType === 'image') {
+        field.type = 'img'
+      }
+      if (inputType === 'ParagraphView') {
+        field.type = 'wrap'
+      }
+      if (inputType === 'switch') {
+        field.type = 'checkbox'
+      }
+      // TODO: hugo - transform paragraphs into group
+      field.outlined = true
+      field.dense = true
+      field.col = 8
+      field.offset = 1
+      return field
+    })
+    // console.warn('formatSchemaForFormGenerator - after - fields:', formattedFields)
+    return formattedFields
+  }
+
   updateFieldSchema (fields, field, id, locale, extraSources) {
     const cachedData = ResourceService.get(field.source)
 
