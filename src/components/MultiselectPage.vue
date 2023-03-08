@@ -9,12 +9,12 @@
     </ul>
     <br>
     <div class="actions">
-      <button @click="onClickSelectAll">{{ 'TL_SELECT_ALL_ITEMS'|translate }}</button>
-      <button :disabled="multiselectItems.length === 0" @click="onClickDeselectAll">{{ 'TL_DESELECT_ALL_ITEMS'|translate }}</button>
+      <v-btn @click="onClickSelectAll">{{ 'TL_SELECT_ALL_ITEMS'|translate }}</v-btn>
+      <v-btn :disabled="multiselectItems.length === 0" @click="onClickDeselectAll">{{ 'TL_DESELECT_ALL_ITEMS'|translate }}</v-btn>
     </div>
     <div class="buttons">
-      <button class="back" @click="onClickCancel">{{ 'TL_CANCEL'|translate }}</button>
-      <button class="delete right" :disabled="isEmpty(multiselectItems)" @click="onClickDelete">{{ 'TL_DELETE'|translate }}</button>
+      <v-btn class="back" @click="onClickCancel">{{ 'TL_CANCEL'|translate }}</v-btn>
+      <v-btn class="delete right" :disabled="isEmpty(multiselectItems)" @click="onClickDelete">{{ 'TL_DELETE'|translate }}</v-btn>
     </div>
     <!-- <button :disabled="isEmpty(multiselectItems)" @click="onClickClone">Clone</button> -->
   </div>
@@ -27,9 +27,10 @@ import _ from 'lodash'
 import RecordNameHelper from './RecordNameHelper'
 import AbstractEditorView from './AbstractEditorView'
 import TranslateService from '@s/TranslateService'
+import Notification from '@m/Notification'
 
 export default {
-  mixins: [RecordNameHelper, AbstractEditorView],
+  mixins: [RecordNameHelper, AbstractEditorView, Notification],
   props: [
     'resource',
     'locale',
@@ -67,10 +68,7 @@ export default {
           return async () => {
             try {
               await axios.delete(`../api/${this.resource.title}/${item._id}`)
-              this.$notify({
-                group: 'notification',
-                text: TranslateService.get('TL_RECORD_DELETED', null, { id: item._id })
-              })
+              this.notify(TranslateService.get('TL_RECORD_DELETED', null, { id: item._id }))
             } catch (error) {
               console.error(error)
               this.manageError(error, 'delete', item)
@@ -101,10 +99,7 @@ export default {
     //       return async () => {
     //         try {
     //           const {data} = await axios.post(`../api/${this.resource.title}`, item)
-    //           this.$notify({
-    //             group: 'notification',
-    //             text: TranslateService.get('TL_RECORD_CREATED', null, { id: data._id })
-    //           })
+    //           this.notify(TranslateService.get('TL_RECORD_CREATED', null, { id: data._id })
     //         } catch (error) {
     //           console.error(error)
     //           this.manageError(error, 'create')

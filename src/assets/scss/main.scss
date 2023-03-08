@@ -18,6 +18,7 @@
 @import "@a/scss/components/MultiselectPage.scss";
 @import "@a/scss/components/LoginApp.scss";
 @import "@a/scss/components/Pager.scss";
+@import "@a/scss/components/Notifications.scss";
 
 body {
   margin: 0px;
@@ -50,23 +51,18 @@ nav-bar {
 }
 
 body {
-  .v-application {
-    .error, .info {
-      background-color: inherit !important;
-      border-color: inherit !important;
-    }
-  }
-}
-
-
-body {
   .theme--light.v-application {
-    background: #FFFFFF;
+    background: white;
     color: rgba(0, 0, 0, 0.87);
   }
   .theme--dark.v-application {
-    background: #4e4e4e;
-    color: rgba(255, 255, 255, 0.87);
+    background: #4e4e4e;    color: rgba(255, 255, 255, 0.87);
+    .buttons {
+      background: #4e4e4e;
+    }
+    .node-cms-title {
+      color: white;
+    }
   }
 
   .theme--dark.v-tabs> {
@@ -80,6 +76,5 @@ body {
       }
     }
   }
-
 }
 

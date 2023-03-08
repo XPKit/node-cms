@@ -56,13 +56,15 @@
 
 import _ from 'lodash'
 import axios from 'axios/dist/axios.min'
+import pAll from 'p-all'
+
 import TranslateService from '@s/TranslateService'
-import VueTableGenerator from './vue-table/VueTableGenerator.vue'
+import VueTableGenerator from '@c/vue-table/VueTableGenerator.vue'
 import Paginate from 'vuejs-paginate'
 
-import RecordEditor from './RecordEditor.vue'
-import AbstractEditorView from './AbstractEditorView'
-import pAll from 'p-all'
+import RecordEditor from '@c/RecordEditor.vue'
+import AbstractEditorView from '@c/AbstractEditorView'
+import Notification from '@m/Notification'
 
 export default {
   components: {
@@ -70,7 +72,7 @@ export default {
     RecordEditor,
     Paginate
   },
-  mixins: [AbstractEditorView],
+  mixins: [AbstractEditorView, Notification],
   props: [
     'resourceList',
     'recordList',
@@ -174,10 +176,7 @@ export default {
         this.$loading.start('delete-record')
         try {
           await axios.delete(`../api/${this.resource.title}/${record._id}`)
-          this.$notify({
-            group: 'notification',
-            text: TranslateService.get('TL_RECORD_DELETED', null, { id: record._id })
-          })
+          this.notify(TranslateService.get('TL_RECORD_DELETED', null, { id: record._id }))
           this.$emit('updateRecordList', null)
         } catch (error) {
           console.error('Error happen during deleteRecord:', error)
@@ -249,10 +248,7 @@ export default {
         try {
           const response = await axios.post(`../api/${this.resource.title}`, uploadObject)
           await this.uploadAttachments(response.data._id, newAttachments)
-          this.$notify({
-            group: 'notification',
-            text: TranslateService.get('TL_RECORD_CREATED', null, { id: response.data._id })
-          })
+          this.notify(TranslateService.get('TL_RECORD_CREATED', null, { id: response.data._id }))
           this.$emit('updateRecordList', response.data)
         } catch (error) {
           console.error('Error happend during updateRecord/create:', error)
@@ -271,10 +267,7 @@ export default {
           await this.uploadAttachments(response.data._id, newAttachments)
           await this.removeAttachments(response.data._id, removeAttachments)
           if (!_.isEmpty(uploadObject) || !_.isEmpty(newAttachments) || !_.isEmpty(removeAttachments)) {
-            this.$notify({
-              group: 'notification',
-              text: TranslateService.get('TL_RECORD_UPDATED', null, { id: record._id })
-            })
+            this.notify(TranslateService.get('TL_RECORD_UPDATED', null, { id: record._id }))
           }
           this.$emit('updateRecordList', response.data)
         } catch (error) {
@@ -293,10 +286,7 @@ export default {
           promises.push(async () => {
             this.$loading.start('delete-record')
             await axios.delete(`../api/${this.resource.title}/${record._id}`)
-            this.$notify({
-              group: 'notification',
-              text: TranslateService.get('TL_RECORD_DELETED', null, { id: record._id })
-            })
+            this.notify(TranslateService.get('TL_RECORD_DELETED', null, { id: record._id }))
             this.$emit('updateRecordList', null)
             this.$loading.stop('delete-record')
           })

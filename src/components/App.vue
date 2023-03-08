@@ -63,6 +63,7 @@ import LoginService from '@s/LoginService'
 import ConfigService from '@s/ConfigService'
 import TranslateService from '@s/TranslateService'
 import ResourceService from '@s/ResourceService'
+import Notification from '@m/Notification'
 
 export default {
   components: {
@@ -73,6 +74,7 @@ export default {
     LocaleList,
     RecordTable
   },
+  mixins: [Notification],
   data () {
     return {
       locale: 'enUS',
@@ -130,11 +132,7 @@ export default {
           this.$forceUpdate()
         } catch (error) {
           const errorMessage = _.get(error, 'response.data.message', error.message)
-          this.$notify({
-            group: 'notification',
-            type: 'error',
-            text: errorMessage
-          })
+          this.notify(errorMessage, 'error')
           throw error
         }
       }

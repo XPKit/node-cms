@@ -4,7 +4,7 @@
 
 <script>
 import _ from 'lodash'
-import { abstractField } from 'vue-form-generator'
+// import { abstractField } from 'vue-form-generator'
 import {v4 as uuid} from 'uuid'
 
 // By importing it, it inject JSONEditor to window
@@ -12,7 +12,7 @@ import {v4 as uuid} from 'uuid'
 import JSONEditor from 'json-editor'
 
 export default {
-  mixins: [abstractField],
+  // mixins: [abstractField],
   data () {
     // console.log(uuid)
     return {

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import * as Mustache from 'mustache'
-import VueFormGenerator from 'vue-form-generator'
 import TranslateServiceLib from '@s/TranslateService'
+import FormService from '@s/FormService'
 import ResourceService from './ResourceService'
 
 let TranslateService
@@ -11,247 +11,9 @@ if (window.TranslateService) {
   TranslateService = TranslateServiceLib
 }
 
-const validators = VueFormGenerator.validators
-const customValidators = {
-  text (value, field, model, messages = VueFormGenerator.validators.resources) {
-    if (field.required && (!_.isString(value) || _.isEmpty(value))) {
-      return messages.fieldIsRequired
-    }
-    const locale = _.head(field.model.split('.'))
-    if (_.get(field, 'regex.value', false) === false && _.get(field, `regex['${locale}'].value`, false) === false) {
-      return true
-    }
-    let regexText = false
-    let regexDescription = false
-    if (field.localised && locale) {
-      regexText = _.get(field, `regex['${locale}'].value`, false)
-      regexDescription = _.get(field, `regex['${locale}'].description`, false)
-    }
-    if (regexText === false) {
-      regexText = _.get(field, 'regex.value', false)
-      regexDescription = _.get(field, 'regex.description', false)
-    }
-    if (regexDescription === false) {
-      regexDescription = regexText
-    }
-    if (regexText && _.isString(regexText)) {
-      const fragments = regexText.match(/\/(.*?)\/([gimy])?$/)
-      const regex = new RegExp(fragments[1], fragments[2] || '')
-      if (!regex.test(value)) {
-        return `${messages.invalidFormat} (${TranslateService.get(regexDescription)})`
-      }
-    }
-    return true
-  },
-  number (value, field, model, messages = VueFormGenerator.validators.resources) {
-    if (field.required && !_.isNumber(value)) {
-      return messages.fieldIsRequired
-    }
-    return validators.number(Number(value || 0), field, model, messages)
-  },
-  double (value, field, model, messages = VueFormGenerator.validators.resources) {
-    if (field.required && !_.isNumber(value)) {
-      return messages.fieldIsRequired
-    }
-    return validators.double(Number(value || 0), field, model, messages)
-  },
-  integer (value, field, model, messages = VueFormGenerator.validators.resources) {
-    if (field.required && !_.isNumber(value)) {
-      return messages.fieldIsRequired
-    }
-    return validators.integer(Number(value || 0), field, model, messages)
-  },
-  image (value, field, model, messages = VueFormGenerator.validators.resources) {
-    const { key, locale } = this.getKeyLocale(field)
-    const attachment = _.find(model._attachments, (item) => {
-      if (item._name !== key) {
-        return false
-      }
-      if (locale && item._fields.locale !== locale) {
-        return false
-      }
-      return true
-    })
-    if (field.required && !attachment) {
-      return messages.fieldIsRequired
-    }
-    return true
-  },
-  file (value, field, model, messages = VueFormGenerator.validators.resources) {
-    const { key, locale } = this.getKeyLocale(field)
-    const attachment = _.find(model._attachments, (item) => {
-      if (item._name !== key) {
-        return false
-      }
-      if (locale && item._fields.locale !== locale) {
-        return false
-      }
-      return true
-    })
-    if (field.required && !attachment) {
-      return messages.fieldIsRequired
-    }
-    return true
-  },
-  select (value, field, model, messages = VueFormGenerator.validators.resources) {
-    if (field.required && _.isEmpty(value)) {
-      return messages.fieldIsRequired
-    }
-    return true
-  }
-}
-
-const typeMapper = {
-  string: {
-    type: 'input',
-    inputType: 'text',
-    validator: customValidators.text
-  },
-  text: {
-    type: 'textArea',
-    rows: 5,
-    validator: customValidators.text
-  },
-  password: {
-    type: 'input',
-    inputType: 'password'
-  },
-  email: {
-    type: 'input',
-    inputType: 'email',
-    validator: validators.email
-  },
-  url: {
-    type: 'input',
-    inputType: 'url',
-    validator: validators.url
-  },
-  number: {
-    type: 'input',
-    inputType: 'number',
-    validator: customValidators.number
-  },
-  double: {
-    type: 'input',
-    inputType: 'number',
-    validator: customValidators.double
-  },
-  integer: {
-    type: 'input',
-    inputType: 'number',
-    validator: customValidators.integer
-  },
-  checkbox: {
-    type: 'switch'
-  },
-  date: {
-    type: 'customDatetimePicker',
-    format: 'YYYY-MM-DD',
-    customDatetimePickerOptions: {
-      format: 'YYYY-MM-DD'
-    }
-  },
-  time: {
-    type: 'customDatetimePicker',
-    format: 'hh:mm:ss a',
-    customDatetimePickerOptions: {
-      format: 'hh:mm:ss a'
-    }
-  },
-  datetime: {
-    type: 'customDatetimePicker',
-    format: 'YYYY-MM-DD hh:mm:ss a',
-    customDatetimePickerOptions: {
-      format: 'YYYY-MM-DD hh:mm:ss a'
-    }
-  },
-  pillbox: {
-    type: 'customInputTag',
-    selectOptions: {
-      taggable: true,
-      multiple: true,
-      searchable: true,
-      onNewTag (newTag, id, options, value) {
-        options.push(newTag)
-        value.push(newTag)
-      }
-    },
-    values: [],
-    validator: validators.array
-  },
-  select: {
-    type: 'customMultiSelect',
-    selectOptions: {
-      multiple: false,
-      trackBy: '_id',
-      customLabel: (item, labelProp) => {
-        return _.get(labelProp, item, item)
-      },
-      searchable: true
-    },
-    validator: customValidators.select
-  },
-  multiselect: {
-    type: 'customChecklist',
-    validator: validators.array
-  },
-  json: {
-    type: 'treeView',
-    treeViewOptions: {
-      maxDepth: 4,
-      rootObjectKey: 'root',
-      modifiable: false
-    }
-  },
-  code: {
-    // type: 'treeView',
-    // treeViewOptions: {
-    //   maxDepth: 4,
-    //   rootObjectKey: 'root',
-    //   modifiable: false,
-    // },
-    type: 'textArea',
-    rows: 10
-  },
-  wysiwyg: {
-    type: 'wysiwyg'
-  },
-  image: {
-    type: 'imageView',
-    validator: customValidators.image
-  },
-  file: {
-    type: 'attachmentView',
-    validator: customValidators.file
-  },
-  paragraph: {
-    type: 'ParagraphView'
-  },
-  group: {
-    type: 'group'
-  },
-  object: {
-    type: 'jsonEditor'
-  },
-  color: {
-    type: 'colorPicker',
-    colorPickerOptions: {
-    }
-  },
-  paragraphImage: {
-    type: 'paragraphAttachmentView',
-    fileType: 'image',
-    validator: customValidators.image
-  },
-  paragraphFile: {
-    type: 'paragraphAttachmentView',
-    validator: customValidators.file
-  }
-}
-
 class SchemaService {
   constructor () {
-    this.typeMapper = typeMapper
+    this.typeMapper = FormService.typeMapper
   }
   getSchemaFields (schema, resource, locale, userLocale, disabled, extraSources, rootView) {
     let fields = _.map(schema, (field) => {
@@ -315,33 +77,8 @@ class SchemaService {
   }
 
   formatSchemaForFormGenerator (fields) {
-    // console.warn('formatSchemaForFormGenerator - before - fields:', fields)
-    const formattedFields = _.map(fields, (field) => {
-      const inputType = _.get(field, 'inputType', false)
-      if (inputType === 'text') {
-        field.type = 'text'
-      }
-      if (inputType === 'number') {
-        field.type = 'number'
-      }
-      if (inputType === 'image') {
-        field.type = 'img'
-      }
-      if (inputType === 'ParagraphView') {
-        field.type = 'wrap'
-      }
-      if (inputType === 'switch') {
-        field.type = 'checkbox'
-      }
-      // TODO: hugo - transform paragraphs into group
-      field.outlined = true
-      field.dense = true
-      field.col = 8
-      field.offset = 1
-      return field
-    })
-    // console.warn('formatSchemaForFormGenerator - after - fields:', formattedFields)
-    return formattedFields
+    console.warn('formatSchemaForFormGenerator - ', _.cloneDeep(fields))
+    return FormService.translateFieldsSchema(fields)
   }
 
   updateFieldSchema (fields, field, id, locale, extraSources) {
@@ -390,13 +127,7 @@ class SchemaService {
   }
 
   getKeyLocale (schema) {
-    const options = {}
-    const list = schema.model.split('.')
-    if (schema.localised) {
-      options.locale = list.shift()
-    }
-    options.key = list.join('.')
-    return options
+    return FormService.getKeyLocale(schema)
   }
 
   getNestedGroups (resource, fields, level, path, prefix) {

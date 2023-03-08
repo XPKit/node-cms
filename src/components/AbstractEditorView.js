@@ -2,6 +2,7 @@ import _ from 'lodash'
 import axios from 'axios/dist/axios.min'
 import TranslateServiceLib from '@s/TranslateService'
 import SchemaService from '@s/SchemaService'
+import Notification from '@m/Notification'
 
 let TranslateService
 if (window.TranslateService) {
@@ -11,6 +12,7 @@ if (window.TranslateService) {
 }
 
 export default {
+  mixins: [Notification],
   methods: {
     async uploadAttachments (id, attachments) {
       this.$loading.start('uploadAttachments')
@@ -27,7 +29,7 @@ export default {
           await axios.post(`../api/${this.resource.title}/${id}/attachments`, data)
         }
       } catch (error) {
-        console.error('Error happen during removeAttachments:', error)
+        console.error('Error happen during uploadAttachments:', error)
       }
       this.$loading.stop('uploadAttachments')
     },
@@ -61,11 +63,7 @@ export default {
         }
       }
       console.error(errorMessage, record)
-      this.$notify({
-        group: 'notification',
-        type: 'error',
-        text: errorMessage
-      })
+      this.notify(errorMessage, 'error')
     },
     async updateSchema () {
       try {
@@ -74,11 +72,13 @@ export default {
         const fields = SchemaService.getSchemaFields(this.resource.schema, this.resource, this.locale, this.userLocale, disabled, this.resource.extraSources)
         this.$loading.stop('loading-schema')
         const groups = SchemaService.getNestedGroups(this.resource, fields, 0)
+        // this.schema.fields = groups
         this.schema.fields = SchemaService.formatSchemaForFormGenerator(groups)
+        console.warn('AbstractEditorView - schema ', this.schema)
         this.originalFieldList = fields
         console.warn('AbstractEditorView - updateSchema', this.schema)
       } catch (error) {
-        console.error('Error happen during updateSchema:', error)
+        console.error('AbstractEditorView - updateSchema - Error happen during updateSchema:', error)
       }
     }
   }

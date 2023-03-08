@@ -1,6 +1,7 @@
 <template>
   <div class="paragraph-view">
     <draggable
+      v-if="schema"
       :key="`${schema.model}-${key}`"
       v-model="items"
       draggable=".item"
@@ -11,20 +12,15 @@
       <div v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" class="item">
         <span class="handle" />
         <div class="item-main">
+          {{ getSchema(item) }}
+          ----
+          {{ item }}
           <vuetify-form-base-ssr
             ref="vfg"
             :schema="getSchema(item)"
             :model="item"
-            :options="formOptions"
             @model-updated="onModelUpdated"
           />
-          <!-- <vue-form-generator
-            ref="vfg"
-            :schema="getSchema(item)"
-            :model="item"
-            :options="formOptions"
-            @model-updated="onModelUpdated"
-          /> -->
         </div>
         <v-btn @click="onClickRemoveItem(item)">remove</v-btn>
       </div>
@@ -41,7 +37,6 @@
 <script>
 import _ from 'lodash'
 import SchemaService from '@s/SchemaService'
-import { abstractField } from 'vue-form-generator'
 import VuetifyFormBaseSsr from 'vuetify-form-base-ssr/src/vuetify-form-base-ssr.vue'
 import ResourceService from '@s/ResourceService'
 import {v4 as uuid} from 'uuid'
@@ -73,15 +68,16 @@ export default {
   components: {
     VuetifyFormBaseSsr
   },
-  mixins: [abstractField],
+  props: ['obj', 'vfg', 'model', 'disabled'],
   data () {
+    const schema = _.get(this.obj, 'schema', {})
     return {
-      items: _.cloneDeep(_.get(this.model, this.schema.model, [])),
+      props: ['obj', 'vfg', 'model', 'disabled'],
+      items: _.cloneDeep(_.get(this.model, schema.model, [])),
       types: [],
-      formOptions: {
-        validateAfterLoad: true,
-        validateAfterChanged: true
-      },
+      selectedType: false,
+      schema,
+      localModel: {},
       key: uuid()
     }
   },
@@ -89,6 +85,9 @@ export default {
     'schema.model': function () {
       this.items = _.cloneDeep(_.get(this.model, this.schema.model, []))
     }
+  },
+  created () {
+    this.updateLocalData()
   },
   mounted () {
     const types = _.get(this, 'schema.types', defaultTypes)
@@ -106,6 +105,10 @@ export default {
     this.selectedType = _.first(this.types)
   },
   methods: {
+    updateLocalData () {
+      this.schema = _.cloneDeep(this.obj.schema)
+      this.localModel = _.cloneDeep(this.model)
+    },
     validate () {
       _.each(this.$refs.vfg, vfg => {
         if (!vfg.validate()) {
@@ -177,12 +180,12 @@ export default {
       if (this.selectedType) {
         const newItem = _.cloneDeep(this.selectedType)
         this.items.push(newItem)
-        _.set(this.model, this.schema.model, this.items)
-        this.$emit('model-updated', this.schema.model, this.model)
+        _.set(this.localModel, this.schema.model, this.items)
+        this.$emit('input', this.items)
       }
     },
     onClickRemoveItem (item) {
-      let attachments = this.model._attachments = this.model._attachments || []
+      let attachments = this.localModel._attachments = this.localModel._attachments || []
       if (_.includes(['image', 'file', 'group'], item.input)) {
         const findIds = obj => {
           const ids = []
@@ -202,24 +205,25 @@ export default {
         })
       }
       this.items = _.difference(this.items, [item])
-      _.set(this.model, this.schema.model, this.items)
-      _.set(this.model, '_attachments', attachments)
+      _.set(this.localModel, this.schema.model, this.items)
+      _.set(this.localModel, '_attachments', attachments)
       this.items = _.clone(this.items)
       this.key = uuid()
-      this.$emit('model-updated', this.schema.model, this.model)
+      this.$emit('input', this.items)
+      this.$emit('input', this.localModel._attachments)
     },
     onChange () {
-      _.set(this.model, this.schema.model, this.items)
-      this.$emit('model-updated', this.schema.model, this.model)
+      _.set(this.localModel, this.schema.model, this.items)
+      this.$emit('input', this.items)
     },
     onEndDrag () {
-      _.set(this.model, this.schema.model, this.items)
+      _.set(this.localModel, this.schema.model, this.items)
       this.key = uuid()
-      this.$emit('model-updated', this.schema.model, this.model)
+      this.$emit('input', this.items)
     },
     onModelUpdated (value, model) {
-      _.set(this.model, this.schema.model, this.items)
-      this.$emit('model-updated', value, model)
+      _.set(this.localModel, this.schema.model, this.items)
+      this.$emit('input', this.items)
     }
   }
 }

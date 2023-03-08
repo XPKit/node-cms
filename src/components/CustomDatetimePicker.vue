@@ -6,14 +6,14 @@
 
 <script>
 import _ from 'lodash'
-import { abstractField } from 'vue-form-generator'
+// import { abstractField } from 'vue-form-generator'
 import datetime from './DatetimePicker.vue'
 
 export default {
   components: {
     datetime
   },
-  mixins: [abstractField],
+  // mixins: [abstractField],
   props: ['options',
     'customDatetimePickerOptions'],
   data () {

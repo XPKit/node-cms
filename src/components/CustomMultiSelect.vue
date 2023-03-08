@@ -16,30 +16,28 @@
 <script>
 import Multiselect from 'vue-multiselect'
 import _ from 'lodash'
-import { abstractField } from 'vue-form-generator'
 
 export default {
   components: {
     Multiselect
   },
-  mixins: [abstractField],
+  props: ['obj', 'vfg', 'model', 'disabled'],
   data () {
     return {
-      objectValue: this.value
+      objectValue: this.value,
+      schema: _.get(this.obj, 'schema', {})
     }
   },
   computed: {
     selectOptions () {
       return this.schema.selectOptions || {}
     },
-
     options () {
       let values = this.schema.values
       if (typeof values === 'function') {
         return values.apply(this, [this.model, this.schema])
-      } else {
-        return values
       }
+      return values
     },
     customLabel () {
       if (
@@ -48,27 +46,35 @@ export default {
         typeof this.schema.selectOptions.customLabel === 'function'
       ) {
         return this.schema.selectOptions.customLabel
-      } else {
-        // this will let the multiselect library use the default behavior if customLabel is not specified
-        return undefined
       }
+      // this will let the multiselect library use the default behavior if customLabel is not specified
+      return undefined
     }
   },
   created () {
-    // Check if the component is loaded globally
-    // if (!this.$root.$options.components['multiselect']) {
-    //   console.error('\'vue-multiselect\' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!')
-    // }
+    this.schema = _.cloneDeep(this.obj.schema)
+    const key = this.getKey()
+    const currentValue = _.get(this.model, _.get(this.schema, 'model', false), false)
+    if (currentValue) {
+      this.updateSelected(_.find(this.options, (option) => {
+        return _.get(option, key, false) === currentValue
+      }))
+    }
   },
   methods: {
+    getKey () {
+      return _.get(this.schema, 'selectOptions.key')
+    },
     updateSelected (value /* , id */) {
       this.objectValue = value
-      const key = _.get(this.schema, 'selectOptions.key')
+      const key = this.getKey()
       if (key) {
         this.value = _.get(this.objectValue, key)
       } else {
         this.value = this.objectValue
       }
+      console.warn('multiselect', this.value, value)
+      this.$emit('input', this.value)
     },
     addTag (newTag, id) {
       let onNewTag = this.selectOptions.onNewTag

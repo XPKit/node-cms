@@ -34,10 +34,13 @@ import LoadingService from '@s/LoadingService'
 import ConfigService from '@s/ConfigService'
 import TranslateService from '@s/TranslateService'
 import LoginService from '@s/LoginService'
+import Notification from '@m/Notification'
+
 export default {
   components: {
     Loading
   },
+  mixins: [Notification],
   data () {
     return {
       username: null,
@@ -93,11 +96,7 @@ export default {
         window.location.reload()
       } catch (error) {
         console.error('Error happen during login:', error)
-        this.$notify({
-          group: 'notification',
-          type: 'error',
-          text: TranslateService.get('TL_LOGIN_FAIL')
-        })
+        this.notify(TranslateService.get('TL_LOGIN_FAIL'), 'error')
         this.loginFailed = true
         this.$loading.stop('login')
       }

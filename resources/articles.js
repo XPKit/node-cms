@@ -61,7 +61,7 @@ exports = (module.exports = {
       localised: true
     },
     {
-      field: 'Related articles',
+      field: 'relatedArticles',
       input: 'multiselect',
       source: 'articles',
       localised: false

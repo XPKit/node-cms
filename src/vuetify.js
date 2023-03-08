@@ -4,8 +4,11 @@ import Vuetify, {
   VCol,
   VTextField,
   VTooltip,
+  VCard,
   VInput,
+  VTextarea,
   VCheckbox,
+  VSwitch,
   VSelect
 } from 'vuetify/lib'
 import { Ripple, Intersect, Touch, Resize, ClickOutside } from 'vuetify/lib/directives'
@@ -13,13 +16,13 @@ import 'vuetify/dist/vuetify.min.css'
 import '@mdi/font/scss/materialdesignicons.scss'
 
 Vue.use(Vuetify, {
-  components: { VRow, VTooltip, VCol, VTextField, VInput, VCheckbox, VSelect },
+  components: { VRow, VTooltip, VCard, VCol, VTextField, VInput, VTextarea, VCheckbox, VSwitch, VSelect },
   directives: { Ripple, Intersect, Touch, Resize, ClickOutside }
 })
 
 export default new Vuetify({
   theme: {
-    // dark: true,
+    dark: true,
     themes: {
       light: {
         primary: '#00095B',

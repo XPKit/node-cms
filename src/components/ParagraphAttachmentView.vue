@@ -17,14 +17,14 @@
             </a>
           </span>
           <template v-if="schema.options && schema.options.extraParams">
-            <span><input v-model="fileItem.title" placeholder="title" :disabled="disabled" @input="onChange"></span>
-            <span><textarea v-model="fileItem.description" placeholder="description" :disabled="disabled" @input="onChange" /></span>
+            <span><v-file-input :value="fileItem.title" placeholder="title" :disabled="disabled" @change="onChange" /></span>
+            <span><v-textarea :value="fileItem.description" placeholder="description" :disabled="disabled" @change="onChange" /></span>
           </template>
         </span>
         <button @click="onClickRemoveFileItem(model, fileItem)">X</button>
       </div>
       <div slot="header">
-        <input type="file" :accept="model.input === 'image'? 'image/*': '*'" :disabled="disabled" @change="onChangeFile($event, model)">
+        <v-file-input :accept="model.input === 'image'? 'image/*': '*'" :disabled="disabled" @change="onChangeFile($event, model)" />
       </div>
     </draggable>
   </div>
@@ -33,12 +33,12 @@
 <script>
 import {v4 as uuid} from 'uuid'
 import _ from 'lodash'
-import { abstractField } from 'vue-form-generator'
+// import { abstractField } from 'vue-form-generator'
 
 export default {
   components: {
   },
-  mixins: [abstractField],
+  // mixins: [abstractField],
   data () {
     return {
       items: _.get(this.model, this.schema.model, [])

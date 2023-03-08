@@ -14,39 +14,38 @@
         {{ 'TL_'+item.toUpperCase() | translate }}
       </v-tab>
     </v-tabs>
-    <!-- <vue-form-generator
-      v-if="isReady"
+    <v-form
       ref="vfg"
-      :schema="schema"
-      :model="editingRecord"
-      :options="formOptions"
-      @error="onError"
-      @model-updated="onModelUpdated"
-    /> -->
-    <vuetify-form-base-ssr
-      v-if="isReady"
+      v-model="formValid"
+      lazy-validation
+    >
+      <vuetify-form-base-ssr
+        v-if="isReady"
+        :schema="getSchema()"
+        :model.sync="editingRecord"
+        :row="rowOptions"
+        @error="onError"
+        @input="onModelUpdated"
+      />
+    </v-form>
+    <!-- <v-form
       ref="vfg"
-      :schema="schema.fields"
-      :model="editingRecord"
-      :options="formOptions"
-      :row="rowOptions"
-      @error="onError"
-      @model-updated="onModelUpdated"
-    />
-    <!-- <vuetify-form-base-ssr
-      v-if="isReady"
-      ref="vfg"
-      :schema="testFormSchema"
-      :options="formOptions"
-      :row="rowOptions"
-      @error="onError"
-      @model-updated="onModelUpdated"
-    /> -->
-    <!-- <pre>{{ editingRecord }}</pre> -->
+      v-model="formValid"
+      lazy-validation
+    >
+      <vuetify-form-base-ssr
+        v-if="isReady"
+        :schema="testFormSchema"
+        :model="testModel"
+        :row="rowOptions"
+        @error="onError"
+        @input="onModelUpdated"
+      />
+    </v-form> -->
     <div class="buttons">
-      <button class="back" @click="back">{{ "TL_BACK" | translate }}</button>
-      <button class="update" @click="updateRecord">{{ (editingRecord._id? "TL_UPDATE": "TL_CREATE") | translate }}</button>
-      <button class="delete" @click="deleteRecord">{{ 'TL_DELETE' | translate }}</button>
+      <v-btn class="back" @click="back">{{ "TL_BACK" | translate }}</v-btn>
+      <v-btn class="update" color="primary" @click="updateRecord">{{ (editingRecord._id? "TL_UPDATE": "TL_CREATE") | translate }}</v-btn>
+      <v-btn class="delete" color="error" @click="deleteRecord">{{ 'TL_DELETE' | translate }}</v-btn>
     </div>
   </div>
 </template>
@@ -54,18 +53,17 @@
 <script>
 import axios from 'axios/dist/axios.min'
 import _ from 'lodash'
-// import VueFormGenerator from 'vue-form-generator'
 import VuetifyFormBaseSsr from 'vuetify-form-base-ssr/src/vuetify-form-base-ssr.vue'
 
 import TranslateService from '@s/TranslateService'
 import AbstractEditorView from './AbstractEditorView'
+import Notification from '@m/Notification'
 
 export default {
   components: {
-    // 'vue-form-generator': VueFormGenerator.component
     'vuetify-form-base-ssr': VuetifyFormBaseSsr
   },
-  mixins: [AbstractEditorView],
+  mixins: [AbstractEditorView, Notification],
   props: [
     'resourceList',
     'resource',
@@ -75,16 +73,15 @@ export default {
   ],
   data () {
     return {
+      formValid: false,
+      fileInputTypes: ['file', 'img', 'imageView', 'attachmentView'],
       cachedMap: {},
       editingRecord: {},
       originalFieldList: [],
       schema: { fields: [] },
       isReady: false,
-      formOptions: {
-        validateAfterLoad: true,
-        validateAfterChanged: true
-      },
       rowOptions: { justify: 'start', align: 'start', noGutters: false },
+      // TODO: hugo - remove after tests
       testFormSchema: {
         name: { type: 'text', label: 'Name' },
         position: { type: 'text', label: 'Position' },
@@ -114,6 +111,9 @@ export default {
       this.editingRecord = _.clone(this.editingRecord)
       this.checkDirty()
       this.updateValidationMessage()
+    },
+    model () {
+      console.warn('MODEL CHANGED: ', this.model)
     }
   },
   async mounted () {
@@ -122,11 +122,13 @@ export default {
     this.removeDirtyFlags()
     this.updateValidationMessage()
     this.isReady = true
-    console.warn('SCHEMA = ', this.schema)
+    console.warn('SCHEMA = ', this.getSchema())
     console.warn('EDITING RECORD = ', this.editingRecord)
-    console.warn('FORM OPTIONS = ', this.formOptions)
   },
   methods: {
+    getSchema () {
+      return _.keyBy(_.get(this.schema, 'fields', []), 'model')
+    },
     back () {
       this.$emit('back')
     },
@@ -139,7 +141,7 @@ export default {
     cloneEditingRecord () {
       const dummy = {}
       _.each(this.resource.schema, (field) => {
-        if (field.input === 'file' || field.input === 'image') {
+        if (_.includes(this.fileInputTypes, field.input)) {
           return
         }
         const isLocalised = this.resource.locales && (field.localised || _.isUndefined(field.localised))
@@ -198,10 +200,7 @@ export default {
         this.$loading.start('delete-record')
         try {
           await axios.delete(`../api/${this.resource.title}/${this.editingRecord._id}`)
-          this.$notify({
-            group: 'notification',
-            text: TranslateService.get('TL_RECORD_DELETED', null, { id: this.editingRecord._id })
-          })
+          this.notify(TranslateService.get('TL_RECORD_DELETED', null, { id: this.editingRecord._id }))
           this.$emit('updateRecordList', null)
         } catch (error) {
           console.error('Error happen during deleteRecord:', error)
@@ -211,27 +210,22 @@ export default {
       }
     },
     async updateRecord () {
-      let isValid = false
+      this.formValid = false
       try {
-        isValid = this.$refs.vfg.validate()
+        this.formValid = this.$refs.vfg.validate()
       } catch (error) {
-        isValid = false
+        console.error('Not valid: ', error)
+        this.formValid = false
       }
-      if (!isValid) {
-        this.$notify({
-          group: 'notification',
-          type: 'error',
-          text: this.editingRecord._id ? TranslateService.get('TL_ERROR_CREATING_RECORD_ID', null, { id: this.editingRecord._id }) : TranslateService.get('TL_ERROR_CREATING_RECORD')
-        })
+      if (!this.formValid) {
+        const notificationText = this.editingRecord._id ? TranslateService.get('TL_ERROR_CREATING_RECORD_ID', null, { id: this.editingRecord._id }) : TranslateService.get('TL_ERROR_CREATING_RECORD')
+        this.notify(notificationText, 'error')
         return
       }
 
       const uploadObject = {}
       _.each(this.resource.schema, (field) => {
-        if (field.input === 'file') {
-          return
-        }
-        if (field.input === 'image') {
+        if (_.includes(this.fileInputTypes, field.input)) {
           return
         }
         const isLocalised = this.resource.locales && (field.localised || _.isUndefined(field.localised))
@@ -268,17 +262,16 @@ export default {
       })
 
       const newAttachments = _.filter(this.editingRecord._attachments, item => !item._id)
+      console.warn('NEW ATTACHMENTS = ', newAttachments)
       const removeAttachments = _.filter(this.record._attachments, item => !_.find(this.editingRecord._attachments, { _id: item._id }))
+      console.warn('REMOVE ATTACHMENTS = ', removeAttachments)
 
       if (_.isUndefined(this.editingRecord._id)) {
         this.$loading.start('create-record')
         try {
           const response = await axios.post(`../api/${this.resource.title}`, uploadObject)
           await this.uploadAttachments(response.data._id, newAttachments)
-          this.$notify({
-            group: 'notification',
-            text: TranslateService.get('TL_RECORD_CREATED', null, { id: response.data._id })
-          })
+          this.notify(TranslateService.get('TL_RECORD_CREATED', null, { id: response.data._id }))
           this.$emit('updateRecordList', response.data)
         } catch (error) {
           console.error('Error happen during updateRecord/create:', error)
@@ -296,10 +289,7 @@ export default {
           }
           await this.uploadAttachments(response.data._id, newAttachments)
           await this.removeAttachments(response.data._id, removeAttachments)
-          this.$notify({
-            group: 'notification',
-            text: TranslateService.get('TL_RECORD_UPDATED', null, { id: this.editingRecord._id })
-          })
+          this.notify(TranslateService.get('TL_RECORD_UPDATED', null, { id: this.editingRecord._id }))
           this.$emit('updateRecordList', response.data)
         } catch (error) {
           console.error('Error happen during updateRecord/update:', error)
@@ -308,23 +298,41 @@ export default {
         this.$loading.stop('update-record')
       }
     },
-    onModelUpdated () {
+    onModelUpdated ({ obj }) {
+      console.info(`onModelUpdated ---- ${obj.key}`, obj.value, obj.schema)
+      // console.info('SCHEMA ', this.schema)
+      if (_.includes(this.fileInputTypes, _.get(obj, 'schema.type', false))) {
+        let newAttachments = _.get(obj, 'value', [])
+        if (!_.isArray(newAttachments)) {
+          newAttachments = [newAttachments]
+        }
+        console.info(`Will udpate attachment ${obj.key}`)
+        _.each(newAttachments, (newAttachment) => {
+          this.editingRecord._attachments.push(newAttachment)
+        })
+        // TODO: hugo - add / remove attachments in this.editingRecord
+      } else {
+        let key = obj.key
+        if (_.get(obj, 'schema.localised', false)) {
+          key = `${_.get(obj, 'schema.locale', 'enUS')}.${key}`
+        }
+        console.info(`Will udpate field ${obj.key}`)
+        _.set(this.editingRecord, key, obj.value)
+      }
+      console.warn('EDITING RECORD ', _.cloneDeep(this.editingRecord))
       this.$refs.vfg.validate()
       this.checkDirty()
     },
     checkDirty () {
       _.each(this.originalFieldList, (field) => {
         let isEqual = true
-        switch (field.type) {
-          case 'attachmentView':
-          case 'imageView':
-            const { key, locale } = this.getKeyLocale(field)
-            const list1 = _.filter(this.record._attachments, attachment => attachment._name === key && (attachment._fields && attachment._fields.locale) === locale)
-            const list2 = _.filter(this.editingRecord._attachments, attachment => attachment._name === key && (attachment._fields && attachment._fields.locale) === locale)
-            isEqual = _.isEqual(list1, list2)
-            break
-          default:
-            isEqual = _.isEqual(_.get(this.record, field.model), _.get(this.editingRecord, field.model))
+        if (_.includes(['attachmentView', 'imageView'], field.type)) {
+          const { key, locale } = this.getKeyLocale(field)
+          const list1 = _.filter(this.record._attachments, attachment => attachment._name === key && (attachment._fields && attachment._fields.locale) === locale)
+          const list2 = _.filter(this.editingRecord._attachments, attachment => attachment._name === key && (attachment._fields && attachment._fields.locale) === locale)
+          isEqual = _.isEqual(list1, list2)
+        } else {
+          isEqual = _.isEqual(_.get(this.record, field.model), _.get(this.editingRecord, field.model))
         }
         field.labelClasses = isEqual ? '' : 'dirty'
       })
@@ -335,7 +343,6 @@ export default {
       })
     },
     updateValidationMessage () {
-      console.warn('updateValidationMessage - TEST')
       // VueFormGenerator.validators.resources.fieldIsRequired = TranslateService.get('TL_FIELD_IS_REQUIRED')
       // VueFormGenerator.validators.resources.invalidFormat = TranslateService.get('TL_INVALID_FORMAT')
     },

@@ -1,17 +1,17 @@
 <template>
-  <wysiwyg :id="editorId()" v-model="obj[key]" :class="{frozen:disabled}" :disabled="disabled" @input="onChange" />
+  <wysiwyg :id="editorId()" v-model="localObj[key]" :class="{frozen:disabled}" :disabled="disabled" @input="onChange" />
 </template>
 
 <script>
 import _ from 'lodash'
-import { abstractField } from 'vue-form-generator'
 
 export default {
-  mixins: [abstractField],
+  props: ['obj', 'vfg', 'model', 'disabled'],
   data () {
     return {
-      obj: this.model,
-      key: null
+      localObj: this.model,
+      key: null,
+      schema: _.get(this.obj, 'schema', {})
     }
   },
   watch: {
@@ -22,12 +22,15 @@ export default {
   mounted () {
     this.updateObj()
   },
+  created () {
+    this.schema = _.cloneDeep(this.obj.schema)
+  },
   methods: {
     updateObj () {
       const list = this.schema.model.split('.')
       this.key = list.pop()
-      this.obj = _.reduce(list, (memo, item) => memo[item], this.model)
-      this.obj[this.key] = this.obj[this.key] || ''
+      this.localObj = _.reduce(list, (memo, item) => memo[item], this.model)
+      this.localObj[this.key] = this.localObj[this.key] || ''
     },
     onChange () {
       this.$emit('model-updated', this.obj[this.key], this.schema.model)

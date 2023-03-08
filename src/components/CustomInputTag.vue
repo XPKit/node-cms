@@ -12,13 +12,13 @@
 <script>
 import InputTag from 'vue-input-tag'
 import _ from 'lodash'
-import { abstractField } from 'vue-form-generator'
+// import { abstractField } from 'vue-form-generator'
 
 export default {
   components: {
     inputTag: InputTag
   },
-  mixins: [abstractField],
+  // mixins: [abstractField],
   props: [
     'locale'
   ],

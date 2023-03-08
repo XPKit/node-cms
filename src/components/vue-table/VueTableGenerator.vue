@@ -176,7 +176,7 @@ export default {
       return _.get(item, sItem.model, '')
     },
     isText (sItem) {
-      return _.includes(['input', 'textArea', 'select'], sItem.type)
+      return _.includes(['input', 'textarea', 'select'], sItem.type)
     },
     isImage (sItem) {
       return _.includes(['imageView'], sItem.type)

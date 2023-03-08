@@ -34,7 +34,10 @@
       </template>
     </div> -->
     <div class="system">
-      <div class="title flex">{{ 'TL_SYSTEM' | translate }} <button v-if="showLogoutButton" @click="logout()"><v-icon small color="black">mdi-link-variant-off</v-icon>{{ 'TL_LOGOUT' | translate }}</button></div>
+      <div class="node-cms-title flex">
+        {{ 'TL_SYSTEM' | translate }}
+        <v-btn v-if="showLogoutButton" color="error" small @click="logout()"><v-icon small color="black">mdi-link-variant-off</v-icon>{{ 'TL_LOGOUT' | translate }}</v-btn>
+      </div>
       <div class="stats cpu">
         <div class="node-cms-title"><small><b>CPU Usage</b></small></div>
         <v-progress-linear color="#6af" rounded :value="system.cpu.usage" />

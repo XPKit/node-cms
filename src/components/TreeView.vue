@@ -4,10 +4,10 @@
 
 <script>
 import _ from 'lodash'
-import { abstractField } from 'vue-form-generator'
+// import { abstractField } from 'vue-form-generator'
 
 export default {
-  mixins: [abstractField],
+  // mixins: [abstractField],
   data () {
     return {
       options: {

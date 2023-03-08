@@ -1,23 +1,22 @@
 <template>
   <div>
-    <vue-form-generator
+    <vuetify-form-base-ssr
       ref="vfg"
       :schema="schema.groupOptions"
       :model="model"
-      :options="formOptions"
       @model-updated="onModelUpdated"
     />
   </div>
 </template>
 
 <script>
-import VueFormGenerator, { abstractField } from 'vue-form-generator'
+import VuetifyFormBaseSsr from 'vuetify-form-base-ssr/src/vuetify-form-base-ssr.vue'
 
 export default {
   components: {
-    'vue-form-generator': VueFormGenerator.component
+    'vuetify-form-base-ssr': VuetifyFormBaseSsr
   },
-  mixins: [abstractField],
+  // mixins: [abstractField],
   props: ['groupOptions'],
   data () {
     return {

@@ -14,13 +14,24 @@ module.exports = {
       label: 'Name',
       field: 'name',
       input: 'string',
-      localised: false,
+      localised: true,
       unique: true,
       required: true
     },
     {
+      label: 'Not localized',
+      field: 'notLocalized',
+      input: 'string',
+      localised: false,
+      required: true
+    },
+    {
       field: 'file',
-      input: 'file'
+      input: 'file',
+      localised: true,
+      options: {
+        maxCount: 1
+      }
     },
     {
       label: 'Enable',
@@ -33,6 +44,10 @@ module.exports = {
       localised: false,
       required: true
     }
+  ],
+  locales: [
+    'enUS',
+    'zhCN'
   ],
   type: 'normal'
 }

@@ -9,7 +9,7 @@
         </div>
       </div>
       <form v-if="!disabled" enctype="multipart/form-data">
-        <input ref="fileInput" :key="schema.model" type="file" @change="onUploadChanged">
+        <v-file-input :key="schema.model" ref="fileInput" :label="schema.label" dense outlined :multiple="schema.maxCount > 1" :accept="schema.accept" show-size @change="onUploadChanged" />
       </form>
     </div>
     <croppa
@@ -54,19 +54,23 @@
 
 <script>
 import _ from 'lodash'
-import { abstractField } from 'vue-form-generator'
+// import { abstractField } from 'vue-form-generator'
 import TranslateService from '@s/TranslateService'
+import Notification from '@m/Notification'
 
 export default {
   components: {
   },
-  mixins: [abstractField],
+  mixins: [Notification],
+  props: ['obj', 'vfg', 'model', 'disabled'],
   data () {
     return {
       placeholder: '',
       myCroppa: null,
       croppaAttachment: null,
-      croppaFileType: null
+      croppaFileType: null,
+      schema: _.get(this.obj, 'schema', {}),
+      localModel: false
     }
   },
   computed: {
@@ -76,10 +80,15 @@ export default {
       this.croppaAttachment = null
     }
   },
-  mounted () {
-    // console.log(this.schema)
+  created () {
+    this.schema = _.cloneDeep(this.obj.schema)
   },
   methods: {
+    updateLocalData () {
+      this.schema = _.cloneDeep(this.obj.schema)
+      this.localModel = _.cloneDeep(this.model)
+      console.warn('updateLocalData', this.obj.schema)
+    },
     getFileSizeLimit (limit) {
       const kbLimit = limit / 1024
       if (kbLimit > 1000) {
@@ -91,10 +100,10 @@ export default {
       if (isClearInput) {
         this.$refs.fileInput.value = null
       }
-      this.model._attachments = _.filter(this.model._attachments, item => item !== attachment)
+      this.localModel._attachments = _.filter(this.localModel._attachments, item => item !== attachment)
       this.$forceUpdate()
 
-      this.$emit('model-updated', this.model._attachments, this.schema.model)
+      this.$emit('input', this.localModel._attachments)
 
       // work around to force label update
       const dummy = this.schema.label
@@ -118,11 +127,11 @@ export default {
         blob.name = _.get(this, 'croppaAttachment._filename', 'blob')
         this.croppaAttachment.file = blob
 
-        if (!_.includes(this.model._attachments, this.croppaAttachment)) {
-          this.model._attachments = _.filter(this.model._attachments, item => item._name !== this.croppaAttachment._name)
-          this.model._attachments.push(this.croppaAttachment)
+        if (!_.includes(this.localModel._attachments, this.croppaAttachment)) {
+          this.localModel._attachments = _.filter(this.localModel._attachments, item => item._name !== this.croppaAttachment._name)
+          this.localModel._attachments.push(this.croppaAttachment)
         }
-        this.$emit('model-updated', this.model._attachments, this.schema.model)
+        this.$emit('input', this.localModel._attachments)
       }, type, this.schema.quality || 0.9)
     },
     onCroppaMouseUp () {
@@ -137,7 +146,7 @@ export default {
     onCroppaChooseFile (file) {
       const { key, locale } = this.getKeyLocale()
       this.croppaFileType = file.type
-      this.model._attachments.push(this.croppaAttachment = {
+      this.localModel._attachments.push(this.croppaAttachment = {
         _filename: file.name,
         _name: key,
         _fields: {
@@ -147,7 +156,7 @@ export default {
         localised: this.schema.localised,
         file
       })
-      this.$emit('model-updated', this.model._attachments, this.schema.model)
+      this.$emit('input', this.localModel._attachments)
     },
 
     onCroppaImageDraw () {
@@ -163,7 +172,7 @@ export default {
       reader.onload = (element) => {
         const { key, locale } = vm.getKeyLocale()
         vm.removeImage(vm.attachment())
-        vm.model._attachments.push({
+        vm.localModel._attachments.push({
           _filename: files[0].name,
           _name: key,
           _fields: {
@@ -175,8 +184,7 @@ export default {
           data: element.target.result
         })
         vm.$forceUpdate()
-
-        this.$emit('model-updated', vm.model._attachments, this.schema.model)
+        this.$emit('input', this.localModel._attachments)
 
         // work around to force label update
         const dummy = this.schema.label
@@ -200,7 +208,7 @@ export default {
     },
     attachment () {
       const { key, locale } = this.getKeyLocale()
-      return _.find(this.model._attachments, attachment => attachment._name === key && (attachment._fields && attachment._fields.locale) === locale)
+      return _.find(this.localModel._attachments, attachment => attachment._name === key && (attachment._fields && attachment._fields.locale) === locale)
     },
     imageSize () {
       const attachment = this.attachment()
@@ -213,10 +221,10 @@ export default {
       return attachment && /image/g.test(attachment._contentType || (attachment.file && attachment.file.type))
     },
     bytesToSize (bytes) {
-      const sizes = [ 'Bytes', 'KB', 'MB', 'GB', 'TB' ]
       if (bytes === 0) {
         return '0 Byte'
       }
+      const sizes = [ 'Bytes', 'KB', 'MB', 'GB', 'TB' ]
       const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
       const result = Math.round(bytes / Math.pow(1024, i), 2)
       if (_.isNaN(result)) {
@@ -225,18 +233,10 @@ export default {
       return `${result} ${sizes[i]}`
     },
     onCroppaFileSizeExceed () {
-      this.$notify({
-        group: 'notification',
-        type: 'error',
-        text: TranslateService.get('TL_FILE_SIZE_EXCEED', null, { size: this.schema.limit / 1024 })
-      })
+      this.notify(TranslateService.get('TL_FILE_SIZE_EXCEED', null, { size: this.schema.limit / 1024 }), 'error')
     },
     onCroppaFileTypeMismatch () {
-      this.$notify({
-        group: 'notification',
-        type: 'error',
-        text: TranslateService.get('TL_FILE_TYPE_MISMATCH')
-      })
+      this.notify(TranslateService.get('TL_FILE_TYPE_MISMATCH'), 'error')
     }
   }
 }
