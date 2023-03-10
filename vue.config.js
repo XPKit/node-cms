@@ -29,6 +29,7 @@ module.exports = defineConfig({
         '@c': path.resolve(__dirname, 'src/components'),
         '@v': path.resolve(__dirname, 'src/views'),
         '@f': path.resolve(__dirname, 'src/filters'),
+        '@u': path.resolve(__dirname, 'src/utils'),
         '@l': path.resolve(__dirname, 'src/lib'),
         '@r': path.resolve(__dirname, 'src/router'),
         '@m': path.resolve(__dirname, 'src/mixins')

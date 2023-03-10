@@ -14,7 +14,7 @@
         {{ 'TL_'+item.toUpperCase() | translate }}
       </v-tab>
     </v-tabs>
-    <v-form
+    <!-- <v-form
       ref="vfg"
       v-model="formValid"
       lazy-validation
@@ -27,7 +27,7 @@
         @error="onError"
         @input="onModelUpdated"
       />
-    </v-form>
+    </v-form> -->
     <!-- <v-form
       ref="vfg"
       v-model="formValid"
@@ -36,12 +36,26 @@
       <vuetify-form-base-ssr
         v-if="isReady"
         :schema="testFormSchema"
-        :model="testModel"
+        :model="testFormModel"
         :row="rowOptions"
         @error="onError"
         @input="onModelUpdated"
       />
     </v-form> -->
+    <v-form
+      ref="vfg"
+      v-model="formValid"
+      lazy-validation
+    >
+      <custom-form
+        v-if="isReady"
+        :schema="schema"
+        :model.sync="editingRecord"
+        :row="rowOptions"
+        @error="onError"
+        @input="onModelUpdated"
+      />
+    </v-form>
     <div class="buttons">
       <v-btn class="back" @click="back">{{ "TL_BACK" | translate }}</v-btn>
       <v-btn class="update" color="primary" @click="updateRecord">{{ (editingRecord._id? "TL_UPDATE": "TL_CREATE") | translate }}</v-btn>
@@ -53,7 +67,7 @@
 <script>
 import axios from 'axios/dist/axios.min'
 import _ from 'lodash'
-import VuetifyFormBaseSsr from 'vuetify-form-base-ssr/src/vuetify-form-base-ssr.vue'
+// import VuetifyFormBaseSsr from 'vuetify-form-base-ssr/src/vuetify-form-base-ssr.vue'
 
 import TranslateService from '@s/TranslateService'
 import AbstractEditorView from './AbstractEditorView'
@@ -61,7 +75,7 @@ import Notification from '@m/Notification'
 
 export default {
   components: {
-    'vuetify-form-base-ssr': VuetifyFormBaseSsr
+    // 'vuetify-form-base-ssr': VuetifyFormBaseSsr
   },
   mixins: [AbstractEditorView, Notification],
   props: [
@@ -80,19 +94,8 @@ export default {
       originalFieldList: [],
       schema: { fields: [] },
       isReady: false,
-      rowOptions: { justify: 'start', align: 'start', noGutters: false },
-      // TODO: hugo - remove after tests
-      testFormSchema: {
-        name: { type: 'text', label: 'Name' },
-        position: { type: 'text', label: 'Position' },
-        tasks: {
-          type: 'array',
-          schema: {
-            done: { type: 'checkbox', label: 'done', col: 4 },
-            title: { type: 'text', col: 4 }
-          }
-        }
-      }
+      // TODO: hugo - LATER -  put the formatting in the resource's definition to allow custom layout
+      rowOptions: { justify: 'start', align: 'start', noGutters: false }
     }
   },
   watch: {
@@ -122,13 +125,9 @@ export default {
     this.removeDirtyFlags()
     this.updateValidationMessage()
     this.isReady = true
-    console.warn('SCHEMA = ', this.getSchema())
-    console.warn('EDITING RECORD = ', this.editingRecord)
+    console.warn('EDITING RECORD - ', this.editingRecord)
   },
   methods: {
-    getSchema () {
-      return _.keyBy(_.get(this.schema, 'fields', []), 'model')
-    },
     back () {
       this.$emit('back')
     },
@@ -310,7 +309,6 @@ export default {
         _.each(newAttachments, (newAttachment) => {
           this.editingRecord._attachments.push(newAttachment)
         })
-        // TODO: hugo - add / remove attachments in this.editingRecord
       } else {
         let key = obj.key
         if (_.get(obj, 'schema.localised', false)) {
@@ -320,8 +318,10 @@ export default {
         _.set(this.editingRecord, key, obj.value)
       }
       console.warn('EDITING RECORD ', _.cloneDeep(this.editingRecord))
+      console.warn('AFTER VALIDATE', obj)
       this.$refs.vfg.validate()
       this.checkDirty()
+      debugger// eslint-disable-line no-debugger
     },
     checkDirty () {
       _.each(this.originalFieldList, (field) => {

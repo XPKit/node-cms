@@ -54,14 +54,14 @@
 
 <script>
 import _ from 'lodash'
-// import { abstractField } from 'vue-form-generator'
+import AbstractField from '@m/AbstractField'
 import TranslateService from '@s/TranslateService'
 import Notification from '@m/Notification'
 
 export default {
   components: {
   },
-  mixins: [Notification],
+  mixins: [Notification, AbstractField],
   props: ['obj', 'vfg', 'model', 'disabled'],
   data () {
     return {

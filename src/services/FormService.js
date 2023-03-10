@@ -48,8 +48,10 @@ const customValidators = {
     if (_.get(field, 'required', false) && (!_.isString(value) || _.isEmpty(value))) {
       return messages.fieldIsRequired
     }
+    console.warn('AFTER 1')
     const locale = _.head(_.get(field, 'model', '').split('.'))
     if (_.get(field, 'regex.value', false) === false && _.get(field, `regex['${locale}'].value`, false) === false) {
+      console.warn('AFTER 1-1')
       return true
     }
     let regexText = false
@@ -58,6 +60,7 @@ const customValidators = {
       regexText = _.get(field, `regex['${locale}'].value`, false)
       regexDescription = _.get(field, `regex['${locale}'].description`, false)
     }
+    console.warn('AFTER 2')
     if (regexText === false) {
       regexText = _.get(field, 'regex.value', false)
       regexDescription = _.get(field, 'regex.description', false)
@@ -72,6 +75,7 @@ const customValidators = {
         return `${messages.invalidFormat} (${TranslateService.get(regexDescription)})`
       }
     }
+    console.warn('AFTER 3')
     return true
   },
   number: (value, field, model) => {
@@ -135,45 +139,63 @@ const customValidators = {
 const typeMapper = {
   string: {
     type: 'input',
-    inputType: 'text',
+    overrideType: 'CustomInput',
+    outlined: true,
+    dense: true,
     validator: customValidators.text
   },
   text: {
     type: 'textarea',
+    overrideType: 'CustomTextarea',
     rows: 5,
+    outlined: true,
+    dense: true,
     validator: customValidators.text
   },
   password: {
     type: 'input',
-    inputType: 'password'
+    overrideType: 'CustomPassword',
+    outlined: true,
+    dense: true
   },
   email: {
     type: 'input',
-    inputType: 'email',
+    overrideType: 'CustomEmail',
+    outlined: true,
+    dense: true,
     validator: validators.email
   },
   url: {
     type: 'input',
-    inputType: 'url',
+    overrideType: 'CustomUrl',
+    outlined: true,
+    dense: true,
     validator: validators.url
   },
   number: {
     type: 'input',
-    inputType: 'number',
+    overrideType: 'CustomNumber',
+    outlined: true,
+    dense: true,
     validator: customValidators.number
   },
   double: {
     type: 'input',
-    inputType: 'number',
+    overrideType: 'CustomDouble',
+    outlined: true,
+    dense: true,
     validator: customValidators.double
   },
   integer: {
     type: 'input',
-    inputType: 'number',
+    overrideType: 'CustomInteger',
+    outlined: true,
+    dense: true,
     validator: customValidators.integer
   },
   checkbox: {
-    type: 'switch'
+    type: 'switch',
+    overrideType: 'CustomSwitch'
   },
   date: {
     type: 'customDatetimePicker',
@@ -228,6 +250,7 @@ const typeMapper = {
   },
   json: {
     type: 'treeView',
+    overrideType: 'TreeView',
     treeViewOptions: {
       maxDepth: 4,
       rootObjectKey: 'root',
@@ -252,7 +275,7 @@ const typeMapper = {
     validator: customValidators.image
   },
   file: {
-    type: 'attachmentView',
+    type: 'AttachmentView',
     validator: customValidators.file
   },
   paragraph: {
@@ -289,69 +312,59 @@ class FormService {
     return getKeyLocale(schema)
   }
 
-  translateFieldType (field) {
-    let type = _.get(field, 'inputType', _.get(field, 'type', false))
-    console.warn(`${field.model} - ${type}`, _.cloneDeep(field))
-    if (!type) {
-      console.error(`Field ${field.label} has no type, will assume it is a string field`)
-      return 'text'
-    }
-    if (type === 'string') {
-      return 'text'
-    }
-    if (type === 'text') {
-      return 'text'
-    }
-    if (type === 'image') {
-      return 'img'
-    }
-    // if (type === 'ParagraphView') {
-    //   return 'wrap'
-    // }
-    if (type === 'switch') {
-      return 'checkbox'
-    }
-    if (type === 'attachmentView') {
-      return 'attachmentView'
-      // TODO: hugo - may need to adapt for extra options
-    }
-    return type
-  }
+  // translateFieldType (field) {
+  //   let type = _.get(field, 'inputType', _.get(field, 'type', false))
+  //   console.warn(`${field.model} - ${type}`, _.cloneDeep(field))
+  //   if (!type) {
+  //     console.error(`Field ${field.label} has no type, will assume it is a string field`)
+  //     return 'text'
+  //   }
+  //   if (type === 'string') {
+  //     return 'text'
+  //   }
+  //   if (type === 'text') {
+  //     return 'textarea'
+  //   }
+  //   if (type === 'image') {
+  //     return 'img'
+  //   }
+  //   if (type === 'switch') {
+  //     return 'checkbox'
+  //   }
+  //   if (type === 'attachmentView') {
+  //     return 'attachmentView'
+  //   }
+  //   return type
+  // }
 
-  translateFieldRequirements (field) {
-    const rules = []
-    if (_.get(field, 'validator', false)) {
-      rules.push(field.validator)
-    }
-    if (_.get(field, 'required', false) && field.type !== 'checkbox') {
-      rules.push((val) => {
-        // TODO: hugo - check if works with all field types
-        if (_.get(val, 'length', 0) === 0) {
-          return false
-        }
-        return true
-      })
-    }
-    // TODO: hugo - checkbox options
-    // TODO: hugo - file input options
-    // TODO: hugo - min max text options
-    return rules
-  }
+  // translateFieldRequirements (field) {
+  //   const rules = []
+  //   if (_.get(field, 'validator', false)) {
+  //     rules.push(field.validator)
+  //   }
+  //   if (_.get(field, 'required', false) && field.type !== 'checkbox') {
+  //     rules.push((val) => {
+  //       if (_.get(val, 'length', 0) === 0) {
+  //         return false
+  //       }
+  //       return true
+  //     })
+  //   }
+  //   return rules
+  // }
 
-  translateFieldsSchema (fields) {
-    const formattedFields = _.map(fields, (field) => {
-      field.type = this.translateFieldType(field)
-      // TODO: hugo - fix the translation of the schema
-      field.outlined = true
-      field.dense = true
-      field.col = 8
-      field.offset = 1
-      field.rules = this.translateFieldRequirements(field)
-      // TODO: hugo - transform paragraphs into group
-      return field
-    })
-    return formattedFields
-  }
+  // translateFieldsSchema (fields) {
+  //   const formattedFields = _.map(fields, (field) => {
+  //     field.type = this.translateFieldType(field)
+  //     field.outlined = true
+  //     field.dense = true
+  //     field.col = 8
+  //     field.offset = 1
+  //     field.rules = this.translateFieldRequirements(field)
+  //     return field
+  //   })
+  //   return formattedFields
+  // }
 }
 
 export default new FormService()

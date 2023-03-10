@@ -12,9 +12,6 @@
       <div v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" class="item">
         <span class="handle" />
         <div class="item-main">
-          {{ getSchema(item) }}
-          ----
-          {{ item }}
           <vuetify-form-base-ssr
             ref="vfg"
             :schema="getSchema(item)"
@@ -25,9 +22,9 @@
         <v-btn @click="onClickRemoveItem(item)">remove</v-btn>
       </div>
       <div slot="header">
-        <v-select v-model="selectedType">
-          <option v-for="item in types" :key="`option-${item.input}`" :value="item">{{ item.label }}</option>
-        </v-select>
+        <v-select v-model="selectedType" outlined dense :items="types" :label="schema.label" item-text="label" />
+        <!-- <option v-for="item in types" :key="`option-${item.input}`" :value="item">{{ item.label }}</option>
+        </v-select> -->
         <v-btn @click="onClickAddNewItem">Add</v-btn>
       </div>
     </draggable>

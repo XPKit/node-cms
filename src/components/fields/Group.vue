@@ -11,12 +11,13 @@
 
 <script>
 import VuetifyFormBaseSsr from 'vuetify-form-base-ssr/src/vuetify-form-base-ssr.vue'
+import AbstractField from '@m/AbstractField'
 
 export default {
   components: {
     'vuetify-form-base-ssr': VuetifyFormBaseSsr
   },
-  // mixins: [abstractField],
+  mixins: [AbstractField],
   props: ['groupOptions'],
   data () {
     return {

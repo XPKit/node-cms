@@ -1,24 +1,27 @@
 import Vue from 'vue'
-import Vuetify, {
-  VRow,
-  VCol,
-  VTextField,
-  VTooltip,
-  VCard,
-  VInput,
-  VTextarea,
-  VCheckbox,
-  VSwitch,
-  VSelect
-} from 'vuetify/lib'
-import { Ripple, Intersect, Touch, Resize, ClickOutside } from 'vuetify/lib/directives'
+import Vuetify from 'vuetify/lib/framework'
+// import Vuetify, {
+//   VRow,
+//   VCol,
+//   VTextField,
+//   VTooltip,
+//   VCard,
+//   VForm,
+//   VInput,
+//   VTextarea,
+//   VCheckbox,
+//   VSwitch,
+//   VSelect
+// } from 'vuetify/lib'
+// import { Ripple, Intersect, Touch, Resize, ClickOutside } from 'vuetify/lib/directives'
 import 'vuetify/dist/vuetify.min.css'
 import '@mdi/font/scss/materialdesignicons.scss'
 
-Vue.use(Vuetify, {
-  components: { VRow, VTooltip, VCard, VCol, VTextField, VInput, VTextarea, VCheckbox, VSwitch, VSelect },
-  directives: { Ripple, Intersect, Touch, Resize, ClickOutside }
-})
+Vue.use(Vuetify)
+// Vue.use(Vuetify, {
+//   components: { VRow, VTooltip, VCard, VCol, VTextField, VForm, VInput, VTextarea, VCheckbox, VSwitch, VSelect },
+//   directives: { Ripple, Intersect, Touch, Resize, ClickOutside }
+// })
 
 export default new Vuetify({
   theme: {

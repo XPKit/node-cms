@@ -18,13 +18,13 @@
 <script>
 import Verte from 'verte'
 import _ from 'lodash'
-// import { abstractField } from 'vue-form-generator'
+import AbstractField from '@m/AbstractField'
 
 export default {
   components: {
     verte: Verte
   },
-  // mixins: [abstractField],
+  mixins: [AbstractField],
   props: [
     'locale'
   ],

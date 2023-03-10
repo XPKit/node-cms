@@ -15,26 +15,35 @@ import draggable from 'vuedraggable'
 import LogViewer from '@femessage/log-viewer'
 
 import vuetify from './vuetify.js'
+// Global components
 import App from '@c/App.vue'
 import LoginApp from '@c/LoginApp.vue'
-import TreeView from '@c/TreeView.vue'
-import ColorPicker from '@c/ColorPicker.vue'
-import JsonEditor from '@c/JsonEditor.vue'
-import WysiwygField from '@c/Wysiwyg.vue'
-import ParagraphView from '@c/ParagraphView.vue'
-import ImageView from '@c/ImageView.vue'
-import AttachmentView from '@c/AttachmentView.vue'
-import ParagraphAttachmentView from '@c/ParagraphAttachmentView.vue'
-import CustomDatetimePicker from '@c/CustomDatetimePicker.vue'
-import CustomMultiSelect from '@c/CustomMultiSelect.vue'
-import CustomChecklist from '@c/CustomChecklist.vue'
-import CustomInputTag from '@c/CustomInputTag.vue'
-import Group from '@c/Group.vue'
-import PluginPage from '@c/PluginPage.vue'
 import MultiselectPage from '@c/MultiselectPage.vue'
-import Syslog from '@c/Syslog.vue'
-import CmsImport from '@c/CmsImport.vue'
-import SyncResource from '@c/SyncResource.vue'
+import CustomForm from '@c/CustomForm.vue'
+
+// Pages
+import PluginPage from '@c/pages/PluginPage.vue'
+import Syslog from '@c/pages/Syslog.vue'
+import CmsImport from '@c/pages/CmsImport.vue'
+import SyncResource from '@c/pages/SyncResource.vue'
+
+// Field components
+import TreeView from '@c/fields/TreeView.vue'
+import ColorPicker from '@c/fields/ColorPicker.vue'
+import JsonEditor from '@c/fields/JsonEditor.vue'
+import WysiwygField from '@c/fields/Wysiwyg.vue'
+import ParagraphView from '@c/fields/ParagraphView.vue'
+import ImageView from '@c/fields/ImageView.vue'
+import AttachmentView from '@c/fields/AttachmentView.vue'
+import ParagraphAttachmentView from '@c/fields/ParagraphAttachmentView.vue'
+import CustomDatetimePicker from '@c/fields/CustomDatetimePicker.vue'
+import CustomMultiSelect from '@c/fields/CustomMultiSelect.vue'
+import CustomChecklist from '@c/fields/CustomChecklist.vue'
+import CustomInput from '@c/fields/CustomInput.vue'
+import CustomSwitch from '@c/fields/CustomSwitch.vue'
+import CustomInputTag from '@c/fields/CustomInputTag.vue'
+import Group from '@c/fields/Group.vue'
+
 import Loading from './modules/Loading'
 
 import TranslateFilter from '@f/Translate'
@@ -43,26 +52,22 @@ import TranslateService from '@s/TranslateService'
 window.Vue = Vue
 // Debug purpose
 // Vue.config.devtools = false
-Vue.component('FieldAttachmentView', AttachmentView)
-Vue.component('VAttachmentView', AttachmentView)
-Vue.component('FieldImageView', ImageView)
-Vue.component('VImageView', ImageView)
-Vue.component('FieldParagraphAttachmentView', ParagraphAttachmentView)
-Vue.component('FieldParagraphView', ParagraphView)
-Vue.component('VParagraphView', ParagraphView)
-Vue.component('FieldTreeView', TreeView)
-Vue.component('FieldColorPicker', ColorPicker)
-Vue.component('FieldJsonEditor', JsonEditor)
-Vue.component('VJsonEditor', JsonEditor)
-Vue.component('FieldWysiwyg', WysiwygField)
-Vue.component('VWysiwyg', WysiwygField)
-Vue.component('FieldCustomDatetimePicker', CustomDatetimePicker)
-Vue.component('FieldCustomChecklist', CustomChecklist)
-Vue.component('VCustomChecklist', CustomChecklist)
-Vue.component('FieldGroup', Group)
-Vue.component('FieldCustomInputTag', CustomInputTag)
-Vue.component('FieldCustomMultiSelect', CustomMultiSelect)
-Vue.component('VCustomMultiSelect', CustomMultiSelect)
+Vue.component('CustomForm', CustomForm)
+Vue.component('AttachmentView', AttachmentView)
+Vue.component('ImageView', ImageView)
+Vue.component('CustomInput', CustomInput)
+Vue.component('CustomSwitch', CustomSwitch)
+Vue.component('ParagraphAttachmentView', ParagraphAttachmentView)
+Vue.component('ParagraphView', ParagraphView)
+Vue.component('TreeView', TreeView)
+Vue.component('ColorPicker', ColorPicker)
+Vue.component('JsonEditor', JsonEditor)
+Vue.component('Wysiwyg', WysiwygField)
+Vue.component('CustomDatetimePicker', CustomDatetimePicker)
+Vue.component('CustomChecklist', CustomChecklist)
+Vue.component('Group', Group)
+Vue.component('CustomInputTag', CustomInputTag)
+Vue.component('CustomMultiSelect', CustomMultiSelect)
 Vue.component('LogViewer', LogViewer)
 Vue.component('PluginPage', PluginPage)
 Vue.component('MultiselectPage', MultiselectPage)

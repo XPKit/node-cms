@@ -33,12 +33,12 @@
 <script>
 import {v4 as uuid} from 'uuid'
 import _ from 'lodash'
-// import { abstractField } from 'vue-form-generator'
+import AbstractField from '@m/AbstractField'
 
 export default {
   components: {
   },
-  // mixins: [abstractField],
+  mixins: [AbstractField],
   data () {
     return {
       items: _.get(this.model, this.schema.model, [])

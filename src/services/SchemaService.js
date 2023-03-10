@@ -76,10 +76,10 @@ class SchemaService {
     return fields
   }
 
-  formatSchemaForFormGenerator (fields) {
-    console.warn('formatSchemaForFormGenerator - ', _.cloneDeep(fields))
-    return FormService.translateFieldsSchema(fields)
-  }
+  // formatSchemaForFormGenerator (fields) {
+  //   console.warn('formatSchemaForFormGenerator - ', _.cloneDeep(fields))
+  //   return FormService.translateFieldsSchema(fields)
+  // }
 
   updateFieldSchema (fields, field, id, locale, extraSources) {
     const cachedData = ResourceService.get(field.source)

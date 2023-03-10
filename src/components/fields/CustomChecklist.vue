@@ -31,6 +31,7 @@
 
 <script>
 import { isObject, isNil, clone, get, cloneDeep } from 'lodash'
+import AbstractField from '@m/AbstractField'
 
 function slugify (name = '') {
   return name
@@ -43,7 +44,7 @@ function slugify (name = '') {
 }
 
 export default {
-  // mixins: [abstractField],
+  mixins: [AbstractField],
   props: ['obj', 'vfg', 'model', 'disabled'],
   data () {
     return {
