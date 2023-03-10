@@ -44,11 +44,9 @@ function msg (text) {
 
 const validators = {
   resources,
-
   required (value, field, model, messages = resources) {
     return checkEmpty(value, field.required, messages)
   },
-
   number (value, field, model, messages = resources) {
     let res = checkEmpty(value, field.required, messages)
     if (res != null) {
@@ -67,7 +65,6 @@ const validators = {
     }
     return err
   },
-
   integer (value, field, model, messages = resources) {
     let res = checkEmpty(value, field.required, messages)
     if (res != null) {
@@ -79,7 +76,6 @@ const validators = {
     }
     return errs
   },
-
   double (value, field, model, messages = resources) {
     let res = checkEmpty(value, field.required, messages)
     if (res != null) {
@@ -89,7 +85,6 @@ const validators = {
       return [msg(messages.invalidNumber)]
     }
   },
-
   string (value, field, model, messages = resources) {
     let res = checkEmpty(value, field.required, messages)
     if (res != null) {
@@ -106,10 +101,8 @@ const validators = {
     } else {
       err.push(msg(messages.thisNotText))
     }
-
     return err
   },
-
   array (value, field, model, messages = resources) {
     if (field.required) {
       if (!isArray(value)) {
@@ -128,7 +121,6 @@ const validators = {
       }
     }
   },
-
   date (value, field, model, messages = resources) {
     let res = checkEmpty(value, field.required, messages)
     if (res != null) return res
@@ -151,7 +143,6 @@ const validators = {
     }
     return err
   },
-
   regexp (value, field, model, messages = resources) {
     let res = checkEmpty(value, field.required, messages)
     if (res != null) {
@@ -164,7 +155,6 @@ const validators = {
       }
     }
   },
-
   email (value, field, model, messages = resources) {
     let res = checkEmpty(value, field.required, messages)
     if (res != null) {
@@ -175,25 +165,21 @@ const validators = {
       return [msg(messages.invalidEmail)]
     }
   },
-
   url (value, field, model, messages = resources) {
     let res = checkEmpty(value, field.required, messages)
     if (res != null) {
       return res
     }
-
     let re = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g // eslint-disable-line no-useless-escape
     if (!re.test(value)) {
       return [msg(messages.invalidURL)]
     }
   },
-
   creditCard (value, field, model, messages = resources) {
     let res = checkEmpty(value, field.required, messages)
     if (res != null) {
       return res
     }
-
     const creditCard = /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/
     const sanitized = value.replace(/[^0-9]+/g, '')
     if (!creditCard.test(sanitized)) {
@@ -218,26 +204,21 @@ const validators = {
       }
       shouldDouble = !shouldDouble
     }
-
     if (!(sum % 10 === 0 ? sanitized : false)) {
       return [msg(messages.invalidCardNumber)]
     }
   },
-
   alpha (value, field, model, messages = resources) {
     let res = checkEmpty(value, field.required, messages)
     if (res != null) return res
-
     let re = /^[a-zA-Z]*$/
     if (!re.test(value)) {
       return [msg(messages.invalidTextContainNumber)]
     }
   },
-
   alphaNumeric (value, field, model, messages = resources) {
     let res = checkEmpty(value, field.required, messages)
     if (res != null) return res
-
     let re = /^[a-zA-Z0-9]*$/
     if (!re.test(value)) {
       return [msg(messages.invalidTextContainSpec)]

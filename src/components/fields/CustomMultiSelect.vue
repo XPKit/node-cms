@@ -3,8 +3,9 @@
     :id="selectOptions.id"
     :options="options"
     :value="objectValue"
+    :class="[schema.labelClasses]"
     :multiple="selectOptions.multiple"
-    :track-by="selectOptions.trackBy || null" :label="selectOptions.label || null" :searchable="selectOptions.searchable" :clear-on-select="selectOptions.clearOnSelect" :hide-selected="selectOptions.hideSelected" :placeholder="schema.placeholder" :allow-empty="selectOptions.allowEmpty" :reset-after="selectOptions.resetAfter" :close-on-select="selectOptions.closeOnSelect" :custom-label="customLabel"
+    :track-by="selectOptions.trackBy || null" :label="selectOptions.label || null" :searchable="selectOptions.searchable" :clear-on-select="selectOptions.clearOnSelect" :hide-selected="selectOptions.hideSelected" :placeholder="schema.placeholder" :allow-empty="selectOptions.allowEmpty ? true : false" :reset-after="selectOptions.resetAfter" :close-on-select="selectOptions.closeOnSelect" :custom-label="customLabel"
     :taggable="selectOptions.taggable" :tag-placeholder="selectOptions.tagPlaceholder" :max="schema.max || null" :options-limit="selectOptions.optionsLimit" :group-values="selectOptions.groupValues" :group-label="selectOptions.groupLabel" :block-keys="selectOptions.blockKeys" :internal-search="selectOptions.internalSearch" :select-label="selectOptions.selectLabel" :selected-label="selectOptions.selectedLabel"
     :deselect-label="selectOptions.deselectLabel" :show-labels="selectOptions.showLabels" :limit="selectOptions.limit" :limit-text="selectOptions.limitText" :loading="selectOptions.loading" :disabled="disabled" :max-height="selectOptions.maxHeight" :show-pointer="selectOptions.showPointer" :option-height="selectOptions.optionHeight" @input="updateSelected"
     @select="onSelect" @remove="onRemove" @search-change="onSearchChange" @tag="addTag" @open="onOpen" @close="onClose"
@@ -16,20 +17,22 @@
 <script>
 import Multiselect from 'vue-multiselect'
 import _ from 'lodash'
+import AbstractField from '@m/AbstractField'
 
 export default {
   components: {
     Multiselect
   },
+  mixins: [AbstractField],
   props: ['obj', 'vfg', 'model', 'disabled'],
   data () {
     return {
-      objectValue: this.value,
-      schema: _.get(this.obj, 'schema', {})
+      objectValue: this.value
     }
   },
   computed: {
     selectOptions () {
+      console.warn('test options', this.schema.selectOptions || {})
       return this.schema.selectOptions || {}
     },
     options () {
@@ -52,7 +55,6 @@ export default {
     }
   },
   created () {
-    this.schema = _.cloneDeep(this.obj.schema)
     const key = this.getKey()
     const currentValue = _.get(this.model, _.get(this.schema, 'model', false), false)
     if (currentValue) {
@@ -73,8 +75,7 @@ export default {
       } else {
         this.value = this.objectValue
       }
-      console.warn('multiselect', this.value, value)
-      this.$emit('input', this.value)
+      // TODO: hugo - when value set to none
     },
     addTag (newTag, id) {
       let onNewTag = this.selectOptions.onNewTag

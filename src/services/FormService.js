@@ -28,7 +28,10 @@ const validators = {
     }
   },
   number: (n) => _.isNumber(n),
-  integer: (n) => _.isInteger(n),
+  integer: (n) => {
+    console.warn('validators.integer', n, _.isInteger(n))
+    return _.isInteger(n)
+  },
   double: (n) => isNaN(Number(n)),
   text: (t) => _.isString(t),
   array: (a) => _.isArray(a),
@@ -136,61 +139,50 @@ const customValidators = {
   }
 }
 
-const typeMapper = {
+let typeMapper = {
   string: {
     type: 'input',
     overrideType: 'CustomInput',
-    outlined: true,
-    dense: true,
     validator: customValidators.text
   },
   text: {
     type: 'textarea',
     overrideType: 'CustomTextarea',
     rows: 5,
-    outlined: true,
-    dense: true,
     validator: customValidators.text
   },
   password: {
     type: 'input',
-    overrideType: 'CustomPassword',
-    outlined: true,
-    dense: true
+    inputFieldType: 'password',
+    overrideType: 'CustomInput'
   },
   email: {
     type: 'input',
-    overrideType: 'CustomEmail',
-    outlined: true,
-    dense: true,
+    overrideType: 'CustomInput',
+    inputFieldType: 'email',
     validator: validators.email
   },
   url: {
     type: 'input',
-    overrideType: 'CustomUrl',
-    outlined: true,
-    dense: true,
+    overrideType: 'CustomInput',
     validator: validators.url
   },
   number: {
     type: 'input',
-    overrideType: 'CustomNumber',
-    outlined: true,
-    dense: true,
+    overrideType: 'CustomInput',
+    inputFieldType: 'number',
     validator: customValidators.number
   },
   double: {
     type: 'input',
-    overrideType: 'CustomDouble',
-    outlined: true,
-    dense: true,
+    overrideType: 'CustomInput',
+    inputFieldType: 'number',
     validator: customValidators.double
   },
   integer: {
     type: 'input',
-    overrideType: 'CustomInteger',
-    outlined: true,
-    dense: true,
+    overrideType: 'CustomInput',
+    inputFieldType: 'number',
     validator: customValidators.integer
   },
   checkbox: {
@@ -198,28 +190,28 @@ const typeMapper = {
     overrideType: 'CustomSwitch'
   },
   date: {
-    type: 'customDatetimePicker',
+    type: 'CustomDatetimePicker',
     format: 'YYYY-MM-DD',
     customDatetimePickerOptions: {
       format: 'YYYY-MM-DD'
     }
   },
   time: {
-    type: 'customDatetimePicker',
+    type: 'CustomDatetimePicker',
     format: 'hh:mm:ss a',
     customDatetimePickerOptions: {
       format: 'hh:mm:ss a'
     }
   },
   datetime: {
-    type: 'customDatetimePicker',
+    type: 'CustomDatetimePicker',
     format: 'YYYY-MM-DD hh:mm:ss a',
     customDatetimePickerOptions: {
       format: 'YYYY-MM-DD hh:mm:ss a'
     }
   },
   pillbox: {
-    type: 'customInputTag',
+    type: 'CustomInputTag',
     selectOptions: {
       taggable: true,
       multiple: true,
@@ -233,7 +225,7 @@ const typeMapper = {
     validator: validators.array
   },
   select: {
-    type: 'customMultiSelect',
+    type: 'CustomMultiSelect',
     selectOptions: {
       multiple: false,
       trackBy: '_id',
@@ -245,11 +237,11 @@ const typeMapper = {
     validator: customValidators.select
   },
   multiselect: {
-    type: 'customChecklist',
+    type: 'CustomChecklist',
     validator: validators.array
   },
   json: {
-    type: 'treeView',
+    type: 'TreeView',
     overrideType: 'TreeView',
     treeViewOptions: {
       maxDepth: 4,
@@ -268,10 +260,10 @@ const typeMapper = {
     rows: 10
   },
   wysiwyg: {
-    type: 'wysiwyg'
+    type: 'Wysiwyg'
   },
   image: {
-    type: 'imageView',
+    type: 'ImageView',
     validator: customValidators.image
   },
   file: {
@@ -285,10 +277,10 @@ const typeMapper = {
     type: 'group'
   },
   object: {
-    type: 'jsonEditor'
+    type: 'JsonEditor'
   },
   color: {
-    type: 'colorPicker',
+    type: 'ColorPicker',
     colorPickerOptions: {
     }
   },
@@ -303,6 +295,11 @@ const typeMapper = {
   }
 }
 
+_.each(typeMapper, (type) => {
+  type.dense = true
+  type.outlined = true
+})
+
 class FormService {
   constructor () {
     this.typeMapper = typeMapper
@@ -311,60 +308,6 @@ class FormService {
   getKeyLocale (schema) {
     return getKeyLocale(schema)
   }
-
-  // translateFieldType (field) {
-  //   let type = _.get(field, 'inputType', _.get(field, 'type', false))
-  //   console.warn(`${field.model} - ${type}`, _.cloneDeep(field))
-  //   if (!type) {
-  //     console.error(`Field ${field.label} has no type, will assume it is a string field`)
-  //     return 'text'
-  //   }
-  //   if (type === 'string') {
-  //     return 'text'
-  //   }
-  //   if (type === 'text') {
-  //     return 'textarea'
-  //   }
-  //   if (type === 'image') {
-  //     return 'img'
-  //   }
-  //   if (type === 'switch') {
-  //     return 'checkbox'
-  //   }
-  //   if (type === 'attachmentView') {
-  //     return 'attachmentView'
-  //   }
-  //   return type
-  // }
-
-  // translateFieldRequirements (field) {
-  //   const rules = []
-  //   if (_.get(field, 'validator', false)) {
-  //     rules.push(field.validator)
-  //   }
-  //   if (_.get(field, 'required', false) && field.type !== 'checkbox') {
-  //     rules.push((val) => {
-  //       if (_.get(val, 'length', 0) === 0) {
-  //         return false
-  //       }
-  //       return true
-  //     })
-  //   }
-  //   return rules
-  // }
-
-  // translateFieldsSchema (fields) {
-  //   const formattedFields = _.map(fields, (field) => {
-  //     field.type = this.translateFieldType(field)
-  //     field.outlined = true
-  //     field.dense = true
-  //     field.col = 8
-  //     field.offset = 1
-  //     field.rules = this.translateFieldRequirements(field)
-  //     return field
-  //   })
-  //   return formattedFields
-  // }
 }
 
 export default new FormService()

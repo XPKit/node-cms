@@ -80,6 +80,7 @@ export default {
           if (validateAsync) {
             results.push(validator(this.value, this.schema, this.model))
           } else {
+            // TODO: hugo - check why the validators aren't triggerred
             let result = validator(this.value, this.schema, this.model)
             if (result && isFunction(result.then)) {
               result.then(err => {
@@ -107,7 +108,6 @@ export default {
         if (isFunction(this.schema.onValidated)) {
           this.schema.onValidated.call(this, this.model, fieldErrors, this.schema)
         }
-
         let isValid = fieldErrors.length === 0
         if (!calledParent) {
           this.$emit('validated', isValid, fieldErrors, this)
@@ -139,7 +139,7 @@ export default {
         changed = true
       }
       if (changed) {
-        this.$emit('model-updated', newValue, this.schema.model)
+        console.warn(`value for '${this.schema.model}' changed to `, newValue)
         if (isFunction(this.schema.onChanged)) {
           this.schema.onChanged.call(this, this.model, newValue, oldValue, this.schema)
         }
@@ -150,6 +150,7 @@ export default {
             this.validate()
           }
         }
+        this.$emit('input', newValue, this.schema.model)
       }
     },
     clearValidationErrors () {

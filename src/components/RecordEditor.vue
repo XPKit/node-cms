@@ -50,6 +50,7 @@
       <custom-form
         v-if="isReady"
         :schema="schema"
+        :form-options="formOptions"
         :model.sync="editingRecord"
         :row="rowOptions"
         @error="onError"
@@ -94,6 +95,10 @@ export default {
       originalFieldList: [],
       schema: { fields: [] },
       isReady: false,
+      formOptions: {
+        validateAfterLoad: true,
+        validateAfterChanged: true
+      },
       // TODO: hugo - LATER -  put the formatting in the resource's definition to allow custom layout
       rowOptions: { justify: 'start', align: 'start', noGutters: false }
     }
@@ -221,14 +226,12 @@ export default {
         this.notify(notificationText, 'error')
         return
       }
-
       const uploadObject = {}
       _.each(this.resource.schema, (field) => {
         if (_.includes(this.fileInputTypes, field.input)) {
           return
         }
         const isLocalised = this.resource.locales && (field.localised || _.isUndefined(field.localised))
-
         if (isLocalised) {
           _.each(this.resource.locales, (locale) => {
             const fieldName = `${locale}.${field.field}`
@@ -261,9 +264,9 @@ export default {
       })
 
       const newAttachments = _.filter(this.editingRecord._attachments, item => !item._id)
-      console.warn('NEW ATTACHMENTS = ', newAttachments)
+      // console.warn('NEW ATTACHMENTS = ', newAttachments)
       const removeAttachments = _.filter(this.record._attachments, item => !_.find(this.editingRecord._attachments, { _id: item._id }))
-      console.warn('REMOVE ATTACHMENTS = ', removeAttachments)
+      // console.warn('REMOVE ATTACHMENTS = ', removeAttachments)
 
       if (_.isUndefined(this.editingRecord._id)) {
         this.$loading.start('create-record')
@@ -277,56 +280,61 @@ export default {
           this.manageError(error, 'create')
         }
         this.$loading.stop('create-record')
-      } else {
-        this.$loading.start('update-record')
-        try {
-          let response
-          if (!_.isEmpty(uploadObject)) {
-            response = await axios.put(`../api/${this.resource.title}/${this.editingRecord._id}`, uploadObject)
-          } else {
-            response = { data: this.editingRecord }
-          }
-          await this.uploadAttachments(response.data._id, newAttachments)
-          await this.removeAttachments(response.data._id, removeAttachments)
-          this.notify(TranslateService.get('TL_RECORD_UPDATED', null, { id: this.editingRecord._id }))
-          this.$emit('updateRecordList', response.data)
-        } catch (error) {
-          console.error('Error happen during updateRecord/update:', error)
-          this.manageError(error, 'update', this.editingRecord)
-        }
-        this.$loading.stop('update-record')
+        return
       }
+      this.$loading.start('update-record')
+      try {
+        let response
+        console.warn('Will send', uploadObject)
+        if (!_.isEmpty(uploadObject)) {
+          response = await axios.put(`../api/${this.resource.title}/${this.editingRecord._id}`, uploadObject)
+        } else {
+          response = { data: this.editingRecord }
+        }
+        await this.uploadAttachments(response.data._id, newAttachments)
+        await this.removeAttachments(response.data._id, removeAttachments)
+        this.notify(TranslateService.get('TL_RECORD_UPDATED', null, { id: this.editingRecord._id }))
+        this.$emit('updateRecordList', response.data)
+      } catch (error) {
+        console.error('Error happen during updateRecord/update:', error)
+        this.manageError(error, 'update', this.editingRecord)
+      }
+      this.$loading.stop('update-record')
     },
-    onModelUpdated ({ obj }) {
-      console.info(`onModelUpdated ---- ${obj.key}`, obj.value, obj.schema)
-      // console.info('SCHEMA ', this.schema)
-      if (_.includes(this.fileInputTypes, _.get(obj, 'schema.type', false))) {
-        let newAttachments = _.get(obj, 'value', [])
-        if (!_.isArray(newAttachments)) {
-          newAttachments = [newAttachments]
-        }
-        console.info(`Will udpate attachment ${obj.key}`)
-        _.each(newAttachments, (newAttachment) => {
-          this.editingRecord._attachments.push(newAttachment)
-        })
-      } else {
-        let key = obj.key
-        if (_.get(obj, 'schema.localised', false)) {
-          key = `${_.get(obj, 'schema.locale', 'enUS')}.${key}`
-        }
-        console.info(`Will udpate field ${obj.key}`)
-        _.set(this.editingRecord, key, obj.value)
-      }
-      console.warn('EDITING RECORD ', _.cloneDeep(this.editingRecord))
-      console.warn('AFTER VALIDATE', obj)
+    onModelUpdated (value, model) {
       this.$refs.vfg.validate()
+      console.warn(`model updated: ${model}`, value, this.editingRecord)
       this.checkDirty()
-      debugger// eslint-disable-line no-debugger
     },
+    // onModelUpdated ({ obj }) {
+    //   console.info(`onModelUpdated ---- ${obj.key}`, obj.value, obj.schema)
+    //   // console.info('SCHEMA ', this.schema)
+    //   if (_.includes(this.fileInputTypes, _.get(obj, 'schema.type', false))) {
+    //     let newAttachments = _.get(obj, 'value', [])
+    //     if (!_.isArray(newAttachments)) {
+    //       newAttachments = [newAttachments]
+    //     }
+    //     console.info(`Will udpate attachment ${obj.key}`)
+    //     _.each(newAttachments, (newAttachment) => {
+    //       this.editingRecord._attachments.push(newAttachment)
+    //     })
+    //   } else {
+    //     let key = obj.key
+    //     if (_.get(obj, 'schema.localised', false)) {
+    //       key = `${_.get(obj, 'schema.locale', 'enUS')}.${key}`
+    //     }
+    //     console.info(`Will udpate field ${obj.key}`)
+    //     _.set(this.editingRecord, key, obj.value)
+    //   }
+    //   console.warn('EDITING RECORD ', _.cloneDeep(this.editingRecord))
+    //   console.warn('AFTER VALIDATE', obj)
+    //   this.$refs.vfg.validate()
+    //   this.checkDirty()
+    // },
     checkDirty () {
       _.each(this.originalFieldList, (field) => {
         let isEqual = true
-        if (_.includes(['attachmentView', 'imageView'], field.type)) {
+        if (_.includes(['AttachmentView', 'ImageView'], field.type)) {
           const { key, locale } = this.getKeyLocale(field)
           const list1 = _.filter(this.record._attachments, attachment => attachment._name === key && (attachment._fields && attachment._fields.locale) === locale)
           const list2 = _.filter(this.editingRecord._attachments, attachment => attachment._name === key && (attachment._fields && attachment._fields.locale) === locale)

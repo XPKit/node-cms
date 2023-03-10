@@ -107,7 +107,7 @@ class SchemaService {
       }
     }
     fields[id].values = cachedData || []
-    if (fields[id].type === 'customMultiSelect') {
+    if (fields[id].type === 'CustomMultiSelect') {
       fields[id].selectOptions = fields[id].selectOptions || {}
       fields[id].selectOptions = _.clone(fields[id].selectOptions)
       fields[id].selectOptions.key = '_id'
@@ -119,7 +119,7 @@ class SchemaService {
           return _.get(item, key)
         }
       }
-    } else if (fields[id].type === 'customChecklist') {
+    } else if (fields[id].type === 'CustomChecklist') {
       fields[id].customChecklistOptions = fields[id].customChecklistOptions || {}
       fields[id].customChecklistOptions.name = key
       fields[id].customChecklistOptions.value = '_id'
