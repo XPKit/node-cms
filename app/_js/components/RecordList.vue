@@ -6,12 +6,12 @@
       </div>
       <div class="search-buttons">
         <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect"><i class="fi-list-thumbnails" /></div>
-        <tempalte v-if="maxCount <= 0 || listCount < maxCount">
+        <template v-if="maxCount <= 0 || listCount < maxCount">
           <div class="new" @click="onClickNew">+</div>
-        </tempalte>
+        </template>
       </div>
     </div>
-    <div v-shortkey="['ctrl', 'a']" class="records" @shortkey="selectAll()">
+    <div v-shortkey="multiselect ? ['ctrl', 'a'] : false" class="records" @shortkey="selectAll()">
       <RecycleScroller
         v-slot="{ item }"
         class="list"
@@ -25,7 +25,7 @@
         >
           <div v-if="item" class="main">
             <span class="icon">
-              <span v-if="item._searchable" class="serchable">
+              <span v-if="item._searchable" class="searchable">
                 <i v-if="item._searchable.query == true" class="fi-target-two" />
                 <i v-else-if="item._searchable.id == true" class="fi-key" />
                 <i v-else-if="item._searchable.keyFields == true" class="fi-results" />
