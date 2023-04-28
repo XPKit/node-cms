@@ -9,26 +9,28 @@ exports = (module.exports = {
       },
       field: 'type',
       input: 'select',
-      source: ['idle',
+      source: [
+        'idle',
         'close',
-        'far'],
+        'far'
+      ],
       options: {
         labels: {
           idle: {
-            enUS: 'Meet Vivo',
-            zhCN: 'Meet Vivo'
+            enUS: 'idle enUS',
+            zhCN: 'idle zhCN'
           },
           close: {
-            enUS: 'Meet Vivo',
-            zhCN: 'Meet Vivo'
+            enUS: 'close enUS',
+            zhCN: 'close zhCN'
           },
           far: {
-            enUS: 'Meet Vivo',
-            zhCN: 'Meet Vivo'
+            enUS: 'far enUS',
+            zhCN: 'far zhCN'
           }
         }
       },
-      localised: false,
+      localised: true,
       required: true
     },
     {
@@ -59,60 +61,60 @@ exports = (module.exports = {
         2,
         3
       ]
-    },
-    {
-      field: 'gselect',
-      input: 'select',
-      source: [
-        'one',
-        'two',
-        'three'
-      ],
-      localised: false
-    },
-    {
-      field: 'relation',
-      input: 'select',
-      source: 'articles'
-    },
-    {
-      field: 'grelation',
-      input: 'select',
-      source: 'articles',
-      localised: false
-    },
-    {
-      field: 'multiselect',
-      input: 'multiselect',
-      source: [
-        'one',
-        'two',
-        'three'
-      ]
-    },
-    {
-      field: 'listbox',
-      input: 'multiselect',
-      options: {
-        listBox: true,
-        labels: {
-          one: 'My first one',
-          two: 'My second one',
-          three: 'My thrid one'
-        }
-      },
-      source: [
-        'one',
-        'two',
-        'three'
-      ]
-    },
-    {
-      field: 'gmultiselect',
-      input: 'multiselect',
-      source: 'articles',
-      localised: false
     }
+    // {
+    //   field: 'gselect',
+    //   input: 'select',
+    //   source: [
+    //     'one',
+    //     'two',
+    //     'three'
+    //   ],
+    //   localised: false
+    // },
+    // {
+    //   field: 'relation',
+    //   input: 'select',
+    //   source: 'articles'
+    // },
+    // {
+    //   field: 'grelation',
+    //   input: 'select',
+    //   source: 'articles',
+    //   localised: false
+    // },
+    // {
+    //   field: 'multiselect',
+    //   input: 'multiselect',
+    //   source: [
+    //     'one',
+    //     'two',
+    //     'three'
+    //   ]
+    // },
+    // {
+    //   field: 'listbox',
+    //   input: 'multiselect',
+    //   options: {
+    //     listBox: true,
+    //     labels: {
+    //       one: 'My first one',
+    //       two: 'My second one',
+    //       three: 'My third one'
+    //     }
+    //   },
+    //   source: [
+    //     'one',
+    //     'two',
+    //     'three'
+    //   ]
+    // },
+    // {
+    //   field: 'gmultiselect',
+    //   input: 'multiselect',
+    //   source: 'articles',
+    //   localised: false
+    // }
   ],
   locales: [
     'enUS',

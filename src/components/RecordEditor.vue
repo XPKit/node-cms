@@ -14,34 +14,6 @@
         {{ 'TL_'+item.toUpperCase() | translate }}
       </v-tab>
     </v-tabs>
-    <!-- <v-form
-      ref="vfg"
-      v-model="formValid"
-      lazy-validation
-    >
-      <vuetify-form-base-ssr
-        v-if="isReady"
-        :schema="getSchema()"
-        :model.sync="editingRecord"
-        :row="rowOptions"
-        @error="onError"
-        @input="onModelUpdated"
-      />
-    </v-form> -->
-    <!-- <v-form
-      ref="vfg"
-      v-model="formValid"
-      lazy-validation
-    >
-      <vuetify-form-base-ssr
-        v-if="isReady"
-        :schema="testFormSchema"
-        :model="testFormModel"
-        :row="rowOptions"
-        @error="onError"
-        @input="onModelUpdated"
-      />
-    </v-form> -->
     <v-form
       ref="vfg"
       v-model="formValid"
@@ -89,7 +61,7 @@ export default {
   data () {
     return {
       formValid: false,
-      fileInputTypes: ['file', 'img', 'imageView', 'attachmentView'],
+      fileInputTypes: ['file', 'img', 'image', 'imageView', 'attachmentView'],
       cachedMap: {},
       editingRecord: {},
       originalFieldList: [],
@@ -302,35 +274,35 @@ export default {
       this.$loading.stop('update-record')
     },
     onModelUpdated (value, model) {
+      // const updatedValue = _.get(this.editingRecord, model, false)
+      // console.warn(`model updated: ${model} - before`, updatedValue)
+      // console.warn(`model updated: ${model} - after`, value)
+      // console.warn('model updated - editingRecord:', this.editingRecord)
+      // console.warn('model updated - schema:', this.schema)
+      // console.warn('model updated - resource.schema:', this.resource.schema)
+      console.warn(`update ${model}`)
+      if (this.isAttachmentField(model)) {
+        let newAttachments = value
+        if (!_.isArray(newAttachments)) {
+          newAttachments = [newAttachments]
+        }
+        console.info(`Will update attachment ${model}`, newAttachments)
+        _.set(this.editingRecord, '_attachments', newAttachments)
+        // _.each(newAttachments, (newAttachment) => {
+        //   this.editingRecord._attachments.push(newAttachment)
+        // })
+      } else {
+        _.set(this.editingRecord, model, value)
+      }
+      console.info('editingRecord =', this.editingRecord)
       this.$refs.vfg.validate()
-      console.warn(`model updated: ${model}`, value, this.editingRecord)
       this.checkDirty()
     },
-    // onModelUpdated ({ obj }) {
-    //   console.info(`onModelUpdated ---- ${obj.key}`, obj.value, obj.schema)
-    //   // console.info('SCHEMA ', this.schema)
-    //   if (_.includes(this.fileInputTypes, _.get(obj, 'schema.type', false))) {
-    //     let newAttachments = _.get(obj, 'value', [])
-    //     if (!_.isArray(newAttachments)) {
-    //       newAttachments = [newAttachments]
-    //     }
-    //     console.info(`Will udpate attachment ${obj.key}`)
-    //     _.each(newAttachments, (newAttachment) => {
-    //       this.editingRecord._attachments.push(newAttachment)
-    //     })
-    //   } else {
-    //     let key = obj.key
-    //     if (_.get(obj, 'schema.localised', false)) {
-    //       key = `${_.get(obj, 'schema.locale', 'enUS')}.${key}`
-    //     }
-    //     console.info(`Will udpate field ${obj.key}`)
-    //     _.set(this.editingRecord, key, obj.value)
-    //   }
-    //   console.warn('EDITING RECORD ', _.cloneDeep(this.editingRecord))
-    //   console.warn('AFTER VALIDATE', obj)
-    //   this.$refs.vfg.validate()
-    //   this.checkDirty()
-    // },
+    isAttachmentField (model) {
+      const foundField = _.get(_.find(_.get(this.schema, 'fields', []), {model: model}), 'originalModel', false)
+      const fieldType = _.get(_.find(this.resource.schema, {field: foundField}), 'input', false)
+      return _.includes(this.fileInputTypes, fieldType)
+    },
     checkDirty () {
       _.each(this.originalFieldList, (field) => {
         let isEqual = true

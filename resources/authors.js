@@ -19,6 +19,7 @@ exports = (module.exports = {
     {
       field: 'name',
       input: 'string',
+      required: true,
       localised: true
     },
     {

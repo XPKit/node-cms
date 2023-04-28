@@ -52,7 +52,6 @@ export default {
 
       set (newValue) {
         let oldValue = this.value
-
         if (isFunction(newValue)) {
           newValue(newValue, oldValue)
         } else {
@@ -139,7 +138,7 @@ export default {
         changed = true
       }
       if (changed) {
-        console.warn(`value for '${this.schema.model}' changed to `, newValue)
+        // console.warn(`value for '${this.schema.model}' changed to `, newValue)
         if (isFunction(this.schema.onChanged)) {
           this.schema.onChanged.call(this, this.model, newValue, oldValue, this.schema)
         }
@@ -183,6 +182,15 @@ export default {
         }
         ++i
       }
+    },
+    getKeyLocale () {
+      const options = {}
+      const list = this.schema.model.split('.')
+      if (this.schema.localised) {
+        options.locale = list.shift()
+      }
+      options.key = list.join('.')
+      return options
     },
     getFieldID (schema, unique = false) {
       const idPrefix = objGet(this.formOptions, 'fieldIdPrefix', '')

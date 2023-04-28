@@ -36,23 +36,24 @@ class SchemaService {
       schema = _.merge({}, field.options, schema)
       if ((field.input === 'file') && _.get(schema, 'maxCount', false) === false) {
         schema.maxCount = Infinity
-      }
-      if (field.input === 'select' && _.get(schema, 'labels', false)) {
-        schema.selectOptions.label = _.mapValues(schema.labels, label => _.get(label, `${userLocale}`, label))
-      }
-      if (field.input === 'multiselect' && _.get(schema, 'labels', false)) {
+      } else if (field.input === 'select' && _.get(schema, 'labels', false)) {
+        schema.selectOptions.label = _.map(schema.labels, (label, value) => {
+          return { value, text: _.get(label, `${locale}`, label) }
+        })
+        // schema.selectOptions.label = _.mapValues(schema.labels, label => _.get(label, `${userLocale}`, label))
+        console.warn('SchemaService - getSchemaFields - selectOptions.label:', schema.selectOptions.label)
+      } else if (field.input === 'multiselect' && _.get(schema, 'labels', false)) {
         if (!_.isObject(_.first(field.source))) {
           const values = []
           _.forEach(field.source, (value) => {
             values.push({
-              name: _.get(schema, `labels.${value}`, value),
+              text: _.get(schema, `labels.${value}`, value),
               value
             })
           })
           field.source = values
         }
       }
-
       if (field.input === 'select' || field.input === 'pillbox') {
         schema.selectOptions.selectLabel = TranslateService.get('TL_MULTISELECT_SELECT_LABEL')
         schema.selectOptions.selectGroupLabel = TranslateService.get('TL_MULTISELECT_SELECT_GROUP_LABEL')
@@ -76,14 +77,8 @@ class SchemaService {
     return fields
   }
 
-  // formatSchemaForFormGenerator (fields) {
-  //   console.warn('formatSchemaForFormGenerator - ', _.cloneDeep(fields))
-  //   return FormService.translateFieldsSchema(fields)
-  // }
-
   updateFieldSchema (fields, field, id, locale, extraSources) {
     const cachedData = ResourceService.get(field.source)
-
     // handle extra source
     extraSources = _.extend({}, extraSources, _.get(field, 'options.extraSources'))
     _.each(extraSources, (source, key) => {
@@ -95,11 +90,9 @@ class SchemaService {
         }
       })
     })
-
     const relatedSchema = ResourceService.getSchema(field.source)
     const firstField = relatedSchema && _.first(relatedSchema.schema)
     let key = '_id'
-
     if (firstField) {
       key = firstField.field
       if (relatedSchema.locales && locale && (firstField.localised || _.isUndefined(firstField.localised))) {

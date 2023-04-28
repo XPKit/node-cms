@@ -1,6 +1,6 @@
 <template>
   <div class="attachment-view">
-    <div v-for="attachment in getAtttachments()" :key="attachment._id">
+    <div v-for="(attachment, i) in getAttachments()" :key="`${attachment._id}-${i}`">
       <label>{{ attachment && attachment._filename }}</label>
       <v-btn v-if="attachment.url" @click="viewFile(attachment)">{{ 'TL_VIEW' | translate }}</v-btn>
       <v-btn v-if="!disabled" @click="removeFile(attachment)">{{ 'TL_DELETE' | translate }}</v-btn>
@@ -8,8 +8,17 @@
         <span>{{ 'TL_CURRENT_FILESIZE' | translate }}: {{ bytesToSize(attachment._size) }}</span>
       </div>
     </div>
-    <form v-if="!disabled && getAtttachments().length < schema.maxCount" enctype="multipart/form-data">
-      <input :key="schema.model" type="file" :accept="schema.accept" @change="onUploadChanged">
+    <form v-if="!disabled && getAttachments().length < schema.maxCount" enctype="multipart/form-data">
+      <v-card
+        :class="{ 'drag-and-drop': dragover }"
+        @drop.prevent="onDrop($event)"
+        @dragover.prevent="dragover = true"
+        @dragenter.prevent="dragover = true"
+        @dragleave.prevent="dragover = false"
+      >
+        <v-file-input :key="schema.model" ref="fileInput" hide-details :label="schema.label" dense outlined :multiple="schema.maxCount > 1" :accept="schema.accept" show-size @change="onUploadChanged" />
+        <!-- <input :key="schema.model" type="file" :accept="schema.accept" @change="onUploadChanged"> -->
+      </v-card>
     </form>
   </div>
 </template>
@@ -21,7 +30,12 @@ export default {
   mixins: [AbstractField],
   data () {
     return {
+      localModel: false,
+      dragover: false
     }
+  },
+  created () {
+    this.localModel = _.cloneDeep(this.model)
   },
   methods: {
     viewFile (attachment) {
@@ -35,13 +49,20 @@ export default {
       console.log(attachment)
     },
     removeFile (attachment) {
+      this.$refs.fileInput.internalValue = null
+      this.$refs.fileInput.$refs.input.value = null
       this.localModel._attachments = _.filter(this.localModel._attachments, item => item !== attachment)
       this.$forceUpdate()
-      this.$emit('model-updated', this.model._attachments, this.schema.model)
-      // work around to force label update
-      const dummy = this.schema.label
-      this.localSchema.label = null
-      this.localSchema.label = dummy
+      this.$emit('input', this.localModel._attachments, this.schema.model)
+    },
+    onDrop (event) {
+      this.dragover = false
+      if (this.schema.maxCount <= 1 && event.dataTransfer.files.length > 1) {
+        return console.error('Only one file can be uploaded at a time..')
+      }
+      event.dataTransfer.files.forEach(element =>
+        this.onUploadChanged(element)
+      )
     },
     bytesToSize (bytes) {
       if (bytes === 0) {
@@ -55,50 +76,43 @@ export default {
       }
       return `${result} ${sizes[i]}`
     },
-    onUploadChanged (e) {
-      const files = e.target.files || e.dataTransfer.files
+    onUploadChanged (files) {
+      files = _.isNull(files) ? [] : files
+      if (!_.isArray(files)) {
+        files = [files]
+      }
       if (!files.length) {
         return
       }
-      const reader = new FileReader()
-      const vm = this
-      reader.onload = (e) => {
-        const { key, locale } = vm.getKeyLocale()
-        vm.localModel._attachments.push({
-          _filename: files[0].name,
-          _name: key,
-          _fields: {
-            locale
-          },
-          field: this.schema.model,
-          localised: this.schema.localised,
-          file: files[0],
-          data: e.target.result
-        })
-        vm.$forceUpdate()
-        this.$emit('model-updated', this.model._attachments, this.schema.model)
-        // work around to force label update
-        const dummy = this.schema.label
-        this.localSchema.label = null
-        this.localSchema.label = dummy
-      }
-      reader.readAsDataURL(files[0])
-    },
-    getKeyLocale () {
-      const options = {}
-      const list = this.schema.model.split('.')
-      if (this.schema.localised) {
-        options.locale = list.shift()
-      }
-      options.key = list.join('.')
-      return options
+      _.each(files, (file) => {
+        const reader = new FileReader()
+        const vm = this
+        reader.onload = (e) => {
+          const { key, locale } = vm.getKeyLocale()
+          console.warn('onload = ', vm.localModel)
+          vm.localModel._attachments.push({
+            _filename: file.name,
+            _name: key,
+            _fields: {
+              locale
+            },
+            field: this.schema.model,
+            localised: this.schema.localised,
+            file: file,
+            data: e.target.result
+          })
+          vm.$forceUpdate()
+          this.$emit('input', this.localModel._attachments, this.schema.model)
+        }
+        reader.readAsDataURL(file)
+      })
     },
     imageUrl (attachment) {
       return attachment && (attachment.data || attachment.url)
     },
-    getAtttachments () {
+    getAttachments () {
       const { key, locale } = this.getKeyLocale()
-      return _.filter(this.model._attachments, attachment => attachment._name === key && (attachment._fields && attachment._fields.locale) === locale)
+      return _.filter(this.localModel._attachments, attachment => attachment._name === key && (attachment._fields && attachment._fields.locale) === locale)
     }
   }
 }

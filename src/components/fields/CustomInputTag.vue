@@ -1,4 +1,5 @@
 <template>
+  <!-- TODO: hugo - replace with vuetify -->
   <input-tag
     v-model="tags"
     :allow-duplicates="options['allow-duplicates']"

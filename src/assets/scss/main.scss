@@ -20,17 +20,16 @@
 @import "@a/scss/components/Pager.scss";
 @import "@a/scss/components/Notifications.scss";
 
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden !important;
+}
 body {
   margin: 0px;
   padding: 0px;
   font-family: 'Helvetica Neue', Arial;
   color: #4f5f4f;
-  height: 100%;
-  overflow: hidden;
-}
-
-html {
-  height: 100%;
 }
 
 ul, li {

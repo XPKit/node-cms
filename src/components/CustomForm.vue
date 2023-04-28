@@ -28,6 +28,10 @@ export default {
       return _.get(field, 'overrideType', _.get(field, 'type', false))
     },
     onInput (value, model) {
+      if (_.isUndefined(model)) {
+        model = _.get(_.first(value), 'parentKey', false)
+      }
+      console.warn('CUSTOM FORM - onInput', value, model)
       this.$emit('input', value, model)
     },
     checkIfComponentsExist () {

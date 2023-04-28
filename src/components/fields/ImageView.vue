@@ -5,13 +5,29 @@
         <img v-if="isImage()" class="preview" :src="imageUrl()">
         <div>
           <label>{{ attachment()._filename }}</label>
-          <button v-if="!disabled" @click="removeImage(attachment(), true)">{{ 'TL_DELETE'|translate }}</button>
+          <v-btn v-if="!disabled" @click="removeImage(attachment(), true)">{{ 'TL_DELETE'|translate }}</v-btn>
         </div>
       </div>
       <form v-if="!disabled" enctype="multipart/form-data">
-        <v-file-input :key="schema.model" ref="fileInput" :label="schema.label" dense outlined :multiple="schema.maxCount > 1" :accept="schema.accept" show-size @change="onUploadChanged" />
+        <v-card
+          :class="{ 'drag-and-drop': dragover }"
+          @drop.prevent="onDrop($event)"
+          @dragover.prevent="dragover = true"
+          @dragenter.prevent="dragover = true"
+          @dragleave.prevent="dragover = false"
+        >
+          <v-file-input
+            :key="schema.model"
+            ref="fileInput"
+            :label="schema.label"
+            hide-details
+            dense
+            outlined :multiple="schema.maxCount > 1" :accept="schema.accept" show-size @click:clear="removeImage(attachment(), true)" @change="onUploadChanged"
+          />
+        </v-card>
       </form>
     </div>
+    <img v-if="isImage()" class="preview" :src="imageUrl()">
     <croppa
       v-if="schema.width && schema.height"
       :key="schema.model"
@@ -19,8 +35,8 @@
       :zoom-speed="6"
       :accept="schema.accept || 'image/*'"
       :initial-image="imageUrl()"
-      :width="schema.width"
-      :height="schema.height"
+      :width="getSize('width')"
+      :height="getSize('height')"
       :canvas-color="schema.background"
       :placeholder="placeholder"
       :file-size-limit="schema.limit"
@@ -35,7 +51,9 @@
       @file-size-exceed="onCroppaFileSizeExceed"
       @file-type-mismatch="onCroppaFileTypeMismatch"
     >
-      <div v-if="!isImage()" class="placeholder-overlay">{{ 'TL_CLICK_HERE_TO_CHOOSE_AN_IMAGE' | translate }}</div>
+      <div v-if="!isImage()" class="placeholder-overlay">
+        {{ 'TL_CLICK_HERE_TO_CHOOSE_AN_IMAGE' | translate }}
+      </div>
     </croppa>
     <div v-if="(schema.width && schema.height)" class="help-block">
       <span>{{ 'TL_THIS_FIELD_REQUIRES_THE_FOLLOWING_SIZE'|translate }}:{{ schema.width }}x{{ schema.height }}</span>
@@ -62,14 +80,13 @@ export default {
   components: {
   },
   mixins: [Notification, AbstractField],
-  props: ['obj', 'vfg', 'model', 'disabled'],
   data () {
     return {
       placeholder: '',
+      dragover: false,
       myCroppa: null,
       croppaAttachment: null,
       croppaFileType: null,
-      schema: _.get(this.obj, 'schema', {}),
       localModel: false
     }
   },
@@ -80,14 +97,15 @@ export default {
       this.croppaAttachment = null
     }
   },
-  created () {
-    this.schema = _.cloneDeep(this.obj.schema)
+  mounted () {
+    this.updateLocalData()
   },
   methods: {
+    getSize (key) {
+      return _.toNumber(_.get(this.schema, key, 0))
+    },
     updateLocalData () {
-      this.schema = _.cloneDeep(this.obj.schema)
       this.localModel = _.cloneDeep(this.model)
-      console.warn('updateLocalData', this.obj.schema)
     },
     getFileSizeLimit (limit) {
       const kbLimit = limit / 1024
@@ -98,17 +116,27 @@ export default {
     },
     removeImage (attachment, isClearInput = false) {
       if (isClearInput) {
-        this.$refs.fileInput.value = null
+        this.$refs.fileInput.internalValue = null
+        this.$refs.fileInput.$refs.input.value = null
       }
       this.localModel._attachments = _.filter(this.localModel._attachments, item => item !== attachment)
       this.$forceUpdate()
 
-      this.$emit('input', this.localModel._attachments)
+      this.$emit('input', this.localModel._attachments, this.schema.model)
 
       // work around to force label update
       const dummy = this.schema.label
       this.schema.label = null
       this.schema.label = dummy
+    },
+    onDrop (event) {
+      this.dragover = false
+      if (this.schema.maxCount <= 1 && event.dataTransfer.files.length > 1) {
+        return console.error('Only one file can be uploaded at a time..')
+      }
+      event.dataTransfer.files.forEach(element =>
+        this.onUploadChanged(element)
+      )
     },
     updateCroppaBlobData () {
       if (!this.croppaAttachment) {
@@ -122,16 +150,15 @@ export default {
         if (!blob) {
           return
         }
-
         blob.lastModifiedDate = new Date()
         blob.name = _.get(this, 'croppaAttachment._filename', 'blob')
         this.croppaAttachment.file = blob
-
         if (!_.includes(this.localModel._attachments, this.croppaAttachment)) {
           this.localModel._attachments = _.filter(this.localModel._attachments, item => item._name !== this.croppaAttachment._name)
           this.localModel._attachments.push(this.croppaAttachment)
         }
-        this.$emit('input', this.localModel._attachments)
+        console.warn('updated croppa', this.localModel._attachments)
+        this.$emit('input', this.localModel._attachments, this.schema.model)
       }, type, this.schema.quality || 0.9)
     },
     onCroppaMouseUp () {
@@ -142,7 +169,6 @@ export default {
       clearTimeout(this.actionTimer)
       this.actionTimer = setTimeout(this.updateCroppaBlobData, 100)
     },
-
     onCroppaChooseFile (file) {
       const { key, locale } = this.getKeyLocale()
       this.croppaFileType = file.type
@@ -156,14 +182,16 @@ export default {
         localised: this.schema.localised,
         file
       })
-      this.$emit('input', this.localModel._attachments)
+      this.$emit('input', this.localModel._attachments, this.schema.model)
     },
-
     onCroppaImageDraw () {
       this.updateCroppaBlobData()
     },
-    onUploadChanged (e) {
-      const files = e.target.files || e.dataTransfer.files
+    onUploadChanged (files) {
+      files = _.isNull(files) ? [] : files
+      if (!_.isArray(files)) {
+        files = [files]
+      }
       if (!files.length) {
         return
       }
@@ -184,23 +212,9 @@ export default {
           data: element.target.result
         })
         vm.$forceUpdate()
-        this.$emit('input', this.localModel._attachments)
-
-        // work around to force label update
-        const dummy = this.schema.label
-        this.schema.label = null
-        this.schema.label = dummy
+        this.$emit('input', vm.localModel._attachments, this.schema.model)
       }
       reader.readAsDataURL(files[0])
-    },
-    getKeyLocale () {
-      const options = {}
-      const list = this.schema.model.split('.')
-      if (this.schema.localised) {
-        options.locale = list.shift()
-      }
-      options.key = list.join('.')
-      return options
     },
     imageUrl () {
       const attachment = this.attachment()
@@ -209,6 +223,10 @@ export default {
     attachment () {
       const { key, locale } = this.getKeyLocale()
       return _.find(this.localModel._attachments, attachment => attachment._name === key && (attachment._fields && attachment._fields.locale) === locale)
+    },
+    getAttachments () {
+      const { key, locale } = this.getKeyLocale()
+      return _.filter(this.localModel._attachments, attachment => attachment._name === key && (attachment._fields && attachment._fields.locale) === locale)
     },
     imageSize () {
       const attachment = this.attachment()

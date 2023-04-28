@@ -1,16 +1,17 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper custom-checklist">
+    <div class="field-label">{{ schema.label }}</div>
     <div v-if="schema.listBox" class="listbox form-control" :disabled="disabled">
       <div v-for="(item, i) in items" :key="i" class="list-row" :class="{'is-checked': isItemChecked(item)}">
         <label>
           <v-checkbox
-            :id="getFieldID(schema)" dense hide-details
+            :id="getFieldID(schema)"
+            :ripple="false" dense hide-details :label="getItem(item, 'name')"
             :value="isItemChecked(item)" :disabled="disabled" :name="getInputName(item)" @change="onChanged($event, item)"
-          >{{ getItemName(item) }}
-          </v-checkbox></label>
+          /></label>
       </div>
     </div>
-    <div v-if="!schema.listBox" class="combobox form-control" :disabled="disabled">
+    <div v-else class="combobox form-control" :disabled="disabled">
       <div class="mainRow" :class="{ expanded: comboExpanded }" @click="onExpandCombo">
         <div class="node-cms-info">{{ selectedCount }} {{ 'TL_SELECTED'|translate }}</div>
         <div class="arrow" />
@@ -19,10 +20,10 @@
         <div v-for="(item, y) in items" :key="y" class="list-row" :class="{'is-checked': isItemChecked(item)}">
           <label>
             <v-checkbox
-              :id="getFieldID(schema)" dense hide-details
-              :checked="isItemChecked(item)" :disabled="disabled" :name="getInputName(item)" @change="onChanged($event, item)"
-            >{{ getItemName(item) }}
-            </v-checkbox></label>
+              :id="getFieldID(schema)" :ripple="false" dense hide-details :label="getInputName(item)"
+              :input-value="isItemChecked(item)" :disabled="disabled" :name="getInputName(item)" @change="onChanged($event, item)"
+            />
+          </label>
         </div>
       </div>
     </div>
@@ -30,7 +31,7 @@
 </template>
 
 <script>
-import { isObject, isNil, clone, get, cloneDeep } from 'lodash'
+import { isObject, isNil, clone, get } from 'lodash'
 import AbstractField from '@m/AbstractField'
 
 function slugify (name = '') {
@@ -45,11 +46,9 @@ function slugify (name = '') {
 
 export default {
   mixins: [AbstractField],
-  props: ['obj', 'vfg', 'model', 'disabled'],
   data () {
     return {
-      comboExpanded: false,
-      schema: get(this.obj, 'schema', {})
+      comboExpanded: false
     }
   },
   computed: {
@@ -58,66 +57,47 @@ export default {
       if (typeof (values) === 'function') {
         return values.apply(this, [this.model,
           this.schema])
-      } return values
+      }
+      return values
     },
     selectedCount () {
       return get(this, 'value.length', 0)
     }
   },
-  created () {
-    this.schema = cloneDeep(this.obj.schema)
-  },
   methods: {
     getInputName (item) {
       if (this.schema && this.schema.inputName && this.schema.inputName.length > 0) {
-        return slugify(`${this.schema.inputName}_${this.getItemValue(item)}`)
+        return slugify(`${this.schema.inputName}_${this.getItem(item, 'value')}`)
       }
-      return slugify(this.getItemValue(item))
+      return slugify(this.getItem(item, 'value'))
     },
-    getItemValue (item) {
-      if (isObject(item)) {
-        if (typeof this.schema.customChecklistOptions !== 'undefined' && typeof this.schema.customChecklistOptions.value !== 'undefined') {
-          return item[this.schema.customChecklistOptions.value]
-        }
-        if (typeof item.value !== 'undefined') {
-          return item.value
-        }
-        throw new Error('`value` is not defined. If you want to use another key name, add a `value` property under `customChecklistOptions` in the schema. https://icebob.gitbooks.io/vueformgenerator/content/fields/checklist.html#checklist-field-with-object-values')
-      } else {
+    getItem (item, key) {
+      if (!isObject(item)) {
         return item
       }
-    },
-    getItemName (item) {
-      if (isObject(item)) {
-        if (typeof this.schema.customChecklistOptions !== 'undefined' && typeof this.schema.customChecklistOptions.name !== 'undefined') {
-          return get(item, this.schema.customChecklistOptions.name)
-        }
-        if (typeof item.name !== 'undefined') {
-          return item.name
-        }
-        throw new Error('`name` is not defined. If you want to use another key name, add a `name` property under `customChecklistOptions` in the schema. https://icebob.gitbooks.io/vueformgenerator/content/fields/checklist.html#checklist-field-with-object-values')
-      } else {
-        return item
+      if (typeof this.schema.customChecklistOptions !== 'undefined' && typeof this.schema.customChecklistOptions.value !== 'undefined') {
+        return item[get(this.schema.customChecklistOptions, key, false)]
       }
+      const val = get(item, key, 'undefined')
+      if (typeof val !== 'undefined') {
+        return val
+      }
+      this.newError(key)
     },
     isItemChecked (item) {
-      return (this.value && this.value.indexOf(this.getItemValue(item)) !== -1)
+      return (this.value && this.value.indexOf(this.getItem(item, 'value')) !== -1)
     },
-    onChanged (event, item) {
+    onChanged (checked, item) {
       if (isNil(this.value) || !Array.isArray(this.value)) {
         this.value = []
       }
-      if (event.target.checked) {
-        // Note: If you modify this.value array, it won't trigger the `set` in computed field
-        const arr = clone(this.value)
-        arr.push(this.getItemValue(item))
-        this.value = arr
+      const arr = clone(this.value)
+      if (checked) {
+        arr.push(this.getItem(item, 'value'))
       } else {
-        // Note: If you modify this.value array, it won't trigger the `set` in computed field
-        const arr = clone(this.value)
-        arr.splice(this.value.indexOf(this.getItemValue(item)), 1)
-        this.value = arr
+        arr.splice(this.value.indexOf(this.getItem(item, 'value')), 1)
       }
+      this.value = arr
     },
     onExpandCombo () {
       this.comboExpanded = !this.comboExpanded
@@ -127,7 +107,7 @@ export default {
 </script>
 
 <style lang="scss">
-  .vue-form-generator .field-checklist {
+  .custom-checklist {
     .listbox, .dropList {
       height: auto;
       max-height: 150px;
@@ -139,6 +119,12 @@ export default {
         input {
           margin-right: 0.3em;
         }
+      }
+    }
+    .list-row {
+
+      label.v-label.theme--dark, .v-icon.theme--dark {
+        color: black !important;
       }
     }
     .combobox {

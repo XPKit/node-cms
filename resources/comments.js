@@ -10,6 +10,9 @@ exports = (module.exports = {
       field: 'author',
       input: 'select',
       source: 'authors',
+      options: {
+        customLabel: '{{name}}'
+      },
       localised: false
     },
     {
@@ -22,7 +25,46 @@ exports = (module.exports = {
       field: 'category',
       input: 'string',
       localised: true
+    },
+    {
+      label: 'Body',
+      field: 'wysiwyg',
+      input: 'wysiwyg',
+      localised: true
+    },
+    {
+      label: 'Paragraph',
+      field: 'paragraph',
+      input: 'paragraph',
+      localised: false,
+      options: {
+        types: [
+          'text',
+          'file',
+          'image',
+          {
+            input: 'select',
+            source: 'authors',
+            options: {
+              customLabel: '{{name}}'
+            }
+          }
+        ]
+      }
+    },
+    {
+      label: 'Localized Paragraph',
+      field: 'localizedParagraph',
+      input: 'paragraph',
+      localised: true
+      // options: {
+      //   types: ['string']
+      // }
     }
+  ],
+  locales: [
+    'enUS',
+    'zhCN'
   ],
   type: 'normal'
 })

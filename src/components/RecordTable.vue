@@ -27,7 +27,7 @@
         v-if="!search"
         v-model="page"
         :page-count="pageCount"
-        :click-handler="functionName"
+        :click-handler="onPaginationClick"
         :prev-text="'Prev'"
         :next-text="'Next'"
         :container-class="'pager'"
@@ -152,6 +152,9 @@ export default {
     }
   },
   methods: {
+    onPaginationClick () {
+      console.warn('onPaginationClick ---', arguments)
+    },
     updateRecordList (record) {
       this.$emit('updateRecordList', record)
     },

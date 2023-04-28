@@ -69,11 +69,10 @@ export default {
       try {
         const disabled = !(this.record && this.record._local)
         this.$loading.start('loading-schema')
-        const fields = SchemaService.getSchemaFields(this.resource.schema, this.resource, this.locale, this.userLocale, disabled, this.resource.extraSources)
+        const fields = SchemaService.getSchemaFields(this.resource.schema, this.resource, this.locale || this.userLocale, this.userLocale, disabled, this.resource.extraSources)
         this.$loading.stop('loading-schema')
         const groups = SchemaService.getNestedGroups(this.resource, fields, 0)
         this.schema.fields = groups
-        // this.schema.fields = SchemaService.formatSchemaForFormGenerator(groups)
         console.warn('AbstractEditorView - schema ', this.schema)
         this.originalFieldList = fields
         console.warn('AbstractEditorView - updateSchema', this.schema)

@@ -12,17 +12,17 @@
       <div v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" class="item">
         <span class="handle" />
         <div class="item-main">
-          <vuetify-form-base-ssr
-            ref="vfg"
+          <custom-form
             :schema="getSchema(item)"
             :model="item"
-            @model-updated="onModelUpdated"
+            @error="onError"
+            @input="onModelUpdated"
           />
         </div>
         <v-btn @click="onClickRemoveItem(item)">remove</v-btn>
       </div>
       <div slot="header">
-        <v-select v-model="selectedType" outlined dense :items="types" :label="schema.label" item-text="label" />
+        <v-select :label="schema.label" :value="selectedType" hide-details="" :menu-props="{ bottom: true, offsetY: true }" outlined dense :items="types" item-text="label" item-value="label" @change="onChangeType" />
         <!-- <option v-for="item in types" :key="`option-${item.input}`" :value="item">{{ item.label }}</option>
         </v-select> -->
         <v-btn @click="onClickAddNewItem">Add</v-btn>
@@ -34,7 +34,6 @@
 <script>
 import _ from 'lodash'
 import SchemaService from '@s/SchemaService'
-import VuetifyFormBaseSsr from 'vuetify-form-base-ssr/src/vuetify-form-base-ssr.vue'
 import ResourceService from '@s/ResourceService'
 import {v4 as uuid} from 'uuid'
 
@@ -63,17 +62,14 @@ const defaultTypes = [
 
 export default {
   components: {
-    VuetifyFormBaseSsr
   },
-  props: ['obj', 'vfg', 'model', 'disabled'],
+  props: ['schema', 'vfg', 'model', 'disabled'],
   data () {
-    const schema = _.get(this.obj, 'schema', {})
     return {
       props: ['obj', 'vfg', 'model', 'disabled'],
-      items: _.cloneDeep(_.get(this.model, schema.model, [])),
+      items: _.cloneDeep(_.get(this.model, this.schema.model, [])),
       types: [],
       selectedType: false,
-      schema,
       localModel: {},
       key: uuid()
     }
@@ -81,6 +77,7 @@ export default {
   watch: {
     'schema.model': function () {
       this.items = _.cloneDeep(_.get(this.model, this.schema.model, []))
+      console.warn('watch !!!', this.items)
     }
   },
   created () {
@@ -91,7 +88,8 @@ export default {
     this.types = _.map(types, type => {
       if (_.isString(type)) {
         type = {
-          input: type
+          input: type,
+          parentKey: this.schema.model
         }
       }
       if (!type.label) {
@@ -102,8 +100,10 @@ export default {
     this.selectedType = _.first(this.types)
   },
   methods: {
+    onError (error) {
+      console.error('ParagraphView - error', error)
+    },
     updateLocalData () {
-      this.schema = _.cloneDeep(this.obj.schema)
       this.localModel = _.cloneDeep(this.model)
     },
     validate () {
@@ -128,7 +128,6 @@ export default {
     getSchema (item) {
       let schemaItems = []
       const {resource, locale, userLocale, disabled} = this.schema
-
       if (item.input === 'group') {
         schemaItems = _.map(item.schema, schemaItems => {
           return _.extend({}, schemaItems, {
@@ -164,21 +163,20 @@ export default {
       }
       return attach
     },
-    getKeyLocale () {
-      const options = {}
-      const list = this.schema.model.split('.')
-      if (this.schema.localised) {
-        options.locale = list.shift()
+    onChangeType (type) {
+      const foundType = _.find(this.types, {label: type})
+      if (_.isUndefined(foundType)) {
+        return console.warn(`No type found for ${type} in types:`, this.types)
       }
-      options.key = list.join('.')
-      return options
+      this.selectedType = foundType
     },
     onClickAddNewItem () {
       if (this.selectedType) {
         const newItem = _.cloneDeep(this.selectedType)
         this.items.push(newItem)
         _.set(this.localModel, this.schema.model, this.items)
-        this.$emit('input', this.items)
+        console.warn('NEW ITEM ADDED: ', this.selectedType, this.localModel)
+        this.$emit('input', this.localModel, this.schema.model)
       }
     },
     onClickRemoveItem (item) {
@@ -206,21 +204,21 @@ export default {
       _.set(this.localModel, '_attachments', attachments)
       this.items = _.clone(this.items)
       this.key = uuid()
-      this.$emit('input', this.items)
-      this.$emit('input', this.localModel._attachments)
+      this.$emit('input', this.items, this.schema.model)
+      // this.$emit('input', this.localModel._attachments, this.schema.model)
     },
     onChange () {
       _.set(this.localModel, this.schema.model, this.items)
-      this.$emit('input', this.items)
+      this.$emit('input', this.items, this.schema.model)
     },
     onEndDrag () {
       _.set(this.localModel, this.schema.model, this.items)
       this.key = uuid()
-      this.$emit('input', this.items)
+      this.$emit('input', this.items, this.schema.model)
     },
     onModelUpdated (value, model) {
       _.set(this.localModel, this.schema.model, this.items)
-      this.$emit('input', this.items)
+      this.$emit('input', this.items, this.schema.model)
     }
   }
 }

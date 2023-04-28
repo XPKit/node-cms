@@ -1,11 +1,9 @@
 <template>
-  <div class="custom-input">
-    <v-text-field
+  <div class="custom-textarea">
+    <v-textarea
       :class="[schema.labelClasses]"
       :type="getType()"
-      :label="schema.label"
       :value="value"
-      :input-value="value"
       :max-length="schema.max"
       :min-length="schema.min"
       :dense="schema.dense ? true : false"
@@ -14,15 +12,10 @@
       :readonly="schema.readonly ? true : false"
       :filled="schema.filled ? true : false"
       :hide-details="true"
-      :rules="[validateField]"
       :outlined="schema.outlined ? true : false"
       :solo="schema.solo ? true : false"
       @input="onChangeData"
-    >
-      <template v-if="schema.required" #label>
-        <span class="red--text"><strong>* </strong></span>{{ schema.label }}
-      </template>
-    </v-text-field>
+    />
   </div>
 </template>
 
@@ -33,7 +26,8 @@ import AbstractField from '@m/AbstractField'
 export default {
   mixins: [AbstractField],
   data () {
-    return {}
+    return {
+    }
   },
   methods: {
     onChangeData (data) {
@@ -41,22 +35,13 @@ export default {
     },
     getType () {
       return _.get(this.schema, 'inputFieldType', 'text')
-    },
-    validateField (val) {
-      if (this.schema.required && (_.isNull(val) || _.isUndefined(val) || val === '')) {
-        return false
-      }
-      if (this.schema.validator && _.isFunction(this.schema.validator)) {
-        return this.schema.validator(val, this.schema.model, this.model)
-      }
-      return true
     }
   }
 }
 </script>
 
 <style lang="scss">
-  .custom-input {
+  .custom-textarea {
 
   }
 </style>

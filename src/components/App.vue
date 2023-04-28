@@ -285,6 +285,7 @@ export default {
     display: flex;
     align-items: stretch;
     flex: 1 1 0;
+    height: 100vh;
     .resources {
       display: flex;
       flex-direction: column;

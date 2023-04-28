@@ -29,7 +29,7 @@
                 <img :src="display(item, sItem)">
               </div>
               <div v-else class="field-wrap">
-                <component :is="'field-' + sItem.type" :model="item" :disabled="true" :schema="sItem" :form-options="{fieldIdPrefix: `record-${idx}-`}" />
+                <component :is="sItem.type" :model="item" :disabled="true" :schema="sItem" :form-options="{fieldIdPrefix: `record-${idx}-`}" />
               </div>
             </div>
           </div>
@@ -64,6 +64,7 @@ export default {
       TranslateService,
       sortBy: null,
       actionsSize: 110,
+      selectedItem: false,
       idSize: 180,
       updatedAtSize: 110
     }
@@ -201,6 +202,11 @@ export default {
       this.sortBy = _.clone(this.sortBy)
     }
   }
-
 }
 </script>
+
+<style lang="scss" scoped>
+.vue-table-generator {
+  display: block;
+}
+</style>

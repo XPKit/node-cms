@@ -17,14 +17,32 @@
             </a>
           </span>
           <template v-if="schema.options && schema.options.extraParams">
-            <span><v-file-input :value="fileItem.title" placeholder="title" :disabled="disabled" @change="onChange" /></span>
-            <span><v-textarea :value="fileItem.description" placeholder="description" :disabled="disabled" @change="onChange" /></span>
+            <span>
+              <v-card
+                :class="{ 'drag-and-drop': dragover }"
+                @drop.prevent="onDrop($event)"
+                @dragover.prevent="dragover = true"
+                @dragenter.prevent="dragover = true"
+                @dragleave.prevent="dragover = false"
+              >
+                <v-file-input :value="fileItem.title" placeholder="title" hide-details :disabled="disabled" @change="onChange" />
+              </v-card>
+            </span>
+            <span><v-textarea :value="fileItem.description" placeholder="description" hide-details :disabled="disabled" @change="onChange" /></span>
           </template>
         </span>
         <button @click="onClickRemoveFileItem(model, fileItem)">X</button>
       </div>
       <div slot="header">
-        <v-file-input :accept="model.input === 'image'? 'image/*': '*'" :disabled="disabled" @change="onChangeFile($event, model)" />
+        <v-card
+          :class="{ 'drag-and-drop': dragover }"
+          @drop.prevent="onDrop($event)"
+          @dragover.prevent="dragover = true"
+          @dragenter.prevent="dragover = true"
+          @dragleave.prevent="dragover = false"
+        >
+          <v-file-input :accept="model.input === 'image'? 'image/*': '*'" hide-details :disabled="disabled" @change="onChangeFile($event)" />
+        </v-card>
       </div>
     </draggable>
   </div>
@@ -41,6 +59,7 @@ export default {
   mixins: [AbstractField],
   data () {
     return {
+      dragover: false,
       items: _.get(this.model, this.schema.model, [])
     }
   },
@@ -52,26 +71,28 @@ export default {
   mounted () {
   },
   methods: {
-    getKeyLocale () {
-      const options = {}
-      const list = this.schema.model.split('.')
-      if (this.schema.localised) {
-        options.locale = list.shift()
-      }
-      options.key = list.join('.')
-      return options
-    },
     onChange () {
       _.set(this.model, this.schema.model, this.items)
-      this.$emit('model-updated', this.model, this.schema.model)
+      this.$emit('input', this.model, this.schema.model)
     },
     onEndDrag () {
       _.set(this.model, this.schema.model, this.items)
-      this.$emit('model-updated', this.model, this.schema.model)
+      this.$emit('input', this.model, this.schema.model)
     },
-    onChangeFile (event) {
-      const files = _.get(event, 'target.files')
-      const { key, locale } = this.schema.rootView.getKeyLocale()
+    onDrop (event) {
+      this.dragover = false
+      if (this.schema.maxCount <= 1 && event.dataTransfer.files.length > 1) {
+        return console.error('Only one file can be uploaded at a time..')
+      }
+      event.dataTransfer.files.forEach(element => {
+        this.onChangeFile(element)
+      })
+    },
+    onChangeFile (files) {
+      if (!_.isArray(files)) {
+        files = [files]
+      }
+      const { key, locale } = this.getKeyLocale()
       _.each(files, file => {
         const fileItemId = uuid()
         const newItem = {
@@ -80,9 +101,8 @@ export default {
         this.items.push(newItem)
         this.items = _.clone(this.items)
         _.set(this.model, this.schema.model, this.items)
-        this.$emit('model-updated', this.model, this.schema.model)
+        this.$emit('input', this.model, this.schema.model)
         const attachments = this.schema.rootView.model._attachments = this.schema.rootView.model._attachments || []
-
         const attachmentObj = {
           _filename: file.name,
           _name: key,
@@ -92,7 +112,6 @@ export default {
           },
           file
         }
-
         if (this.schema.fileType === 'image') {
           try {
             attachmentObj.url = URL.createObjectURL(file)
@@ -100,17 +119,13 @@ export default {
             console.error(error)
           }
         }
-
         attachments.push(attachmentObj)
         event.target.value = null
       })
     },
     getAttachment (fileItemId, field) {
       const attach = _.find(this.schema.rootView.model._attachments, {_fields: {fileItemId}})
-      if (field) {
-        return _.get(attach, field)
-      }
-      return attach
+      return field ? _.get(attach, field) : attach
     },
     onClickRemoveFileItem (item, fileItem) {
       let attachments = this.schema.rootView.model._attachments = this.schema.rootView.model._attachments || []
@@ -118,7 +133,7 @@ export default {
       this.items = _.difference(this.items, [fileItem])
       _.set(this.schema.rootView.model, '_attachments', attachments)
       _.set(this.model, this.schema.model, this.items)
-      this.$emit('model-updated', this.model, this.schema.model)
+      this.$emit('input', this.model, this.schema.model)
     }
   }
 

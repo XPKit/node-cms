@@ -1,21 +1,23 @@
 <template>
-  <div class="custom-input">
+  <div class="custom-switch">
     <v-switch
-      v-model="model.value"
+      :label="schema.model"
+      :input-value="getValue()"
       :dense="schema.dense ? true : false"
       :compact="schema.compact ? true : false"
       :disabled="schema.disabled ? true : false"
       :readonly="schema.readonly ? true : false"
       :filled="schema.filled ? true : false"
-      :hide-details="schema.hideDetails ? true : false"
+      :hide-details="true"
       :outlined="schema.outlined ? true : false"
       :solo="schema.solo ? true : false"
+      @change="onChange"
     />
   </div>
 </template>
 
 <script>
-// import _ from 'lodash'
+import _ from 'lodash'
 import AbstractField from '@m/AbstractField'
 
 export default {
@@ -29,12 +31,19 @@ export default {
   created () {
   },
   methods: {
+    getValue () {
+      const value = _.get(this.model, this.schema.model, false)
+      return _.isNull(value) ? false : value
+    },
+    onChange (event) {
+      this.$emit('input', event, this.schema.model)
+    }
   }
 }
 </script>
 
 <style lang="scss">
-  .custom-input {
+  .custom-switch {
 
   }
 </style>

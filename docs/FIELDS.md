@@ -246,7 +246,7 @@ Select input fields
     labels: {
       one: 'My first one',
       two: 'My second one',
-      three: 'My thrid one'
+      three: 'My third one'
     }
   },
   source: [

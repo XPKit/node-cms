@@ -1,37 +1,32 @@
 <template>
-  <verte
-    v-if="options.model"
-    :key="schema.model"
-    v-model="color"
-    :picker="options.picker"
-    :model="options.outputModel"
-    :menu-position="options.menuPosition"
-    :recent-colors="options.recentColors"
-    :display="options.display"
-    :draggable="options.draggable"
-    :enable-alpha="options.enableAlpha"
-    :rgb-sliders="options.rgbSliders"
-    :class="{disabled: disabled}"
-  />
+  <div class="wrapper-color">
+    <v-color-picker
+      v-if="options.model"
+      :key="schema.model + 'custom'"
+      v-model="color"
+      :dot-size="options.dotSize"
+      :hide-canvas="options.hideCanvas"
+      :hide-sliders="options.hideSliders"
+      :hide-inputs="options.hideInputs"
+      :hide-mode-switch="options.hideModeSwitch"
+      :model="options.outputModel"
+      :class="{disabled: disabled}"
+    />
+  </div>
 </template>
 
 <script>
-import Verte from 'verte'
 import _ from 'lodash'
 import AbstractField from '@m/AbstractField'
 
 export default {
-  components: {
-    verte: Verte
-  },
   mixins: [AbstractField],
-  props: [
-    'locale'
-  ],
+  props: ['locale'],
   data () {
     return {
+      acceptedModes: ['hexa', 'rgba', 'hsla'],
       color: '',
-      options: { recentColors: null, enableAlpha: false, outputModel: 'hex' }
+      options: { outputModel: 'hexa', hideInputs: false, hideCanvas: false, hideSliders: false, hideModeSwitch: false }
     }
   },
   watch: {
@@ -39,16 +34,24 @@ export default {
       _.set(this.model, this.schema.model, this.color)
     },
     'schema.model': function () {
-      this.color = _.get(this.model, this.schema.model)
+      this.color = this.getColor()
     }
   },
   created () {
-    this.options = _.extend(this.options, this.schema)
+    const options = _.extend(this.options, this.schema)
+    if (_.indexOf(this.acceptedModes, options.outputModel) === -1) {
+      console.warn(`Invalid color mode detected: '${options.outputModel}', will default to hexa`)
+      options.outputModel = 'hexa'
+    }
+    this.options = options
   },
   mounted () {
-    this.color = _.get(this.model, this.schema.model)
+    this.color = this.getColor()
   },
   methods: {
+    getColor () {
+      return _.get(this.model, this.schema.model)
+    }
   }
 }
 </script>

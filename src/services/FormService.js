@@ -28,11 +28,8 @@ const validators = {
     }
   },
   number: (n) => _.isNumber(n),
-  integer: (n) => {
-    console.warn('validators.integer', n, _.isInteger(n))
-    return _.isInteger(n)
-  },
-  double: (n) => isNaN(Number(n)),
+  integer: (n) => _.isNumber(n) && _.isInteger(n),
+  double: (n) => _.isNumber(n) && (_.isInteger(n) || (n === +n && n !== (n | 0))),
   text: (t) => _.isString(t),
   array: (a) => _.isArray(a),
   email: (e) => (new RegExp('/^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$/')).test(e)
@@ -43,18 +40,27 @@ const messages = {
   invalidFormat: TranslateService.get('TL_INVALID_FORMAT')
 }
 
+const checkNumber = (field, value, model, type) => {
+  if (_.get(field, 'required', false) && !_.isNumber(value)) {
+    return messages.fieldIsRequired
+  }
+  const func = _.get(validators, type, false)
+  if (func) {
+    return func(Number(value || 0), field, model, messages)
+  }
+  console.error(`checkNumber - No validator found for type '${type}'`)
+  return false
+}
+
 const customValidators = {
   array: (a) => _.isArray(a),
   email: (e) => (new RegExp('/^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$/')).test(e),
   text: (value, field, model) => {
-    console.warn('customValidators - text - ', value, field, model)
     if (_.get(field, 'required', false) && (!_.isString(value) || _.isEmpty(value))) {
       return messages.fieldIsRequired
     }
-    console.warn('AFTER 1')
     const locale = _.head(_.get(field, 'model', '').split('.'))
     if (_.get(field, 'regex.value', false) === false && _.get(field, `regex['${locale}'].value`, false) === false) {
-      console.warn('AFTER 1-1')
       return true
     }
     let regexText = false
@@ -63,7 +69,6 @@ const customValidators = {
       regexText = _.get(field, `regex['${locale}'].value`, false)
       regexDescription = _.get(field, `regex['${locale}'].description`, false)
     }
-    console.warn('AFTER 2')
     if (regexText === false) {
       regexText = _.get(field, 'regex.value', false)
       regexDescription = _.get(field, 'regex.description', false)
@@ -78,26 +83,15 @@ const customValidators = {
         return `${messages.invalidFormat} (${TranslateService.get(regexDescription)})`
       }
     }
-    console.warn('AFTER 3')
     return true
   },
-  number: (value, field, model) => {
-    if (_.get(field, 'required', false) && !_.isNumber(value)) {
-      return messages.fieldIsRequired
-    }
-    return validators.number(Number(value || 0), field, model, messages)
-  },
-  double: (value, field, model) => {
-    if (_.get(field, 'required', false) && !_.isNumber(value)) {
-      return messages.fieldIsRequired
-    }
-    return validators.double(Number(value || 0), field, model, messages)
-  },
+  number: (value, field, model) => checkNumber(field, value, model, 'number'),
+  double: (value, field, model) => checkNumber(field, value, model, 'double'),
   integer: (value, field, model) => {
-    if (_.get(field, 'required', false) && !_.isNumber(value)) {
-      return messages.fieldIsRequired
+    if (value.toString().indexOf('.') !== -1) {
+      return false
     }
-    return validators.integer(Number(value || 0), field, model, messages)
+    return checkNumber(field, value, model, 'integer')
   },
   image: (value, field, model) => {
     const { key, locale } = getKeyLocale(field)
@@ -132,10 +126,7 @@ const customValidators = {
     return true
   },
   select: (value, field, model) => {
-    if (_.get(field, 'required', false) && _.isEmpty(value)) {
-      return messages.fieldIsRequired
-    }
-    return true
+    return _.get(field, 'required', false) && _.isEmpty(value) ? messages.fieldIsRequired : true
   }
 }
 
@@ -260,7 +251,8 @@ let typeMapper = {
     rows: 10
   },
   wysiwyg: {
-    type: 'Wysiwyg'
+    type: 'Wysiwyg',
+    overrideType: 'WysiwygField'
   },
   image: {
     type: 'ImageView',
@@ -286,11 +278,13 @@ let typeMapper = {
   },
   paragraphImage: {
     type: 'paragraphAttachmentView',
+    overrideType: 'ParagraphAttachmentView',
     fileType: 'image',
     validator: customValidators.image
   },
   paragraphFile: {
     type: 'paragraphAttachmentView',
+    overrideType: 'ParagraphAttachmentView',
     validator: customValidators.file
   }
 }

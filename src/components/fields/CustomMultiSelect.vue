@@ -1,30 +1,82 @@
 <template>
-  <multiselect
-    :id="selectOptions.id"
-    :options="options"
-    :value="objectValue"
-    :class="[schema.labelClasses]"
-    :multiple="selectOptions.multiple"
-    :track-by="selectOptions.trackBy || null" :label="selectOptions.label || null" :searchable="selectOptions.searchable" :clear-on-select="selectOptions.clearOnSelect" :hide-selected="selectOptions.hideSelected" :placeholder="schema.placeholder" :allow-empty="selectOptions.allowEmpty ? true : false" :reset-after="selectOptions.resetAfter" :close-on-select="selectOptions.closeOnSelect" :custom-label="customLabel"
-    :taggable="selectOptions.taggable" :tag-placeholder="selectOptions.tagPlaceholder" :max="schema.max || null" :options-limit="selectOptions.optionsLimit" :group-values="selectOptions.groupValues" :group-label="selectOptions.groupLabel" :block-keys="selectOptions.blockKeys" :internal-search="selectOptions.internalSearch" :select-label="selectOptions.selectLabel" :selected-label="selectOptions.selectedLabel"
-    :deselect-label="selectOptions.deselectLabel" :show-labels="selectOptions.showLabels" :limit="selectOptions.limit" :limit-text="selectOptions.limitText" :loading="selectOptions.loading" :disabled="disabled" :max-height="selectOptions.maxHeight" :show-pointer="selectOptions.showPointer" :option-height="selectOptions.optionHeight" @input="updateSelected"
-    @select="onSelect" @remove="onRemove" @search-change="onSearchChange" @tag="addTag" @open="onOpen" @close="onClose"
-  >
-    <span slot="noResult">{{ selectOptions.noResult }}</span>
-    <span slot="maxElements">{{ selectOptions.maxElements }}</span>
-  </multiselect>
+  <div class="multiselect-wrapper">
+    <v-autocomplete
+      :label="schema.label"
+      :chips="selectOptions.multiple"
+      :value="objectValue"
+      :items="selectOptions.label || options"
+      clearable
+      :deletable-chips="selectOptions.multiple"
+      outlined
+      dense
+      hide-details
+      :placeholder="schema.placeholder"
+      :multiple="selectOptions.multiple"
+      @change="updateSelected"
+      @select="onSelect"
+      @remove="onRemove"
+      @search-change="onSearchChange"
+      @tag="addTag"
+      @open="onOpen"
+      @close="onClose"
+    />
+    <!-- <multiselect
+      :id="selectOptions.id"
+      :options="options"
+      :value="objectValue"
+      :multiple="selectOptions.multiple"
+      :track-by="selectOptions.trackBy || null"
+      :label="getLabel()"
+      :searchable="selectOptions.searchable"
+      :clear-on-select="selectOptions.clearOnSelect"
+      :hide-selected="selectOptions.hideSelected"
+      :placeholder="schema.placeholder"
+      :allow-empty="selectOptions.allowEmpty"
+      :reset-after="selectOptions.resetAfter"
+      :close-on-select="selectOptions.closeOnSelect"
+      :custom-label="customLabel"
+      :taggable="selectOptions.taggable"
+      :tag-placeholder="selectOptions.tagPlaceholder"
+      :max="schema.max || null"
+      :options-limit="selectOptions.optionsLimit"
+      :group-values="selectOptions.groupValues"
+      :group-label="selectOptions.groupLabel"
+      :block-keys="selectOptions.blockKeys"
+      :internal-search="selectOptions.internalSearch"
+      :select-label="selectOptions.selectLabel"
+      :selected-label="selectOptions.selectedLabel"
+      :deselect-label="selectOptions.deselectLabel"
+      :show-labels="selectOptions.showLabels"
+      :limit="selectOptions.limit"
+      :limit-text="selectOptions.limitText"
+      :loading="selectOptions.loading"
+      :disabled="disabled"
+      :max-height="selectOptions.maxHeight"
+      :show-pointer="selectOptions.showPointer"
+      :option-height="selectOptions.optionHeight"
+      @input="updateSelected"
+      @select="onSelect"
+      @remove="onRemove"
+      @search-change="onSearchChange"
+      @tag="addTag"
+      @open="onOpen"
+      @close="onClose"
+    >
+      <span slot="noResult">{{ selectOptions.noResult }}</span>
+      <span slot="maxElements">{{ selectOptions.maxElements }}</span>
+    </multiselect> -->
+  </div>
 </template>
 <script>
-import Multiselect from 'vue-multiselect'
+// import Multiselect from 'vue-multiselect'
 import _ from 'lodash'
 import AbstractField from '@m/AbstractField'
 
 export default {
   components: {
-    Multiselect
+    // Multiselect
   },
   mixins: [AbstractField],
-  props: ['obj', 'vfg', 'model', 'disabled'],
   data () {
     return {
       objectValue: this.value
@@ -32,7 +84,7 @@ export default {
   },
   computed: {
     selectOptions () {
-      console.warn('test options', this.schema.selectOptions || {})
+      console.warn('computed - selectOptions - ', this.value, this.model)
       return this.schema.selectOptions || {}
     },
     options () {
@@ -48,6 +100,7 @@ export default {
         typeof this.schema.selectOptions.customLabel !== 'undefined' &&
         typeof this.schema.selectOptions.customLabel === 'function'
       ) {
+        console.warn('custom label = ', this.schema.selectOptions.customLabel)
         return this.schema.selectOptions.customLabel
       }
       // this will let the multiselect library use the default behavior if customLabel is not specified
@@ -64,17 +117,21 @@ export default {
     }
   },
   methods: {
+    // getLabel () {
+    //   if (!_.isString(this.selectOptions.label)) {
+    //     return 'nope'
+    //   }
+    //   return this.selectOptions.label
+    // },
     getKey () {
       return _.get(this.schema, 'selectOptions.key')
     },
     updateSelected (value /* , id */) {
       this.objectValue = value
       const key = this.getKey()
-      if (key) {
-        this.value = _.get(this.objectValue, key)
-      } else {
-        this.value = this.objectValue
-      }
+      this.value = key ? _.get(this.objectValue, key)
+        : this.objectValue
+      console.warn('updateSelected ', value)
       // TODO: hugo - when value set to none
     },
     addTag (newTag, id) {
