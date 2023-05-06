@@ -1,24 +1,23 @@
 <template>
   <div class="multiselect-wrapper">
     <v-autocomplete
-      :label="schema.label"
+      :id="selectOptions.id"
+      :label="getLabel()"
       :chips="selectOptions.multiple"
       :value="objectValue"
-      :items="selectOptions.label || options"
-      clearable
+      :items="formattedOptions"
       :deletable-chips="selectOptions.multiple"
+      clearable
       outlined
       dense
+      :hide-selected="selectOptions.hideSelected"
+      :disabled="disabled"
       hide-details
       :placeholder="schema.placeholder"
       :multiple="selectOptions.multiple"
       @change="updateSelected"
-      @select="onSelect"
-      @remove="onRemove"
       @search-change="onSearchChange"
       @tag="addTag"
-      @open="onOpen"
-      @close="onClose"
     />
     <!-- <multiselect
       :id="selectOptions.id"
@@ -68,14 +67,10 @@
   </div>
 </template>
 <script>
-// import Multiselect from 'vue-multiselect'
 import _ from 'lodash'
 import AbstractField from '@m/AbstractField'
 
 export default {
-  components: {
-    // Multiselect
-  },
   mixins: [AbstractField],
   data () {
     return {
@@ -84,79 +79,82 @@ export default {
   },
   computed: {
     selectOptions () {
-      console.warn('computed - selectOptions - ', this.value, this.model)
+      // console.warn('computed - selectOptions - ', this.value, this.model)
       return this.schema.selectOptions || {}
     },
     options () {
       let values = this.schema.values
-      if (typeof values === 'function') {
+      if (typeof (values) === 'function') {
         return values.apply(this, [this.model, this.schema])
       }
       return values
     },
-    customLabel () {
-      if (
-        typeof this.schema.selectOptions !== 'undefined' &&
-        typeof this.schema.selectOptions.customLabel !== 'undefined' &&
-        typeof this.schema.selectOptions.customLabel === 'function'
-      ) {
-        console.warn('custom label = ', this.schema.selectOptions.customLabel)
-        return this.schema.selectOptions.customLabel
+    formattedOptions () {
+      const formattedOptions = this.selectOptions.label || this.options
+      if (_.isString(_.first(formattedOptions))) {
+        return formattedOptions
       }
-      // this will let the multiselect library use the default behavior if customLabel is not specified
-      return undefined
-    }
-  },
-  created () {
-    const key = this.getKey()
-    const currentValue = _.get(this.model, _.get(this.schema, 'model', false), false)
-    if (currentValue) {
-      this.updateSelected(_.find(this.options, (option) => {
-        return _.get(option, key, false) === currentValue
-      }))
+      const customLabel = this.customLabel
+      if (!_.isFunction(this.customLabel)) {
+        return formattedOptions
+      }
+      return _.map(formattedOptions, (option) => {
+        const optionLabel = customLabel(option)
+        if (_.isString(optionLabel)) {
+          option.text = optionLabel
+        }
+        if (_.isUndefined(_.get(option, 'value', undefined))) {
+          option.value = _.get(option, '_id', undefined)
+        }
+        return option
+      })
+    },
+    hasCustomLabel () {
+      const selectOptions = _.get(this.schema, 'selectOptions')
+      return typeof selectOptions !== 'undefined' && typeof selectOptions.customLabel !== 'undefined' && typeof selectOptions.customLabel === 'function'
+    },
+    customLabel () {
+      if (_.isString(_.first(this.options))) {
+        return this.options
+      }
+      if (!this.hasCustomLabel) {
+        // this will let the multiselect library use the default behavior if customLabel is not specified
+        return 'text'
+      }
+      return this.schema.selectOptions.customLabel
     }
   },
   methods: {
-    // getLabel () {
-    //   if (!_.isString(this.selectOptions.label)) {
-    //     return 'nope'
-    //   }
-    //   return this.selectOptions.label
-    // },
-    getKey () {
-      return _.get(this.schema, 'selectOptions.key')
+    getLabel () {
+      if (this.disabled) {
+        return ''
+      }
+      if (!_.isString(this.selectOptions.label)) {
+        return this.schema.label
+      }
+      return this.selectOptions.label
     },
     updateSelected (value /* , id */) {
       this.objectValue = value
-      const key = this.getKey()
-      this.value = key ? _.get(this.objectValue, key)
-        : this.objectValue
-      console.warn('updateSelected ', value)
-      // TODO: hugo - when value set to none
+      const key = _.get(this.schema, 'selectOptions.key')
+      if (key) {
+        this.value = _.get(this.objectValue, key)
+      } else {
+        this.value = this.objectValue
+      }
+      this.$emit('input', value, this.schema.model)
     },
     addTag (newTag, id) {
-      let onNewTag = this.selectOptions.onNewTag
+      const onNewTag = this.selectOptions.onNewTag
       if (typeof onNewTag === 'function') {
         onNewTag(newTag, id, this.options, this.objectValue)
       }
     },
     onSearchChange (searchQuery, id) {
-      let onSearch = this.selectOptions.onSearch
+      const onSearch = this.selectOptions.onSearch
       if (typeof onSearch === 'function') {
         onSearch(searchQuery, id, this.options)
       }
-    },
-    onSelect (/* selectedOption, id */) {
-      // console.log("onSelect", selectedOption, id);
-    },
-    onRemove (/* removedOption, id */) {
-      // console.log("onRemove", removedOption, id);
-    },
-    onOpen (/* id */) {
-      // console.log("onOpen", id);
-    },
-    onClose (/* value, id */) {
-      // console.log("onClose", value, id);
     }
   }
 }

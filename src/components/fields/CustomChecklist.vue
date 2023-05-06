@@ -2,12 +2,17 @@
   <div class="wrapper custom-checklist">
     <div class="field-label">{{ schema.label }}</div>
     <div v-if="schema.listBox" class="listbox form-control" :disabled="disabled">
+      <div class="select-all">
+        <label>
+          <v-checkbox
+            :id="getFieldID(schema)" :ripple="false" dense hide-details :input-value="allSelected" :label="selectAllLabel" @change="onChangeSelectAll"
+          />
+        </label>
+      </div>
       <div v-for="(item, i) in items" :key="i" class="list-row" :class="{'is-checked': isItemChecked(item)}">
         <label>
           <v-checkbox
-            :id="getFieldID(schema)"
-            :ripple="false" dense hide-details :label="getItem(item, 'name')"
-            :value="isItemChecked(item)" :disabled="disabled" :name="getInputName(item)" @change="onChanged($event, item)"
+            :id="getFieldID(schema)" :ripple="false" dense hide-details :input-value="isItemChecked(item)" :disabled="disabled" :label="getInputName(item)" :name="getInputName(item)" @change="onChanged($event, item)"
           /></label>
       </div>
     </div>
@@ -31,8 +36,9 @@
 </template>
 
 <script>
-import { isObject, isNil, clone, get } from 'lodash'
+import { isObject, isNil, clone, get, map } from 'lodash'
 import AbstractField from '@m/AbstractField'
+import TranslateService from '@s/TranslateService'
 
 function slugify (name = '') {
   return name
@@ -62,14 +68,26 @@ export default {
     },
     selectedCount () {
       return get(this, 'value.length', 0)
+    },
+    selectAllLabel () {
+      return TranslateService.get(this.allSelected ? 'TL_DESELECT_ALL' : 'TL_SELECT_ALL')
+    },
+    allSelected () {
+      return this.value.length === this.items.length
     }
   },
   methods: {
+
+    onChangeSelectAll (checked) {
+      this.value = !checked ? [] : map(this.items, (item) => this.getItem(item, 'value'))
+      this.$forceUpdate()
+    },
     getInputName (item) {
+      let toSlugify = this.getItem(item, 'value')
       if (this.schema && this.schema.inputName && this.schema.inputName.length > 0) {
-        return slugify(`${this.schema.inputName}_${this.getItem(item, 'value')}`)
+        toSlugify = `${this.schema.inputName}_${toSlugify}`
       }
-      return slugify(this.getItem(item, 'value'))
+      return slugify(toSlugify)
     },
     getItem (item, key) {
       if (!isObject(item)) {
@@ -108,6 +126,11 @@ export default {
 
 <style lang="scss">
   .custom-checklist {
+    .select-all {
+      label {
+        color: black;
+      }
+    }
     .listbox, .dropList {
       height: auto;
       max-height: 150px;
@@ -122,7 +145,6 @@ export default {
       }
     }
     .list-row {
-
       label.v-label.theme--dark, .v-icon.theme--dark {
         color: black !important;
       }
@@ -153,7 +175,6 @@ export default {
       }
       .dropList {
         transition: height 0.5s;
-        //margin-top: 0.5em;
       }
     }
   }

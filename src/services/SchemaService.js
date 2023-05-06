@@ -41,7 +41,7 @@ class SchemaService {
           return { value, text: _.get(label, `${locale}`, label) }
         })
         // schema.selectOptions.label = _.mapValues(schema.labels, label => _.get(label, `${userLocale}`, label))
-        console.warn('SchemaService - getSchemaFields - selectOptions.label:', schema.selectOptions.label)
+        // console.warn('SchemaService - getSchemaFields - selectOptions.label:', schema.selectOptions.label)
       } else if (field.input === 'multiselect' && _.get(schema, 'labels', false)) {
         if (!_.isObject(_.first(field.source))) {
           const values = []

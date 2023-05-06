@@ -266,7 +266,8 @@ let typeMapper = {
     type: 'ParagraphView'
   },
   group: {
-    type: 'group'
+    type: 'group',
+    overrideType: 'Group'
   },
   object: {
     type: 'JsonEditor'

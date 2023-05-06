@@ -159,6 +159,7 @@ export default {
       this.$emit('updateRecordList', record)
     },
     selectRecord (record) {
+      this.localLocale = this.locale
       this.$emit('update:record', record)
     },
     editRecord (record) {

@@ -3,6 +3,15 @@ exports = (module.exports = {
   group: 'standards',
   schema: [
     {
+      field: 'author',
+      input: 'select',
+      source: 'authors',
+      options: {
+        customLabel: '{{name}}'
+      },
+      localised: false
+    },
+    {
       label: {
         enUS: 'Type',
         zhCN: '类型'
@@ -61,60 +70,60 @@ exports = (module.exports = {
         2,
         3
       ]
+    },
+    {
+      field: 'gselect',
+      input: 'select',
+      source: [
+        'one',
+        'two',
+        'three'
+      ],
+      localised: false
+    },
+    {
+      field: 'relation',
+      input: 'select',
+      source: 'articles'
+    },
+    {
+      field: 'grelation',
+      input: 'select',
+      source: 'articles',
+      localised: false
+    },
+    {
+      field: 'multiselect',
+      input: 'multiselect',
+      source: [
+        'one',
+        'two',
+        'three'
+      ]
+    },
+    {
+      field: 'listbox',
+      input: 'multiselect',
+      options: {
+        listBox: true,
+        labels: {
+          one: 'My first one',
+          two: 'My second one',
+          three: 'My third one'
+        }
+      },
+      source: [
+        'one',
+        'two',
+        'three'
+      ]
+    },
+    {
+      field: 'gmultiselect',
+      input: 'multiselect',
+      source: 'articles',
+      localised: false
     }
-    // {
-    //   field: 'gselect',
-    //   input: 'select',
-    //   source: [
-    //     'one',
-    //     'two',
-    //     'three'
-    //   ],
-    //   localised: false
-    // },
-    // {
-    //   field: 'relation',
-    //   input: 'select',
-    //   source: 'articles'
-    // },
-    // {
-    //   field: 'grelation',
-    //   input: 'select',
-    //   source: 'articles',
-    //   localised: false
-    // },
-    // {
-    //   field: 'multiselect',
-    //   input: 'multiselect',
-    //   source: [
-    //     'one',
-    //     'two',
-    //     'three'
-    //   ]
-    // },
-    // {
-    //   field: 'listbox',
-    //   input: 'multiselect',
-    //   options: {
-    //     listBox: true,
-    //     labels: {
-    //       one: 'My first one',
-    //       two: 'My second one',
-    //       three: 'My third one'
-    //     }
-    //   },
-    //   source: [
-    //     'one',
-    //     'two',
-    //     'three'
-    //   ]
-    // },
-    // {
-    //   field: 'gmultiselect',
-    //   input: 'multiselect',
-    //   source: 'articles',
-    //   localised: false
-    // }
   ],
   locales: [
     'enUS',

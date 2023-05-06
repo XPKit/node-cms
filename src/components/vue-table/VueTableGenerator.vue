@@ -29,7 +29,8 @@
                 <img :src="display(item, sItem)">
               </div>
               <div v-else class="field-wrap">
-                <component :is="sItem.type" :model="item" :disabled="true" :schema="sItem" :form-options="{fieldIdPrefix: `record-${idx}-`}" />
+                <component :is="getFieldType(sItem)" :model="item" :disabled="true" :schema="sItem" :form-options="{fieldIdPrefix: `record-${idx}-`}" />
+                <!-- <component :is="sItem.type" :model="item" :disabled="true" :schema="sItem" :form-options="{fieldIdPrefix: `record-${idx}-`}" /> -->
               </div>
             </div>
           </div>
@@ -98,6 +99,7 @@ export default {
             }
           })
         }
+        field.disabled = true
       })
       fields = fields.concat(newFields)
       let list = _.filter(fields, (item) => _.isNumber(_.get(item, 'options.index', false)))
@@ -108,6 +110,9 @@ export default {
     }
   },
   methods: {
+    getFieldType (field) {
+      return _.get(field, 'overrideType', _.get(field, 'type', false))
+    },
     calculatedSize () {
       let size = this.actionsSize
       let totalFieldsCount = this.schemaFields.length + 1

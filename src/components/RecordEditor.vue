@@ -40,16 +40,12 @@
 <script>
 import axios from 'axios/dist/axios.min'
 import _ from 'lodash'
-// import VuetifyFormBaseSsr from 'vuetify-form-base-ssr/src/vuetify-form-base-ssr.vue'
 
 import TranslateService from '@s/TranslateService'
 import AbstractEditorView from './AbstractEditorView'
 import Notification from '@m/Notification'
 
 export default {
-  components: {
-    // 'vuetify-form-base-ssr': VuetifyFormBaseSsr
-  },
   mixins: [AbstractEditorView, Notification],
   props: [
     'resourceList',
@@ -185,7 +181,7 @@ export default {
         this.$loading.stop('delete-record')
       }
     },
-    async updateRecord () {
+    checkFormValid () {
       this.formValid = false
       try {
         this.formValid = this.$refs.vfg.validate()
@@ -196,27 +192,49 @@ export default {
       if (!this.formValid) {
         const notificationText = this.editingRecord._id ? TranslateService.get('TL_ERROR_CREATING_RECORD_ID', null, { id: this.editingRecord._id }) : TranslateService.get('TL_ERROR_CREATING_RECORD')
         this.notify(notificationText, 'error')
+      }
+    },
+    async updateRecord () {
+      this.checkFormValid()
+      if (!this.formValid) {
         return
       }
       const uploadObject = {}
       _.each(this.resource.schema, (field) => {
+        if (!this.formValid) {
+          return
+        }
         if (_.includes(this.fileInputTypes, field.input)) {
           return
         }
         const isLocalised = this.resource.locales && (field.localised || _.isUndefined(field.localised))
         if (isLocalised) {
           _.each(this.resource.locales, (locale) => {
+            if (!this.formValid) {
+              return
+            }
             const fieldName = `${locale}.${field.field}`
             let value = _.get(this.editingRecord, fieldName)
             if (field.input === 'pillbox') {
               value = value || []
-            }
-            if (_.includes(['code', 'json'], field.input)) {
+            } else if (_.includes(['code', 'json'], field.input)) {
               value = value || {}
+            }
+            if (locale !== this.userLocale && field.required) {
+              if (_.isUndefined(value) || (field.input === 'string' && value.length === 0)) {
+                console.warn('required field empty', field)
+                this.selectLocale(locale)
+                this.formValid = false
+                this.$nextTick(() => {
+                  this.checkFormValid()
+                })
+                return
+              }
             }
             if (_.isEqual(value, _.get(this.record, fieldName))) {
               return
             }
+
             _.set(uploadObject, fieldName, value)
           })
         } else {

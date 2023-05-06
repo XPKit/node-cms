@@ -97,47 +97,48 @@ export default {
       _.forEach(this.list, item => item._searchable = { id: false, keyFields: false, query: false })
       if (this.sift.isQuery) {
         return _.forEach(this.list.filter(sift(this.query)), item => item._searchable.query = true)
-      } else {
-        return _.filter(this.list, (item) => {
-          if (_.isEmpty(this.search)) {
-            return true
-          }
-          const values = []
-          _.forEach(fields, (field) => {
-            values.push(this.getValue(item, field, this.resource.displayItem))
-          })
-          let qItems = 0
-          let qValues = 0
-          for (const queryKey in this.query) {
-            const queryValue = this.query[queryKey]
-            qItems = qItems + 1
-            let value = _.get(item, queryKey)
-            if (_.isUndefined(value) === false) {
-              if (_.isArray(value)) {
-                if (_.includes(value, queryValue)) {
-                  qValues = qValues + 1
-                }
-              } else {
-                if (value === queryValue) {
-                  qValues = qValues + 1
-                }
+      }
+      const test = _.filter(this.list, (item) => {
+        if (_.isEmpty(this.search)) {
+          return true
+        }
+        const values = []
+        _.forEach(fields, (field) => {
+          values.push(this.getValue(item, field, this.resource.displayItem))
+        })
+        let qItems = 0
+        let qValues = 0
+        for (const queryKey in this.query) {
+          const queryValue = this.query[queryKey]
+          qItems = qItems + 1
+          let value = _.get(item, queryKey)
+          if (_.isUndefined(value) === false) {
+            if (_.isArray(value)) {
+              if (_.includes(value, queryValue)) {
+                qValues = qValues + 1
+              }
+            } else {
+              if (value === queryValue) {
+                qValues = qValues + 1
               }
             }
           }
-          let found = false
-          if (qItems > 0 && qItems === qValues) {
-            found = true
-            item._searchable.query = true
-          } else if (this.doesMatch(this.search, values)) {
-            found = true
-            item._searchable.keyFields = true
-          } else if (new RegExp(this.search, 'i').test(item._id)) {
-            found = true
-            item._searchable.id = true
-          }
-          return found
-        })
-      }
+        }
+        let found = false
+        if (qItems > 0 && qItems === qValues) {
+          found = true
+          item._searchable.query = true
+        } else if (this.doesMatch(this.search, values)) {
+          found = true
+          item._searchable.keyFields = true
+        } else if (new RegExp(this.search, 'i').test(item._id)) {
+          found = true
+          item._searchable.id = true
+        }
+        return found
+      })
+      console.warn('LIST RECORDS = ', test)
+      return test
     }
   },
   watch: {

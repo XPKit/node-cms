@@ -79,7 +79,6 @@ export default {
           if (validateAsync) {
             results.push(validator(this.value, this.schema, this.model))
           } else {
-            // TODO: hugo - check why the validators aren't triggerred
             let result = validator(this.value, this.schema, this.model)
             if (result && isFunction(result.then)) {
               result.then(err => {

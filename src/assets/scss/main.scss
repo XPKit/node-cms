@@ -75,5 +75,32 @@ body {
       }
     }
   }
+  .theme--dark {
+    .record-table {
+      .locales {
+        li {
+          cursor: pointer;
+          color: black;
+          &.selected {
+            color: white;
+          }
+        }
+      }
+      .table {
+        .row  {
+          .cell {
+            color: white;
+            input, textarea {
+              color: white;
+            }
+          }
+          &.header {
+            .cell {
+              color: #4f5f4f;
+            }
+          }
+        }
+      }
+    }
+  }
 }
-

@@ -20,7 +20,7 @@ class ResourceService {
   get (resource) {
     const data = this.cacheMap[resource]
     if (_.isUndefined(data)) {
-      console.warn(`resource (${resource}) is not cached`)
+      console.info(`resource (${resource}) is not cached`)
     }
     // return _.cloneDeep(data)
     return data

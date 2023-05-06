@@ -93,5 +93,7 @@
     "TL_MUTE": "Mute",
     "TL_UNMUTE": "Unmute",
     "TL_CLEAR_SEARCH": "Clear Search",
-    "TL_ERROR_RETRIEVE_SYSLOG": "Failed to retreive syslog"
-}
+    "TL_ERROR_RETRIEVE_SYSLOG": "Failed to retreive syslog",
+    "TL_SELECT_ALL": "Select all",
+    "TL_DESELECT_ALL": "Deselect all"
+  }

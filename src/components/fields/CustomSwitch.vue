@@ -1,16 +1,16 @@
 <template>
   <div class="custom-switch">
     <v-switch
-      :label="schema.model"
+      :label="schema.disabled ? '' : schema.model"
       :input-value="getValue()"
-      :dense="schema.dense ? true : false"
       :compact="schema.compact ? true : false"
       :disabled="schema.disabled ? true : false"
       :readonly="schema.readonly ? true : false"
       :filled="schema.filled ? true : false"
-      :hide-details="true"
+      dense
+      hide-details
+      solo
       :outlined="schema.outlined ? true : false"
-      :solo="schema.solo ? true : false"
       @change="onChange"
     />
   </div>
@@ -44,6 +44,8 @@ export default {
 
 <style lang="scss">
   .custom-switch {
-
+    .v-input--selection-controls {
+      margin-top: 0;
+    }
   }
 </style>

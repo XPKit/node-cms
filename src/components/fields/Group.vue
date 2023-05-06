@@ -1,22 +1,23 @@
 <template>
   <div>
-    <vuetify-form-base-ssr
-      ref="vfg"
-      :schema="schema.groupOptions"
-      :model="model"
-      @model-updated="onModelUpdated"
-    />
+    <div class="field-label">{{ schema.label }}</div>
+    <div class="group">
+      <custom-form
+        ref="vfg"
+        :schema="schema.groupOptions"
+        :model.sync="model"
+        @error="onError"
+        @input="onModelUpdated"
+      />
+    </div>
   </div>
 </template>
 
 <script>
-import VuetifyFormBaseSsr from 'vuetify-form-base-ssr/src/vuetify-form-base-ssr.vue'
+// import _ from 'lodash'
 import AbstractField from '@m/AbstractField'
 
 export default {
-  components: {
-    'vuetify-form-base-ssr': VuetifyFormBaseSsr
-  },
   mixins: [AbstractField],
   props: ['groupOptions'],
   data () {
@@ -24,9 +25,10 @@ export default {
       errors: null
     }
   },
-  created () {
-  },
   methods: {
+    onError (error) {
+      console.log(999, 'error', error)
+    },
     validate () {
       const isValid = this.$refs.vfg.validate()
       if (!isValid) {
@@ -47,3 +49,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.group {
+  border: 1px solid white;
+  border-radius: 16px;
+  padding: 16px;
+}
+</style>

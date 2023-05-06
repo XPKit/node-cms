@@ -73,9 +73,9 @@ export default {
         this.$loading.stop('loading-schema')
         const groups = SchemaService.getNestedGroups(this.resource, fields, 0)
         this.schema.fields = groups
-        console.warn('AbstractEditorView - schema ', this.schema)
+        // console.warn('AbstractEditorView - schema ', this.schema)
         this.originalFieldList = fields
-        console.warn('AbstractEditorView - updateSchema', this.schema)
+        // console.warn('AbstractEditorView - updateSchema', this.schema)
       } catch (error) {
         console.error('AbstractEditorView - updateSchema - Error happen during updateSchema:', error)
       }

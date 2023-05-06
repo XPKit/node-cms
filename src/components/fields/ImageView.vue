@@ -27,7 +27,6 @@
         </v-card>
       </form>
     </div>
-    <img v-if="isImage()" class="preview" :src="imageUrl()">
     <croppa
       v-if="schema.width && schema.height"
       :key="schema.model"
