@@ -105,7 +105,7 @@ before(async () => {
     request: request(MASTER_URL)
   }
   cms.resource('articles', articleSchema)
-  await Q.ninvoke(cms, 'bootstrap')
+  await cms.bootstrap()
   await Q.ninvoke(cms, 'allow', 'anonymous', 'articles')
   await Q.ninvoke(cms, 'allow', 'anonymous', '_sync')
   await Q.ninvoke(cms.express(), 'listen', MASTER_HTTP_PORT)
@@ -134,7 +134,7 @@ before(async () => {
     request: request(SLAVE_URL)
   }
   cms.resource('articles', articleSchema)
-  await Q.ninvoke(cms, 'bootstrap')
+  await cms.bootstrap()
   await Q.ninvoke(cms, 'allow', 'anonymous', 'articles')
   await Q.ninvoke(cms, 'allow', 'anonymous', '_sync')
   await Q.ninvoke(cms.express(), 'listen', SLAVE_HTTP_PORT)

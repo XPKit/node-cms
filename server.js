@@ -55,7 +55,7 @@ const cms = new CMS(options)
 const app = express()
 app.use(cms.express())
 const server = app.listen(pkg.config.port, async () => {
-  await Q.ninvoke(cms, 'bootstrap')
+  await cms.bootstrap()
   logger.info('########### server started #################')
   return logger.info(`${pkg.name} started at http://localhost:${server.address().port}/admin`)
 })

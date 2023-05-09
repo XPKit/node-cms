@@ -80,7 +80,7 @@ before(async () => {
   cms.resource('querytest')
 
   await Q.ninvoke(cms.express(), 'listen', helper.port)
-  await Q.ninvoke(cms, 'bootstrap')
+  await cms.bootstrap()
 })
 
 before(() => {

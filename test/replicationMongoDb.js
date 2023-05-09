@@ -43,7 +43,7 @@ before(async () => {
     request: request(helper.MASTER_URL)
   }
   cms.resource('articles', { type: 'normal' })
-  await Q.ninvoke(cms, 'bootstrap')
+  await cms.bootstrap()
   await Q.ninvoke(cms, 'allow', 'anonymous', 'articles')
   await Q.ninvoke(cms.express(), 'listen', MASTER_HTTP_PORT)
 })
@@ -67,7 +67,7 @@ before(async () => {
     request: request(helper.SLAVE_URL)
   }
   cms.resource('articles', { type: 'normal' })
-  await Q.ninvoke(cms, 'bootstrap')
+  await cms.bootstrap()
   await Q.ninvoke(cms, 'allow', 'anonymous', 'articles')
   await Q.ninvoke(cms.express(), 'listen', helper.SLAVE_HTTP_PORT)
 })
