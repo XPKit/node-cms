@@ -69,10 +69,37 @@ export default {
       warningQty: 0,
       errorQty: 0,
       ignoreNextScrollEvent: false,
-      fakeData: []
+      fakeData: [],
+      client: null,
+      config: null
     }
   },
   async mounted () {
+    const {data: config} = await axios.get('../api/_syslog/config')
+    this.config = config
+    if (this.config.wss) {
+      const url = window.location.origin.replace(/^(http)/, 'ws')
+      const client = new WebSocket(url)
+      client.addEventListener('open', (event) => {
+        this.client = client
+      })
+      client.addEventListener('message', (event) => {
+        const list = JSON.parse(event.data)
+        this.isLoading = false
+        this.error = false
+        if (!_.isEmpty(list)) {
+          this.error = false
+          this.logLines.push(...list)
+          this.lastId = _.last(this.logLines).id
+          this.updateSysLog()
+        }
+        if (this.autoscroll) {
+          this.ignoreNextScrollEvent = true
+          this.$refs.scroller.scrollToBottom()
+        }
+      })
+    }
+
     this.$nextTick(() => {
       this.refreshLog()
       if (this.$refs.scroller) {
@@ -161,19 +188,26 @@ export default {
     },
     async refreshLog () {
       try {
-        const response = await axios.get('../api/_syslog', {params: {id: this.lastId}})
-
-        this.isLoading = false
-        this.error = false
-        if (!_.isEmpty(response.data)) {
+        if (this.config.wss) {
+          if (this.client) {
+            this.client.send(JSON.stringify({id: this.lastId}))
+            this.isLoading = false
+            this.error = false
+          }
+        } else {
+          const response = await axios.get('../api/_syslog', {params: {id: this.lastId}})
+          this.isLoading = false
           this.error = false
-          this.logLines.push(...response.data)
-          this.lastId = _.last(this.logLines).id
-          this.updateSysLog()
-        }
-        if (this.autoscroll) {
-          this.ignoreNextScrollEvent = true
-          this.$refs.scroller.scrollToBottom()
+          if (!_.isEmpty(response.data)) {
+            this.error = false
+            this.logLines.push(...response.data)
+            this.lastId = _.last(this.logLines).id
+            this.updateSysLog()
+          }
+          if (this.autoscroll) {
+            this.ignoreNextScrollEvent = true
+            this.$refs.scroller.scrollToBottom()
+          }
         }
       } catch (error) {
         console.error(error)
