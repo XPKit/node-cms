@@ -1,24 +1,30 @@
 <template>
-  <!-- TODO: hugo - replace with vuetify -->
-  <input-tag
+  <!-- TODO: hugo - handle limit -->
+  <v-combobox
+    clearable
+    :hide-selected="!options['allow-duplicates']"
+    :readonly="options['read-only']"
+    :placeholder="options['tagPlaceholder']"
+    dense
+    multiple
+    outlined
+    small-chips
+  />
+  <!-- <input-tag
     v-model="tags"
     :allow-duplicates="options['allow-duplicates']"
     :limit="options['limit']"
     :read-only="options['read-only']"
     :placeholder="options['tagPlaceholder']"
     :add-tag-on-keys="options['add-tag-on-keys']"
-  />
+  /> -->
 </template>
 
 <script>
-import InputTag from 'vue-input-tag'
 import _ from 'lodash'
 import AbstractField from '@m/AbstractField'
 
 export default {
-  components: {
-    inputTag: InputTag
-  },
   mixins: [AbstractField],
   props: ['locale'],
   data () {

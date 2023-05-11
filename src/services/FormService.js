@@ -248,6 +248,7 @@ let typeMapper = {
     //   modifiable: false,
     // },
     type: 'textArea',
+    overrideType: 'CustomTextarea',
     rows: 10
   },
   wysiwyg: {

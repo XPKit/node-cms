@@ -4,6 +4,7 @@
       :class="[schema.labelClasses]"
       :type="getType()"
       :value="value"
+      :label="schema.label"
       :max-length="schema.max"
       :min-length="schema.min"
       :dense="schema.dense ? true : false"
