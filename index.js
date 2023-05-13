@@ -155,6 +155,7 @@ class CMS {
     this.bootstrapFunctions.push(async (callback) => {
       SyslogManager.init(this, options)
       SystemManager.init(this, options)
+      callback()
     })
     this._app.use(SyslogManager.express())
     this._app.use(SystemManager.express())
