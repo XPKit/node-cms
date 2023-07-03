@@ -47,7 +47,7 @@ export default {
         return false
       }
       if (this.schema.validator && _.isFunction(this.schema.validator)) {
-        return this.schema.validator(val, this.schema.model, this.model)
+        return !!this.schema.validator(val, this.schema.model, this.model)
       }
       return true
     }

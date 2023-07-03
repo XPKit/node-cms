@@ -11,7 +11,7 @@
         </template>
       </div>
     </div>
-    <div v-shortkey="['ctrl', 'a']" class="records" @shortkey="selectAll()">
+    <div v-shortkey="multiselect ? ['ctrl', 'a'] : false" class="records" @shortkey="selectAll()">
       <RecycleScroller
         v-slot="{ item }"
         class="list"

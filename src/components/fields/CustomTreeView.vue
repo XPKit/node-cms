@@ -1,5 +1,5 @@
 <template>
-  <tree-view :key="schema.model" :data="_get(model,schema.model)" :options="options" @change-data="onChangeData" />
+  <tree-view v-if="schema" :key="schema.model" :data="get(model,schema.model)" :options="options" @change-data="onChangeData" />
 </template>
 
 <script>
@@ -24,9 +24,10 @@ export default {
   },
   methods: {
     onChangeData (data) {
-      _.set(this.model, this.schema.model, data)
+      console.warn('onChangeData - ', data)
+      _.set(this.model, _.get(this.schema, 'model', false), data)
     },
-    _get: _.get
+    get: _.get
   }
 
 }

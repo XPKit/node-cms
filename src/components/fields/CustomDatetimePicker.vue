@@ -1,6 +1,6 @@
 <template>
   <div>
-    <datetime :format="schema.format" :value="_get(model,schema.model)" @input="onChangeData" />
+    <datetime :format="schema.format" :value="get(model,schema.model)" @input="onChangeData" />
   </div>
 </template>
 
@@ -33,7 +33,7 @@ export default {
       this.schema.label = null
       this.schema.label = dummy
     },
-    _get: _.get
+    get: _.get
   }
 }
 </script>

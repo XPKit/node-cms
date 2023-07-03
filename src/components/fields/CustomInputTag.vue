@@ -1,6 +1,7 @@
 <template>
   <!-- TODO: hugo - handle limit -->
   <v-combobox
+    v-model="tags"
     clearable
     :hide-selected="!options['allow-duplicates']"
     :readonly="options['read-only']"
@@ -8,6 +9,7 @@
     dense
     multiple
     outlined
+    :counter="options['limit']"
     small-chips
   />
   <!-- <input-tag

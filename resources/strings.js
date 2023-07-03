@@ -106,12 +106,18 @@ exports = (module.exports = {
     },
     {
       field: 'code',
-      input: 'code'
+      input: 'code',
+      options: {
+        languages: [['cpp', 'C++']]
+      }
     },
     {
       field: 'gcode',
       input: 'code',
-      localised: false
+      localised: false,
+      options: {
+        theme: 'github'
+      }
     },
     {
       field: 'pillbox',

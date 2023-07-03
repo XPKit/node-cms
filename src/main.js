@@ -5,7 +5,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VueShortkey from 'vue-shortkey'
 import VueTimeago from 'vue-timeago'
-import JsonTreeView from 'vue-json-tree-view'
+import TreeView from 'vue-json-tree-view'
 import VueVirtualScroller from 'vue-virtual-scroller'
 import Notifications from 'vue-notification'
 import Croppa from 'vue-croppa'
@@ -28,7 +28,8 @@ import CmsImport from '@c/pages/CmsImport.vue'
 import SyncResource from '@c/pages/SyncResource.vue'
 
 // Field components
-import TreeView from '@c/fields/TreeView.vue'
+import CustomTreeView from '@c/fields/CustomTreeView.vue'
+import CustomCode from '@c/fields/CustomCode.vue'
 import ColorPicker from '@c/fields/ColorPicker.vue'
 import JsonEditor from '@c/fields/JsonEditor.vue'
 import WysiwygField from '@c/fields/Wysiwyg.vue'
@@ -61,7 +62,8 @@ Vue.component('CustomTextarea', CustomTextarea)
 Vue.component('CustomSwitch', CustomSwitch)
 Vue.component('ParagraphAttachmentView', ParagraphAttachmentView)
 Vue.component('ParagraphView', ParagraphView)
-Vue.component('TreeView', TreeView)
+Vue.component('CustomTreeView', CustomTreeView)
+Vue.component('CustomCode', CustomCode)
 Vue.component('ColorPicker', ColorPicker)
 Vue.component('JsonEditor', JsonEditor)
 Vue.component('WysiwygField', WysiwygField)
@@ -87,7 +89,7 @@ Vue.use(wysiwyg, {})
 Vue.use(Loading)
 Vue.use(Croppa)
 Vue.use(Notifications)
-Vue.use(JsonTreeView)
+Vue.use(TreeView)
 Vue.use(VueVirtualScroller)
 Vue.use(VueRouter)
 Vue.use(VueShortkey)

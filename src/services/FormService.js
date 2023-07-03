@@ -18,6 +18,14 @@ const getKeyLocale = (schema) => {
   return options
 }
 
+const validateEmail = (email) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    )
+}
+
 const validators = {
   url: (u) => {
     try {
@@ -32,7 +40,7 @@ const validators = {
   double: (n) => _.isNumber(n) && (_.isInteger(n) || (n === +n && n !== (n | 0))),
   text: (t) => _.isString(t),
   array: (a) => _.isArray(a),
-  email: (e) => (new RegExp('/^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$/')).test(e)
+  email: (e) => validateEmail(e)
 }
 
 const messages = {
@@ -233,7 +241,7 @@ let typeMapper = {
   },
   json: {
     type: 'TreeView',
-    overrideType: 'TreeView',
+    overrideType: 'CustomTreeView',
     treeViewOptions: {
       maxDepth: 4,
       rootObjectKey: 'root',
@@ -241,15 +249,14 @@ let typeMapper = {
     }
   },
   code: {
-    // type: 'treeView',
-    // treeViewOptions: {
-    //   maxDepth: 4,
-    //   rootObjectKey: 'root',
-    //   modifiable: false,
-    // },
-    type: 'textArea',
-    overrideType: 'CustomTextarea',
-    rows: 10
+    type: 'Code',
+    overrideType: 'CustomCode',
+    options: {
+      languages: [['javascript', 'JS']],
+      tabSpaces: 2,
+      theme: 'github-dark',
+      lineNums: true
+    }
   },
   wysiwyg: {
     type: 'Wysiwyg',
