@@ -218,8 +218,7 @@ export default {
             let value = _.get(record, fieldName)
             if (field.input === 'pillbox') {
               value = value || []
-            }
-            if (_.includes(['code', 'json'], field.input)) {
+            } else if (field.input === 'json') {
               value = value || {}
             }
             if (_.isEqual(value, _.get(oldRecord, fieldName))) {
@@ -233,8 +232,7 @@ export default {
           let value = _.get(record, fieldName)
           if (field.input === 'pillbox') {
             value = value || []
-          }
-          if (_.includes(['code', 'json'], field.input)) {
+          } else if (field.input === 'json') {
             value = value || {}
           }
           if (_.isEqual(value, _.get(oldRecord, fieldName))) {

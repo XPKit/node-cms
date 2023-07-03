@@ -1,7 +1,7 @@
 <template>
   <div class="code-wrapper">
     <div class="label">{{ schema.label }}</div>
-    <codemirror v-model="value" :style="getStyle()" :options="cmOption" @input="onChangeData" />
+    <codemirror v-if="isReady" v-model="value" :style="getStyle()" :options="cmOption" @input="onChangeData" />
   </div>
 </template>
 
@@ -10,6 +10,8 @@ import _ from 'lodash'
 import 'codemirror/keymap/sublime'
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/mode/javascript/javascript.js'
+import 'codemirror/mode/htmlmixed/htmlmixed.js'
+import 'codemirror/mode/css/css.js'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/dracula.css'
 import AbstractField from '@m/AbstractField'
@@ -19,6 +21,7 @@ export default {
   mixins: [AbstractField],
   data () {
     return {
+      isReady: false,
       cmOption: {
         height: 'auto',
         viewportMargin: Infinity,
@@ -28,7 +31,7 @@ export default {
         line: this.getOpt('line', true),
         foldGutter: this.getOpt('foldGutter', true),
         styleSelectedText: this.getOpt('styleSelectedText', true),
-        mode: this.getOpt('mode', 'text/javascript'),
+        mode: this.getOpt('mode', 'javascript'),
         keyMap: 'sublime',
         matchBrackets: this.getOpt('matchBrackets', true),
         showCursorWhenSelecting: this.getOpt('showCursorWhenSelecting', true),
@@ -42,10 +45,16 @@ export default {
   },
   watch: {
   },
+  mounted () {
+    if (_.isObject(this.value)) {
+      this.value = ''
+    }
+    if (_.get(this.cmOption, 'mode', false) === 'json') {
+      this.cmOption.mode = 'javascript'
+    }
+    this.isReady = true
+  },
   methods: {
-    getOpt (opt, defaultVal) {
-      return _.get(this.schema, `options.${opt}`, defaultVal)
-    },
     getStyle () {
       return _.merge({
         height: _.get(this.schema, 'options.height', 'auto'),

@@ -2,7 +2,6 @@ import { defaults, isNil, isNumber, isInteger, isString, isArray, isFunction, is
 import moment from 'moment'
 
 let resources = {
-  // TODO: hugo - link all of them with TranslateService.get()
   fieldIsRequired: 'This field is required!',
   invalidFormat: 'Invalid format!',
   numberTooSmall: 'The number is too small! Minimum: {0}',

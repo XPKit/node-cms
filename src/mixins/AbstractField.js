@@ -61,8 +61,10 @@ export default {
       }
     }
   },
-
   methods: {
+    getOpt (opt, defaultVal) {
+      return objGet(this.schema, `options.${opt}`, defaultVal)
+    },
     validate (calledParent) {
       this.clearValidationErrors()
       let validateAsync = objGet(this.formOptions, 'validateAsync', false)

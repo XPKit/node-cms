@@ -124,8 +124,7 @@ export default {
             let value = _.get(this.record, fieldName)
             if (field.input === 'pillbox') {
               value = value || []
-            }
-            if (_.includes(['code', 'json'], field.input)) {
+            } else if (field.input === 'json') {
               value = value || {}
             }
             if (_.isPlainObject(value)) {
@@ -139,7 +138,7 @@ export default {
           if (field.input === 'pillbox') {
             value = value || []
           }
-          if (_.includes(['code', 'json'], field.input)) {
+          if (field.input === 'json') {
             value = value || {}
           }
           if (_.isPlainObject(value)) {
@@ -217,7 +216,7 @@ export default {
             let value = _.get(this.editingRecord, fieldName)
             if (field.input === 'pillbox') {
               value = value || []
-            } else if (_.includes(['code', 'json'], field.input)) {
+            } else if (field.input === 'json') {
               value = value || {}
             }
             if (locale !== this.userLocale && field.required) {
@@ -234,7 +233,6 @@ export default {
             if (_.isEqual(value, _.get(this.record, fieldName))) {
               return
             }
-
             _.set(uploadObject, fieldName, value)
           })
         } else {
@@ -242,8 +240,7 @@ export default {
           let value = _.get(this.editingRecord, fieldName)
           if (field.input === 'pillbox') {
             value = value || []
-          }
-          if (_.includes(['code', 'json'], field.input)) {
+          } else if (field.input === 'json') {
             value = value || {}
           }
           if (_.isEqual(value, _.get(this.record, fieldName))) {
@@ -252,12 +249,10 @@ export default {
           _.set(uploadObject, fieldName, value)
         }
       })
-
       const newAttachments = _.filter(this.editingRecord._attachments, item => !item._id)
       // console.warn('NEW ATTACHMENTS = ', newAttachments)
       const removeAttachments = _.filter(this.record._attachments, item => !_.find(this.editingRecord._attachments, { _id: item._id }))
       // console.warn('REMOVE ATTACHMENTS = ', removeAttachments)
-
       if (_.isUndefined(this.editingRecord._id)) {
         this.$loading.start('create-record')
         try {
@@ -298,7 +293,7 @@ export default {
       // console.warn('model updated - editingRecord:', this.editingRecord)
       // console.warn('model updated - schema:', this.schema)
       // console.warn('model updated - resource.schema:', this.resource.schema)
-      console.warn(`update ${model}`)
+      // console.warn(`update ${model}`)
       if (this.isAttachmentField(model)) {
         let newAttachments = value
         if (!_.isArray(newAttachments)) {

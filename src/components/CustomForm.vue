@@ -31,7 +31,7 @@ export default {
       if (_.isUndefined(model)) {
         model = _.get(_.first(value), 'parentKey', false)
       }
-      console.warn('CUSTOM FORM - onInput', value, model)
+      // console.warn('CUSTOM FORM - onInput', value, model)
       this.$emit('input', value, model)
     },
     checkIfComponentsExist () {

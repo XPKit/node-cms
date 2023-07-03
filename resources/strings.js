@@ -105,10 +105,35 @@ exports = (module.exports = {
       }
     },
     {
-      field: 'code',
+      label: 'Code (JS)',
+      field: 'codeJS',
       input: 'code',
       options: {
-        languages: [['cpp', 'C++']]
+        mode: 'text/javascript'
+      }
+    },
+    {
+      label: 'Code (HTML)',
+      field: 'codeHTML',
+      input: 'code',
+      options: {
+        mode: 'htmlmixed'
+      }
+    },
+    {
+      label: 'Code (CSS)',
+      field: 'codeCSS',
+      input: 'code',
+      options: {
+        mode: 'css'
+      }
+    },
+    {
+      label: 'Code (JSON)',
+      field: 'codeJSON',
+      input: 'code',
+      options: {
+        mode: 'json'
       }
     },
     {

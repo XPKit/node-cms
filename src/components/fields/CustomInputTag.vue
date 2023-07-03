@@ -1,16 +1,16 @@
 <template>
-  <!-- TODO: hugo - handle limit -->
   <v-combobox
     v-model="tags"
     clearable
-    :hide-selected="!options['allow-duplicates']"
-    :readonly="options['read-only']"
-    :placeholder="options['tagPlaceholder']"
-    dense
-    multiple
-    outlined
-    :counter="options['limit']"
-    small-chips
+    :hide-selected="!options['allowDuplicates']"
+    :readonly="options['readOnly']"
+    :placeholder="options['placeholder']"
+    :dense="options['dense']"
+    :multiple="options['multiple']"
+    :outlined="options['outlined']"
+    :deletable-chips="options['deletableChips']"
+    :small-chips="options['smallChips']"
+    @change="onChangeData"
   />
   <!-- <input-tag
     v-model="tags"
@@ -33,7 +33,15 @@ export default {
     return {
       tags: [],
       options: {
-        'allow-duplicates': true
+        allowDuplicates: this.getOpt('allowDuplicates', true),
+        readOnly: this.getOpt('disabled', false),
+        placeholder: this.getOpt('placeholder', ''),
+        dense: this.getOpt('dense', false),
+        multiple: this.getOpt('multiple', false),
+        outlined: this.getOpt('outlined', false),
+        deletableChips: this.getOpt('deletableChips', false),
+        smallChips: this.getOpt('smallChips', false),
+        limit: this.getOpt('limit', -1)
       }
     }
   },
@@ -52,6 +60,11 @@ export default {
     this.tags = _.get(this.model, this.schema.model)
   },
   methods: {
+    onChangeData (value) {
+      if (_.get(this.options, 'limit', -1) !== -1) {
+        this.value = _.take(value, this.options.limit)
+      }
+    }
   }
 }
 </script>
