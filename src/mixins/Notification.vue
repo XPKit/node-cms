@@ -1,7 +1,7 @@
 
 <script>
 import _ from 'lodash'
-
+import NotificationsService from '@s/NotificationsService'
 export default {
   data () {
     return {
@@ -10,16 +10,10 @@ export default {
   mounted () {
   },
   methods: {
-    notify (text, type = 'success') {
-      const notificationObj = {
-        group: 'notification',
-        text,
-        type
-        // duration: -1
-      }
+    notify (message, type = 'success') {
       const logFunc = _.get(console, type, console.info)
-      logFunc(text)
-      this.$notify(notificationObj)
+      logFunc(message)
+      NotificationsService.send(message, type)
     }
   }
 }

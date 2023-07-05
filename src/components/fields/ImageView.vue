@@ -27,7 +27,8 @@
         </v-card>
       </form>
     </div>
-    <croppa
+    <!-- TODO: hugo - replace with new cropper -->
+    <!-- <croppa
       v-if="schema.width && schema.height"
       :key="schema.model"
       v-model="myCroppa"
@@ -53,7 +54,7 @@
       <div v-if="!isImage()" class="placeholder-overlay">
         {{ 'TL_CLICK_HERE_TO_CHOOSE_AN_IMAGE' | translate }}
       </div>
-    </croppa>
+    </croppa> -->
     <div v-if="(schema.width && schema.height)" class="help-block">
       <span>{{ 'TL_THIS_FIELD_REQUIRES_THE_FOLLOWING_SIZE'|translate }}:{{ schema.width }}x{{ schema.height }}</span>
     </div>

@@ -1,7 +1,6 @@
-@import "@a/scss/components/vue-recycle-scroller";
-@import "@a/scss/components/vue-multiselect";
-@import "@a/scss/components/vue-form-generator";
-@import "@a/scss/components/vue-croppa";
+// @import "@a/scss/components/vue-recycle-scroller";
+// @import "@a/scss/components/vue-multiselect";
+// @import "@a/scss/components/vue-form-generator";
 @import "@a/scss/components/LocaleList";
 @import "@a/scss/components/RecordList";
 @import "@a/scss/components/RecordEditor";
@@ -62,17 +61,6 @@ body {
     }
   }
 
-  .theme--dark.v-tabs> {
-    .v-tabs-bar {
-      .v-tab {
-        max-width: 100%;
-        color: black;
-        &:not(.v-tab--active) {
-          color: grey;
-        }
-      }
-    }
-  }
   .theme--dark {
     .record-table {
       .locales {
@@ -96,6 +84,19 @@ body {
             .cell {
               color: #4f5f4f;
             }
+          }
+        }
+      }
+    }
+    &.v-tabs> {
+      .v-tabs-bar {
+        .v-tab {
+          max-width: 100%;
+          color: black;
+          transition: all 0.3s;
+          &:not(.v-tab--active) {
+            color: grey;
+            background-color: lightgrey;
           }
         }
       }

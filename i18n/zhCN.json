@@ -108,5 +108,6 @@
     "TL_INVALID_CARD": "Invalid card format!",
     "TL_INVALID_CARD_NUMBER": "Invalid card number!",
     "TL_INVALID_TEXT_CONTAIN_NUMBER": "Invalid text! Cannot contains numbers or special characters",
-    "TL_INVALID_TEXT_CONTAIN_SPEC": "Invalid text! Cannot contains special characters"
+    "TL_INVALID_TEXT_CONTAIN_SPEC": "Invalid text! Cannot contains special characters",
+    "TL_CLOSE": "Close"
 }

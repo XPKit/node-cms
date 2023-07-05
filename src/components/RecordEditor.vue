@@ -2,13 +2,14 @@
   <div v-if="record" class="record-editor" :class="{frozen:!record._local}">
     <v-tabs
       v-show="resource.locales"
+      v-model="activeLocale"
       fixed-tabs
       background-color="white"
       dark
     >
       <v-tab
         v-for="item in resource.locales" :key="item"
-        :class="{ active: item == locale }" class="locale"
+        class="locale"
         @click="selectLocale(item)"
       >
         {{ 'TL_'+item.toUpperCase() | translate }}
@@ -60,6 +61,7 @@ export default {
       fileInputTypes: ['file', 'img', 'image', 'imageView', 'attachmentView'],
       cachedMap: {},
       editingRecord: {},
+      activeLocale: _.indexOf(this.resource.locales, this.locale),
       originalFieldList: [],
       schema: { fields: [] },
       isReady: false,
@@ -75,6 +77,7 @@ export default {
     async locale () {
       await this.updateSchema()
       this.editingRecord = _.clone(this.editingRecord)
+      this.activeLocale = _.indexOf(this.resource.locales, this.locale)
       this.checkDirty()
     },
     async record () {
@@ -108,6 +111,9 @@ export default {
       console.log(999, 'error', error)
     },
     selectLocale (item) {
+      console.warn('WILL CHANGE LOCALE TO', item)
+      this.activeLocale = _.indexOf(this.resource.locales, item)
+
       this.$emit('update:locale', item)
     },
     cloneEditingRecord () {
@@ -181,13 +187,19 @@ export default {
       }
     },
     checkFormValid () {
-      this.formValid = false
+      let formValid = false
       try {
-        this.formValid = this.$refs.vfg.validate()
+        formValid = this.$refs.vfg.validate()
       } catch (error) {
         console.error('Not valid: ', error)
-        this.formValid = false
+        formValid = false
       }
+      const firstInvalidField = _.find(this.$refs.vfg.inputs, (input) => !input.valid)
+      if (!_.isUndefined(firstInvalidField)) {
+        formValid = false
+        firstInvalidField.focus()
+      }
+      this.formValid = formValid
       if (!this.formValid) {
         const notificationText = this.editingRecord._id ? TranslateService.get('TL_ERROR_CREATING_RECORD_ID', null, { id: this.editingRecord._id }) : TranslateService.get('TL_ERROR_CREATING_RECORD')
         this.notify(notificationText, 'error')
@@ -196,6 +208,7 @@ export default {
     async updateRecord () {
       this.checkFormValid()
       if (!this.formValid) {
+        console.info('form not valid')
         return
       }
       const uploadObject = {}
@@ -219,14 +232,15 @@ export default {
             } else if (field.input === 'json') {
               value = value || {}
             }
-            if (locale !== this.userLocale && field.required) {
+            if (locale !== this.locale && field.required) {
               if (_.isUndefined(value) || (field.input === 'string' && value.length === 0)) {
-                console.warn('required field empty', field)
                 this.selectLocale(locale)
                 this.formValid = false
+                this.$forceUpdate()
                 this.$nextTick(() => {
                   this.checkFormValid()
                 })
+                console.warn('required field empty', field, this.formValid)
                 return
               }
             }
@@ -253,6 +267,9 @@ export default {
       // console.warn('NEW ATTACHMENTS = ', newAttachments)
       const removeAttachments = _.filter(this.record._attachments, item => !_.find(this.editingRecord._attachments, { _id: item._id }))
       // console.warn('REMOVE ATTACHMENTS = ', removeAttachments)
+      if (!this.formValid) {
+        return
+      }
       if (_.isUndefined(this.editingRecord._id)) {
         this.$loading.start('create-record')
         try {
@@ -267,10 +284,11 @@ export default {
         this.$loading.stop('create-record')
         return
       }
+
       this.$loading.start('update-record')
       try {
         let response
-        console.warn('Will send', uploadObject)
+        console.warn('Will send', uploadObject, this.formValid)
         if (!_.isEmpty(uploadObject)) {
           response = await axios.put(`../api/${this.resource.title}/${this.editingRecord._id}`, uploadObject)
         } else {

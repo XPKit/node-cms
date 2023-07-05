@@ -13,7 +13,7 @@
       :disabled="schema.disabled ? true : false"
       :readonly="schema.readonly ? true : false"
       :filled="schema.filled ? true : false"
-      :hide-details="true"
+      hide-details
       :rules="[validateField]"
       :outlined="schema.outlined ? true : false"
       :solo="schema.solo ? true : false"

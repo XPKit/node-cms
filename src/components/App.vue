@@ -1,6 +1,20 @@
 <template>
   <v-app>
-    <notifications group="notification" position="bottom left" />
+    <v-scroll-y-transition>
+      <v-snackbar v-if="notification.type" v-model="notification" multi-line top centered :timeout="notification.type === 'error' ? -1 : 1000" class="notification" :class="getNotificationClass()">
+        <p>{{ notification.message }}</p>
+        <template #action="{ attrs }">
+          <v-btn
+            v-if="notification.type === 'error'"
+            text
+            v-bind="attrs"
+            @click="notification = {}"
+          >
+            {{ 'TL_CLOSE' | translate }}
+          </v-btn>
+        </template>
+      </v-snackbar>
+    </v-scroll-y-transition>
     <div v-if="user" class="cms-layout">
       <div class="cms-inner-layout" :class="getThemeClass()">
         <div class="resources">
@@ -53,6 +67,7 @@ import _ from 'lodash'
 import pAll from 'p-all'
 
 import LoadingService from '@s/LoadingService'
+import NotificationsService from '@s/NotificationsService'
 import LoginService from '@s/LoginService'
 import ConfigService from '@s/ConfigService'
 import TranslateService from '@s/TranslateService'
@@ -82,6 +97,7 @@ export default {
       selectedResource: null,
       localeList: [],
       recordList: [],
+      notification: {},
       selectedRecord: null,
       selectedPlugin: null,
       LoadingService,
@@ -110,12 +126,16 @@ export default {
       }
     }
   },
+  destroyed () {
+    NotificationsService.events.off('notification', this.onGetNotification)
+  },
   mounted () {
     this.$loading.start('init')
     LoginService.onLogout(() => {
       console.info('User logged out')
       window.location.reload()
     })
+    NotificationsService.events.on('notification', this.onGetNotification)
     this.$nextTick(async () => {
       await ConfigService.init()
       await TranslateService.init()
@@ -157,6 +177,13 @@ export default {
     })
   },
   methods: {
+    onGetNotification (data) {
+      this.notification = data
+      // console.warn('received notification !', data)
+    },
+    getNotificationClass () {
+      return `notification-${this.notification.type}`
+    },
     getThemeClass () {
       const classes = {}
       _.set(classes, `theme--${_.get(this.user, 'theme', 'light')}`, true)
@@ -348,5 +375,21 @@ export default {
     }
   }
 }
-
+.v-snack.notification {
+  z-index: 4200;
+  p {
+    margin: 0;
+    text-align: center;
+  }
+  &.notification-error {
+    p {
+      color: red;
+    }
+  }
+  &.notification-success {
+    p {
+      color: green;
+    }
+  }
+}
 </style>

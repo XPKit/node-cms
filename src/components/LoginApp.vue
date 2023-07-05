@@ -1,6 +1,5 @@
 <template>
   <v-app>
-    <notifications group="notification" position="bottom left" />
     <div v-if="loaded" class="cms-layout" :class="{displayed: showLoginForm}">
       <div class="login-canvas">
         <form @submit.prevent="login">
@@ -96,7 +95,6 @@ export default {
         window.location.reload()
       } catch (error) {
         console.error('Error happen during login:', error)
-        this.notify(TranslateService.get('TL_LOGIN_FAIL'), 'error')
         this.loginFailed = true
         this.$loading.stop('login')
       }

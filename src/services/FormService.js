@@ -96,6 +96,9 @@ const customValidators = {
   number: (value, field, model) => checkNumber(field, value, model, 'number'),
   double: (value, field, model) => checkNumber(field, value, model, 'double'),
   integer: (value, field, model) => {
+    if (_.isUndefined(value)) {
+      value = ''
+    }
     if (value.toString().indexOf('.') !== -1) {
       return false
     }

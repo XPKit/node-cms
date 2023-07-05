@@ -25,25 +25,25 @@
     height: 25px;
     z-index: 100;
   }
-  .croppa-container {
-    border: 1px solid transparent;
-    canvas {
-      width: 100% !important;
-      height: auto !important;
-    }
-    .placeholder-overlay {
-      position: absolute;
-      z-index: 10;
-      left: 0;
-      color: gray;
-      width: 100%;
-      font-size: 16px;
-      text-align: center;
-      pointer-events: none;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-  }
+  // .croppa-container {
+  //   border: 1px solid transparent;
+  //   canvas {
+  //     width: 100% !important;
+  //     height: auto !important;
+  //   }
+  //   .placeholder-overlay {
+  //     position: absolute;
+  //     z-index: 10;
+  //     left: 0;
+  //     color: gray;
+  //     width: 100%;
+  //     font-size: 16px;
+  //     text-align: center;
+  //     pointer-events: none;
+  //     top: 50%;
+  //     transform: translateY(-50%);
+  //   }
+  // }
 }
 
 .form-group.error {
