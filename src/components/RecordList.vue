@@ -98,7 +98,7 @@ export default {
       if (this.sift.isQuery) {
         return _.forEach(this.list.filter(sift(this.query)), item => item._searchable.query = true)
       }
-      const test = _.filter(this.list, (item) => {
+      return _.filter(this.list, (item) => {
         if (_.isEmpty(this.search)) {
           return true
         }
@@ -137,8 +137,6 @@ export default {
         }
         return found
       })
-      console.warn('LIST RECORDS = ', test)
-      return test
     }
   },
   watch: {

@@ -145,8 +145,10 @@ export default {
       }
     }
     .list-row {
-      label.v-label.theme--dark, .v-icon.theme--dark {
-        color: black !important;
+      .theme-dark {
+        &.v-label, &.v-icon {
+          color: black !important;
+        }
       }
     }
     .combobox {

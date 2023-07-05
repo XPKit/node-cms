@@ -36,6 +36,17 @@ class LoginService {
     }
   }
 
+  async changeTheme (isDark) {
+    try {
+      const newTheme = _.get(this.user, 'theme', 'dark') === 'dark' ? 'light' : 'dark'
+      console.warn('changeTheme ', this.user, newTheme)
+      await axios.get(`./changeTheme/${newTheme}`)
+      console.warn('Successfully changed the theme for user')
+    } catch (error) {
+      console.error('Failed to change theme: ', error)
+    }
+  }
+
   async logout () {
     this.user = null
     try {

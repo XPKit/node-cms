@@ -1,39 +1,34 @@
 <template>
   <div class="resources-content">
-    <v-navigation-drawer
-      permanent
+    <DynamicScroller
+      :items="groupedList"
+      key-field="index"
+      :min-item-size="54"
       class="resource-list"
     >
-      <v-list
-        dense
-        subheader
-        rounded
-      >
-        <template v-for="(group, index) in groupedList">
-          <div v-if="group.list && group.list.length > 0" :key="index">
-            <div class="node-cms-title">{{ group.name | translate }}</div>
-            <ul>
-              <li v-for="item in group.list" :key="item.title" :class="{selected: item == selectedItem}" @click="select(item, 'resource')">
-                <span class="icon" />{{ item.displayname ? TranslateService.get(item.displayname) : item.title }}
-              </li>
-            </ul>
-          </div>
-        </template>
-      </v-list>
-    </v-navigation-drawer>
-    <!-- <div class="resource-list">
-      <template v-for="(group, index) in groupedList">
-        <div v-if="group.list && group.list.length > 0" :key="index">
-          <div class="node-cms-title">{{ group.name | translate }}</div>
-          <ul>
-            <li v-for="item in group.list" :key="item.title" :class="{selected: item == selectedItem}" @click="select(item, 'resource')">
-              <span class="icon" />{{ item.displayname ? TranslateService.get(item.displayname) : item.title }}
+      <template #default="{ item, index, active }">
+        <DynamicScrollerItem
+          :item="item"
+          :active="active"
+          :size-dependencies="[
+            item.name,
+          ]"
+          :data-index="index"
+          class="resource-group"
+        >
+          <div class="node-cms-title">{{ item.name | translate }}</div>
+          <ul v-if="item.list && item.list.length > 0">
+            <li v-for="i in item.list" :key="i.title" :class="{selected: i == selectedItem}" @click="select(i, 'resource')">
+              <span class="icon" />{{ i.displayname ? TranslateService.get(i.displayname) : i.title }}
             </li>
           </ul>
-        </div>
+        </DynamicScrollerItem>
       </template>
-    </div> -->
+    </DynamicScroller>
     <div class="system">
+      <div class="theme-switch">
+        <v-switch :input-value="getTheme()" compact dense hide-details solo @change="onChangeTheme" />
+      </div>
       <div class="node-cms-title flex">
         {{ 'TL_SYSTEM' | translate }}
         <v-btn v-if="showLogoutButton" color="error" small @click="logout()"><v-icon small color="black">mdi-link-variant-off</v-icon>{{ 'TL_LOGOUT' | translate }}</v-btn>
@@ -68,9 +63,9 @@
 </template>
 
 <script>
-
 import _ from 'lodash'
 import axios from 'axios'
+import moment from 'moment'
 import TranslateService from '@s/TranslateService'
 import LoginService from '@s/LoginService'
 
@@ -186,8 +181,11 @@ export default {
         }
         return `${TranslateService.get(item.name, 'enUS')}`.toLowerCase()
       }, 'asc')
-
-      return groups
+      groups = _.map(groups, (group, i) => {
+        group.index = i
+        return group
+      })
+      return _.filter(groups, (group) => group.list && group.list.length !== 0)
     }
   },
   async mounted () {
@@ -198,7 +196,13 @@ export default {
     clearTimeout(this.timer)
   },
   methods: {
-
+    getTheme () {
+      return _.get(LoginService, 'user.theme', 'light') === 'dark'
+    },
+    async onChangeTheme (value) {
+      // await LoginService.changeTheme(value)
+      this.$vuetify.theme.dark = value
+    },
     async logout () {
       await LoginService.logout()
     },
@@ -217,23 +221,7 @@ export default {
       this.$emit('selectItem', item)
     },
     timeAgo (current) {
-      const elapsed = parseInt(current, 10)
-      let secondsPerMinute = 60
-      let secondsPerHour = secondsPerMinute * 60
-      let secondsPerDay = secondsPerHour * 24
-      let secondsPerMonth = secondsPerDay * 30
-
-      if (elapsed < secondsPerMinute) {
-        return Math.round(elapsed) + ' seconds ago'
-      } else if (elapsed < secondsPerHour) {
-        return Math.round(elapsed / secondsPerMinute) + ' minutes ago'
-      } else if (elapsed < secondsPerDay) {
-        return Math.round(elapsed / secondsPerHour) + ' hours ago'
-      } else if (elapsed < secondsPerMonth) {
-        return '~' + Math.round(elapsed / secondsPerDay) + ' days ago'
-      } else {
-        return '~' + Math.round(elapsed / secondsPerMonth) + ' months ago'
-      }
+      return moment().subtract(parseInt(current, 10), 'seconds').fromNow()
     },
     convertBytes (megaBytes) {
       const sizes = ['MB', 'GB', 'TB']
@@ -262,6 +250,8 @@ export default {
   .resource-list {
     flex: 1 1 0;
     overflow-y: auto;
+    width: 100%;
+    height: 100%;
     &:after {
       display: block;
       content: '';
@@ -343,6 +333,14 @@ button {
     align-items: center;
     justify-content: space-between;
   }
+}
+.theme-switch {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+}
+
+.resource-group {
 }
 
 </style>

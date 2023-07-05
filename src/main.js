@@ -7,9 +7,9 @@ import VueShortkey from 'vue-shortkey'
 import VueTimeago from 'vue-timeago'
 import TreeView from 'vue-json-tree-view'
 import VueVirtualScroller from 'vue-virtual-scroller'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import Notifications from 'vue-notification'
 import Croppa from 'vue-croppa'
-import wysiwyg from 'vue-wysiwyg'
 import axios from 'axios'
 import draggable from 'vuedraggable'
 import LogViewer from '@femessage/log-viewer'
@@ -85,7 +85,6 @@ Vue.mixin({
   }
 })
 
-Vue.use(wysiwyg, {})
 Vue.use(Loading)
 Vue.use(Croppa)
 Vue.use(Notifications)

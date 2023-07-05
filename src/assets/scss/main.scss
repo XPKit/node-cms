@@ -3,17 +3,14 @@
 @import "@a/scss/components/vue-form-generator";
 @import "@a/scss/components/vue-croppa";
 @import "@a/scss/components/LocaleList";
-@import "@a/scss/components/ResourceList";
 @import "@a/scss/components/RecordList";
 @import "@a/scss/components/RecordEditor";
 @import "@a/scss/components/RecordTable";
-@import "@a/scss/components/Wysiwyg";
 @import "@a/scss/components/ImageView";
 @import "@a/scss/components/AttachmentView";
 @import "@a/scss/components/DatetimePicker";
 @import "@a/scss/components/Loading";
 @import "@a/scss/components/JsonEditor";
-@import "@a/scss/components/ColorPicker";
 @import "@a/scss/components/PluginPage.scss";
 @import "@a/scss/components/MultiselectPage.scss";
 @import "@a/scss/components/LoginApp.scss";
@@ -55,7 +52,8 @@ body {
     color: rgba(0, 0, 0, 0.87);
   }
   .theme--dark.v-application {
-    background: #4e4e4e;    color: rgba(255, 255, 255, 0.87);
+    background: #4e4e4e;
+    color: rgba(255, 255, 255, 0.87);
     .buttons {
       background: #4e4e4e;
     }
@@ -102,5 +100,8 @@ body {
         }
       }
     }
+  }
+  .theme-light {
+
   }
 }

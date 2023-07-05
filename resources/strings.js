@@ -139,10 +139,7 @@ exports = (module.exports = {
     {
       field: 'gcode',
       input: 'code',
-      localised: false,
-      options: {
-        theme: 'github'
-      }
+      localised: false
     },
     {
       field: 'pillbox',

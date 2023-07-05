@@ -252,10 +252,6 @@ let typeMapper = {
     type: 'Code',
     overrideType: 'CustomCode',
     options: {
-      languages: [['javascript', 'JS']],
-      tabSpaces: 2,
-      theme: 'github-dark',
-      lineNums: true
     }
   },
   wysiwyg: {

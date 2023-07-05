@@ -2,7 +2,7 @@
   <v-app>
     <notifications group="notification" position="bottom left" />
     <div v-if="user" class="cms-layout">
-      <div class="cms-inner-layout">
+      <div class="cms-inner-layout" :class="getThemeClass()">
         <div class="resources">
           <locale-list v-if="localeList" :locale-list="localeList" />
           <resource-list :class="{locale:localeList && localeList.length > 1}" :list="resourceList" :plugins="pluginList" :selected-item="selectedResource || selectedPlugin" @selectItem="selectResource" />
@@ -111,7 +111,6 @@ export default {
     }
   },
   mounted () {
-    console.warn('App mounted')
     this.$loading.start('init')
     LoginService.onLogout(() => {
       console.info('User logged out')
@@ -126,9 +125,9 @@ export default {
       } else {
         LoginService.init()
         try {
-          const userResponse = await axios.get('./login')
-          this.user = userResponse.data
-          // console.warn(`User is: `, this.user)
+          this.user = await LoginService.getStatus()
+          const isDark = _.get(this.user, 'theme', 'light') === 'dark'
+          this.$vuetify.theme.dark = isDark
           this.$forceUpdate()
         } catch (error) {
           const errorMessage = _.get(error, 'response.data.message', error.message)
@@ -158,6 +157,11 @@ export default {
     })
   },
   methods: {
+    getThemeClass () {
+      const classes = {}
+      _.set(classes, `theme--${_.get(this.user, 'theme', 'light')}`, true)
+      return classes
+    },
     async selectResource (resource) {
       try {
         if (_.get(this.$router, 'history.current.query.id', false) !== resource.title) {
