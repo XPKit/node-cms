@@ -1,5 +1,5 @@
 import { defaults, isNil, isNumber, isInteger, isString, isArray, isFunction, isFinite } from 'lodash'
-import moment from 'moment'
+import Dayjs from 'dayjs'
 
 let resources = {
   fieldIsRequired: 'This field is required!',
@@ -131,13 +131,13 @@ const validators = {
     if (!isNil(field.min)) {
       let min = new Date(field.min)
       if (m.valueOf() < min.valueOf()) {
-        err.push(msg(messages.dateIsEarly, moment.format(m), moment.format(min)))
+        err.push(msg(messages.dateIsEarly, Dayjs.format(m), Dayjs.format(min)))
       }
     }
     if (!isNil(field.max)) {
       let max = new Date(field.max)
       if (m.valueOf() > max.valueOf()) {
-        err.push(msg(messages.dateIsLate, moment.format(m), moment.format(max)))
+        err.push(msg(messages.dateIsLate, Dayjs.format(m), Dayjs.format(max)))
       }
     }
     return err

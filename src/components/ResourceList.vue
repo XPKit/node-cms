@@ -65,7 +65,7 @@
 <script>
 import _ from 'lodash'
 import axios from 'axios'
-import moment from 'moment'
+import Dayjs from 'dayjs'
 import TranslateService from '@s/TranslateService'
 import LoginService from '@s/LoginService'
 
@@ -221,7 +221,7 @@ export default {
       this.$emit('selectItem', item)
     },
     timeAgo (current) {
-      return moment().subtract(parseInt(current, 10), 'seconds').fromNow()
+      return Dayjs().subtract(parseInt(current, 10), 'second').fromNow()
     },
     convertBytes (megaBytes) {
       const sizes = ['MB', 'GB', 'TB']

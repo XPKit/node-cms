@@ -3,7 +3,7 @@ const measure = require('measure')
 const numeral = require('numeral')
 const path = require('path')
 const logger = new (require(path.join(__dirname, '..', 'lib', 'logger')))()
-const moment = require('moment')
+const Dayjs = require('dayjs')
 const _ = require('lodash')
 
 let startProcess = function () {
@@ -59,7 +59,7 @@ let convertData = function (value, type) {
       return value = _.compact(_.map(value, _.trim))
     case 'datetime':
     case 'date':
-      return moment(value, 'DD/MM/YYYY').valueOf() || moment(value, 'YYYY-MM-DD').valueOf()
+      return Dayjs(value, 'DD/MM/YYYY').valueOf() || Dayjs(value, 'YYYY-MM-DD').valueOf()
     default:
       return _.trim(value)
   }

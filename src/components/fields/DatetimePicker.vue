@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import dayjs from 'dayjs'
 import _ from 'lodash'
 
 export default {
@@ -181,7 +181,7 @@ export default {
       return _.padStart(number, 2, '0')
     },
     display () {
-      return this.timeStamp ? moment(this.timeStamp).format(this.dateFormat) : ''
+      return this.timeStamp ? dayjs(this.timeStamp).format(this.dateFormat) : ''
     },
     leftMonth () {
       const index = this.months.indexOf(this.month)
