@@ -3,6 +3,36 @@ exports = (module.exports = {
   group: 'specials',
   schema: [
     {
+      field: 'cropimage',
+      input: 'image',
+      options: {
+        width: '800',
+        height: '300',
+        background: 'transparent',
+        accept: 'image/jpeg',
+        quality: 0.5,
+        limit: 300 * 1024 // 100KB
+      }
+    },
+    {
+      field: 'gcropimage',
+      input: 'image',
+      localised: false,
+      options: {
+        width: '400',
+        height: '200',
+        background: 'transparent'
+      }
+    },
+    {
+      field: 'cropimage2',
+      input: 'image',
+      options: {
+        width: '200',
+        height: '300'
+      }
+    },
+    {
       field: 'defaultColor',
       input: 'color',
       options: {
@@ -31,36 +61,6 @@ exports = (module.exports = {
         draggable: false,
         enableAlpha: false,
         rgbSliders: false
-      }
-    },
-    {
-      field: 'cropimage',
-      input: 'image',
-      options: {
-        width: '800',
-        height: '300',
-        background: 'transparent',
-        accept: 'image/jpeg',
-        quality: 0.5,
-        limit: 300 * 1024 // 100KB
-      }
-    },
-    {
-      field: 'gcropimage',
-      input: 'image',
-      localised: false,
-      options: {
-        width: '400',
-        height: '200',
-        background: 'transparent'
-      }
-    },
-    {
-      field: 'cropimage2',
-      input: 'image',
-      options: {
-        width: '200',
-        height: '300'
       }
     },
     {

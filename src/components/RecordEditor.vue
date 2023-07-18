@@ -111,9 +111,7 @@ export default {
       console.log(999, 'error', error)
     },
     selectLocale (item) {
-      console.warn('WILL CHANGE LOCALE TO', item)
       this.activeLocale = _.indexOf(this.resource.locales, item)
-
       this.$emit('update:locale', item)
     },
     cloneEditingRecord () {
@@ -284,7 +282,6 @@ export default {
         this.$loading.stop('create-record')
         return
       }
-
       this.$loading.start('update-record')
       try {
         let response
@@ -295,6 +292,12 @@ export default {
           response = { data: this.editingRecord }
         }
         await this.uploadAttachments(response.data._id, newAttachments)
+        const newAttachmentsIds = _.map(newAttachments, '_id')
+        const updatedAttachments = _.filter(this.editingRecord._attachments, item => {
+          return item._id && !_.includes(newAttachmentsIds, item._id) && _.get(item, 'cropOptions.updated', false)
+        })
+        console.warn('UPDATED ATTACHMENTS = ', updatedAttachments)
+        await this.updateAttachments(response.data._id, updatedAttachments)
         await this.removeAttachments(response.data._id, removeAttachments)
         this.notify(TranslateService.get('TL_RECORD_UPDATED', null, { id: this.editingRecord._id }))
         this.$emit('updateRecordList', response.data)

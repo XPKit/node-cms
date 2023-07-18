@@ -24,7 +24,7 @@ export default {
   props: ['locale'],
   data () {
     return {
-      acceptedModes: ['hexa', 'rgba', 'hsla'],
+      acceptedModes: ['hexa', 'rgba', 'hsla', 'hex', 'rgb'],
       color: '',
       options: { outputModel: 'hexa', hideInputs: false, hideCanvas: false, hideSliders: false, hideModeSwitch: false }
     }

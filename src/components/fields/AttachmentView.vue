@@ -8,7 +8,7 @@
         <span>{{ 'TL_CURRENT_FILESIZE' | translate }}: {{ bytesToSize(attachment._size) }}</span>
       </div>
     </div>
-    <form v-if="!disabled && getAttachments().length < schema.maxCount" enctype="multipart/form-data">
+    <form v-if="!disabled && (!schema.maxCount || getAttachments().length < schema.maxCount)" enctype="multipart/form-data">
       <v-card
         :class="{ 'drag-and-drop': dragover }"
         @drop.prevent="onDrop($event)"
@@ -17,7 +17,6 @@
         @dragleave.prevent="dragover = false"
       >
         <v-file-input :key="schema.model" ref="fileInput" hide-details :label="schema.label" dense outlined :multiple="schema.maxCount > 1" :accept="schema.accept" show-size @change="onUploadChanged" />
-        <!-- <input :key="schema.model" type="file" :accept="schema.accept" @change="onUploadChanged"> -->
       </v-card>
     </form>
   </div>
@@ -49,8 +48,10 @@ export default {
       console.log(attachment)
     },
     removeFile (attachment) {
-      this.$refs.fileInput.internalValue = null
-      this.$refs.fileInput.$refs.input.value = null
+      if (_.get(this.$refs, 'fileInput', false)) {
+        this.$refs.fileInput.internalValue = null
+        this.$refs.fileInput.$refs.input.value = null
+      }
       this.localModel._attachments = _.filter(this.localModel._attachments, item => item !== attachment)
       this.$forceUpdate()
       this.$emit('input', this.localModel._attachments, this.schema.model)

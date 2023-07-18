@@ -17,9 +17,9 @@
     </v-scroll-y-transition>
     <div v-if="user" class="cms-layout">
       <div class="cms-inner-layout" :class="getThemeClass()">
+        <nav-bar :config="config" :toolbar-title="toolbarTitle" :locale-class="{locale:localeList && localeList.length > 1}" :select-resource-group-callback="selectResourceGroup" :select-resource-callback="selectResource" :resource-list="resourceList" :plugin-list="pluginList" :selected-resource-group="selectedResourceGroup" :selected-item="selectedResource || selectedPlugin" />
         <div class="resources">
           <locale-list v-if="localeList" :locale-list="localeList" />
-          <resource-list :class="{locale:localeList && localeList.length > 1}" :list="resourceList" :plugins="pluginList" :selected-item="selectedResource || selectedPlugin" @selectItem="selectResource" />
         </div>
         <div class="records">
           <template v-if="selectedResource && (!selectedResource.view || selectedResource.view == 'list')">
@@ -75,14 +75,16 @@ import ResourceService from '@s/ResourceService'
 import Notification from '@m/Notification'
 import Loading from '@c/Loading.vue'
 import LocaleList from '@c/LocaleList.vue'
-import ResourceList from '@c/ResourceList.vue'
+import NavBar from '@c/NavBar.vue'
+// import ResourceList from '@c/ResourceList.vue'
 import RecordList from '@c/RecordList.vue'
 import RecordEditor from '@c/RecordEditor.vue'
 import RecordTable from '@c/RecordTable.vue'
 
 export default {
   components: {
-    ResourceList,
+    // ResourceList,
+    NavBar,
     RecordList,
     RecordEditor,
     Loading,
@@ -92,12 +94,15 @@ export default {
   mixins: [Notification],
   data () {
     return {
+      config: false,
       locale: 'enUS',
       resourceList: [],
       selectedResource: null,
       localeList: [],
       recordList: [],
       notification: {},
+      toolbarTitle: false,
+      selectedResourceGroup: null,
       selectedRecord: null,
       selectedPlugin: null,
       LoadingService,
@@ -138,7 +143,9 @@ export default {
     NotificationsService.events.on('notification', this.onGetNotification)
     this.$nextTick(async () => {
       await ConfigService.init()
+      this.config = ConfigService.config
       await TranslateService.init()
+      this.setToolbarTitle()
       const noLogin = _.get(window, 'noLogin', false)
       if (noLogin) {
         this.user = {}
@@ -177,6 +184,9 @@ export default {
     })
   },
   methods: {
+    setToolbarTitle () {
+      this.toolbarTitle = _.get(ConfigService.config, `toolbarTitle.${TranslateService.locale}`, _.get(ConfigService.config, 'toolbarTitle', false))
+    },
     onGetNotification (data) {
       this.notification = data
       // console.warn('received notification !', data)
@@ -188,6 +198,9 @@ export default {
       const classes = {}
       _.set(classes, `theme--${_.get(this.user, 'theme', 'light')}`, true)
       return classes
+    },
+    async selectResourceGroup (resourceGroup) {
+      this.selectedResourceGroup = resourceGroup
     },
     async selectResource (resource) {
       try {
@@ -314,6 +327,7 @@ export default {
   overflow: auto;
   .cms-inner-layout {
     display: flex;
+    flex-direction: column;
     align-items: stretch;
     flex: 1 1 0;
     height: 100vh;

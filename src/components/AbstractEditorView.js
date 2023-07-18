@@ -26,12 +26,36 @@ export default {
           if (attachment._fields.fileItemId) {
             data.append('fileItemId', attachment._fields.fileItemId)
           }
+          if (_.get(attachment, 'cropOptions', false)) {
+            console.warn('detected cropOptions, will add it to the request')
+            data.append('cropOptions', JSON.stringify(attachment.cropOptions))
+          }
           await axios.post(`../api/${this.resource.title}/${id}/attachments`, data)
         }
       } catch (error) {
         console.error('Error happen during uploadAttachments:', error)
       }
       this.$loading.stop('uploadAttachments')
+    },
+    async updateAttachments (id, attachments) {
+      this.$loading.start('updateAttachments')
+      try {
+        for (const attachment of attachments) {
+          console.warn('updateAttachments ====', attachment)
+          const dataToUpdate = {
+            cropOptions: {
+              top: attachment.cropOptions.top,
+              left: attachment.cropOptions.left,
+              width: attachment.cropOptions.width,
+              height: attachment.cropOptions.height
+            }
+          }
+          await axios.put(`../api/${this.resource.title}/${id}/attachments/${attachment._id}`, dataToUpdate)
+        }
+      } catch (error) {
+        console.error('Error happen during updateAttachments:', error)
+      }
+      this.$loading.stop('updateAttachments')
     },
     async removeAttachments (id, attachments) {
       this.$loading.start('remove-attachments')

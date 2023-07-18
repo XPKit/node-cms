@@ -1,62 +1,24 @@
 <template>
-  <div class="resources-content">
-    <DynamicScroller
-      :items="groupedList"
-      key-field="index"
-      :min-item-size="54"
-      class="resource-list"
-    >
-      <template #default="{ item, index, active }">
-        <DynamicScrollerItem
-          :item="item"
-          :active="active"
-          :size-dependencies="[
-            item.name,
-          ]"
-          :data-index="index"
-          class="resource-group"
-        >
-          <div class="node-cms-title">{{ item.name | translate }}</div>
-          <ul v-if="item.list && item.list.length > 0">
-            <li v-for="i in item.list" :key="i.title" :class="{selected: i == selectedItem}" @click="select(i, 'resource')">
-              <span class="icon" />{{ i.displayname ? TranslateService.get(i.displayname) : i.title }}
-            </li>
-          </ul>
-        </DynamicScrollerItem>
-      </template>
-    </DynamicScroller>
-    <div class="system">
-      <div class="theme-switch">
-        <v-switch :input-value="getTheme()" compact dense hide-details solo @change="onChangeTheme" />
-      </div>
-      <div class="node-cms-title flex">
-        {{ 'TL_SYSTEM' | translate }}
-        <v-btn v-if="showLogoutButton" color="error" small @click="logout()"><v-icon small color="black">mdi-link-variant-off</v-icon>{{ 'TL_LOGOUT' | translate }}</v-btn>
-      </div>
-      <div class="stats cpu">
-        <div class="node-cms-title"><small><b>CPU Usage</b></small></div>
-        <v-progress-linear color="#6af" rounded :value="system.cpu.usage" />
-        <small class="text">{{ system.cpu.count }} cores ({{ system.cpu.model }})</small>
-      </div>
-      <div class="stats ram">
-        <div class="node-cms-title"><small><b>Memory Usage</b></small></div>
-        <v-progress-linear color="#6af" rounded :value="100 - system.memory.freeMemPercentage" />
-        <small class="text">{{ convertBytes(system.memory.usedMemMb) }} / {{ convertBytes(system.memory.totalMemMb) }}</small>
-      </div>
-      <div v-if="system.drive != 'not supported'" class="stats drive">
-        <div class="node-cms-title"><small><b>Disk Usage</b></small></div>
-        <v-progress-linear color="#6af" rounded :value="100 - system.drive.usedPercentage" />
-        <small class="text">{{ convertBytes(system.drive.usedGb * 1024) }} / {{ convertBytes(system.drive.totalGb * 1024) }}</small>
-      </div>
-      <div class="stats two-by-two">
-        <div v-if="system.network != 'not supported'" class="stats network">
-          <div class="node-cms-title"><small><b>Network Usage</b></small></div>
-          <small class="text">{{ convertBytes(system.network.total.outputMb) }} <v-icon>mdi-arrow-up</v-icon> / {{ convertBytes(system.network.total.inputMb) }} <v-icon>mdi-arrow-down</v-icon></small>
-        </div>
-        <div class="stats uptime">
-          <div class="node-cms-title"><small><b>Uptime</b></small></div>
-          <small class="text">{{ timeAgo(system.uptime) }}</small>
-        </div>
+  <div v-if="groupedList" class="resources-content">
+    <div class="resource-list">
+      <div v-for="(resourceGroup, index) in groupedList" :key="`resource-group-${index}`" class="resource">
+        <v-menu open-on-hover offset-y>
+          <template #activator="{ on, attrs }">
+            <v-btn :outlined="groupSelected(resourceGroup)" text small v-bind="attrs" :class="{selected: groupSelected(resourceGroup)}" v-on="on">
+              {{ resourceGroup.name | translate }}
+            </v-btn>
+          </template>
+          <v-list dense>
+            <v-list-item
+              v-for="resource in resourceGroup.list"
+              :key="resource.name" dense
+              :class="{selected: selectedItem === resource}"
+              @click="selectResourceCallback(resource)"
+            >
+              <v-list-item-title>{{ getResourceTitle(resource) }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </div>
     </div>
   </div>
@@ -64,50 +26,33 @@
 
 <script>
 import _ from 'lodash'
-import axios from 'axios'
-import Dayjs from 'dayjs'
 import TranslateService from '@s/TranslateService'
-import LoginService from '@s/LoginService'
 
 export default {
-  props: [
-    'list',
-    'selectedItem',
-    'plugins'
-  ],
-  data () {
-    return {
-      TranslateService,
-      destroyed: false,
-      type: null,
-      timer: null,
-      system: {
-        cpu: {
-          count: 0,
-          usage: 0,
-          model: 'Unknown'
-        },
-        memory: {
-          totalMemMb: 0,
-          usedMemMb: 0,
-          freeMemMb: 0,
-          freeMemPercentage: 0
-        },
-        network: 'not supported',
-        drive: 'not supported',
-        uptime: 0
-      }
+  props: {
+    selectResourceCallback: {
+      type: Function,
+      default: () => {}
+    },
+    resourceList: {
+      type: Array,
+      default: () => []
+    },
+    plugins: {
+      type: Array,
+      default: () => []
+    },
+    selectedItem: {
+      type: Object,
+      default: () => {}
     }
   },
   computed: {
-    showLogoutButton () {
-      return !_.get(window, 'disableJwtLogin', false)
-    },
     groupedList () {
       const others = { name: 'TL_OTHERS' }
       const plugins = { name: 'TL_PLUGINS' }
       let groups = [others, plugins]
-      let list = _.union(this.list, _.map(this.plugins, (item) => _.extend(item, {type: 'plugin'})))
+      let list = _.union(this.resourceList, _.map(this.plugins, (item) => _.extend(item, {type: 'plugin'})))
       _.each(list, (item) => {
         if (_.isEmpty(item.group)) {
           return
@@ -181,61 +126,15 @@ export default {
         }
         return `${TranslateService.get(item.name, 'enUS')}`.toLowerCase()
       }, 'asc')
-      groups = _.map(groups, (group, i) => {
-        group.index = i
-        return group
-      })
       return _.filter(groups, (group) => group.list && group.list.length !== 0)
     }
   },
-  async mounted () {
-    this.getSystemData()
-  },
-  destroyed () {
-    this.destroyed = true
-    clearTimeout(this.timer)
-  },
   methods: {
-    getTheme () {
-      return _.get(LoginService, 'user.theme', 'light') === 'dark'
+    getResourceTitle (resource) {
+      return resource.displayname ? TranslateService.get(resource.displayname) : resource.title
     },
-    async onChangeTheme (value) {
-      // await LoginService.changeTheme(value)
-      this.$vuetify.theme.dark = value
-    },
-    async logout () {
-      await LoginService.logout()
-    },
-    async getSystemData () {
-      try {
-        const response = await axios.get('../api/system')
-        this.system = _.get(response, 'data', this.system)
-      } catch (error) {
-        console.error(error)
-      }
-      if (!this.destroyed) {
-        this.timer = setTimeout(this.getSystemData, this.error ? 10000 : 5000)
-      }
-    },
-    select (item) {
-      this.$emit('selectItem', item)
-    },
-    timeAgo (current) {
-      return Dayjs().subtract(parseInt(current, 10), 'second').fromNow()
-    },
-    convertBytes (megaBytes) {
-      const sizes = ['MB', 'GB', 'TB']
-      if (megaBytes === 0) {
-        return '0 MB'
-      }
-      if (Math.log(megaBytes) <= 0) {
-        return `${megaBytes.toFixed(1)} MB`
-      }
-      const i = parseInt(Math.floor(Math.log(megaBytes) / Math.log(1024)))
-      if (i <= 0) {
-        return megaBytes + ' ' + sizes[i]
-      }
-      return (megaBytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i]
+    groupSelected (resourceGroup) {
+      return this.selectedItem && resourceGroup.name === this.selectedItem.group
     }
   }
 }
@@ -244,12 +143,12 @@ export default {
 .resources-content {
   flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: stretch;
   position: relative;
   .resource-list {
-    flex: 1 1 0;
-    overflow-y: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
     height: 100%;
     &:after {
@@ -257,90 +156,17 @@ export default {
       content: '';
     }
   }
-  .system {
-    position: sticky;
-    padding: 4px;
-    box-sizing: border-box;
-    font-size: 11.2px;
-    font-weight: 400;
-    &:before {
-      display: block;
-      content: '';
-      position: absolute;
-      top: -1px;
-      border-top: 1px solid #c7c7c7;
-      width: 100%;
-      left: 0;
-      right: 0;
-    }
-    .stats {
-      .text {
-        text-overflow: ellipsis;
-        padding: 4px;
-      }
-      .progress {
-        margin: 0 4px;
-      }
-    }
-    .two-by-two {
-      display: flex;
-      direction: row;
-      align-items: stretch;
-      .stats {
-        width: 50%;
-      }
-    }
-  }
-  .progress {
-    // height: 4px;
-    // display: flex;
-    // overflow: hidden;
-    // line-height: 0;
-    // font-size: .65625rem;
-    // border-radius: .25rem;
-    // background-color: #ebedef;
-    // .progress-bar {
-    //   display: flex;
-    //   flex-direction: column;
-    //   justify-content: center;
-    //   overflow: hidden;
-    //   text-align: center;
-    //   white-space: nowrap;
-    //   transition: width .6s ease;
-    //   color: #fff;
-    //   background-color: #4799eb;
-    // }
+}
+.v-btn, .v-list-item {
+  &.selected {
+    font-weight: bold !important;
+    font-size: 14px !important;
   }
 }
-button {
-  user-select: none;
-      display: inline-block;
-    line-height: 20px;
-    text-align: center;
-    background: #f0f0f0;
-    font-size: 12px;
-    color: black;
-    box-sizing: border-box;
-    border: 1px solid #c7c7c7;
-    cursor: pointer;
-  i {
-    margin-right: 5px;
-  }
-}
-.node-cms-title {
-  &.flex {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
-.theme-switch {
-  position: absolute;
-  bottom: 6px;
-  right: 6px;
-}
-
-.resource-group {
+.v-list-item.selected {
+  background-color: rgba($color: #000000, $alpha: 0.25);
+    font-weight: bold !important;
+    font-size: 14px !important;
 }
 
 </style>
