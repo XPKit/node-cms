@@ -18,6 +18,7 @@ const watchify = require('watchify')
 const clean = require('semver').clean
 const zip = require('gulp-zip')
 const childExec = require('child_process').exec
+
 const pkg = require('./package.json')
 const CMS = require('./')
 
@@ -31,6 +32,7 @@ const exec = (command) => {
         console.log(stderr)
         reject(error)
       } else {
+        console.log(stdout)
         resolve(stdout)
       }
     })
@@ -97,8 +99,7 @@ class CreateTasks {
   }
 
   createStyleTask () {
-    // TODO: hugo - to change
-    gulp.task(this.stylesTask, () => gulp.src(`./${this.name}/_scss/main.scss`)
+    gulp.task(this.stylesTask, () => gulp.src(`./${this.name}/assets/scss/main.scss`)
       .pipe(scss())
       .on('error', scss.logError)
       .pipe(gulp.dest(`./${this.name}/styles/`))
@@ -106,8 +107,7 @@ class CreateTasks {
   }
 
   createMinStyleTask () {
-    // TODO: hugo - to change
-    gulp.task(this.minStylesTask, () => gulp.src(`./${this.name}/_scss/main.scss`)
+    gulp.task(this.minStylesTask, () => gulp.src(`./${this.name}/assets/scss/main.scss`)
       .pipe(scss())
       .on('error', scss.logError)
       .pipe(cleanCSS())
@@ -131,9 +131,14 @@ class CreateTasks {
       }
 
       this.bundler = browserify(options)
-        .add(`${this.name}/_js/main.js`)
+        .add(`${this.name}/main.js`)
         .transform('vueify-babel-7-support')
-        .transform('babelify')
+        .transform('babelify', {
+          presets: ['@babel/preset-env'],
+          sourceMaps: true,
+          global: true,
+          ignore: [/\/node_modules\/(?!your module folder\/)/]
+        })
         .on('update', this.gulpBundle)
       let doBundle = promisify(this.bundler.bundle.bind(this.bundler))
       await doBundle()
@@ -170,7 +175,7 @@ class CreateTasks {
     gulp.task(this.watchTask, () => {
       livereload.listen({ port: pkg.config.port + this.liveReloadPort })
       // TODO: hugo - to change
-      gulp.watch([`./${this.name}/_scss/**/*.scss`], gulp.series(this.stylesTask))
+      gulp.watch([`./${this.name}/assets/scss/**/*.scss`], gulp.series(this.stylesTask))
       gulp.watch([`./${this.name}/**/*.html`], gulp.series(this.browserifyTask))
       gulp.watch([`./${this.name}/styles/main.css`], gulp.series(this.reloadCssTask))
       this.bundler.plugin(watchify)
@@ -352,17 +357,52 @@ class MainTask {
     gulp.task('min-styles', done => runSequence(_.map(this.subTasks, task => task.minStylesTask), done))
     gulp.task('min-js', done => runSequence(_.map(this.subTasks, task => task.minJSTask), done))
     gulp.task('watch', done => runSequence(_.map(this.subTasks, task => task.watchTask), done))
-    gulp.task('build', done => runSequence('clean', ['browserify', 'styles'], done))
+    // gulp.task('build', done => runSequence('clean', ['browserify', 'styles'], done))
     gulp.task('release', done => runSequence('clean', 'bump-patch', 'browserify', 'styles', 'min-styles', 'min-js', 'git-release', done))
     gulp.task('release-minor', done => runSequence('clean', 'bump-minor', 'browserify', 'styles', 'min-styles', 'min-js', 'git-release', done))
     gulp.task('release-major', done => runSequence('clean', 'bump-major', 'browserify', 'styles', 'min-styles', 'min-js', 'git-release', done))
     gulp.task('start', done => runSequence('build', 'watch', 'server', done))
     gulp.task('dev', done => runSequence('build', 'watch', done))
-    gulp.task('default', done => runSequence('clean', ['browserify', 'styles'], 'watch', 'server', done))
+    // gulp.task('default', done => runSequence('clean', ['browserify', 'styles'], 'watch', 'server', done))
+    gulp.task('launch-server', (done) => {
+      let server
+      const cms = new CMS()
+      const app = express()
+      _.forEach(this.subTasks, task => app.use(injectReload({
+        port: pkg.config.port + task.liveReloadPort,
+        ignore: [/\/api\//]
+      })))
+      app.use(cms.express())
+      return server = app.listen(pkg.config.port, () =>
+        cms.bootstrap(() => {
+          logger.info(`${pkg.name} started at http://localhost:${server.address().port}/admin`)
+          done()
+        }))
+    })
+    gulp.task('launch-frontend', async (done) => {
+      try {
+        childExec('.\\node_modules\\.bin\\vue-cli-service serve', {maxBuffer: 200 * 4096}, (error, stdout, stderr) => {
+          if (error) {
+            logger.error(stderr)
+          } else {
+            logger.info(stdout)
+          }
+        })
+        // await exec('.\\node_modules\\.bin\\vue-cli-service serve')
+        done()
+      } catch (error) {
+        console.error('ERROR: ', error)
+      }
+    })
+    gulp.task('default', done => runSequence('launch-server', 'launch-frontend', done))
+    gulp.task('build', () => {
+      console.warn('TODO: hugo - build')
+      // return run('npm run build').exec()
+    })
   }
 }
 
-const AppTasks = new CreateTasks('app')
+const AppTasks = new CreateTasks('src')
 
 const mainTask = new MainTask([AppTasks])
 mainTask.createTasks()

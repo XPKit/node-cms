@@ -1,20 +1,20 @@
 // @import "@a/scss/components/vue-recycle-scroller";
 // @import "@a/scss/components/vue-multiselect";
 // @import "@a/scss/components/vue-form-generator";
-@import "@a/scss/components/LocaleList";
-@import "@a/scss/components/RecordList";
-@import "@a/scss/components/RecordEditor";
-@import "@a/scss/components/RecordTable";
-@import "@a/scss/components/ImageView";
-@import "@a/scss/components/AttachmentView";
-@import "@a/scss/components/DatetimePicker";
-@import "@a/scss/components/Loading";
-@import "@a/scss/components/JsonEditor";
-@import "@a/scss/components/PluginPage.scss";
-@import "@a/scss/components/MultiselectPage.scss";
-@import "@a/scss/components/LoginApp.scss";
-@import "@a/scss/components/Pager.scss";
-@import "@a/scss/components/Notifications.scss";
+@import "./components/LocaleList";
+@import "./components/RecordList";
+@import "./components/RecordEditor";
+@import "./components/RecordTable";
+@import "./components/ImageView";
+@import "./components/AttachmentView";
+@import "./components/DatetimePicker";
+@import "./components/Loading";
+@import "./components/JsonEditor";
+@import "./components/PluginPage.scss";
+@import "./components/MultiselectPage.scss";
+@import "./components/LoginApp.scss";
+@import "./components/Pager.scss";
+@import "./components/Notifications.scss";
 
 html, body {
   height: 100%;
