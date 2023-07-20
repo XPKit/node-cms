@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "esnext",
     "module": "esnext",
     "baseUrl": "./",
     "jsx": "preserve",
     "moduleResolution": "node",
     "paths": {
       "@/*": [
-        "app/*",
+        "src/*",
         "lib/*"
       ]
     },

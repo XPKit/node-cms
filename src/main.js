@@ -44,6 +44,9 @@ import CustomSwitch from '@c/fields/CustomSwitch.vue'
 import CustomInputTag from '@c/fields/CustomInputTag.vue'
 import Group from '@c/fields/Group.vue'
 
+import enUS from 'vue-timeago/locales/en-US.json'
+import zhCN from 'vue-timeago/locales/zh-CN.json'
+
 import Loading from './modules/Loading'
 
 import TranslateFilter from '@f/Translate'
@@ -91,10 +94,7 @@ Vue.use(VueShortkey)
 Vue.use(VueTimeago, {
   name: 'timeago',
   locale: 'enUS',
-  locales: {
-    enUS: require('vue-timeago/locales/en-US.json'),
-    zhCN: require('vue-timeago/locales/zh-CN.json')
-  }
+  locales: { enUS, zhCN }
 })
 
 function addPlugin (title, displayName, group = 'System', allowed = ['admins', 'imagination']) {

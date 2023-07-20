@@ -2,7 +2,8 @@ module.exports = {
   env: {
     browser: true,
     es2021: true,
-    node: true
+    node: true,
+    es2022: true
   },
   extends: [
     'standard',
@@ -10,7 +11,6 @@ module.exports = {
     'plugin:vue/recommended'
   ],
   parserOptions: {
-    parser: '@babel/eslint-parser',
     ecmaVersion: 2018,
     sourceType: 'module',
     ecmaFeatures: {
