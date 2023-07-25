@@ -83,7 +83,7 @@ export default {
   },
   async mounted () {
     let response
-    response = await axios.get('./resources')
+    response = await axios.get(`${window.location.pathname}resources`)
     _.each(response.data, resource => {
       let uniqueKeyField = _.find(resource.schema, {unique: true})
       if (uniqueKeyField) {
@@ -91,7 +91,7 @@ export default {
       }
     })
 
-    response = await axios.get('./config')
+    response = await axios.get(`${window.location.pathname}/config`)
     this.config = response.data
     if (this.selectedResource) {
       this.update()
@@ -103,7 +103,7 @@ export default {
           await pAll(_.map(['local', 'remote'], env => {
             return async () => {
               try {
-                const response = await axios.get(`../sync/${env}/${this.selectedResource}/status`)
+                const response = await axios.get(`${window.location.pathname}/sync/${env}/${this.selectedResource}/status`)
                 this.syncStatus[env] = response.data
                 this.syncStatus = _.clone(this.syncStatus)
               } catch (error) {
@@ -139,10 +139,10 @@ export default {
           return async () => {
             try {
               let response
-              response = await axios.get(`../sync/${env}/${this.selectedResource}`)
+              response = await axios.get(`${window.location.pathname}sync/${env}/${this.selectedResource}`)
               _.set(this.recordData, env, response.data)
 
-              response = await axios.get(`../sync/${env}/${this.selectedResource}/status`)
+              response = await axios.get(`${window.location.pathname}sync/${env}/${this.selectedResource}/status`)
               _.set(this.syncStatus, env, response.data)
               this.syncStatus = _.clone(this.syncStatus)
             } catch (error) {

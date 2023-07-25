@@ -9,8 +9,7 @@ import {v4 as uuid} from 'uuid'
 
 // By importing it, it inject JSONEditor to window
 // eslint-disable-next-line no-unused-vars
-import JSONEditor from 'json-editor'
-
+import * as JSONEditor from '@json-editor/json-editor'
 export default {
   mixins: [AbstractField],
   data () {

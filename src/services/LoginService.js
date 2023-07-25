@@ -16,7 +16,7 @@ class LoginService {
 
   async getStatus () {
     try {
-      const { data } = await axios.get('./login')
+      const { data } = await axios.get(`${window.location.pathname}login`)
       this.user = data
       return data
     } catch (error) {
@@ -40,7 +40,7 @@ class LoginService {
     try {
       const newTheme = _.get(this.user, 'theme', 'dark') === 'dark' ? 'light' : 'dark'
       console.warn('changeTheme ', this.user, newTheme)
-      await axios.get(`./changeTheme/${newTheme}`)
+      await axios.get(`${window.location.pathname}changeTheme/${newTheme}`)
       console.warn('Successfully changed the theme for user')
     } catch (error) {
       console.error('Failed to change theme: ', error)
@@ -50,7 +50,8 @@ class LoginService {
   async logout () {
     this.user = null
     try {
-      await axios.get('./logout')
+      await axios.get(`${window.location.pathname}logout`)
+      window.location.reload()
     } catch (error) {
       console.error('Failed to logout: ', error)
     }

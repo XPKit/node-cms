@@ -90,7 +90,7 @@ export default {
       this.$loading.start('login')
       this.loggingIn = true
       try {
-        await axios.post('./login', {username: this.username, password: this.password})
+        await axios.post(`${window.location.pathname}login`, {username: this.username, password: this.password})
         this.$loading.stop('login')
         window.location.reload()
       } catch (error) {

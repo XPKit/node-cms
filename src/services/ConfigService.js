@@ -7,7 +7,7 @@ class ConfigService {
 
   async init () {
     try {
-      const { data } = await axios.get('./config')
+      const { data } = await axios.get('/config')
       this.config = data
     } catch (error) {
       console.error('Error during init of ConfigService:', error)

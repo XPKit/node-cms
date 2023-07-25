@@ -164,7 +164,7 @@ export default {
       }
 
       try {
-        const resourcesResponse = await axios.get('./resources')
+        const resourcesResponse = await axios.get(`${window.location.pathname}resources`)
         this.$loading.stop('init')
         this.resourceList = _.sortBy(resourcesResponse.data, item => item.title)
         this.resourceList = _.filter(this.resourceList, resource => {

@@ -165,7 +165,7 @@ export default {
     },
     async refreshLog () {
       try {
-        const response = await axios.get('../api/_syslog', {params: {id: this.lastId}})
+        const response = await axios.get('/api/_syslog', {params: {id: this.lastId}})
 
         this.isLoading = false
         this.error = false

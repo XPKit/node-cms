@@ -7,6 +7,7 @@
       :value="value"
       :input-value="value"
       :max-length="schema.max"
+      :autocomplete="getAutocomplete()"
       :min-length="schema.min"
       :dense="schema.dense ? true : false"
       :compact="schema.compact ? true : false"
@@ -38,6 +39,9 @@ export default {
   methods: {
     onChangeData (data) {
       this.value = data
+    },
+    getAutocomplete () {
+      return _.get(this.schema, 'inputFieldType', 'text') === 'password' ? 'current-password' : 'null'
     },
     getType () {
       return _.get(this.schema, 'inputFieldType', 'text')

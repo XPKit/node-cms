@@ -134,7 +134,7 @@ export default {
       return resource.displayname ? TranslateService.get(resource.displayname) : resource.title
     },
     groupSelected (resourceGroup) {
-      return this.selectedItem && resourceGroup.name === this.selectedItem.group
+      return this.selectedItem && _.get(resourceGroup, 'name.enUS', resourceGroup.name) === _.get(this.selectedItem, 'group.enUS', this.selectedItem.group)
     }
   }
 }

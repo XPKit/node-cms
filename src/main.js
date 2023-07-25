@@ -110,7 +110,7 @@ function addPlugin (title, displayName, group = 'System', allowed = ['admins', '
 
 window.addEventListener('load', async function () {
   window.TranslateService = TranslateService
-  const response = await axios.get('./config')
+  const response = await axios.get(`${window.location.pathname}/config`)
   const config = response.data
   addPlugin('Syslog', 'Syslog')
   if (config.import) {
