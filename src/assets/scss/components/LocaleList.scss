@@ -12,7 +12,7 @@
     border-bottom: 1px #c7c7c7 solid;
     border-right: 1px #c7c7c7 solid;
     background-color: #f9f9f9;
-    border-bottom-width: 1px;
+    border-bottom-width: 0px;
     cursor: pointer;
     &:last-child {
       border-right-width: 0px;
@@ -20,7 +20,7 @@
 
     &.active {
       background-color: white;
-      border-bottom-width: 0px;
+      border-bottom-width: 1px;
     }
   }
 }

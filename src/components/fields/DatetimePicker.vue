@@ -1,7 +1,6 @@
 <template>
   <div :style="{width:width}" class="datetime-picker" @click="calendarClicked($event)">
     <div>
-      <!-- TODO: hugo - change to vuetify one -->
       <input
         id="tj-datetime-input" readonly type="text" :value="display()" :name="name" autocomplete="off"
         @click="toggleCal"

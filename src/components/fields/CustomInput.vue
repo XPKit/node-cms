@@ -1,23 +1,12 @@
 <template>
   <div class="custom-input">
     <v-text-field
-      :class="[schema.labelClasses]"
-      :type="getType()"
-      :label="schema.label"
-      :value="value"
-      :input-value="value"
-      :max-length="schema.max"
-      :autocomplete="getAutocomplete()"
+      :class="[schema.labelClasses]" :type="getType()" :label="schema.label" :value="value" :input-value="value"
+      :max-length="schema.max" :autocomplete="getAutocomplete()"
       :min-length="schema.min"
-      :dense="schema.dense ? true : false"
-      :compact="schema.compact ? true : false"
-      :disabled="schema.disabled ? true : false"
-      :readonly="schema.readonly ? true : false"
-      :filled="schema.filled ? true : false"
-      hide-details
       :rules="[validateField]"
-      :outlined="schema.outlined ? true : false"
-      :solo="schema.solo ? true : false"
+      :dense="get('dense')" :compact="get('compact')" :disabled="get('disabled')" :readonly="get('readonly')" :filled="get('filled')" :outlined="get('outlined')" :solo="get('solo')"
+      persistent-placeholder hide-details
       @input="onChangeData"
     >
       <template v-if="schema.required" #label>
@@ -39,6 +28,9 @@ export default {
   methods: {
     onChangeData (data) {
       this.value = data
+    },
+    get (key) {
+      return _.get(this.schema, key, false)
     },
     getAutocomplete () {
       return _.get(this.schema, 'inputFieldType', 'text') === 'password' ? 'current-password' : 'null'

@@ -8,7 +8,7 @@
               {{ resourceGroup.name | translate }}
             </v-btn>
           </template>
-          <v-list dense>
+          <v-list dense nav>
             <v-list-item
               v-for="resource in resourceGroup.list"
               :key="resource.name" dense
@@ -134,7 +134,15 @@ export default {
       return resource.displayname ? TranslateService.get(resource.displayname) : resource.title
     },
     groupSelected (resourceGroup) {
-      return this.selectedItem && _.get(resourceGroup, 'name.enUS', resourceGroup.name) === _.get(this.selectedItem, 'group.enUS', this.selectedItem.group)
+      if (!this.selectedItem) {
+        return false
+      }
+      const selectedItemGroup = _.get(this.selectedItem, 'group.enUS', _.get(this.selectedItem, 'group', false))
+      const groupName = _.get(resourceGroup, 'name.enUS', resourceGroup.name)
+      if (groupName === 'TL_OTHERS' && !selectedItemGroup) {
+        return true
+      }
+      return groupName === selectedItemGroup
     }
   }
 }

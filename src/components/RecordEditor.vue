@@ -3,9 +3,7 @@
     <v-tabs
       v-show="resource.locales"
       v-model="activeLocale"
-      fixed-tabs
-      background-color="white"
-      dark
+      fixed-tabs background-color="white" dark height="40" hide-slider
     >
       <v-tab
         v-for="item in resource.locales" :key="item"

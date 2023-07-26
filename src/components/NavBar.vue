@@ -71,7 +71,7 @@ export default {
 </script>
 <style lang="scss">
 .nav-bar-wrapper {
-  z-index: 42;
+  z-index: 2001;
 }
 .nav-bar {
   display: flex;

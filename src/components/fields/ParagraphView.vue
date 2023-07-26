@@ -22,7 +22,12 @@
         <v-btn @click="onClickRemoveItem(item)">remove</v-btn>
       </div>
       <div slot="header">
-        <v-select :label="schema.label" :value="selectedType" hide-details :menu-props="{ bottom: true, offsetY: true }" outlined dense :items="types" item-text="label" item-value="label" @change="onChangeType" />
+        <v-select
+          :label="schema.label" :value="selectedType"
+          :menu-props="{ bottom: true, offsetY: true }" :items="types" item-text="label" item-value="label"
+          hide-details outlined dense persistent-placeholder
+          @change="onChangeType"
+        />
         <!-- <option v-for="item in types" :key="`option-${item.input}`" :value="item">{{ item.label }}</option>
         </v-select> -->
         <v-btn @click="onClickAddNewItem">Add</v-btn>

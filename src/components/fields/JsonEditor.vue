@@ -1,21 +1,17 @@
 <template>
-  <div :id="id" class="json-editor" :disabled="disabled" />
+  <div ref="json-editor" class="json-editor" :disabled="disabled" />
 </template>
 
 <script>
 import _ from 'lodash'
 import AbstractField from '@m/AbstractField'
-import {v4 as uuid} from 'uuid'
 
-// By importing it, it inject JSONEditor to window
-// eslint-disable-next-line no-unused-vars
-import * as JSONEditor from '@json-editor/json-editor'
+import { JSONEditor } from '@json-editor/json-editor'
 export default {
   mixins: [AbstractField],
   data () {
     // console.log(uuid)
     return {
-      id: `json-editor-${uuid()}`,
       editor: null,
       originalValue: null
     }
@@ -28,7 +24,7 @@ export default {
     }
   },
   mounted () {
-    const element = document.getElementById(this.id)
+    const element = _.get(this.$refs, 'json-editor', false)
     this.schema.jsonEditorOptions.title = ' '
     const options = {
       schema: this.schema.jsonEditorOptions,
@@ -38,39 +34,38 @@ export default {
     if (this.disabled) {
       options.disable_array_delete = true
     }
-    window.JSONEditor.defaults.themes.cms = window.JSONEditor.AbstractTheme.extend({
+    JSONEditor.defaults.themes.cms = class cms extends JSONEditor.AbstractTheme {
       getRangeInput (min, max, step) {
-        // TODO: use bootstrap slider
-        return this._super(min, max, step)
-      },
+        return super.getRangeInput(min, max, step)
+      }
       getGridContainer () {
         const el = document.createElement('div')
         el.className = 'json-editor-grid-container'
         return el
-      },
+      }
       getGridRow () {
         const el = document.createElement('div')
         el.className = 'json-editor-grid-row'
         return el
-      },
+      }
       getFormInputLabel (text) {
-        const el = this._super(text)
+        const el = super.getFormInputLabel(text)
         el.style.display = 'inline-block'
         el.style.fontWeight = 'bold'
         el.className = 'json-editor-input-label'
         return el
-      },
+      }
       setGridColumnSize (el, size) {
         el.className = `span${size}`
-      },
+      }
       getSelectInput (options) {
-        const input = this._super(options)
+        const input = super.getSelectInput(options)
         return input
-      },
+      }
       getFormInputField (type) {
-        const el = this._super(type)
+        const el = super.getFormInputField(type)
         return el
-      },
+      }
       afterInputReady (input) {
         if (input.controlgroup) {
           return
@@ -87,13 +82,11 @@ export default {
           delete this.queuedInputErrorText
           this.addInputError(input, text)
         }
-
-        // TODO: use bootstrap slider
-      },
+      }
       getIndentedPanel () {
         const el = document.createElement('div')
         return el
-      },
+      }
       getModal () {
         const el = document.createElement('div')
         el.style.backgroundColor = 'white'
@@ -104,7 +97,7 @@ export default {
         el.style.display = 'none'
         el.style.width = 'auto'
         return el
-      },
+      }
       getInfoButton (text) {
         const icon = document.createElement('span')
         icon.className = 'icon-info-sign pull-right'
@@ -134,13 +127,13 @@ export default {
         icon.appendChild(tooltip)
 
         return icon
-      },
+      }
       getFormInputDescription (text) {
         const el = document.createElement('p')
         el.className = 'help-inline'
         el.textContent = text
         return el
-      },
+      }
       getFormControl (label, input, description, infoText) {
         const ret = document.createElement('div')
         ret.className = 'control-group'
@@ -174,31 +167,31 @@ export default {
         }
 
         return ret
-      },
+      }
       getHeaderButtonHolder () {
         const el = this.getButtonHolder()
         el.className += ' btn-groups'
         return el
-      },
+      }
       getButtonHolder () {
         const el = document.createElement('div')
         el.className = 'btn-group'
         return el
-      },
+      }
       getButton (text, icon, title) {
-        const el = this._super(text, icon, title)
+        const el = super.getButton(text, icon, title)
         el.className += ' btn btn-default'
         return el
-      },
+      }
       getTable () {
         const el = document.createElement('table')
         el.className = 'table table-bordered'
         return el
-      },
+      }
       getTableCell () {
         const el = document.createElement('td')
         return el
-      },
+      }
       addInputError (input, text) {
         if (!input.controlgroup) {
           this.queuedInputErrorText = text
@@ -217,7 +210,7 @@ export default {
         }
 
         input.errmsg.textContent = text
-      },
+      }
       removeInputError (input) {
         if (!input.controlgroup) {
           delete this.queuedInputErrorText
@@ -227,21 +220,21 @@ export default {
         }
         input.errmsg.style.display = 'none'
         input.controlgroup.className = input.controlgroup.className.replace(/\s?error/g, '')
-      },
+      }
       getTabHolder (propertyName) {
         const pName = (typeof propertyName === 'undefined') ? '' : propertyName
         const el = document.createElement('div')
         el.className = 'tabbable tabs-left'
         el.innerHTML = `<ul class='nav nav-tabs'  id='${pName}'></ul><div class='tab-content well well-small' id='${pName}'></div>`
         return el
-      },
+      }
       getTopTabHolder (propertyName) {
         const pName = (typeof propertyName === 'undefined') ? '' : propertyName
         const el = document.createElement('div')
         el.className = 'tabbable tabs-over'
         el.innerHTML = `<ul class='nav nav-tabs' id='${pName}'></ul><div class='tab-content well well-small'  id='${pName}'></div>`
         return el
-      },
+      }
       getTab (text, tabId) {
         const el = document.createElement('li')
         el.className = 'nav-item'
@@ -250,7 +243,7 @@ export default {
         a.appendChild(text)
         el.appendChild(a)
         return el
-      },
+      }
       getTopTab (text, tabId) {
         const el = document.createElement('li')
         el.className = 'nav-item'
@@ -259,39 +252,39 @@ export default {
         a.appendChild(text)
         el.appendChild(a)
         return el
-      },
+      }
       getTabContentHolder (tabHolder) {
         return tabHolder.children[1]
-      },
+      }
       getTopTabContentHolder (tabHolder) {
         return tabHolder.children[1]
-      },
+      }
       getTabContent () {
         const el = document.createElement('div')
         el.className = 'tab-pane'
         return el
-      },
+      }
       getTopTabContent () {
         const el = document.createElement('div')
         el.className = 'tab-pane'
         return el
-      },
+      }
       markTabActive (row) {
         row.tab.className = row.tab.className.replace(/\s?active/g, '')
         row.tab.className += ' active'
         row.container.className = row.container.className.replace(/\s?active/g, '')
         row.container.className += ' active'
-      },
+      }
       markTabInactive (row) {
         row.tab.className = row.tab.className.replace(/\s?active/g, '')
         row.container.className = row.container.className.replace(/\s?active/g, '')
-      },
+      }
       addTab (holder, tab) {
         holder.children[0].appendChild(tab)
-      },
+      }
       addTopTab (holder, tab) {
         holder.children[0].appendChild(tab)
-      },
+      }
       getProgressBar () {
         const container = document.createElement('div')
         container.className = 'progress'
@@ -302,14 +295,14 @@ export default {
         container.appendChild(bar)
 
         return container
-      },
+      }
       updateProgressBar (progressBar, progress) {
         if (!progressBar) {
           return
         }
 
         progressBar.firstChild.style.width = `${progress}%`
-      },
+      }
       updateProgressBarUnknown (progressBar) {
         if (!progressBar) {
           return
@@ -318,14 +311,13 @@ export default {
         progressBar.className = 'progress progress-striped active'
         progressBar.firstChild.style.width = '100%'
       }
-    })
-
-    this.editor = new window.JSONEditor(element, options)
-    this.originalValue = this.editor.getValue()
+    }
+    this.editor = new JSONEditor(element, options)
     if (this.disabled) {
       this.editor.disable()
     }
     this.editor.on('ready', () => {
+      this.originalValue = this.editor.getValue()
       const value = _.extend(this.originalValue, _.get(this.model, this.schema.model))
       this.editor.setValue(value)
       _.set(this.model, this.schema.model, value)

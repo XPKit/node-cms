@@ -1,34 +1,36 @@
 <template>
   <div class="wrapper custom-checklist">
     <div class="field-label">{{ schema.label }}</div>
-    <div v-if="schema.listBox" class="listbox form-control" :disabled="disabled">
-      <div class="select-all">
-        <label>
-          <v-checkbox
-            :id="getFieldID(schema)" :ripple="false" dense hide-details :input-value="allSelected" :label="selectAllLabel" @change="onChangeSelectAll"
-          />
-        </label>
-      </div>
-      <div v-for="(item, i) in items" :key="i" class="list-row" :class="{'is-checked': isItemChecked(item)}">
-        <label>
-          <v-checkbox
-            :id="getFieldID(schema)" :ripple="false" dense hide-details :input-value="isItemChecked(item)" :disabled="disabled" :label="getInputName(item)" :name="getInputName(item)" @change="onChanged($event, item)"
-          /></label>
-      </div>
-    </div>
-    <div v-else class="combobox form-control" :disabled="disabled">
-      <div class="mainRow" :class="{ expanded: comboExpanded }" @click="onExpandCombo">
-        <div class="node-cms-info">{{ selectedCount }} {{ 'TL_SELECTED'|translate }}</div>
-        <div class="arrow" />
-      </div>
-      <div v-if="comboExpanded" class="dropList">
-        <div v-for="(item, y) in items" :key="y" class="list-row" :class="{'is-checked': isItemChecked(item)}">
+    <div class="border-wrapper">
+      <div v-if="schema.listBox" class="listbox form-control" :disabled="disabled">
+        <div class="select-all">
           <label>
             <v-checkbox
-              :id="getFieldID(schema)" :ripple="false" dense hide-details :label="getInputName(item)"
-              :input-value="isItemChecked(item)" :disabled="disabled" :name="getInputName(item)" @change="onChanged($event, item)"
+              :id="getFieldID(schema)" :ripple="false" dense hide-details :input-value="allSelected" :label="selectAllLabel" @change="onChangeSelectAll"
             />
           </label>
+        </div>
+        <div v-for="(item, i) in items" :key="i" class="list-row" :class="{'is-checked': isItemChecked(item)}">
+          <label>
+            <v-checkbox
+              :id="getFieldID(schema)" :ripple="false" dense hide-details :input-value="isItemChecked(item)" :disabled="disabled" :label="getInputName(item)" :name="getInputName(item)" @change="onChanged($event, item)"
+            /></label>
+        </div>
+      </div>
+      <div v-else class="combobox form-control" :disabled="disabled">
+        <div class="mainRow" :class="{ expanded: comboExpanded }" @click="onExpandCombo">
+          <div class="node-cms-info">{{ selectedCount }} {{ 'TL_SELECTED'|translate }}</div>
+          <div class="arrow" />
+        </div>
+        <div v-if="comboExpanded" class="dropList">
+          <div v-for="(item, y) in items" :key="y" class="list-row" :class="{'is-checked': isItemChecked(item)}">
+            <label>
+              <v-checkbox
+                :id="getFieldID(schema) + y" :ripple="false" dense hide-details :label="getInputName(item)"
+                :input-value="isItemChecked(item)" :disabled="disabled" :name="getInputName(item)" @change="onChanged($event, item)"
+              />
+            </label>
+          </div>
         </div>
       </div>
     </div>
@@ -73,7 +75,7 @@ export default {
       return TranslateService.get(this.allSelected ? 'TL_DESELECT_ALL' : 'TL_SELECT_ALL')
     },
     allSelected () {
-      return this.value.length === this.items.length
+      return get(this.value, 'length', 0) === get(this.items, 'length', 0)
     }
   },
   methods: {
@@ -154,13 +156,16 @@ export default {
     .combobox {
       height: initial;
       overflow: hidden;
+      .mainRow, .dropList {
+        padding-left: 12px;
+      }
       .mainRow {
         cursor: pointer;
         position: relative;
         padding-right: 10px;
         .arrow {
           position: absolute;
-          right: -9px;
+          right: 0px;
           top: 3px;
           width: 16px;
           height: 16px;
@@ -173,11 +178,20 @@ export default {
           .arrow {
             transform: rotate(-180deg);
           }
+          .node-cms-info {
+            padding-bottom: 0;
+          }
         }
       }
       .dropList {
         transition: height 0.5s;
       }
+    }
+    .node-cms-info {
+      user-select: none;
+      padding: 12px 6px;
+      font-size: 14px;
+      line-height: 14px;
     }
   }
 </style>

@@ -225,7 +225,6 @@ export default {
         this.$loading.start('selectResource')
         await this.cacheRelatedResources(resource)
         const data = ResourceService.get(resource.title)
-        this.$loading.stop('selectResource')
         this.recordList = _.sortBy(data, item => -item._updatedAt)
 
         if (_.get(resource, 'maxCount', 0) === 1) {
@@ -236,6 +235,7 @@ export default {
             this.selectRecord(first)
           }
         }
+        this.$loading.stop('selectResource')
       } catch (error) {
         console.error('Error happen during selectResource:', error)
       }
@@ -387,6 +387,22 @@ export default {
       align-items: stretch;
       overflow-y: auto;
     }
+  }
+  .field-label {
+    position: absolute;
+    top: -10px;
+    left: 12px;
+    background-color: white;
+    z-index: 2;
+    padding: 0 4px;
+    font-size: 12px;
+    color: rgba(0,0,0,.6);
+  }
+  .border-wrapper  {
+    border: 1px solid rgba(0,0,0,.42);
+    border-radius: 4px;
+    z-index: 1;
+    overflow: hidden;
   }
 }
 .v-snack.notification {

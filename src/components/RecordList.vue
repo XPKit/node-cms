@@ -2,14 +2,18 @@
   <div v-if="maxCount != 1" class="record-list">
     <div class="top-bar">
       <div class="search" :class="{'is-query': sift.isQuery, 'is-valid': sift.isQuery && sift.isValid == true, 'is-invalid': sift.isQuery && sift.isValid == false}">
-        <v-text-field v-model="search" outlined :placeholder="'TL_SEARCH' | translate" type="text" name="search" />
-      </div>
-      <div class="search-buttons">
+        <v-text-field v-model="search" flat outlined hide-details dense solo :placeholder="'TL_SEARCH' | translate" type="text" name="search" />
         <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect"><v-icon color="black">mdi-list-box</v-icon></div>
         <template v-if="maxCount <= 0 || listCount < maxCount">
           <div class="new" @click="onClickNew">+</div>
         </template>
       </div>
+      <!-- <div class="search-buttons">
+        <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect"><v-icon color="black">mdi-list-box</v-icon></div>
+        <template v-if="maxCount <= 0 || listCount < maxCount">
+          <div class="new" @click="onClickNew">+</div>
+        </template>
+      </div> -->
     </div>
     <div v-shortkey="multiselect ? ['ctrl', 'a'] : false" class="records" @shortkey="selectAll()">
       <RecycleScroller

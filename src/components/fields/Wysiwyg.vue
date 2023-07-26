@@ -1,16 +1,19 @@
 <template>
   <div ref="wysiwygWrapper" class="wysiwyg-wrapper">
-    <div class="label">{{ schema.label }}</div>
-    <tiptap-vuetify
-      v-model="localObj[key]"
-      :extensions="extensions"
-      :toolbar-attributes="{ color: getColorForToolbar() }"
-      :disabled="disabled"
-      placeholder="Write something …"
-      @init="onInit"
-      @blur="onInit"
-      @focus="onInit"
-    />
+    <div class="field-label">{{ schema.label }}</div>
+    <div class="border-wrapper">
+      <tiptap-vuetify
+        v-model="localObj[key]"
+        :card-props="{ flat: true }"
+        :extensions="extensions"
+        :toolbar-attributes="{ color: getColorForToolbar(), dense: true, outlined: true, elevation: 1 }"
+        :disabled="disabled"
+        placeholder="Write something …"
+        @init="onInit"
+        @blur="onInit"
+        @focus="onInit"
+      />
+    </div>
   </div>
 </template>
 
@@ -93,3 +96,9 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.wysiwyg-wrapper {
+  position: relative;
+
+}
+</style>
