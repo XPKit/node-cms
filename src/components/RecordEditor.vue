@@ -3,7 +3,7 @@
     <v-tabs
       v-show="resource.locales"
       v-model="activeLocale"
-      fixed-tabs background-color="white" dark height="40" hide-slider
+      fixed-tabs background-color="white" dark height="39" hide-slider
     >
       <v-tab
         v-for="item in resource.locales" :key="item"
@@ -30,7 +30,7 @@
     </v-form>
     <div class="buttons">
       <v-btn class="back" @click="back">{{ "TL_BACK" | translate }}</v-btn>
-      <v-btn class="update" color="primary" @click="updateRecord">{{ (editingRecord._id? "TL_UPDATE": "TL_CREATE") | translate }}</v-btn>
+      <v-btn class="update" color="primary" @click="createUpdateClicked">{{ (editingRecord._id? "TL_UPDATE": "TL_CREATE") | translate }}</v-btn>
       <v-btn class="delete" color="error" @click="deleteRecord">{{ 'TL_DELETE' | translate }}</v-btn>
     </div>
   </div>
@@ -46,13 +46,28 @@ import Notification from '@m/Notification'
 
 export default {
   mixins: [AbstractEditorView, Notification],
-  props: [
-    'resourceList',
-    'resource',
-    'record',
-    'locale',
-    'userLocale'
-  ],
+  props: {
+    resourceList: {
+      type: [Array, Boolean],
+      default: () => []
+    },
+    resource: {
+      type: Object,
+      default: () => {}
+    },
+    record: {
+      type: Object,
+      default: () => {}
+    },
+    locale: {
+      type: String,
+      default: () => 'enUS'
+    },
+    userLocale: {
+      type: String,
+      default: () => 'enUS'
+    }
+  },
   data () {
     return {
       formValid: false,
@@ -81,13 +96,11 @@ export default {
     async record () {
       await this.updateSchema()
       this.cloneEditingRecord()
-      this.removeDirtyFlags()
     },
     async userLocale () {
       await this.updateSchema()
       this.editingRecord = _.clone(this.editingRecord)
       this.checkDirty()
-      this.updateValidationMessage()
     },
     model () {
       console.warn('MODEL CHANGED: ', this.model)
@@ -96,8 +109,6 @@ export default {
   async mounted () {
     await this.updateSchema()
     this.cloneEditingRecord()
-    this.removeDirtyFlags()
-    this.updateValidationMessage()
     this.isReady = true
     console.warn('EDITING RECORD - ', this.editingRecord)
   },
@@ -157,6 +168,7 @@ export default {
         console.error('Error during cloneEditingRecord:', error)
         this.editingRecord._attachments = []
       }
+      this.removeDirtyFlags()
     },
     async deleteRecord () {
       if (!window.confirm(
@@ -201,131 +213,134 @@ export default {
         this.notify(notificationText, 'error')
       }
     },
-    async updateRecord () {
+    fieldValueOrDefault (field, value) {
+      if (field.input === 'pillbox') {
+        return value || []
+      } else if (field.input === 'json') {
+        return value || {}
+      }
+      return value
+    },
+    updateLocalisedField (uploadObject, field) {
+      _.each(this.resource.locales, (locale) => {
+        if (!this.formValid) {
+          return this.handleFormNotValid()
+        }
+        const fieldName = `${locale}.${field.field}`
+        const value = this.fieldValueOrDefault(field, _.get(this.editingRecord, fieldName))
+        if (locale !== this.locale && field.required &&
+        (_.isUndefined(value) || (field.input === 'string' && value.length === 0))) {
+          this.selectLocale(locale)
+          this.formValid = false
+          this.$forceUpdate()
+          this.$nextTick(() => {
+            this.checkFormValid()
+          })
+          console.warn('required field empty', field, this.formValid)
+          return
+        }
+        if (!_.isEqual(value, _.get(this.record, fieldName))) {
+          _.set(uploadObject, fieldName, value)
+        }
+      })
+    },
+    handleFormNotValid () {
+      console.info('form not valid')
+    },
+    async createUpdateClicked () {
       this.checkFormValid()
       if (!this.formValid) {
-        console.info('form not valid')
-        return
+        return this.handleFormNotValid()
       }
       const uploadObject = {}
       _.each(this.resource.schema, (field) => {
-        if (!this.formValid) {
-          return
-        }
-        if (_.includes(this.fileInputTypes, field.input)) {
+        if (!this.formValid || _.includes(this.fileInputTypes, field.input)) {
           return
         }
         const isLocalised = this.resource.locales && (field.localised || _.isUndefined(field.localised))
         if (isLocalised) {
-          _.each(this.resource.locales, (locale) => {
-            if (!this.formValid) {
-              return
-            }
-            const fieldName = `${locale}.${field.field}`
-            let value = _.get(this.editingRecord, fieldName)
-            if (field.input === 'pillbox') {
-              value = value || []
-            } else if (field.input === 'json') {
-              value = value || {}
-            }
-            if (locale !== this.locale && field.required) {
-              if (_.isUndefined(value) || (field.input === 'string' && value.length === 0)) {
-                this.selectLocale(locale)
-                this.formValid = false
-                this.$forceUpdate()
-                this.$nextTick(() => {
-                  this.checkFormValid()
-                })
-                console.warn('required field empty', field, this.formValid)
-                return
-              }
-            }
-            if (_.isEqual(value, _.get(this.record, fieldName))) {
-              return
-            }
-            _.set(uploadObject, fieldName, value)
-          })
+          this.updateLocalisedField(uploadObject, field)
         } else {
           const fieldName = field.field
-          let value = _.get(this.editingRecord, fieldName)
-          if (field.input === 'pillbox') {
-            value = value || []
-          } else if (field.input === 'json') {
-            value = value || {}
+          const value = this.fieldValueOrDefault(field, _.get(this.editingRecord, fieldName))
+          if (!_.isEqual(value, _.get(this.record, fieldName))) {
+            _.set(uploadObject, fieldName, value)
           }
-          if (_.isEqual(value, _.get(this.record, fieldName))) {
-            return
-          }
-          _.set(uploadObject, fieldName, value)
         }
       })
       const newAttachments = _.filter(this.editingRecord._attachments, item => !item._id)
-      // console.warn('NEW ATTACHMENTS = ', newAttachments)
-      const removeAttachments = _.filter(this.record._attachments, item => !_.find(this.editingRecord._attachments, { _id: item._id }))
-      // console.warn('REMOVE ATTACHMENTS = ', removeAttachments)
+      if (!_.isEmpty(newAttachments)) {
+        console.warn('NEW ATTACHMENTS = ', newAttachments)
+      }
       if (!this.formValid) {
-        return
+        return this.handleFormNotValid()
       }
       if (_.isUndefined(this.editingRecord._id)) {
-        this.$loading.start('create-record')
-        try {
-          const response = await axios.post(`../api/${this.resource.title}`, uploadObject)
-          await this.uploadAttachments(response.data._id, newAttachments)
-          this.notify(TranslateService.get('TL_RECORD_CREATED', null, { id: response.data._id }))
-          this.$emit('updateRecordList', response.data)
-        } catch (error) {
-          console.error('Error happen during updateRecord/create:', error)
-          this.manageError(error, 'create')
-        }
-        this.$loading.stop('create-record')
-        return
+        return this.createRecord(uploadObject, newAttachments)
       }
+      this.updateRecord(uploadObject, newAttachments)
+    },
+    async createRecord (uploadObject, newAttachments) {
+      this.$loading.start('create-record')
+      try {
+        const {data} = await axios.post(`../api/${this.resource.title}`, uploadObject)
+        await this.uploadAttachments(data._id, newAttachments)
+        this.notify(TranslateService.get('TL_RECORD_CREATED', null, { id: data._id }))
+        this.$emit('updateRecordList', data)
+      } catch (error) {
+        console.error('Error happen during createRecord:', error)
+        this.manageError(error, 'create')
+      }
+      this.$loading.stop('create-record')
+    },
+    async updateRecord (uploadObject, newAttachments) {
       this.$loading.start('update-record')
       try {
-        let response
-        console.warn('Will send', uploadObject, this.formValid)
+        let data = this.editingRecord
+        console.warn('Will send', uploadObject)
         if (!_.isEmpty(uploadObject)) {
-          response = await axios.put(`../api/${this.resource.title}/${this.editingRecord._id}`, uploadObject)
-        } else {
-          response = { data: this.editingRecord }
+          const response = await axios.put(`../api/${this.resource.title}/${this.editingRecord._id}`, uploadObject)
+          data = response.data
         }
-        await this.uploadAttachments(response.data._id, newAttachments)
+        await this.uploadAttachments(data._id, newAttachments)
         const newAttachmentsIds = _.map(newAttachments, '_id')
         const updatedAttachments = _.filter(this.editingRecord._attachments, item => {
-          return item._id && !_.includes(newAttachmentsIds, item._id) && _.get(item, 'cropOptions.updated', false)
+          return item._id && !_.includes(newAttachmentsIds, item._id) && (_.get(item, 'cropOptions.updated', false) || _.get(item, 'orderUpdated', false))
         })
-        console.warn('UPDATED ATTACHMENTS = ', updatedAttachments)
-        await this.updateAttachments(response.data._id, updatedAttachments)
-        await this.removeAttachments(response.data._id, removeAttachments)
+        if (!_.isEmpty(updatedAttachments)) {
+          console.warn('UPDATED ATTACHMENTS = ', _.map(updatedAttachments, a => `${a.orderUpdated}-${a.order}-${a._filename}`))
+          await this.updateAttachments(data._id, updatedAttachments)
+        }
+        const removedAttachments = _.filter(this.record._attachments, item => !_.find(this.editingRecord._attachments, { _id: item._id }))
+        if (!_.isEmpty(removedAttachments)) {
+          console.warn('REMOVED ATTACHMENTS = ', _.map(removedAttachments, a => `${a.order}-${a._filename}`))
+          await this.removeAttachments(data._id, removedAttachments)
+        }
         this.notify(TranslateService.get('TL_RECORD_UPDATED', null, { id: this.editingRecord._id }))
-        this.$emit('updateRecordList', response.data)
+        this.$emit('updateRecordList', data)
       } catch (error) {
-        console.error('Error happen during updateRecord/update:', error)
+        console.error('Error happen during updateRecord:', error)
         this.manageError(error, 'update', this.editingRecord)
       }
       this.$loading.stop('update-record')
     },
-    onModelUpdated (value, model) {
-      // const updatedValue = _.get(this.editingRecord, model, false)
-      // console.warn(`model updated: ${model} - before`, updatedValue)
-      // console.warn(`model updated: ${model} - after`, value)
-      // console.warn('model updated - editingRecord:', this.editingRecord)
-      // console.warn('model updated - schema:', this.schema)
-      // console.warn('model updated - resource.schema:', this.resource.schema)
-      // console.warn(`update ${model}`)
-      if (this.isAttachmentField(model)) {
-        let newAttachments = value
-        if (!_.isArray(newAttachments)) {
-          newAttachments = [newAttachments]
-        }
-        console.info(`Will update attachment ${model}`, newAttachments)
-        _.set(this.editingRecord, '_attachments', newAttachments)
-        // _.each(newAttachments, (newAttachment) => {
-        //   this.editingRecord._attachments.push(newAttachment)
-        // })
-      } else {
-        _.set(this.editingRecord, model, value)
+    getAttachmentModel (attachment) {
+      const modelParts = []
+      if (_.get(attachment, '_fields.locale', false)) {
+        modelParts.push(attachment._fields.locale)
       }
+      modelParts.push(attachment._name)
+      return _.join(modelParts, '.')
+    },
+    updateFields (value, model) {
+      if (!this.isAttachmentField(model)) {
+        return _.set(this.editingRecord, model, value)
+      }
+      _.set(this.editingRecord, '_attachments', value)
+      console.info(`Will update attachment ${model}`, value)
+    },
+    onModelUpdated (value, model) {
+      this.updateFields(value, model)
       console.info('editingRecord =', this.editingRecord)
       this.$refs.vfg.validate()
       this.checkDirty()
@@ -353,10 +368,6 @@ export default {
       _.each(this.originalFieldList, (field) => {
         delete field.labelClasses
       })
-    },
-    updateValidationMessage () {
-      // VueFormGenerator.validators.resources.fieldIsRequired = TranslateService.get('TL_FIELD_IS_REQUIRED')
-      // VueFormGenerator.validators.resources.invalidFormat = TranslateService.get('TL_INVALID_FORMAT')
     },
     getKeyLocale (schema) {
       const options = {}

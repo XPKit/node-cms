@@ -91,37 +91,27 @@ export default {
       })
       _.each(list, (item) => {
         const oldGroup = _.find(groups, (group) => {
-          if (_.isEqual(group.name, item.group)) {
-            return group
-          }
-          if (group === item.group) {
-            return group
-          }
-          if (group.name === item.group) {
-            return group
-          }
-          if (_.includes(_.values(group.name), item.group)) {
+          if (_.isEqual(group.name, item.group) || group === item.group || group.name === item.group || _.includes(_.values(group.name), item.group)) {
             return group
           }
         })
         if (oldGroup) {
           oldGroup.list = oldGroup.list || []
           oldGroup.list.push(item)
+          return
+        }
+        if (item.type === 'plugin') {
+          plugins.list = plugins.list || []
+          plugins.list.push(item)
         } else {
-          if (item.type === 'plugin') {
-            plugins.list = plugins.list || []
-            plugins.list.push(item)
-          } else {
-            others.list = others.list || []
-            others.list.push(item)
-          }
+          others.list = others.list || []
+          others.list.push(item)
         }
       })
       groups = _.orderBy(groups, (item) => {
         if (item.name === 'CMS') {
           return String.fromCharCode(0x00)
-        }
-        if (item === others) {
+        } else if (item === others) {
           return String.fromCharCode(0xff)
         }
         return `${TranslateService.get(item.name, 'enUS')}`.toLowerCase()

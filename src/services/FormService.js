@@ -107,10 +107,7 @@ const customValidators = {
   image: (value, field, model) => {
     const { key, locale } = getKeyLocale(field)
     const attachment = _.find(_.get(model, '_attachments', []), (item) => {
-      if (item._name !== key) {
-        return false
-      }
-      if (locale && item._fields.locale !== locale) {
+      if (item._name !== key || (locale && item._fields.locale !== locale)) {
         return false
       }
       return true
@@ -123,10 +120,7 @@ const customValidators = {
   file: (value, field, model) => {
     const { key, locale } = getKeyLocale(field)
     const attachment = _.find(_.get(model, '_attachments', []), (item) => {
-      if (item._name !== key) {
-        return false
-      }
-      if (locale && item._fields.locale !== locale) {
+      if (item._name !== key || (locale && item._fields.locale !== locale)) {
         return false
       }
       return true

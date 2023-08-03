@@ -403,6 +403,7 @@ export default {
     border-radius: 4px;
     z-index: 1;
     overflow: hidden;
+    padding-top: 6px;
   }
 }
 .v-snack.notification {

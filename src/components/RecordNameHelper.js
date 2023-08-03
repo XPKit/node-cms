@@ -5,9 +5,7 @@ import * as Mustache from 'mustache'
 export default {
   methods: {
     getName (item) {
-      const field = _.first(this.resource.schema)
-      let value = this.getValue(item, field, this.resource.displayItem)
-      return value
+      return this.getValue(item, _.first(this.resource.schema), this.resource.displayItem)
     },
     getValue (item, field, template) {
       let displayname = ''
@@ -15,7 +13,7 @@ export default {
         if (field.input === 'file') {
           const attachment = _(item).get('_attachments', []).find(file => file._name === field.field)
           displayname = attachment && attachment._filename
-        } if (field.input === 'select') {
+        } else if (field.input === 'select') {
           let value = _.get(item, field.field)
           if (_.isString(value)) {
             value = _.find(ResourceService.get(field.source), {_id: value})

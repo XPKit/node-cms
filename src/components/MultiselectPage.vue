@@ -31,12 +31,24 @@ import Notification from '@m/Notification'
 
 export default {
   mixins: [RecordNameHelper, AbstractEditorView, Notification],
-  props: [
-    'resource',
-    'locale',
-    'multiselectItems',
-    'recordList'
-  ],
+  props: {
+    resource: {
+      type: Object,
+      default: () => {}
+    },
+    locale: {
+      type: String,
+      default: 'enUS'
+    },
+    multiselectItems: {
+      type: Array,
+      default: () => []
+    },
+    recordList: {
+      type: Array,
+      default: () => []
+    }
+  },
   data () {
     return {
       size: _.size,

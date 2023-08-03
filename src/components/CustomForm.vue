@@ -11,17 +11,14 @@
 import _ from 'lodash'
 
 export default {
-  components: {
-  },
   props: ['schema', 'model', 'row', 'formOptions', 'disabled'],
-  data () {
-    return {
-    }
-  },
-  computed: {
-  },
   created () {
-    this.checkIfComponentsExist()
+    _.each(this.schema.fields, (field) => {
+      const fieldType = this.getFieldType(field)
+      if (!(fieldType in Vue.options.components)) {
+        console.error(`${fieldType} isn't defined as a custom field type, will not render it`)
+      }
+    })
   },
   methods: {
     getFieldType (field) {
@@ -31,17 +28,7 @@ export default {
       if (_.isUndefined(model)) {
         model = _.get(_.first(value), 'parentKey', false)
       }
-      // console.warn('CUSTOM FORM - onInput', value, model)
       this.$emit('input', value, model)
-    },
-    checkIfComponentsExist () {
-      _.each(this.schema.fields, (field) => {
-        // console.warn(`field = ${field.model}`, field)
-        const fieldType = this.getFieldType(field)
-        if (!(fieldType in Vue.options.components)) {
-          console.error(`${fieldType} isn't defined as a custom field type, will not render it`)
-        }
-      })
     }
   }
 }

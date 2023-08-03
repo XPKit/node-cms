@@ -49,7 +49,6 @@ export default {
         }
         return objGet(this.model, this.schema.model)
       },
-
       set (newValue) {
         let oldValue = this.value
         if (isFunction(newValue)) {

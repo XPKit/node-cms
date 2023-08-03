@@ -64,14 +64,32 @@ import JSON5 from 'json5'
 
 export default {
   mixins: [RecordNameHelper],
-  props: [
-    'list',
-    'selectedItem',
-    'resource',
-    'locale',
-    'multiselect',
-    'multiselectItems'
-  ],
+  props: {
+    list: {
+      type: [Array, Boolean],
+      default: () => []
+    },
+    resource: {
+      type: [Object, Boolean],
+      default: () => {}
+    },
+    selectedItem: {
+      type: Object,
+      default: () => {}
+    },
+    locale: {
+      type: String,
+      default: 'enUS'
+    },
+    multiselect: {
+      type: Boolean,
+      default: false
+    },
+    multiselectItems: {
+      type: [Array, Boolean],
+      default: () => []
+    }
+  },
   data () {
     return {
       cachedMap: {},

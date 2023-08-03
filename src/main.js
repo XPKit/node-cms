@@ -50,6 +50,7 @@ import zhCN from 'vue-timeago/locales/zh-CN.json'
 import Loading from './modules/Loading'
 
 import TranslateFilter from '@f/Translate'
+import TruncateFilter from '@f/Truncate'
 import TranslateService from '@s/TranslateService'
 
 window.Vue = Vue
@@ -82,7 +83,8 @@ Vue.component('SyncResource', SyncResource)
 Vue.component('Draggable', draggable)
 Vue.mixin({
   filters: {
-    translate: TranslateFilter
+    translate: TranslateFilter,
+    truncate: TruncateFilter
   }
 })
 

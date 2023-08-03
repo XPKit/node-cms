@@ -4,12 +4,7 @@ import TranslateServiceLib from '@s/TranslateService'
 import SchemaService from '@s/SchemaService'
 import Notification from '@m/Notification'
 
-let TranslateService
-if (window.TranslateService) {
-  TranslateService = window.TranslateService
-} else {
-  TranslateService = TranslateServiceLib
-}
+const TranslateService = window.TranslateService || TranslateServiceLib
 
 export default {
   mixins: [Notification],
@@ -23,12 +18,19 @@ export default {
           if (attachment._fields.locale) {
             data.append('locale', attachment._fields.locale)
           }
+          if (attachment._filename) {
+            data.append('_filename', attachment._filename)
+          }
           if (attachment._fields.fileItemId) {
             data.append('fileItemId', attachment._fields.fileItemId)
           }
           if (_.get(attachment, 'cropOptions', false)) {
             console.warn('detected cropOptions, will add it to the request')
             data.append('cropOptions', JSON.stringify(attachment.cropOptions))
+          }
+          if (_.get(attachment, 'orderUpdated', false) && _.get(attachment, 'order', false)) {
+            console.warn('detected orderUpdated, will add it to the request')
+            data.append('order', attachment.order)
           }
           await axios.post(`../api/${this.resource.title}/${id}/attachments`, data)
         }
@@ -40,17 +42,10 @@ export default {
     async updateAttachments (id, attachments) {
       this.$loading.start('updateAttachments')
       try {
-        for (const attachment of attachments) {
-          console.warn('updateAttachments ====', attachment)
-          const dataToUpdate = {
-            cropOptions: {
-              top: attachment.cropOptions.top,
-              left: attachment.cropOptions.left,
-              width: attachment.cropOptions.width,
-              height: attachment.cropOptions.height
-            }
-          }
-          await axios.put(`../api/${this.resource.title}/${id}/attachments/${attachment._id}`, dataToUpdate)
+        for (const [i, attachment] of attachments.entries()) {
+          const cropOptions = _.omit(_.get(attachment, 'cropOptions', {}), ['updated'])
+          const order = _.get(attachment, 'order', i + 1)
+          await axios.put(`../api/${this.resource.title}/${id}/attachments/${attachment._id}`, {cropOptions, order})
         }
       } catch (error) {
         console.error('Error happen during updateAttachments:', error)
@@ -68,15 +63,19 @@ export default {
       }
       this.$loading.stop('remove-attachments')
     },
-    manageError (error, type, record) {
-      let typePrefix = 'Error'
+    getTypePrexix (type) {
+      let typePrefix = false
       if (type === 'create') {
-        typePrefix = TranslateService.get('TL_ERROR_ON_RECORD_CREATION')
+        typePrefix = 'TL_ERROR_ON_RECORD_CREATION'
       } else if (type === 'update') {
-        typePrefix = TranslateService.get('TL_ERROR_ON_RECORD_UPDATE')
+        typePrefix = 'TL_ERROR_ON_RECORD_UPDATE'
       } else if (type === 'delete') {
-        typePrefix = TranslateService.get('TL_ERROR_ON_RECORD_DELETE')
+        typePrefix = 'TL_ERROR_ON_RECORD_DELETE'
       }
+      return typePrefix ? TranslateService.get(typePrefix) : 'Error'
+    },
+    manageError (error, type, record) {
+      let typePrefix = this.getTypePrexix(type)
       let errorMessage = typePrefix
       if (_.get(error, 'response.data.code', 500) === 400) {
         const serverError = _.get(error, 'response.data')

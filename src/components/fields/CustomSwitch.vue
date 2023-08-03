@@ -1,18 +1,21 @@
 <template>
   <div class="custom-switch">
-    <v-switch
-      :label="schema.disabled ? '' : schema.model"
-      :input-value="getValue()"
-      :compact="schema.compact ? true : false"
-      :disabled="schema.disabled ? true : false"
-      :readonly="schema.readonly ? true : false"
-      :filled="schema.filled ? true : false"
-      dense
-      hide-details
-      solo
-      :outlined="schema.outlined ? true : false"
-      @change="onChange"
-    />
+    <div class="field-label">{{ schema.label }}</div>
+    <div class="border-wrapper">
+      <v-switch
+        class="switch"
+        :input-value="getValue()"
+        :compact="schema.compact ? true : false"
+        :disabled="schema.disabled ? true : false"
+        :readonly="schema.readonly ? true : false"
+        :filled="schema.filled ? true : false"
+        dense
+        hide-details
+        solo
+        :outlined="schema.outlined ? true : false"
+        @change="onChange"
+      />
+    </div>
   </div>
 </template>
 
@@ -44,6 +47,11 @@ export default {
 
 <style lang="scss">
   .custom-switch {
+    .switch {
+      padding-top: 8px;
+      margin: 16px;
+      margin-bottom: 8px;
+    }
     .v-input--selection-controls {
       margin-top: 0;
     }

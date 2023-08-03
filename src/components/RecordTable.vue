@@ -73,13 +73,28 @@ export default {
     Paginate
   },
   mixins: [AbstractEditorView, Notification],
-  props: [
-    'resourceList',
-    'recordList',
-    'resource',
-    'locale',
-    'record'
-  ],
+  props: {
+    resourceList: {
+      type: Array,
+      default: () => []
+    },
+    recordList: {
+      type: Array,
+      default: () => []
+    },
+    locale: {
+      type: String,
+      default: 'enUS'
+    },
+    resource: {
+      type: Object,
+      default: () => {}
+    },
+    record: {
+      type: Object,
+      default: () => {}
+    }
+  },
   data () {
     return {
       page: 1,

@@ -94,7 +94,16 @@ exports = (module.exports = {
     },
     {
       field: 'image',
-      input: 'image'
+      input: 'image',
+      options: {
+        accept: 'image/*',
+        maxCount: 5
+      }
+    },
+    {
+      field: 'unlimitedImages',
+      input: 'image',
+      localised: false
     },
     {
       field: 'gimage',
