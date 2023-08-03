@@ -93,6 +93,9 @@ export default {
       return _.isNaN(result) ? 'Unknown' : `${result} ${sizes[i]}`
     },
     isForMultipleImages () {
+      if (this.schema.width && this.schema.height) {
+        return false
+      }
       const maxCount = this.getMaxCount()
       return maxCount === -1 ? true : maxCount > 1
     },
