@@ -1,19 +1,16 @@
 <template>
   <div v-if="maxCount != 1" class="record-list">
     <div class="top-bar">
-      <div class="search" :class="{'is-query': sift.isQuery, 'is-valid': sift.isQuery && sift.isValid == true, 'is-invalid': sift.isQuery && sift.isValid == false}">
-        <v-text-field v-model="search" flat outlined hide-details dense solo :placeholder="'TL_SEARCH' | translate" type="text" name="search" />
+      <div
+        v-shortkey="{esc: ['esc'], open: ['/']}" class="search"
+        :class="{'is-query': sift.isQuery, 'is-valid': sift.isQuery && sift.isValid == true, 'is-invalid': sift.isQuery && sift.isValid == false}" @shortkey="interactiveSearch"
+      >
+        <v-text-field ref="search" v-model="search" flat outlined hide-details dense solo :placeholder="'TL_SEARCH' | translate" type="text" name="search" />
         <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect"><v-icon color="black">mdi-list-box</v-icon></div>
         <template v-if="maxCount <= 0 || listCount < maxCount">
           <div class="new" @click="onClickNew">+</div>
         </template>
       </div>
-      <!-- <div class="search-buttons">
-        <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect"><v-icon color="black">mdi-list-box</v-icon></div>
-        <template v-if="maxCount <= 0 || listCount < maxCount">
-          <div class="new" @click="onClickNew">+</div>
-        </template>
-      </div> -->
     </div>
     <div v-shortkey="multiselect ? ['ctrl', 'a'] : false" class="records" @shortkey="selectAll()">
       <RecycleScroller
@@ -227,7 +224,14 @@ export default {
       this.dive('', arr, newObj)
       return newObj
     },
-
+    async interactiveSearch (event) {
+      const action = _.get(event, 'srcKey', false)
+      const elem = _.get(this.$refs, '[\'search\']', false)
+      if (!action || !elem) {
+        return
+      }
+      return action === 'esc' ? elem.blur() : elem.focus()
+    },
     select (item) {
       if (this.multiselect) {
         if (_.includes(this.multiselectItems, item)) {
