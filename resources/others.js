@@ -126,7 +126,7 @@ exports = (module.exports = {
       field: 'file2',
       input: 'file',
       options: {
-        maxCount: 1
+        maxCount: 5
       }
     }
   ],

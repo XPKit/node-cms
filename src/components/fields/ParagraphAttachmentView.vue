@@ -7,6 +7,7 @@
       :class="{disabled}"
       @end="onEndDrag"
     >
+      <!-- TODO: hugo - refactor to use mixin and same style of normal input fields -->
       <div v-for="fileItem in items" :key="fileItem.id" class="file-item">
         <span class="file-item-handle" />
         <span class="file-item-main">
@@ -149,7 +150,7 @@ export default {
 
   .handle, .file-item-handle {
     display: inline-block;
-    width: 40px;
+    width: 20px;
     background-color: grey;
     cursor: pointer;
   }

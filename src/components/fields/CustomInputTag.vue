@@ -1,25 +1,10 @@
 <template>
   <v-combobox
     v-model="tags"
-    clearable
-    :hide-selected="!options['allowDuplicates']"
-    :readonly="options['readOnly']"
-    :placeholder="options['placeholder']"
-    :multiple="options['multiple']"
-    dense
-    outlined
-    small-chips
-    deletable-chips
+    clearable hide-details outlined deletable-chips small-chips dense
+    :hide-selected="!options['allowDuplicates']" :readonly="options['readOnly']" :placeholder="options['tagPlaceholder']" :multiple="options['multiple']"
     @change="onChangeData"
   />
-  <!-- <input-tag
-    v-model="tags"
-    :allow-duplicates="options['allow-duplicates']"
-    :limit="options['limit']"
-    :read-only="options['read-only']"
-    :placeholder="options['tagPlaceholder']"
-    :add-tag-on-keys="options['add-tag-on-keys']"
-  /> -->
 </template>
 
 <script>
@@ -66,7 +51,6 @@ export default {
       } else {
         this.value = value
       }
-      console.warn('value = ', this.value)
     }
   }
 }

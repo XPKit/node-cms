@@ -12,18 +12,20 @@
       @end="onEndDrag"
       @start="dragging = true"
     >
-      <div v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" class="item">
+      <v-card v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" class="item">
         <span class="handle" />
-        <div class="item-main">
-          <custom-form
-            :schema="getSchema(item)"
-            :model="item"
-            @error="onError"
-            @input="onModelUpdated"
-          />
+        <div class="item-main-wrapper">
+          <div class="item-main">
+            <custom-form
+              :schema="getSchema(item)"
+              :model="item"
+              @error="onError"
+              @input="onModelUpdated"
+            />
+          </div>
+          <v-btn class="add-new-item" fab small @click="onClickRemoveItem(item)"><v-icon>mdi-minus</v-icon></v-btn>
         </div>
-        <v-btn @click="onClickRemoveItem(item)">remove</v-btn>
-      </div>
+      </v-card>
       <div slot="header">
         <v-select
           :label="schema.label" :value="selectedType"
@@ -31,7 +33,7 @@
           hide-details outlined dense persistent-placeholder
           @change="onChangeType"
         />
-        <v-btn @click="onClickAddNewItem">Add</v-btn>
+        <v-btn class="add-new-item" fab small @click="onClickAddNewItem"><v-icon>mdi-plus</v-icon></v-btn>
       </div>
     </draggable>
   </div>
@@ -239,10 +241,9 @@ export default {
   margin-bottom: 5px;
   align-items: stretch;
   border: 1px grey solid;
-
   .handle, .file-item-handle {
     display: inline-block;
-    width: 40px;
+    width: 20px;
     background-color: grey;
     cursor: pointer;
   }
@@ -286,5 +287,25 @@ export default {
 }
 .disabled {
   pointer-events: none;
+}
+.add-new-item {
+  margin: 6px;
+}
+
+</style>
+<style lang="scss">
+.paragraph-view {
+  .item-main-wrapper {
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+    flex: 1 0;
+    > .v-btn {
+      margin: 10px;
+    }
+    .field-wrapper {
+      margin-bottom: 0;
+    }
+  }
 }
 </style>
