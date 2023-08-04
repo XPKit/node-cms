@@ -5,7 +5,6 @@
         class="file-input-card" elevation="0" :class="{ 'drag-and-drop': dragover }"
         @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
       >
-        <!-- TODO: hugo - change like in ImageView  -->
         <v-file-input
           ref="fileInput" :rules="getRules()"
           :label="schema.label" :placeholder="getPlaceholder() | translate" :clearable="false"
@@ -21,14 +20,20 @@
       </v-card>
     </form>
     <div v-if="isForMultipleImages()" ref="preview-multiple" class="preview-multiple">
-      <v-card v-for="a in getAttachments()" :key="a._filename" class="preview-attachment">
-        <v-chip class="filename" close @click:close="removeImage(a)">{{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
-        <div class="row-handle">
-          <img v-if="isImage()" :src="getImageSrc(a)">
-          <v-btn v-else small @click="viewFile(a)">{{ 'TL_VIEW' | translate }}</v-btn>
-          <v-icon>mdi-drag</v-icon>
-        </div>
-      </v-card>
+      <draggable
+        v-if="schema" :key="`${schema.model}`" :list="getAttachments()"
+        draggable=".preview-attachment" handle=".row-handle" ghost-class="ghost"
+        v-bind="dragOptions" :class="{disabled}" @end="onEndDrag" @start="onStartDrag"
+      >
+        <v-card v-for="(a, i) in getAttachments()" :key="`${a._filename}-${i}`" class="preview-attachment" :class="{odd: i % 2 !== 0}">
+          <v-chip class="filename" close @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
+          <div class="row-handle">
+            <img v-if="isImage()" :src="getImageSrc(a)">
+            <v-btn v-else small @click="viewFile(a)">{{ 'TL_VIEW' | translate }}</v-btn>
+            <v-icon>mdi-drag</v-icon>
+          </div>
+        </v-card>
+      </draggable>
     </div>
     <div v-else-if="attachment()" class="preview-single-attachment">
       <v-chip class="filename" close @click:close="removeImage(attachment())">{{ attachment()._filename | truncate(10) }} ({{ imageSize(attachment()) }})</v-chip>
@@ -61,25 +66,14 @@
 import _ from 'lodash'
 import AbstractField from '@m/AbstractField'
 import FileInputField from '@m/FileInputField'
+import DragList from '@m/DragList'
 export default {
-  mixins: [AbstractField, FileInputField],
-  data () {
-    return {
-      localModel: false,
-      dragover: false
-    }
-  },
-  created () {
-    this.localModel = _.cloneDeep(this.model)
-  },
+  mixins: [AbstractField, FileInputField, DragList],
   methods: {
     viewFile (attachment = false) {
       var a = attachment || this.attachment()
       const filenameComponents = _.get(a, '_filename', '').split('.')
-      let suffix = ''
-      if (filenameComponents.length > 1) {
-        suffix = `.${_.last(filenameComponents)}`
-      }
+      const suffix = filenameComponents.length > 1 ? `.${_.last(filenameComponents)}` : ''
       const win = window.open(window.origin + a.url + suffix, '_blank')
       win.focus()
       console.log(a)

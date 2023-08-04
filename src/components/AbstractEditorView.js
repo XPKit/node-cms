@@ -29,7 +29,7 @@ export default {
             data.append('cropOptions', JSON.stringify(attachment.cropOptions))
           }
           if (_.get(attachment, 'orderUpdated', false) && _.get(attachment, 'order', false)) {
-            console.warn('detected orderUpdated, will add it to the request')
+            // console.warn('detected orderUpdated, will add it to the request')
             data.append('order', attachment.order)
           }
           await axios.post(`../api/${this.resource.title}/${id}/attachments`, data)

@@ -54,7 +54,7 @@ export default {
         if (isFunction(newValue)) {
           newValue(newValue, oldValue)
         } else {
-          console.warn(`UPDATE VAL ${this.schema.model}`, newValue)
+          // console.warn(`UPDATE VAL ${this.schema.model}`, newValue)
           this.updateModelValue(newValue, oldValue)
         }
       }

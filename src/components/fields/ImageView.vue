@@ -20,13 +20,19 @@
       </v-card>
     </form>
     <div v-if="isForMultipleImages()" ref="preview-multiple" class="preview-multiple">
-      <v-card v-for="(a, i) in getAttachments()" :key="`${a._filename}-${i}`" class="preview-attachment" :class="{odd: i % 2 !== 0}">
-        <v-chip class="filename" close @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
-        <div class="row-handle">
-          <img :src="getImageSrc(a)">
-          <v-icon>mdi-drag</v-icon>
-        </div>
-      </v-card>
+      <draggable
+        v-if="schema" :key="`${schema.model}`" :list="getAttachments()"
+        draggable=".preview-attachment" handle=".row-handle" ghost-class="ghost"
+        v-bind="dragOptions" :class="{disabled}" @end="onEndDrag" @start="onStartDrag"
+      >
+        <v-card v-for="(a, i) in getAttachments()" :key="`${a._filename}-${i}`" class="preview-attachment" :class="{odd: i % 2 !== 0}">
+          <v-chip class="filename" close @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
+          <div class="row-handle">
+            <img :src="getImageSrc(a)">
+            <v-icon>mdi-drag</v-icon>
+          </div>
+        </v-card>
+      </draggable>
     </div>
     <template v-else-if="attachment() && isImage()">
       <div v-if="!(schema.width && schema.height)" class="preview-single-attachment">
@@ -76,16 +82,15 @@ import { Cropper } from 'vue-advanced-cropper'
 import Notification from '@m/Notification'
 import AbstractField from '@m/AbstractField'
 import FileInputField from '@m/FileInputField'
+import DragList from '@m/DragList'
 
 export default {
   components: {
     Cropper
   },
-  mixins: [Notification, AbstractField, FileInputField],
+  mixins: [Notification, AbstractField, FileInputField, DragList],
   data () {
     return {
-      croppedImage: false,
-      attachments: [],
       firstCropUpdate: true,
       stencilProps: {
         class: 'cropper-stencil',

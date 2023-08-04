@@ -423,4 +423,17 @@ export default {
     }
   }
 }
+// NOTE: For ordered lists
+.flip-list-move {
+  transition: transform 0.2s;
+}
+
+.no-move {
+  transition: transform 0s;
+}
+
+.ghost {
+  opacity: 0.5;
+  background: #c8ebfb;
+}
 </style>

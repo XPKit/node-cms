@@ -1,54 +1,43 @@
 import _ from 'lodash'
-import Sortable from 'sortablejs'
 import TranslateService from '@s/TranslateService'
 
 export default {
   data () {
     return {
       dragover: false,
-      sortable: false,
+      attachments: [],
       localModel: false
-
     }
   },
   mounted () {
     this.localModel = _.cloneDeep(this.model)
-    if (this.isForMultipleImages()) {
-      this.$nextTick(() => {
-        const previewMultiple = this.$refs['preview-multiple']
-        this.sortable = Sortable.create(previewMultiple, {
-          animation: 150,
-          handle: '.row-handle',
-          onEnd: ({ newIndex, oldIndex }) => {
-            let items = this.getAttachments().slice()
-            items.splice(newIndex, 0, items.splice(oldIndex, 1)[0])
-            items = _.map(items, (item, i) => {
-              if (item.order !== i + 1) {
-                item.order = i + 1
-                item.orderUpdated = true
-              }
-              return item
-            })
-            let orderedAttachments = _.map(this.localModel._attachments, attachment => {
-              if (!this.isSameAttachment(attachment)) {
-                return attachment
-              }
-              const foundOrder = _.get(_.find(items, {orderUpdated: true, _filename: attachment._filename, _size: attachment._size, url: attachment.url}), 'order', 0)
-              if (foundOrder !== 0 && foundOrder !== _.get(attachment, 'order', -1)) {
-                attachment.order = foundOrder
-                attachment.orderUpdated = true
-              }
-              return attachment
-            })
-            orderedAttachments = _.orderBy(orderedAttachments, ['order'], ['asc'])
-            this.attachments = _.filter(orderedAttachments, attachment => this.isSameAttachment(attachment))
-            this.$emit('input', orderedAttachments, this.schema.model)
-          }
-        })
-      })
-    }
+    this.attachments = this.getAttachments()
   },
   methods: {
+    onEndDrag ({newIndex, oldIndex}) {
+      this.dragging = false
+      const items = _.map(this.getAttachments(), (item, i) => {
+        if (item.order !== i + 1) {
+          item.order = i + 1
+          item.orderUpdated = true
+        }
+        return item
+      })
+      let orderedAttachments = _.map(this.localModel._attachments, attachment => {
+        if (!this.isSameAttachment(attachment)) {
+          return attachment
+        }
+        const foundOrder = _.get(_.find(items, {orderUpdated: true, _filename: attachment._filename, _size: attachment._size, url: attachment.url}), 'order', 0)
+        if (foundOrder !== 0 && foundOrder !== _.get(attachment, 'order', -1)) {
+          attachment.order = foundOrder
+          attachment.orderUpdated = true
+        }
+        return attachment
+      })
+      orderedAttachments = _.orderBy(orderedAttachments, ['order'], ['asc'])
+      this.attachments = _.filter(orderedAttachments, attachment => this.isSameAttachment(attachment))
+      this.$emit('input', orderedAttachments, this.schema.model)
+    },
     getImageSrc (attachment = false) {
       const a = attachment || this.attachment()
       return a.data ? a.data : this.getPreviewUrl(a)
@@ -75,13 +64,8 @@ export default {
       return _.filter(this.localModel._attachments, attachment => this.isSameAttachment(attachment))
     },
     imageSize (attachment = false) {
-      let fileSize = 0
-      if (attachment) {
-        fileSize = _.get(attachment, '_size', _.get(attachment, 'file.size', false))
-      } else {
-        fileSize = _.get(this.attachment(), '_size', false)
-      }
-      return this.bytesToSize(fileSize)
+      const a = attachment || this.attachment()
+      return this.bytesToSize(_.get(a, '_size', _.get(a, 'file.size', false)))
     },
     bytesToSize (bytes) {
       if (bytes === 0) {

@@ -53,6 +53,15 @@ exports = (module.exports = {
       }
     },
     {
+      label: 'Pillbox Paragraph',
+      field: 'pillboxParagraph',
+      input: 'paragraph',
+      localised: false,
+      options: {
+        types: ['pillbox']
+      }
+    },
+    {
       label: 'Localized Paragraph',
       field: 'localizedParagraph',
       input: 'paragraph',

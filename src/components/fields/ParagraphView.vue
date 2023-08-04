@@ -3,11 +3,14 @@
     <draggable
       v-if="schema"
       :key="`${schema.model}-${key}`"
-      v-model="items"
+      :list="items"
       draggable=".item"
+      v-bind="dragOptions"
       handle=".handle"
+      ghost-class="ghost"
       :class="{disabled}"
       @end="onEndDrag"
+      @start="dragging = true"
     >
       <div v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" class="item">
         <span class="handle" />
@@ -28,8 +31,6 @@
           hide-details outlined dense persistent-placeholder
           @change="onChangeType"
         />
-        <!-- <option v-for="item in types" :key="`option-${item.input}`" :value="item">{{ item.label }}</option>
-        </v-select> -->
         <v-btn @click="onClickAddNewItem">Add</v-btn>
       </div>
     </draggable>
@@ -40,6 +41,7 @@
 import _ from 'lodash'
 import SchemaService from '@s/SchemaService'
 import ResourceService from '@s/ResourceService'
+import DragList from '@m/DragList'
 import {v4 as uuid} from 'uuid'
 
 const defaultTypes = [
@@ -66,8 +68,7 @@ const defaultTypes = [
 ]
 
 export default {
-  components: {
-  },
+  mixins: [DragList],
   props: ['schema', 'vfg', 'model', 'disabled'],
   data () {
     return {
@@ -82,7 +83,6 @@ export default {
   watch: {
     'schema.model': function () {
       this.items = _.cloneDeep(_.get(this.model, this.schema.model, []))
-      console.warn('watch !!!', this.items)
     }
   },
   created () {
@@ -180,7 +180,7 @@ export default {
         const newItem = _.cloneDeep(this.selectedType)
         this.items.push(newItem)
         _.set(this.localModel, this.schema.model, this.items)
-        console.warn('NEW ITEM ADDED: ', this.selectedType, this.localModel)
+        // console.warn('NEW ITEM ADDED: ', this.selectedType, this.localModel)
         this.$emit('input', this.localModel, this.schema.model)
       }
     },
@@ -217,6 +217,7 @@ export default {
       this.$emit('input', this.items, this.schema.model)
     },
     onEndDrag () {
+      this.dragging = false
       _.set(this.localModel, this.schema.model, this.items)
       this.key = uuid()
       this.$emit('input', this.items, this.schema.model)

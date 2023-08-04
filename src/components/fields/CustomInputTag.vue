@@ -5,11 +5,11 @@
     :hide-selected="!options['allowDuplicates']"
     :readonly="options['readOnly']"
     :placeholder="options['placeholder']"
-    :dense="options['dense']"
     :multiple="options['multiple']"
-    :outlined="options['outlined']"
-    :deletable-chips="options['deletableChips']"
-    :small-chips="options['smallChips']"
+    dense
+    outlined
+    small-chips
+    deletable-chips
     @change="onChangeData"
   />
   <!-- <input-tag
@@ -63,7 +63,10 @@ export default {
     onChangeData (value) {
       if (_.get(this.options, 'limit', -1) !== -1) {
         this.value = _.take(value, this.options.limit)
+      } else {
+        this.value = value
       }
+      console.warn('value = ', this.value)
     }
   }
 }
