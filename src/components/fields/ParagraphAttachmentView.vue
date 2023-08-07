@@ -55,12 +55,12 @@ export default {
     'schema.model': function () {
       this.items = _.get(this.model, this.schema.model, [])
       this.attachments = this.formatItems()
-      console.warn('changed !', this.attachments)
+      // console.warn('changed !', this.attachments)
     }
   },
   mounted () {
     this.attachments = this.formatItems()
-    console.warn('attachments = ', this.attachments)
+    // console.warn('attachments = ', this.attachments)
   },
   methods: {
     formatItems () {

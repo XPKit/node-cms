@@ -5,7 +5,10 @@
         v-shortkey="{esc: ['esc'], open: ['/']}" class="search"
         :class="{'is-query': sift.isQuery, 'is-valid': sift.isQuery && sift.isValid == true, 'is-invalid': sift.isQuery && sift.isValid == false}" @shortkey="interactiveSearch"
       >
-        <v-text-field ref="search" v-model="search" flat outlined hide-details dense solo :placeholder="'TL_SEARCH' | translate" type="text" name="search" />
+        <v-text-field
+          ref="search" v-model="search" class="search-bar" flat outlined hide-details dense :placeholder="'TL_SEARCH' | translate" type="text"
+          name="search"
+        />
         <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect"><v-icon color="black">mdi-list-box</v-icon></div>
         <template v-if="maxCount <= 0 || listCount < maxCount">
           <div class="new" @click="onClickNew">+</div>
@@ -295,14 +298,17 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.search-buttons {
   .multiselect i:before {
-    color: #aaa;
+    // color: #aaa;
     line-height: 40px;
   }
   .new {
     line-height: 40px;
     user-select: none;
   }
-}
+  .top-bar {
+    .search-bar {
+      border-radius: 0px;
+    }
+  }
 </style>

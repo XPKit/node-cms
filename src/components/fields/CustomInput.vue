@@ -53,6 +53,5 @@ export default {
 
 <style lang="scss">
   .custom-input {
-
   }
 </style>

@@ -271,7 +271,9 @@ export default {
   }
   .item-main {
     width: 100%;
-    padding: 10px;
+    // padding: 10px;
+    padding-left: 10px;
+    padding-bottom: 10px;
   }
   .file-item {
     display: flex;
@@ -311,6 +313,12 @@ export default {
     .field-wrapper {
       margin-bottom: 0;
     }
+  }
+  .v-input {
+    padding-top: 12px;
+  }
+  .custom-switch {
+    margin-top: 12px;
   }
 }
 </style>
