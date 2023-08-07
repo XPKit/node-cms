@@ -7,6 +7,7 @@
       draggable=".item"
       v-bind="dragOptions"
       handle=".handle"
+      :group="`${schema.model}-${key}`"
       ghost-class="ghost"
       :class="{disabled}"
       @end="onEndDrag"
@@ -74,7 +75,6 @@ export default {
   props: ['schema', 'vfg', 'model', 'disabled'],
   data () {
     return {
-      props: ['obj', 'vfg', 'model', 'disabled'],
       items: _.cloneDeep(_.get(this.model, this.schema.model, [])),
       types: [],
       selectedType: false,
@@ -187,7 +187,8 @@ export default {
       }
     },
     onClickRemoveItem (item) {
-      let attachments = this.localModel._attachments = this.localModel._attachments || []
+      console.warn('onClickRemoveItem -', item)
+      let attachments = _.get(this.model, '_attachments', [])
       if (_.includes(['image', 'file', 'group'], item.input)) {
         const findIds = obj => {
           const ids = []
@@ -202,17 +203,20 @@ export default {
           return ids
         }
         const ids = findIds(item)
+        console.warn('IDS = ', ids)
         _.each(ids, fileItemId => {
           attachments = _.reject(attachments, {_fields: {fileItemId}})
         })
       }
       this.items = _.difference(this.items, [item])
+      // console.warn('PARAGRAPH - ITEMS - ', this.items)
+      // console.warn('PARAGRAPH - ATTACHMENTS - ', attachments)
+      // console.warn('PARAGRAPH - LOCAL ATTACHMENTS - ', _.get(this.localModel, '_attachments', []))
       _.set(this.localModel, this.schema.model, this.items)
-      _.set(this.localModel, '_attachments', attachments)
+      _.set(this.model, '_attachments', attachments)
       this.items = _.clone(this.items)
       this.key = uuid()
       this.$emit('input', this.items, this.schema.model)
-      // this.$emit('input', this.localModel._attachments, this.schema.model)
     },
     onChange () {
       _.set(this.localModel, this.schema.model, this.items)
@@ -221,6 +225,7 @@ export default {
     onEndDrag () {
       this.dragging = false
       _.set(this.localModel, this.schema.model, this.items)
+      // console.warn('onEndDrag ', this.items)
       this.key = uuid()
       this.$emit('input', this.items, this.schema.model)
     },

@@ -1,6 +1,9 @@
-.image-view, .attachment-view {
-  overflow: hidden;
+.image-view,
+.attachment-view {
   max-width: 600px;
+}
+.image-view, .attachment-view, .paragraph-attachment-view {
+  overflow: hidden;
   img.preview {
     width: 200px;
     height: 140px;
@@ -49,11 +52,9 @@
     align-items: flex-start;
     justify-content: flex-start;
     padding-bottom: 6px;
+    gap: 6px;
     .filename {
       display: block;
-    }
-    .preview-attachment+.preview-attachment {
-      margin-left: 6px;
     }
   }
   .preview-single-attachment {

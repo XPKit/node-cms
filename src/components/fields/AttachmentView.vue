@@ -19,7 +19,7 @@
         </v-file-input>
       </v-card>
     </form>
-    <div v-if="isForMultipleImages()" ref="preview-multiple" class="preview-multiple">
+    <div v-if="isForMultipleImages()" class="preview-multiple">
       <draggable
         v-if="schema" :key="`${schema.model}`" :list="getAttachments()"
         draggable=".preview-attachment" handle=".row-handle" ghost-class="ghost"
@@ -63,21 +63,10 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import AbstractField from '@m/AbstractField'
 import FileInputField from '@m/FileInputField'
 import DragList from '@m/DragList'
 export default {
-  mixins: [AbstractField, FileInputField, DragList],
-  methods: {
-    viewFile (attachment = false) {
-      var a = attachment || this.attachment()
-      const filenameComponents = _.get(a, '_filename', '').split('.')
-      const suffix = filenameComponents.length > 1 ? `.${_.last(filenameComponents)}` : ''
-      const win = window.open(window.origin + a.url + suffix, '_blank')
-      win.focus()
-      console.log(a)
-    }
-  }
+  mixins: [AbstractField, FileInputField, DragList]
 }
 </script>

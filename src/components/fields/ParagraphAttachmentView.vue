@@ -1,50 +1,35 @@
 <template>
-  <div>
-    <draggable
-      v-model="items"
-      draggable=".file-item"
-      handle=".file-item-handle"
-      :class="{disabled}"
-      @end="onEndDrag"
+  <div class="paragraph-attachment-view">
+    <v-card
+      elevation="0" :class="{ 'drag-and-drop': dragover }"
+      @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
     >
-      <!-- TODO: hugo - refactor to use mixin and same style of normal input fields -->
-      <div v-for="fileItem in items" :key="fileItem.id" class="file-item">
-        <span class="file-item-handle" />
-        <span class="file-item-main">
-          <img v-if="schema.fileType === 'image'" :src="getAttachment(fileItem.id, 'url')">
-          <span>
-            <a :href="getAttachment(fileItem.id, 'url')" target="_blank">
-              {{ getAttachment(fileItem.id, '_filename') }}
-            </a>
-          </span>
-          <template v-if="schema.options && schema.options.extraParams">
-            <span>
-              <v-card
-                :class="{ 'drag-and-drop': dragover }"
-                @drop.prevent="onDrop($event)"
-                @dragover.prevent="dragover = true"
-                @dragenter.prevent="dragover = true"
-                @dragleave.prevent="dragover = false"
-              >
-                <v-file-input :value="fileItem.title" placeholder="title" hide-details :disabled="disabled" @change="onChange" />
-              </v-card>
-            </span>
-            <span><v-textarea :value="fileItem.description" placeholder="description" hide-details :disabled="disabled" @change="onChange" /></span>
-          </template>
-        </span>
-        <button @click="onClickRemoveFileItem(model, fileItem)">X</button>
-      </div>
-      <div slot="header">
-        <v-card
-          :class="{ 'drag-and-drop': dragover }"
-          @drop.prevent="onDrop($event)"
-          @dragover.prevent="dragover = true"
-          @dragenter.prevent="dragover = true"
-          @dragleave.prevent="dragover = false"
-        >
-          <v-file-input :accept="model.input === 'image'? 'image/*': '*'" hide-details :disabled="disabled" @change="onChangeFile($event)" />
-        </v-card>
-      </div>
+      <v-file-input
+        ref="fileInput" :rules="getRules()"
+        :accept="model.input === 'image'? 'image/*': '*'" :clearable="false" :placeholder="getPlaceholder() | translate"
+        dense outlined persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :disabled="isForMultipleImages() && isFieldDisabled()"
+        @change="onChangeFile"
+      >
+        <template #selection="{index}">
+          <div v-if="index === 0" class="v-file-input__text v-file-input__text--placeholder">
+            {{ getPlaceholder() | translate }}
+          </div>
+        </template>
+      </v-file-input>
+    </v-card>
+    <draggable
+      v-if="schema" :key="`${schema.model}-${key}`" v-model="items" :group="`${schema.model}-${key}`"
+      draggable=".preview-attachment" handle=".row-handle" ghost-class="ghost"
+      v-bind="dragOptions" :class="{disabled}" class="preview-multiple" @end="onEndDrag" @start="onStartDrag"
+    >
+      <v-card v-for="(i, index) in items" :key="`${i._filename}-${index}`" class="preview-attachment" :class="{odd: index % 2 !== 0}">
+        <v-chip class="filename" close @click:close="onClickRemoveFileItem(i)">#{{ index + 1 }} - {{ getAttachment(i, '_filename') | truncate(10) }} ({{ imageSize(getAttachment(i)) }})</v-chip>
+        <div class="row-handle">
+          <img v-if="isImage()" :src="getImageSrc(i)">
+          <v-btn v-else-if="getAttachment(i, 'url')" small @click="viewFile(getAttachment(i))">{{ 'TL_VIEW' | translate }}</v-btn>
+          <v-icon>mdi-drag</v-icon>
+        </div>
+      </v-card>
     </draggable>
   </div>
 </template>
@@ -53,25 +38,34 @@
 import {v4 as uuid} from 'uuid'
 import _ from 'lodash'
 import AbstractField from '@m/AbstractField'
+import FileInputField from '@m/FileInputField'
+import DragList from '@m/DragList'
 
 export default {
-  components: {
-  },
-  mixins: [AbstractField],
+  mixins: [AbstractField, FileInputField, DragList],
   data () {
     return {
       dragover: false,
-      items: _.get(this.model, this.schema.model, [])
+      items: _.get(this.model, this.schema.model, []),
+      key: uuid(),
+      attachments: []
     }
   },
   watch: {
     'schema.model': function () {
       this.items = _.get(this.model, this.schema.model, [])
+      this.attachments = this.formatItems()
+      console.warn('changed !', this.attachments)
     }
   },
   mounted () {
+    this.attachments = this.formatItems()
+    console.warn('attachments = ', this.attachments)
   },
   methods: {
+    formatItems () {
+      return _.map(this.items, (i) => this.getAttachment(i))
+    },
     onChange () {
       _.set(this.model, this.schema.model, this.items)
       this.$emit('input', this.model, this.schema.model)
@@ -90,11 +84,15 @@ export default {
       })
     },
     onChangeFile (files) {
+      this.$refs.fileInput.validate()
+      if (!this.$refs.fileInput.valid) {
+        return
+      }
       if (!_.isArray(files)) {
         files = [files]
       }
       const { key, locale } = this.getKeyLocale()
-      _.each(files, file => {
+      _.each(files, (file, i) => {
         const fileItemId = uuid()
         const newItem = {
           id: fileItemId
@@ -106,6 +104,8 @@ export default {
         const attachments = this.schema.rootView.model._attachments = this.schema.rootView.model._attachments || []
         const attachmentObj = {
           _filename: file.name,
+          order: i + 1,
+          orderUpdated: true,
           _name: key,
           _fields: {
             locale,
@@ -121,14 +121,18 @@ export default {
           }
         }
         attachments.push(attachmentObj)
+        console.warn('added attachment = ', attachmentObj)
         event.target.value = null
       })
+      _.set(this.model, this.schema.model, this.items)
+      this.$emit('input', this.model, this.schema.model)
     },
     getAttachment (fileItemId, field) {
-      const attach = _.find(this.schema.rootView.model._attachments, {_fields: {fileItemId}})
+      const attach = _.find(this.schema.rootView.model._attachments, {_fields: {fileItemId: fileItemId.id}})
       return field ? _.get(attach, field) : attach
     },
-    onClickRemoveFileItem (item, fileItem) {
+    onClickRemoveFileItem (fileItem) {
+      // console.warn('onClickRemoveFileItem -', fileItem)
       let attachments = this.schema.rootView.model._attachments = this.schema.rootView.model._attachments || []
       attachments = _.reject(attachments, {_fields: {fileItemId: fileItem.id}})
       this.items = _.difference(this.items, [fileItem])

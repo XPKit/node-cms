@@ -19,7 +19,7 @@
         </v-file-input>
       </v-card>
     </form>
-    <div v-if="isForMultipleImages()" ref="preview-multiple" class="preview-multiple">
+    <div v-if="isForMultipleImages()" class="preview-multiple">
       <draggable
         v-if="schema" :key="`${schema.model}`" :list="getAttachments()"
         draggable=".preview-attachment" handle=".row-handle" ghost-class="ghost"

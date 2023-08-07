@@ -312,6 +312,8 @@ export default {
           await this.updateAttachments(data._id, updatedAttachments)
         }
         const removedAttachments = _.filter(this.record._attachments, item => !_.find(this.editingRecord._attachments, { _id: item._id }))
+        // console.warn('record attachments', this.record._attachments)
+        // console.warn('editingRecord attachments', this.editingRecord._attachments)
         if (!_.isEmpty(removedAttachments)) {
           console.warn('REMOVED ATTACHMENTS = ', _.map(removedAttachments, a => `${a.order}-${a._filename}`))
           await this.removeAttachments(data._id, removedAttachments)
