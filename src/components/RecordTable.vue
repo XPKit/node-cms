@@ -7,7 +7,7 @@
       </div>
       <div v-if="maxCount <= 0 || listCount < maxCount" class="new" @click="createRecord">+</div>
 
-      <ul v-show="resource.locales" class="locales">
+      <!-- <ul v-show="resource.locales" class="locales">
         <li
           v-for="item in resource.locales" :key="item"
           :class="{ selected: item == locale }"
@@ -15,7 +15,7 @@
         >
           {{ 'TL_'+item.toUpperCase() | translate }}
         </li>
-      </ul>
+      </ul> -->
 
       <vue-table-generator
         v-if="isReady" :options="options"
@@ -23,7 +23,7 @@
         @remove="removeRecord" @edit="editRecord"
       />
 
-      <paginate
+      <!-- <paginate
         v-if="!search"
         v-model="page"
         :page-count="pageCount"
@@ -31,7 +31,7 @@
         :prev-text="'Prev'"
         :next-text="'Next'"
         :container-class="'pager'"
-      />
+      /> -->
 
       <!-- <button class="update" @click="updateRecords">{{ "TL_UPDATE" | translate }}</button> -->
     </template>
@@ -60,7 +60,7 @@ import pAll from 'p-all'
 
 import TranslateService from '@s/TranslateService'
 import VueTableGenerator from '@c/vue-table/VueTableGenerator.vue'
-import Paginate from 'vuejs-paginate'
+// import Paginate from 'vuejs-paginate'
 
 import RecordEditor from '@c/RecordEditor.vue'
 import AbstractEditorView from '@c/AbstractEditorView'
@@ -69,8 +69,8 @@ import Notification from '@m/Notification'
 export default {
   components: {
     VueTableGenerator,
-    RecordEditor,
-    Paginate
+    RecordEditor
+    // Paginate
   },
   mixins: [AbstractEditorView, Notification],
   props: {

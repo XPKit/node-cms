@@ -101,6 +101,7 @@
     "through": "^2.3.8",
     "tiptap-vuetify": "^2.24.0",
     "ws": "^8.13.0",
+    "x-data-spreadsheet": "^1.1.9",
     "xlsx": "^0.17.3"
   },
   "devDependencies": {
@@ -117,6 +118,7 @@
     "connect-livereload": "^0.6.1",
     "del": "^3.0.0",
     "eslint": "^8.17.0",
+    "less": "^3.8.1",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-node": "^6.0.1",
@@ -148,7 +150,6 @@
     "vue": "^2.7.0",
     "vue-advanced-cropper": "^1.11.6",
     "vue-codemirror": "^4.0.6",
-    "vue-excel-editor": "^1.5.19",
     "vue-form-generator": "^2.3.4",
     "vue-json-tree-view": "^2.1.6",
     "vue-router": "^3.1.6",

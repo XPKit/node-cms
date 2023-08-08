@@ -35,7 +35,7 @@ export default defineConfig({
     })
   ],
   optimizeDeps: {
-    include: ['xlsx']
+    // include: []
   },
   server: {
     origin: `http://localhost:${devPort}`,

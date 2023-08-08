@@ -11,7 +11,6 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import axios from 'axios'
 import draggable from 'vuedraggable'
 import LogViewer from '@femessage/log-viewer'
-import VueExcelEditor from 'vue-excel-editor'
 import vuetify from './vuetify.js'
 // Global components
 import App from '@c/App.vue'
@@ -92,7 +91,6 @@ Vue.use(Loading)
 Vue.use(TreeView)
 Vue.use(VueVirtualScroller)
 Vue.use(VueRouter)
-Vue.use(VueExcelEditor)
 Vue.use(VueShortkey)
 Vue.use(VueTimeago, {
   name: 'timeago',

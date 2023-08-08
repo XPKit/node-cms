@@ -1,17 +1,9 @@
 <template>
-  <div class="vue-table-generator vue-form-generator table">
-    <!-- TODO: hugo - change to vue-excel-editor -->
-    <!--
-    <vue-excel-editor v-model="localSchema">
-      <vue-excel-column field="user" label="User ID" type="string" width="80px" />
-      <vue-excel-column field="name" label="Name" type="string" width="150px" />
-      <vue-excel-column field="phone" label="Contact" type="string" width="130px" />
-      <vue-excel-column field="gender" label="Gender" type="select" width="50px" :options="['F','M','U']" />
-      <vue-excel-column field="age" label="Age" type="number" width="70px" />
-      <vue-excel-column field="birth" label="Date Of Birth" type="date" width="80px" />
-    </vue-excel-editor> -->
+  <div ref="excel-container" class="vue-table-generator vue-form-generator table">
+    <!-- TODO: hugo - change to new plugin -->
+    <div id="x-spreadsheet" />
 
-    <div class="row header">
+    <!-- <div class="row header">
       <div v-if="isDisplay('_id')" :style="getSize('_id')" class="cell input-id" :class="generateClass('_id')" @click="setSortBy('_id')">
         {{ 'TL_ID'|translate }}
       </div>
@@ -26,8 +18,8 @@
       <div class="cell header actions">
         {{ 'TL_ACTIONS'|translate }}
       </div>
-    </div>
-    <template v-for="(item, idx) in orderedItem">
+    </div> -->
+    <!-- <template v-for="(item, idx) in orderedItem">
       <div :key="idx" class="row" :class="{selected: item == selectedItem, frozen: !item._local}">
         <div v-if="isDisplay('_id')" :style="getSize('_id')" class="cell input-id">{{ item._id || "" }}</div>
         <template v-for="sItem in schemaFields">
@@ -41,7 +33,6 @@
               </div>
               <div v-else class="field-wrap">
                 <component :is="getFieldType(sItem)" :model="item" :disabled="true" :schema="sItem" :form-options="{fieldIdPrefix: `record-${idx}-`}" />
-                <!-- <component :is="sItem.type" :model="item" :disabled="true" :schema="sItem" :form-options="{fieldIdPrefix: `record-${idx}-`}" /> -->
               </div>
             </div>
           </div>
@@ -52,18 +43,17 @@
           <button v-if="item._local" @click="remove(item)"><v-icon>mdi-trash-can-outline</v-icon></button>
         </div>
       </div>
-    </template>
+    </template> -->
   </div>
 </template>
 
 <script>
 
 import _ from 'lodash'
-import VueFormGenerator from 'vue-form-generator'
+import Spreadsheet from 'x-data-spreadsheet'
 import TranslateService from '@s/TranslateService'
 
 export default {
-  components: VueFormGenerator.component.components.formGroup.components,
   props: [
     'resource',
     'schema',
@@ -78,7 +68,42 @@ export default {
       actionsSize: 110,
       selectedItem: false,
       idSize: 180,
-      updatedAtSize: 110
+      updatedAtSize: 110,
+      spreadsheetOptions: {
+        mode: 'edit', // edit | read
+        showToolbar: true,
+        showGrid: true,
+        showContextmenu: true,
+        view: {
+          height: () => this.$refs['excel-container'].clientHeight,
+          width: () => this.$refs['excel-container'].clientWidth
+        },
+        row: {
+          len: 100,
+          height: 25
+        },
+        col: {
+          len: 26,
+          width: 100,
+          indexWidth: 60,
+          minWidth: 60
+        },
+        style: {
+          bgcolor: '#ffffff',
+          align: 'left',
+          valign: 'middle',
+          textwrap: false,
+          strike: false,
+          underline: false,
+          color: '#0a0a0a',
+          font: {
+            name: 'Helvetica',
+            size: 10,
+            bold: false,
+            italic: false
+          }
+        }
+      }
     }
   },
   computed: {
@@ -119,6 +144,15 @@ export default {
       }
       return _.sortBy(list, (item) => item.options.index)
     }
+  },
+  mounted () {
+    const s = new Spreadsheet('#x-spreadsheet', this.spreadsheetOptions)
+      .loadData({}) // load data
+      .change(data => {
+        console.warn('data changed: ', data)
+        // save data to db
+      })
+    console.warn('tamer - ', s)
   },
   methods: {
     getFieldType (field) {
@@ -224,5 +258,6 @@ export default {
 <style lang="scss" scoped>
 .vue-table-generator {
   display: block;
+  overflow: hidden;
 }
 </style>
