@@ -3,7 +3,6 @@
 'use strict'
 
 const express = require('express')
-const Q = require('q')
 
 const CMS = require('./')
 const pkg = require('./package.json')
