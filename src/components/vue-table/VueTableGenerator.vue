@@ -2,7 +2,9 @@
   <div ref="excel-container" class="vue-table-generator vue-form-generator table">
     <!-- TODO: hugo - change to new plugin -->
     <div id="x-spreadsheet" />
-
+    <div class="actions">
+      <v-btn @click="updateRecords()">{{ 'TL_UPDATE_RECORDS' | translate }}</v-btn>
+    </div>
     <!-- <div class="row header">
       <div v-if="isDisplay('_id')" :style="getSize('_id')" class="cell input-id" :class="generateClass('_id')" @click="setSortBy('_id')">
         {{ 'TL_ID'|translate }}
@@ -75,7 +77,7 @@ export default {
         showGrid: true,
         showContextmenu: true,
         view: {
-          height: () => this.$refs['excel-container'].clientHeight,
+          height: () => this.$refs['excel-container'].clientHeight * 0.9,
           width: () => this.$refs['excel-container'].clientWidth
         },
         row: {
@@ -109,12 +111,13 @@ export default {
   computed: {
     orderedItem () {
       let list = this.items
-      if (this.sortBy) {
-        list = _.sortBy(list, (item) => _.get(item, this.sortBy.field))
-        if (this.sortBy.reverse) {
-          list = _.reverse(list)
-        }
-      }
+      // if (this.sortBy) {
+      //   list = _.sortBy(list, (item) => _.get(item, this.sortBy.field))
+      //   if (this.sortBy.reverse) {
+      //     list = _.reverse(list)
+      //   }
+      // }
+      console.warn('orderedItem:', list)
       return list
     },
     schemaFields () {
@@ -142,115 +145,214 @@ export default {
       if (_.isEmpty(list)) {
         return this.schema.fields
       }
-      return _.sortBy(list, (item) => item.options.index)
+      const test = _.sortBy(list, (item) => item.options.index)
+      console.warn('schemaFields:', test)
+      return test
     }
   },
   mounted () {
     const s = new Spreadsheet('#x-spreadsheet', this.spreadsheetOptions)
-      .loadData({}) // load data
+      .loadData(this.getExcelData())
       .change(data => {
         console.warn('data changed: ', data)
         // save data to db
       })
-    console.warn('tamer - ', s)
+    console.warn('Spreadsheet - ', s)
   },
   methods: {
+    updateRecords () {
+      // TODO: hugo - extract and reformat all data per line + POST
+    },
+    findAttachmentForField (item, field) {
+      return _.find(_.get(item, '_attachments', []), (attachment) => {
+        if (field.localised) {
+          return _.get(attachment, '_fields.locale', false) === field.locale && attachment._name === field.originalModel
+        }
+        return attachment._name === field.originalModel
+      })
+    },
+    getStyleForField (field) {
+      return 'normal'
+    },
+    getCellsForItem (item) {
+      return _.map(this.schemaFields, (field) => {
+        const obj = {}
+        // console.warn(`test- ${field.model}`, _.get(item, field.model, false))
+        // TODO: hugo - change to excel type
+        const fieldType = this.getExcelType(field.type)
+        if (_.includes(['ImageView', 'AttachmentView'], fieldType)) {
+          _.set(obj, 'text', _.get(this.findAttachmentForField(item, field), 'url', 'NOT FOUND'))
+          // TODO: hugo - add the readonly + link style
+        } else {
+          _.set(obj, fieldType, _.get(item, field.model, 'NOPE'))
+        }
+        _.set(obj, 'style', this.getStyleForField(field))
+        return obj
+      })
+    },
+    getExcelType (fieldType) {
+      if (_.includes(['CustomMultiSelect', 'switch'], fieldType)) {
+        return 'text'
+      }
+      if (fieldType !== 'input') {
+        console.warn(`fieldType = ${fieldType}`)
+        return fieldType
+      }
+      // TODO: hugo - map all the field types
+      return 'text'
+    },
+    getHeaders () {
+      return _.map(this.schemaFields, (field) => {
+        return {
+          text: field.model,
+          style: 'header'
+        }
+      })
+    },
+    getExcelData () {
+      const rows = _.map(this.orderedItem, (item) => {
+        return {
+          cells: this.getCellsForItem(item)
+        }
+      })
+      rows.unshift({cells: this.getHeaders()})
+      console.warn('rows = ', rows)
+      const test = {
+        name: 'My tables',
+        merges: [],
+        rows,
+        styles: {
+          'header': {
+            bgcolor: '#ffffff',
+            align: 'left',
+            valign: 'middle',
+            textwrap: false,
+            strike: false,
+            underline: false,
+            color: '#0a0a0a',
+            font: {
+              name: 'Helvetica',
+              size: 10,
+              bold: true,
+              italic: false
+            }
+          },
+          'normal': {
+            bgcolor: '#ffffff',
+            align: 'left',
+            valign: 'middle',
+            textwrap: false,
+            strike: false,
+            underline: false,
+            color: '#0a0a0a',
+            font: {
+              name: 'Helvetica',
+              size: 10,
+              bold: false,
+              italic: false
+            }
+          }
+        },
+        validations: []
+      }
+      return test
+    },
     getFieldType (field) {
       return _.get(field, 'overrideType', _.get(field, 'type', false))
-    },
-    calculatedSize () {
-      let size = this.actionsSize
-      let totalFieldsCount = this.schemaFields.length + 1
-      let sizedFieldsCount = 1
-      if (this.options.displayId) {
-        totalFieldsCount = totalFieldsCount + 1
-        sizedFieldsCount = sizedFieldsCount + 1
-        size = size + this.idSize
-      }
-      if (this.options.displayUpdatedAt) {
-        totalFieldsCount = totalFieldsCount + 1
-        sizedFieldsCount = sizedFieldsCount + 1
-        size = size + this.updatedAtSize
-      }
-      for (const fieldItem of this.schemaFields) {
-        const fieldSize = _.get(fieldItem, 'options.size', 'auto')
-        if (fieldSize !== 'auto') {
-          size = size + Number(fieldSize)
-          sizedFieldsCount = sizedFieldsCount + 1
-        }
-      }
-      return `width: calc((${100}% - ${size}px) / ${totalFieldsCount - sizedFieldsCount});`
-    },
-    getSize (sItem) {
-      if (sItem === '_id' || sItem === '_updatedAt') {
-        let size = this.idSize
-        if (sItem === '_updatedAt') {
-          size = this.updatedAtSize
-        }
-        return `max-width: ${size}px; min-width: ${size}px; width: ${size}px;`
-      } else {
-        const size = _.get(sItem, 'options.size', 'auto')
-        if (size !== 'auto') {
-          return `max-width: ${size}px; min-width: ${size}px; width: ${size}px;`
-        }
-        return this.calculatedSize()
-      }
-    },
-    isDisplay (name) {
-      if (name === '_id') {
-        return this.options.displayId
-      } else if (name === '_updatedAt') {
-        return this.options.displayUpdatedAt
-      } else {
-        return true
-      }
-    },
-    generateClass (name) {
-      return {sortBy: this.sortBy && this.sortBy.field === name, reverse: this.sortBy && this.sortBy.field === name && this.sortBy.reverse}
-    },
-    display (item, sItem) {
-      if (this.isImage(sItem)) {
-        const attachments = _.get(item, '_attachments', [])
-        if (sItem.localised) {
-          const key = sItem.model.replace(`${this.locale}.`, '')
-          const attachment = _.find(attachments, attachment => {
-            return attachment._name === key && _.get(attachment, '_fields.locale', '?') === this.locale
-          })
-          return _.get(attachment, 'url', '')
-        } else {
-          const attachment = _.find(attachments, attachment => {
-            return attachment._name === sItem.model
-          })
-          return _.get(attachment, 'url', '')
-        }
-      }
-      return _.get(item, sItem.model, '')
-    },
-    isText (sItem) {
-      return _.includes(['input', 'textarea', 'select'], sItem.type)
-    },
-    isImage (sItem) {
-      return _.includes(['imageView'], sItem.type)
-    },
-    prepareValue (item, sItem) {
-      return _.get(item, sItem.model)
-    },
-    remove (record) {
-      this.$emit('remove', record)
-    },
-    edit (record) {
-      this.$emit('edit', record)
-    },
-    setSortBy (field) {
-      this.sortBy = this.sortBy || {}
-      if (this.sortBy.field === field) {
-        this.sortBy.reverse = !this.sortBy.reverse
-      } else {
-        this.sortBy.reverse = false
-      }
-      this.sortBy.field = field
-      this.sortBy = _.clone(this.sortBy)
     }
+    // calculatedSize () {
+    //   let size = this.actionsSize
+    //   let totalFieldsCount = this.schemaFields.length + 1
+    //   let sizedFieldsCount = 1
+    //   if (this.options.displayId) {
+    //     totalFieldsCount = totalFieldsCount + 1
+    //     sizedFieldsCount = sizedFieldsCount + 1
+    //     size = size + this.idSize
+    //   }
+    //   if (this.options.displayUpdatedAt) {
+    //     totalFieldsCount = totalFieldsCount + 1
+    //     sizedFieldsCount = sizedFieldsCount + 1
+    //     size = size + this.updatedAtSize
+    //   }
+    //   for (const fieldItem of this.schemaFields) {
+    //     const fieldSize = _.get(fieldItem, 'options.size', 'auto')
+    //     if (fieldSize !== 'auto') {
+    //       size = size + Number(fieldSize)
+    //       sizedFieldsCount = sizedFieldsCount + 1
+    //     }
+    //   }
+    //   return `width: calc((${100}% - ${size}px) / ${totalFieldsCount - sizedFieldsCount});`
+    // },
+    // getSize (sItem) {
+    //   if (sItem === '_id' || sItem === '_updatedAt') {
+    //     let size = this.idSize
+    //     if (sItem === '_updatedAt') {
+    //       size = this.updatedAtSize
+    //     }
+    //     return `max-width: ${size}px; min-width: ${size}px; width: ${size}px;`
+    //   } else {
+    //     const size = _.get(sItem, 'options.size', 'auto')
+    //     if (size !== 'auto') {
+    //       return `max-width: ${size}px; min-width: ${size}px; width: ${size}px;`
+    //     }
+    //     return this.calculatedSize()
+    //   }
+    // },
+    // isDisplay (name) {
+    //   if (name === '_id') {
+    //     return this.options.displayId
+    //   } else if (name === '_updatedAt') {
+    //     return this.options.displayUpdatedAt
+    //   } else {
+    //     return true
+    //   }
+    // },
+    // generateClass (name) {
+    //   return {sortBy: this.sortBy && this.sortBy.field === name, reverse: this.sortBy && this.sortBy.field === name && this.sortBy.reverse}
+    // },
+    // display (item, sItem) {
+    //   if (this.isImage(sItem)) {
+    //     const attachments = _.get(item, '_attachments', [])
+    //     if (sItem.localised) {
+    //       const key = sItem.model.replace(`${this.locale}.`, '')
+    //       const attachment = _.find(attachments, attachment => {
+    //         return attachment._name === key && _.get(attachment, '_fields.locale', '?') === this.locale
+    //       })
+    //       return _.get(attachment, 'url', '')
+    //     } else {
+    //       const attachment = _.find(attachments, attachment => {
+    //         return attachment._name === sItem.model
+    //       })
+    //       return _.get(attachment, 'url', '')
+    //     }
+    //   }
+    //   return _.get(item, sItem.model, '')
+    // },
+    // isText (sItem) {
+    //   return _.includes(['input', 'textarea', 'select'], sItem.type)
+    // },
+    // isImage (sItem) {
+    //   return _.includes(['imageView'], sItem.type)
+    // },
+    // prepareValue (item, sItem) {
+    //   return _.get(item, sItem.model)
+    // },
+    // remove (record) {
+    //   this.$emit('remove', record)
+    // },
+    // edit (record) {
+    //   this.$emit('edit', record)
+    // },
+    // setSortBy (field) {
+    //   this.sortBy = this.sortBy || {}
+    //   if (this.sortBy.field === field) {
+    //     this.sortBy.reverse = !this.sortBy.reverse
+    //   } else {
+    //     this.sortBy.reverse = false
+    //   }
+    //   this.sortBy.field = field
+    //   this.sortBy = _.clone(this.sortBy)
+    // }
   }
 }
 </script>
