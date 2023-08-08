@@ -35,9 +35,6 @@ export default defineConfig({
     })
   ],
   optimizeDeps: {
-    exclude: [
-      'vue-excel-editor'
-    ],
     include: ['xlsx']
   },
   server: {
