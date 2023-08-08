@@ -1,5 +1,16 @@
 <template>
   <div class="vue-table-generator vue-form-generator table">
+    <!-- TODO: hugo - change to vue-excel-editor -->
+    <!--
+    <vue-excel-editor v-model="localSchema">
+      <vue-excel-column field="user" label="User ID" type="string" width="80px" />
+      <vue-excel-column field="name" label="Name" type="string" width="150px" />
+      <vue-excel-column field="phone" label="Contact" type="string" width="130px" />
+      <vue-excel-column field="gender" label="Gender" type="select" width="50px" :options="['F','M','U']" />
+      <vue-excel-column field="age" label="Age" type="number" width="70px" />
+      <vue-excel-column field="birth" label="Date Of Birth" type="date" width="80px" />
+    </vue-excel-editor> -->
+
     <div class="row header">
       <div v-if="isDisplay('_id')" :style="getSize('_id')" class="cell input-id" :class="generateClass('_id')" @click="setSortBy('_id')">
         {{ 'TL_ID'|translate }}

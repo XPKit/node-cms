@@ -34,6 +34,12 @@ export default defineConfig({
       resolvers: [VuetifyResolver()]
     })
   ],
+  optimizeDeps: {
+    exclude: [
+      'vue-excel-editor'
+    ],
+    include: ['xlsx']
+  },
   server: {
     origin: `http://localhost:${devPort}`,
     port: devPort,
