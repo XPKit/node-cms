@@ -31,4 +31,5 @@
   "files.associations": {
     "*.wpy": "vue"
   },
+  "files.eol": "\n",
 }
