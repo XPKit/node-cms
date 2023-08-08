@@ -103,7 +103,7 @@ describe('xlsx', () => {
     })
 
     await Q.ninvoke(cms.express(), 'listen', MASTER_HTTP_PORT)
-    await Q.ninvoke(cms, 'bootstrap')
+    await cms.bootstrap()
     await Q.ninvoke(cms, 'allow', 'anonymous', ['xlsxRecords'])
   })
 

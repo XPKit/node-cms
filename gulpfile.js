@@ -229,11 +229,11 @@ class MainTask {
         ignore: [/\/api\//]
       })))
       app.use(cms.express())
-      return server = app.listen(pkg.config.port, () =>
-        cms.bootstrap(() => {
-          logger.info(`${pkg.name} started at http://localhost:${server.address().port}/admin`)
-          return done()
-        }))
+      return server = app.listen(pkg.config.port, async () => {
+        await cms.bootstrap()
+        logger.info(`${pkg.name} started at http://localhost:${server.address().port}/admin`)
+        return done()
+      })
     })
   }
   getDependency (node) {

@@ -153,8 +153,12 @@ class CMS {
     this.use(require('./lib/plugins/authentication')(options))
 
     // handle syslog and system
-    SyslogManager.init(this, options)
-    SystemManager.init(this, options)
+    this.bootstrapFunctions = this.bootstrapFunctions || []
+    this.bootstrapFunctions.push(async (callback) => {
+      SyslogManager.init(this, options)
+      SystemManager.init(this, options)
+      callback()
+    })
     this._app.use(SyslogManager.express())
     this._app.use(SystemManager.express())
 
@@ -199,7 +203,12 @@ class CMS {
     }
 
     // handle bootstrap
-    this.bootstrap = async (callback) => {
+    this.bootstrap = async (server, callback) => {
+      if (_.isFunction(server) && _.isUndefined(callback)) {
+        callback = server
+        server = undefined
+      }
+      this.server = server
       await pAll(_.map(this.bootstrapFunctions, bootstrap => {
         return async () => {
           await Q.nfcall(bootstrap)
