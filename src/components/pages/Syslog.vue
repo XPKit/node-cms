@@ -79,7 +79,7 @@ export default {
     }
   },
   async mounted () {
-    const {data: config} = await axios.get('../api/_syslog/config')
+    const {data: config} = await axios.get(`${window.location.pathname}../api/_syslog/config`)
     this.config = config
     if (this.config.wss) {
       const url = window.location.origin.replace(/^(http)/, 'ws')
@@ -91,6 +91,7 @@ export default {
         const list = JSON.parse(event.data)
         this.isLoading = false
         this.error = false
+        console.warn('MSG = ', list)
         if (!_.isEmpty(list)) {
           this.error = false
           this.logLines.push(...list)
@@ -199,7 +200,7 @@ export default {
             this.error = false
           }
         } else {
-          const response = await axios.get('/api/_syslog', {params: {id: this.lastId}})
+          const response = await axios.get(`${window.location.pathname}../api/_syslog`, {params: {id: this.lastId}})
           this.isLoading = false
           this.error = false
           if (!_.isEmpty(response.data)) {

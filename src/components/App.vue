@@ -17,7 +17,7 @@
     </v-scroll-y-transition>
     <div v-if="user" class="cms-layout">
       <div class="cms-inner-layout" :class="getThemeClass()">
-        <nav-bar :config="config" :toolbar-title="toolbarTitle" :locale-class="{locale:localeList && localeList.length > 1}" :select-resource-group-callback="selectResourceGroup" :select-resource-callback="selectResource" :resource-list="resourceList" :plugin-list="pluginList" :selected-resource-group="selectedResourceGroup" :selected-item="selectedResource || selectedPlugin" />
+        <nav-bar :config="config" :toolbar-title="toolbarTitle" :locale-class="{locale:localeList && localeList.length > 1}" :select-resource-group-callback="selectResourceGroup" :select-resource-callback="selectResource" :resource-list="resourceList" :plugins="pluginList" :selected-resource-group="selectedResourceGroup" :selected-item="selectedResource || selectedPlugin" />
         <div class="resources">
           <locale-list v-if="localeList" :locale-list="localeList" />
         </div>
@@ -118,7 +118,9 @@ export default {
         if (_.isUndefined(item.allowed)) {
           return true
         }
-        if (_.isEmpty(this.user)) return false
+        if (_.isEmpty(this.user)) {
+          return false
+        }
         return _.includes(item.allowed, this.user.group)
       })
       return list

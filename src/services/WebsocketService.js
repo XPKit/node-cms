@@ -15,7 +15,7 @@ class WebsocketService {
   }
 
   async init (config) {
-    this.serverUrl = `ws://${window.location.hostname}:${_.get(config, 'webserver.port', 9090)}`
+    this.serverUrl = `ws://${window.location.hostname}:${_.get(config, 'webserver.port', 9091)}`
     this.connect()
   }
 

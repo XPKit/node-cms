@@ -12,7 +12,6 @@ import VueVirtualScroller from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import axios from 'axios'
 import draggable from 'vuedraggable'
-import LogViewer from '@femessage/log-viewer'
 import vuetify from './vuetify.js'
 // Global components
 import App from '@c/App.vue'
@@ -80,7 +79,6 @@ Vue.component('CustomChecklist', CustomChecklist)
 Vue.component('Group', Group)
 Vue.component('CustomInputTag', CustomInputTag)
 Vue.component('CustomMultiSelect', CustomMultiSelect)
-Vue.component('LogViewer', LogViewer)
 Vue.component('PluginPage', PluginPage)
 Vue.component('MultiselectPage', MultiselectPage)
 Vue.component('Syslog', Syslog)
@@ -122,7 +120,7 @@ function addPlugin (title, displayName, group = 'System', allowed = ['admins', '
 
 window.addEventListener('load', async function () {
   window.TranslateService = TranslateService
-  const response = await axios.get(`${window.location.pathname}/config`)
+  const response = await axios.get(`${window.location.pathname}config`)
   const config = response.data
   addPlugin('Syslog', 'Syslog')
   if (config.import) {
