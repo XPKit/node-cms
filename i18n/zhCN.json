@@ -120,5 +120,13 @@
     "TL_UNLIMITED_NUMBER_OF_IMAGES": "Unlimited number of images",
     "TL_UNLIMITED_NUMBER_OF_FILES": "Unlimited number of files",
     "TL_IMAGE_IS_TOO_BIG": "Image is too big",
-    "TL_FILE_IS_TOO_BIG": "Image is too big"
+    "TL_FILE_IS_TOO_BIG": "Image is too big",
+    "TL_NO_IMAGE": "No image",
+    "TL_TRUE": "True",
+    "TL_FALSE": "False",
+    "TL_NO_DATA_FOUND": "No data found",
+    "TL_SHOW_RECORD_SELECTION": "Show record selection",
+    "TL_HIDE_RECORD_SELECTION": "Hide record selection",
+    "TL_DELETE_SELECTED_RECORDS": "Delete selected records",
+    "TL_RECORD_SELECTION": "Record selection"
   }

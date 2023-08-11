@@ -18,35 +18,50 @@ exports = (module.exports = {
       field: 'gString',
       input: 'string',
       required: true,
+      searchable: true,
       localised: false,
       options: {
-        index: 3
+        index: 4,
+        sortBy: ''
       }
     },
     {
       field: 'string',
       input: 'string',
-      required: true,
+      required: false,
+      searchable: true,
       localised: true,
       options: {
         breakdown: true,
         size: '150',
-        index: 1
+        index: 1,
+        filter: 'multiple'
+      }
+    },
+    {
+      field: 'string2',
+      input: 'string',
+      required: false,
+      searchable: true,
+      localised: true,
+      options: {
+        breakdown: true,
+        size: '150',
+        index: 2
       }
     },
     {
       field: 'gCheckbox',
       input: 'checkbox',
-      required: true,
       localised: false,
       options: {
-        index: 2
+        index: 3,
+        filter: 'single'
       }
     },
     {
       field: 'checkbox',
       input: 'checkbox',
-      required: true,
       localised: true
     },
     {
@@ -55,7 +70,8 @@ exports = (module.exports = {
       source: ['Apple', 'Orange', 'Banana'],
       localised: false,
       options: {
-        index: 4
+        index: 5,
+        sortBy: ''
       }
     },
     {
@@ -64,7 +80,7 @@ exports = (module.exports = {
       source: ['Apple', 'Orange', 'Banana'],
       localised: true,
       options: {
-        index: 5
+        index: 6
       }
     },
     {
@@ -90,7 +106,7 @@ exports = (module.exports = {
       input: 'image',
       lcalised: true,
       options: {
-        index: 6,
+        index: 7,
         size: 60
       }
     }

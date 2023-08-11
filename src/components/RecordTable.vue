@@ -2,12 +2,7 @@
   <div class="record-table">
     <!-- table -->
     <template v-if="!record">
-      <div class="search">
-        <input v-model="search" :placeholder="'TL_SEARCH' | translate" type="text" name="search">
-      </div>
-      <div v-if="maxCount <= 0 || listCount < maxCount" class="new" @click="createRecord">+</div>
-
-      <!-- <ul v-show="resource.locales" class="locales">
+      <ul v-show="resource.locales" class="locales">
         <li
           v-for="item in resource.locales" :key="item"
           :class="{ selected: item == locale }"
@@ -15,14 +10,21 @@
         >
           {{ 'TL_'+item.toUpperCase() | translate }}
         </li>
-      </ul> -->
-
+      </ul>
+      <div id="top-actions">
+        <div class="search">
+          <v-text-field
+            v-model="search" flat dense compact outlined solo hide-details clearable :placeholder="'TL_SEARCH' | translate" type="text"
+            name="search"
+          />
+        </div>
+        <div v-if="maxCount <= 0 || listCount < maxCount" class="new" @click="createRecord">+</div>
+      </div>
       <vue-table-generator
         v-if="isReady" :options="options"
         :resource="resource" :schema="schema" :items="filteredList" :locale.sync="localLocale"
-        @remove="removeRecord" @edit="editRecord"
+        @remove="removeRecord" @remove-records="removeRecords" @edit="editRecord"
       />
-
       <!-- <paginate
         v-if="!search"
         v-model="page"
@@ -32,10 +34,8 @@
         :next-text="'Next'"
         :container-class="'pager'"
       /> -->
-
       <!-- <button class="update" @click="updateRecords">{{ "TL_UPDATE" | translate }}</button> -->
     </template>
-
     <!-- editing -->
     <record-editor
       v-if="record"
@@ -156,7 +156,7 @@ export default {
     async recordList () {
       this.clonedRecordList = _.cloneDeep(this.recordList)
       this.isReady = false
-      await await this.updateSchema()
+      await this.updateSchema()
       this.isReady = true
       this.$forceUpdate()
     },
@@ -180,12 +180,26 @@ export default {
     editRecord (record) {
       this.selectRecord(record)
     },
-    async removeRecord (record) {
-      if (!window.confirm(
-        TranslateService.get('TL_ARE_YOU_SURE_TO_DELETE'),
+    askConfirmation (forMultipleRecords = false) {
+      return window.confirm(
+        TranslateService.get(`TL_ARE_YOU_SURE_TO_DELETE${forMultipleRecords ? '_SELECTED_RECORDS' : ''}`),
         TranslateService.get('TL_YES'),
         TranslateService.get('TL_NO')
-      )) {
+      )
+    },
+    async removeRecords (records) {
+      if (!this.askConfirmation(true)) {
+        return
+      }
+      console.warn('will delete selected records')
+      const promises = _.map(records, (record) => {
+        return this.removeRecord(record, true)
+      })
+      await Promise.all(promises)
+      console.warn('all selected records deleted !')
+    },
+    async removeRecord (record, skipConfirm = false) {
+      if (!skipConfirm && this.askConfirmation()) {
         return
       }
       if (_.isUndefined(record._id)) {

@@ -91,33 +91,6 @@
       overflow: inherit;
     }
   }
-
-  .locales {
-    height: 39px;
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    align-items: stretch;
-    align-content: stretch;
-    margin-bottom: 0px;
-    li {
-      width: 100%;
-      flex: 0 1 auto;
-      align-self: auto;
-      text-align: center;
-      line-height: 38px;
-      border-left: 1px solid #c7c7c7;
-      background: #f9f9f9;
-      border-bottom: 1px solid #c7c7c7;
-      &:first-child {
-        border-left: 0;
-      }
-      &.selected {
-        background: none;
-        border-bottom: none;
-      }
-    }
-  }
   >.vue-form-generator {
     flex: 1 1 0;
     padding-bottom: 50px;

@@ -5,34 +5,22 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-
   .record-table-wrapper {
     flex: 1 1 0
   }
-
+  #top-actions {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: stretch;
+  }
   .search {
-    input {
-      width: calc(100% - 20px);
-      margin: 0;
-      padding: 10px;
-      border: none;
-      outline: none;
-      line-height: 18px;
-      display: block;
-      border-bottom: 1px solid #c7c7c7;
-      cursor: pointer;
-      height: 19px;
-      transition: all .3s;
-      &:hover, &:focus {
-        box-shadow: 0px 0px 3px 0px #eee inset;
-      }
+    width: calc(100vw - 39px);
+    .v-input {
+      border-radius: 0px;
     }
   }
-
   .new {
-    position: absolute;
-    right: 0;
-    top: 0;
     width: 38px;
     height: 40px;
     line-height: 35px;
@@ -52,45 +40,16 @@
       background: #69f;
     }
   }
-
-  .locales {
-    height: 39px;
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    align-items: stretch;
-    align-content: stretch;
-    margin-bottom: 0px;
-    li {
-      width: 100%;
-      flex: 0 1 auto;
-      align-self: auto;
-      text-align: center;
-      line-height: 38px;
-      border-left: 1px solid #c7c7c7;
-      background: #f9f9f9;
-      border-bottom: 1px solid #c7c7c7;
-      &:first-child {
-        border-left: 0;
-      }
-      &.selected {
-        background: none;
-        border-bottom: none;
-      }
-    }
-  }
-
   .pager {
     position: sticky;
   }
-
   .table {
     display: flex;
     overflow: auto;
     flex: 1 0 0;
     flex-direction: column;
     border-collapse: collapse;
-    margin: 10px;
+    margin: 16px 10px;
     position: relative;
     min-width: 850px;
     .row {
@@ -267,6 +226,35 @@
           }
         }
       }
+      }
+    }
+  }
+}
+.theme--dark {
+  .record-table {
+    .locales {
+      li {
+        cursor: pointer;
+        color: black;
+        &.selected {
+          color: white;
+        }
+      }
+    }
+    .table {
+      .row {
+        .cell {
+          color: white;
+          input,
+          textarea {
+            color: white;
+          }
+        }
+        &.header {
+          .cell {
+            color: #4f5f4f;
+          }
+        }
       }
     }
   }

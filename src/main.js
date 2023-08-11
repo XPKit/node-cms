@@ -3,6 +3,8 @@ import '@a/scss/main.scss'
 import _ from 'lodash'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import 'vue-easytable/libs/theme-default/index.css'
+import VueEasytable from 'vue-easytable'
 import VueShortkey from 'vue-shortkey'
 import VueTimeago from 'vue-timeago'
 import TreeView from 'vue-json-tree-view'
@@ -43,6 +45,11 @@ import CustomSwitch from '@c/fields/CustomSwitch.vue'
 import CustomInputTag from '@c/fields/CustomInputTag.vue'
 import Group from '@c/fields/Group.vue'
 
+// Table fields
+import TableImageView from '@c/vue-table/TableImageView.vue'
+import TableCustomSwitch from '@c/vue-table/TableCustomSwitch.vue'
+import TableRowActions from '@c/vue-table/TableRowActions.vue'
+
 import enUS from 'vue-timeago/locales/en-US.json'
 import zhCN from 'vue-timeago/locales/zh-CN.json'
 
@@ -80,6 +87,9 @@ Vue.component('Syslog', Syslog)
 Vue.component('CmsImport', CmsImport)
 Vue.component('SyncResource', SyncResource)
 Vue.component('Draggable', draggable)
+Vue.component('TableImageView', TableImageView)
+Vue.component('TableCustomSwitch', TableCustomSwitch)
+Vue.component('TableRowActions', TableRowActions)
 Vue.mixin({
   filters: {
     translate: TranslateFilter,
@@ -88,6 +98,7 @@ Vue.mixin({
 })
 
 Vue.use(Loading)
+Vue.use(VueEasytable)
 Vue.use(TreeView)
 Vue.use(VueVirtualScroller)
 Vue.use(VueRouter)

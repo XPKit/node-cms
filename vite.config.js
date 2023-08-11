@@ -3,6 +3,7 @@
 import { defineConfig } from 'vite'
 import path from 'path'
 import vue from '@vitejs/plugin-vue2'
+import vueJsx from '@vitejs/plugin-vue2-jsx'
 import _ from 'lodash'
 import Components from 'unplugin-vue-components/vite'
 import { VuetifyResolver } from 'unplugin-vue-components/resolvers'
@@ -27,6 +28,9 @@ export default defineConfig({
   base: '/',
   plugins: [
     commonjs(),
+    vueJsx({
+      // options are passed on to @vue/babel-preset-jsx
+    }),
     vue({
       exclude: 'os'
     }),

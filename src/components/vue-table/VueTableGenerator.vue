@@ -1,124 +1,67 @@
 <template>
   <div ref="excel-container" class="vue-table-generator vue-form-generator table">
-    <!-- TODO: hugo - change to new plugin -->
-    <div id="x-spreadsheet" />
-    <div class="actions">
-      <v-btn @click="updateRecords()">{{ 'TL_UPDATE_RECORDS' | translate }}</v-btn>
+    <div id="table-top">
+      <v-btn @click="toggleSelection()">{{ `TL_${showRecordsSelection ? 'HIDE' : 'SHOW'}_RECORD_SELECTION` | translate }}</v-btn>
+      <v-btn v-if="selectedRecords.length > 0" color="node-cms-red" @click="deleteSelectedRecords()">{{ `TL_DELETE_SELECTED_RECORDS` | translate }}</v-btn>
     </div>
-    <!-- <div class="row header">
-      <div v-if="isDisplay('_id')" :style="getSize('_id')" class="cell input-id" :class="generateClass('_id')" @click="setSortBy('_id')">
-        {{ 'TL_ID'|translate }}
-      </div>
-      <template v-for="sItem in schemaFields">
-        <div :key="sItem.field" :style="getSize(sItem)" class="cell" :class="generateClass(sItem.model)" @click="setSortBy(sItem.model)">
-          {{ sItem.label }}
-        </div>
-      </template>
-      <div v-if="isDisplay('_updatedAt')" :style="getSize('_updatedAt')" class="cell input-update" :class="generateClass('_updatedAt')" @click="setSortBy('_updatedAt')">
-        {{ 'TL_UPDATED'|translate }}
-      </div>
-      <div class="cell header actions">
-        {{ 'TL_ACTIONS'|translate }}
-      </div>
-    </div> -->
-    <!-- <template v-for="(item, idx) in orderedItem">
-      <div :key="idx" class="row" :class="{selected: item == selectedItem, frozen: !item._local}">
-        <div v-if="isDisplay('_id')" :style="getSize('_id')" class="cell input-id">{{ item._id || "" }}</div>
-        <template v-for="sItem in schemaFields">
-          <div v-if="sItem" :key="idx+' '+sItem.model" :style="getSize(sItem)" class="cell" :class="'input-' + sItem.type">
-            <div class="field" :class="'field-' + sItem.type">
-              <div v-if="isText(sItem)" class="text">
-                {{ display(item, sItem) }}
-              </div>
-              <div v-else-if="isImage(sItem)" class="image-view">
-                <img :src="display(item, sItem)">
-              </div>
-              <div v-else class="field-wrap">
-                <component :is="getFieldType(sItem)" :model="item" :disabled="true" :schema="sItem" :form-options="{fieldIdPrefix: `record-${idx}-`}" />
-              </div>
-            </div>
-          </div>
-        </template>
-        <div v-if="isDisplay('_updatedAt')" :style="getSize('_updatedAt')" class="cell input-update"><timeago :since="item._updatedAt || Date.now()" :locale="TranslateService.locale" /></div>
-        <div class="cell actions">
-          <button v-if="item._local" @click="edit(item)"><v-icon>mdi-pencil-box-outline</v-icon></button>
-          <button v-if="item._local" @click="remove(item)"><v-icon>mdi-trash-can-outline</v-icon></button>
-        </div>
-      </div>
-    </template> -->
+    <ve-table
+      ref="tableRef"
+      scroll-width="0"
+      :sort-option="sortOption"
+      :virtual-scroll-option="{enable: true}"
+      :column-width-resize-option="columnWidthResizeOption"
+      :columns="columns" :table-data="tableData" :fixed-header="true" :border-around="true" :border-x="true" :border-y="true"
+      :clipboard-option="clipboardOption"
+      :column-hidden-option="columnHiddenOption"
+      max-height="100%"
+      row-key-field-name="_id"
+    />
+    <div v-show="tableData.length === 0" class="empty-data">{{ 'TL_NO_DATA_FOUND' | translate }}</div>
   </div>
 </template>
 
-<script>
-
+<script lang="jsx">
 import _ from 'lodash'
-import Spreadsheet from 'x-data-spreadsheet'
 import TranslateService from '@s/TranslateService'
 
 export default {
-  props: [
-    'resource',
-    'schema',
-    'items',
-    'locale',
-    'options'
-  ],
+  props: ['resource', 'schema', 'items', 'locale', 'options'],
   data () {
     return {
-      TranslateService,
-      sortBy: null,
-      actionsSize: 110,
-      selectedItem: false,
-      idSize: 180,
-      updatedAtSize: 110,
-      spreadsheetOptions: {
-        mode: 'edit', // edit | read
-        showToolbar: true,
-        showGrid: true,
-        showContextmenu: true,
-        view: {
-          height: () => this.$refs['excel-container'].clientHeight * 0.9,
-          width: () => this.$refs['excel-container'].clientWidth
-        },
-        row: {
-          len: 100,
-          height: 25
-        },
-        col: {
-          len: 26,
-          width: 100,
-          indexWidth: 60,
-          minWidth: 60
-        },
-        style: {
-          bgcolor: '#ffffff',
-          align: 'left',
-          valign: 'middle',
-          textwrap: false,
-          strike: false,
-          underline: false,
-          color: '#0a0a0a',
-          font: {
-            name: 'Helvetica',
-            size: 10,
-            bold: false,
-            italic: false
-          }
+      selectedRecords: [],
+      showRecordsSelection: false,
+      columns: [],
+      sourceData: [],
+      tableData: [],
+      filteredColumns: [],
+      sortOption: {
+        multipleSort: true,
+        sortAlways: true,
+        sortChange: (params) => {
+          console.log('sortChange::', _.keys(params), _.values(params))
+          this.tableData = _.sortBy(this.tableData, _.keys(params), _.values(params))
         }
-      }
+      },
+      columnHiddenOption: {
+        defaultHiddenColumnKeys: ['__RECORD_SELECTION__']
+      },
+      clipboardOption: {
+        copy: true,
+        paste: false,
+        cut: false,
+        delete: false,
+        beforeCopy: ({ data, selectionRangeIndexes, selectionRangeKeys }) => {
+          // console.log('beforeCopy', { data, selectionRangeIndexes, selectionRangeKeys })
+          navigator.clipboard.writeText(this.getDataToCopy(selectionRangeIndexes))
+          return false
+        }
+      },
+      columnWidthResizeOption: {enable: true, minWidth: 50}
     }
   },
   computed: {
     orderedItem () {
-      let list = this.items
-      // if (this.sortBy) {
-      //   list = _.sortBy(list, (item) => _.get(item, this.sortBy.field))
-      //   if (this.sortBy.reverse) {
-      //     list = _.reverse(list)
-      //   }
-      // }
-      console.warn('orderedItem:', list)
-      return list
+      return this.items
     },
     schemaFields () {
       let fields = this.schema.fields
@@ -145,214 +88,190 @@ export default {
       if (_.isEmpty(list)) {
         return this.schema.fields
       }
-      const test = _.sortBy(list, (item) => item.options.index)
-      console.warn('schemaFields:', test)
-      return test
+      return _.sortBy(list, (item) => item.options.index)
+    }
+  },
+  watch: {
+    items () {
+      this.resetRecordsFiltering()
     }
   },
   mounted () {
-    const s = new Spreadsheet('#x-spreadsheet', this.spreadsheetOptions)
-      .loadData(this.getExcelData())
-      .change(data => {
-        console.warn('data changed: ', data)
-        // save data to db
-      })
-    console.warn('Spreadsheet - ', s)
+    this.resetRecordsFiltering()
+    this.createTableColumns()
   },
   methods: {
-    updateRecords () {
-      // TODO: hugo - extract and reformat all data per line + POST
-    },
-    findAttachmentForField (item, field) {
-      return _.find(_.get(item, '_attachments', []), (attachment) => {
-        if (field.localised) {
-          return _.get(attachment, '_fields.locale', false) === field.locale && attachment._name === field.originalModel
-        }
-        return attachment._name === field.originalModel
-      })
-    },
-    getStyleForField (field) {
-      return 'normal'
-    },
-    getCellsForItem (item) {
-      return _.map(this.schemaFields, (field) => {
-        const obj = {}
-        // console.warn(`test- ${field.model}`, _.get(item, field.model, false))
-        // TODO: hugo - change to excel type
-        const fieldType = this.getExcelType(field.type)
-        if (_.includes(['ImageView', 'AttachmentView'], fieldType)) {
-          _.set(obj, 'text', _.get(this.findAttachmentForField(item, field), 'url', 'NOT FOUND'))
-          // TODO: hugo - add the readonly + link style
-        } else {
-          _.set(obj, fieldType, _.get(item, field.model, 'NOPE'))
-        }
-        _.set(obj, 'style', this.getStyleForField(field))
-        return obj
-      })
-    },
-    getExcelType (fieldType) {
-      if (_.includes(['CustomMultiSelect', 'switch'], fieldType)) {
-        return 'text'
+    getDataToCopy (indexes) {
+      let startCol = indexes.startColIndex
+      let endCol = indexes.endColIndex
+      if (!this.showRecordsSelection) {
+        startCol++
+        endCol++
       }
-      if (fieldType !== 'input') {
-        console.warn(`fieldType = ${fieldType}`)
-        return fieldType
+      const fieldNames = this.columns
+        .slice(startCol, endCol + 1)
+        .map((x) => x.field)
+      // console.warn('fieldNames - ', fieldNames)
+      const dataToCopy = this.tableData
+        .slice(indexes.startRowIndex, indexes.endRowIndex + 1)
+        .map((rowData) => {
+          return _.map(fieldNames, (fieldName) => {
+            return _.get(rowData, fieldName, '')
+          })
+        })
+      // console.warn('dataToCopy - ', dataToCopy)
+      let text = ''
+      _.each(dataToCopy, (line, i) => {
+        if (i !== 0) {
+          text += '\n'
+        }
+        text += line.join('\t')
+      })
+      return text
+    },
+    deleteSelectedRecords () {
+      this.$emit('remove-records', _.filter(this.sourceData, (row) => _.includes(this.selectedRecords, row._id)))
+    },
+    toggleSelection () {
+      this.showRecordsSelection = !this.showRecordsSelection
+      if (this.showRecordsSelection) {
+        return this.$refs['tableRef'].showColumnsByKeys(['__RECORD_SELECTION__'])
       }
-      // TODO: hugo - map all the field types
-      return 'text'
+      return this.$refs['tableRef'].hideColumnsByKeys(['__RECORD_SELECTION__'])
     },
-    getHeaders () {
-      return _.map(this.schemaFields, (field) => {
-        return {
-          text: field.model,
-          style: 'header'
-        }
-      })
+    resetRecordsFiltering () {
+      this.sourceData = this.orderedItem
+      this.tableData = this.sourceData.slice(0)
+      // console.warn('tableData = ', this.tableData)
     },
-    getExcelData () {
-      const rows = _.map(this.orderedItem, (item) => {
-        return {
-          cells: this.getCellsForItem(item)
-        }
-      })
-      rows.unshift({cells: this.getHeaders()})
-      console.warn('rows = ', rows)
-      const test = {
-        name: 'My tables',
-        merges: [],
-        rows,
-        styles: {
-          'header': {
-            bgcolor: '#ffffff',
-            align: 'left',
-            valign: 'middle',
-            textwrap: false,
-            strike: false,
-            underline: false,
-            color: '#0a0a0a',
-            font: {
-              name: 'Helvetica',
-              size: 10,
-              bold: true,
-              italic: false
-            }
-          },
-          'normal': {
-            bgcolor: '#ffffff',
-            align: 'left',
-            valign: 'middle',
-            textwrap: false,
-            strike: false,
-            underline: false,
-            color: '#0a0a0a',
-            font: {
-              name: 'Helvetica',
-              size: 10,
-              bold: false,
-              italic: false
-            }
+    createTableColumns () {
+      const columns = [
+        {
+          field: '__RECORD_SELECTION__',
+          key: '__RECORD_SELECTION__',
+          title: TranslateService.get('TL_RECORD_SELECTION'),
+          fixed: 'left',
+          align: 'center',
+          disableResizing: true,
+          width: 50,
+          renderBodyCell: ({ row, column, rowIndex }, h) => {
+            return h('TableRecordSelection', {props: {row, selected: this.isRecordSelected(row), onChange: this.onSelectRecord}})
           }
-        },
-        validations: []
+        }
+      ]
+      _.each(this.schemaFields, (field, key) => {
+        // console.warn('test 2 - ', key, field.model, field.type, field)
+        const fieldType = this.getFieldType(field)
+        const tableFieldType = 'Table' + fieldType
+        const column = {
+          field: field.model,
+          key: 'a' + key,
+          title: field.label,
+          ellipsis: {
+            showTitle: true,
+            lineClamp: _.get(field, 'options.lineClamp', 1)
+          },
+          // width: _.get(field, 'options.width', 50),
+          renderBodyCell: ({ row, column, rowIndex }, h) => {
+            // console.warn(`test-  ${column.field} - ${fieldType}`)
+            if (_.includes(['CustomInput', 'CustomMultiSelect'], fieldType)) {
+              return _.get(row, column.field, '')
+            }
+            if (!(tableFieldType in Vue.options.components)) {
+              console.error(`${tableFieldType} isn't defined as a custom field type, will not render it`)
+              return _.get(row, column.field, '')
+            }
+            return h(tableFieldType, {props: {row, column, rowIndex, field}})
+          }
+        }
+        if (_.get(field, 'options.filter', false)) {
+          column.filter = {
+            filterList: _.uniqBy(_.map(this.sourceData, (item, i) => {
+              return {
+                value: i,
+                label: field.type === 'switch' ? TranslateService.get('TL_' + _.toUpper(_.get(item, field.model, false))) : _.get(item, field.model),
+                realValue: _.get(item, field.model),
+                selected: false
+              }
+            }), 'label'),
+            isMultiple: _.get(field, 'options.filter', false) === 'multiple',
+            // filter confirm hook
+            filterConfirm: (filterList) => {
+              const items = filterList.filter((x) => x.selected).map((x) => x.realValue)
+              this.searchBy(items, field.model)
+              if (!_.includes(this.filteredColumns, column.field)) {
+                this.filteredColumns.push(column.field)
+              }
+            },
+            // filter reset hook
+            filterReset: (filterList) => {
+              this.searchBy([], field.model)
+              this.filteredColumns = _.filter(this.filteredColumns, column.field)
+            },
+            filterIcon: () => {
+              if (_.includes(this.filteredColumns, column.field)) {
+                return <v-icon>mdi-filter</v-icon>
+              }
+              return <v-icon>mdi-filter-outline</v-icon>
+            },
+            // max height
+            maxHeight: 200
+          }
+        }
+        _.each(['sortBy', 'align'], (key) => {
+          const val = _.get(field, `options.${key}`, false)
+          if (val !== false) {
+            _.set(column, key, val)
+          }
+        })
+        columns.push(column)
+      })
+      // console.warn('columns = ', columns)
+      columns.push({
+        field: '__ACTIONS__',
+        key: '__ACTIONS__',
+        title: TranslateService.get('TL_ACTIONS'),
+        fixed: 'right',
+        disableResizing: true,
+        width: 180,
+        renderBodyCell: ({ row, column, rowIndex }, h) => {
+          return h('TableRowActions', {props: {row,
+            column,
+            rowIndex,
+            remove: (row) => {
+              this.$emit('remove', row)
+            },
+            edit: (row) => {
+              this.$emit('edit', row)
+            }
+          }})
+        }
+      })
+      this.columns = columns
+      // console.warn('cols = ', this.columns)
+    },
+    isRecordSelected (record) {
+      return _.includes(this.selectedRecords, _.get(record, '_id', false))
+    },
+    onSelectRecord (val, rowId) {
+      if (val) {
+        this.selectedRecords.push(rowId)
+      } else {
+        this.selectedRecords = _.filter(this.selectedRecords, (id) => id !== rowId)
       }
-      return test
+      console.warn('this.selectedRecords = ', this.selectedRecords)
+    },
+    searchBy (items, fieldKey) {
+      this.tableData = this.sourceData.filter(
+        (x) => items.length === 0 || items.includes(_.get(x, fieldKey))
+      )
+    },
+    editRow (row) {
+      console.warn('editRow', row)
     },
     getFieldType (field) {
       return _.get(field, 'overrideType', _.get(field, 'type', false))
     }
-    // calculatedSize () {
-    //   let size = this.actionsSize
-    //   let totalFieldsCount = this.schemaFields.length + 1
-    //   let sizedFieldsCount = 1
-    //   if (this.options.displayId) {
-    //     totalFieldsCount = totalFieldsCount + 1
-    //     sizedFieldsCount = sizedFieldsCount + 1
-    //     size = size + this.idSize
-    //   }
-    //   if (this.options.displayUpdatedAt) {
-    //     totalFieldsCount = totalFieldsCount + 1
-    //     sizedFieldsCount = sizedFieldsCount + 1
-    //     size = size + this.updatedAtSize
-    //   }
-    //   for (const fieldItem of this.schemaFields) {
-    //     const fieldSize = _.get(fieldItem, 'options.size', 'auto')
-    //     if (fieldSize !== 'auto') {
-    //       size = size + Number(fieldSize)
-    //       sizedFieldsCount = sizedFieldsCount + 1
-    //     }
-    //   }
-    //   return `width: calc((${100}% - ${size}px) / ${totalFieldsCount - sizedFieldsCount});`
-    // },
-    // getSize (sItem) {
-    //   if (sItem === '_id' || sItem === '_updatedAt') {
-    //     let size = this.idSize
-    //     if (sItem === '_updatedAt') {
-    //       size = this.updatedAtSize
-    //     }
-    //     return `max-width: ${size}px; min-width: ${size}px; width: ${size}px;`
-    //   } else {
-    //     const size = _.get(sItem, 'options.size', 'auto')
-    //     if (size !== 'auto') {
-    //       return `max-width: ${size}px; min-width: ${size}px; width: ${size}px;`
-    //     }
-    //     return this.calculatedSize()
-    //   }
-    // },
-    // isDisplay (name) {
-    //   if (name === '_id') {
-    //     return this.options.displayId
-    //   } else if (name === '_updatedAt') {
-    //     return this.options.displayUpdatedAt
-    //   } else {
-    //     return true
-    //   }
-    // },
-    // generateClass (name) {
-    //   return {sortBy: this.sortBy && this.sortBy.field === name, reverse: this.sortBy && this.sortBy.field === name && this.sortBy.reverse}
-    // },
-    // display (item, sItem) {
-    //   if (this.isImage(sItem)) {
-    //     const attachments = _.get(item, '_attachments', [])
-    //     if (sItem.localised) {
-    //       const key = sItem.model.replace(`${this.locale}.`, '')
-    //       const attachment = _.find(attachments, attachment => {
-    //         return attachment._name === key && _.get(attachment, '_fields.locale', '?') === this.locale
-    //       })
-    //       return _.get(attachment, 'url', '')
-    //     } else {
-    //       const attachment = _.find(attachments, attachment => {
-    //         return attachment._name === sItem.model
-    //       })
-    //       return _.get(attachment, 'url', '')
-    //     }
-    //   }
-    //   return _.get(item, sItem.model, '')
-    // },
-    // isText (sItem) {
-    //   return _.includes(['input', 'textarea', 'select'], sItem.type)
-    // },
-    // isImage (sItem) {
-    //   return _.includes(['imageView'], sItem.type)
-    // },
-    // prepareValue (item, sItem) {
-    //   return _.get(item, sItem.model)
-    // },
-    // remove (record) {
-    //   this.$emit('remove', record)
-    // },
-    // edit (record) {
-    //   this.$emit('edit', record)
-    // },
-    // setSortBy (field) {
-    //   this.sortBy = this.sortBy || {}
-    //   if (this.sortBy.field === field) {
-    //     this.sortBy.reverse = !this.sortBy.reverse
-    //   } else {
-    //     this.sortBy.reverse = false
-    //   }
-    //   this.sortBy.field = field
-    //   this.sortBy = _.clone(this.sortBy)
-    // }
   }
 }
 </script>
@@ -361,5 +280,16 @@ export default {
 .vue-table-generator {
   display: block;
   overflow: hidden;
+}
+#table-top{
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px
+}
+.empty-data {
+  padding-top: 36px;
+  font-size: 18px;
+  font-style: italic;
 }
 </style>
