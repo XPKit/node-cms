@@ -113,7 +113,8 @@ function addPlugin (title, displayName, group = 'System', allowed = ['admins', '
     displayname: displayName,
     component: title,
     group,
-    allowed
+    allowed,
+    type: 'plugin'
   })
 }
 

@@ -3,29 +3,34 @@
     <h3>Cms Import</h3>
     <div class="config-resources">
       <h4>Resources</h4>
-      <ul v-if="config && config.resources">
-        <li v-for="(item, index) in config.resources" :key="index">
+      <v-chip-group
+        v-if="config && config.resources"
+        column
+      >
+        <v-chip
+          v-for="(item, index) in config.resources" :key="index" :ripple="false"
+        >
           {{ item }}
-        </li>
-      </ul>
+        </v-chip>
+      </v-chip-group>
     </div>
+    <hr>
     <h4>Actions</h4>
     <div>
-      <h3>Goolge SpreadSheet</h3>
-      <div>
-        <button @click="openFile()">Edit Google Sheet</button>
+      <v-btn dense @click="openFile()">Edit Google Sheet</v-btn>
+      <div class="other-actions">
+        <v-btn dense :disabled="loading" @click="checkStatus()">Check Difference</v-btn>
+        <v-btn dense :disabled="loading" @click="execute()">Import from Remote</v-btn>
       </div>
-      <button :disabled="loading" @click="checkStatus()">Check Difference</button>
-      <button :disabled="loading" @click="execute()">Import from Remote</button>
     </div>
     <hr>
     <div>
       <h3>Upload Xlsx</h3>
-      <div>
-        <input ref="xlsxFile" type="file" @change="onChangeXlsxFile">
+      <v-file-input ref="xlsxFile" dense hide-details outlined type="file" @change="onChangeXlsxFile" />
+      <div class="other-actions">
+        <v-btn dense :disabled="loading || !uploadedXlsx" @click="checkXlsxStatus()">Check Difference</v-btn>
+        <v-btn dense :disabled="loading || !uploadedXlsx" @click="executeXlsx()">Import from Remote</v-btn>
       </div>
-      <button :disabled="loading || !uploadedXlsx" @click="checkXlsxStatus()">Check Difference</button>
-      <button :disabled="loading || !uploadedXlsx" @click="executeXlsx()">Import from Remote</button>
     </div>
     <div v-if="status || error">
       <h4 v-if="type == 0">Difference:</h4>
@@ -174,6 +179,18 @@ export default {
     border-radius: 6px;
     color: green;
     font-size: 11px;
+  }
+  .other-actions {
+    margin-top: 12px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .v-file-input {
+    max-width: 200px;
+  }
+  hr {
+    margin: 12px 0;
   }
 }
 </style>

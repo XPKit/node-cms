@@ -8,7 +8,10 @@
       </template>
       <div class="system-info-wrapper">
         <div class="theme-switch">
-          <v-switch :input-value="getTheme()" compact dense hide-details solo @change="onChangeTheme" />
+          <div class="theme-switch-container">
+            <v-icon>mdi-theme-light-dark</v-icon>
+            <v-switch :input-value="getTheme()" compact dense hide-details solo @change="onChangeTheme" />
+          </div>
         </div>
         <div class="node-cms-title flex">
           {{ 'TL_SYSTEM' | translate }}
@@ -199,9 +202,18 @@ export default {
     position: absolute;
     bottom: 6px;
     right: 6px;
+    .theme-switch-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
   }
 }
 .system-info-menu {
   background-color: inherit;
+}
+.v-input--selection-controls {
+  margin-top: 0;
 }
 </style>

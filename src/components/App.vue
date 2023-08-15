@@ -178,7 +178,8 @@ export default {
         ResourceService.setSchemas(this.resourceList)
         this.localeList = TranslateService.config.locales
         if (this.$route.query.id != null) {
-          this.selectResource(_.find(_.union(this.pluginList, this.resourceList), {title: this.$route.query.id}))
+          const resource = _.find(_.union(this.pluginList, this.resourceList), {title: this.$route.query.id})
+          this.selectResource(resource)
         }
       } catch (error) {
         console.error('Error while getting resources: ', error)
@@ -205,6 +206,7 @@ export default {
       this.selectedResourceGroup = resourceGroup
     },
     async selectResource (resource) {
+      // console.warn('selectResource', resource)
       try {
         if (_.get(this.$router, 'history.current.query.id', false) !== resource.title) {
           this.$router.push({query: {id: resource.title}}).catch(error => console.error('Router throw an error:', error))
