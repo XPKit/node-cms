@@ -23,61 +23,57 @@ const configure = (proxyRoute, proxyPort, proxy, _options) => {
   // })
 }
 
+const baseUrl = 'http://localhost'
+
 const proxy = {
   '^/(cms|i18n|config|login|logout|resources)': {
-    target: `http://localhost:${serverPort}/admin`,
+    target: `${baseUrl}:${serverPort}/admin`,
     ws: true,
     changeOrigin: true
   },
   '^/admin/(fonts)': {
-    target: `http://localhost:${devPort}`,
+    target: `${baseUrl}:${devPort}`,
     ws: true,
     changeOrigin: true,
     configure: (proxy, _options) => configure('^/admin/(fonts)', devPort, proxy, _options)
   },
   '^/(admin)': {
-    target: `http://localhost:${serverPort}/admin`,
+    target: `${baseUrl}:${serverPort}/admin`,
     ws: true,
     rewrite: (path) => path.replace(/^\/admin/, ''),
     changeOrigin: true,
     configure: (proxy, _options) => configure('^/(admin)$', serverPort, proxy, _options)
   },
   '^/(api)': {
-    target: `http://localhost:${serverPort}`,
+    target: `${baseUrl}:${serverPort}`,
     ws: true,
     changeOrigin: true
   }
 }
 
-export default defineConfig(({mode}) => {
-  console.warn(`vite mode = ${mode}`)
+export default defineConfig(({ command, mode, ssrBuild }) => {
+  // console.warn(`vite mode = ${mode} - command = ${command}`)
   return {
-    root: mode === 'development' ? '/' : 'src',
+    root: mode === 'development' ? './' : './src',
     base: './',
-    publicDir: `${mode === 'development' ? '' : '..'}/public`,
+    publicDir: `${mode === 'development' ? '.' : '..'}/public`,
     plugins: [
       splitVendorChunkPlugin(),
-      vueJsx({
-      // options are passed on to @vue/babel-preset-jsx
-      }),
-      vue({
-        exclude: 'os'
-      }),
+      vueJsx({}),
+      vue({exclude: 'os'}),
       Components({
         resolvers: [VuetifyResolver()]
       })
     ],
     optimizeDeps: {
-    // include: []
+      // include: []
     },
     server: {
-      origin: `http://localhost:${devPort}`,
+      origin: `${baseUrl}:${devPort}`,
       port: devPort,
       proxy
     },
-    transpileDependencies: [
-      'vuetify'
-    ],
+    transpileDependencies: ['vuetify'],
     resolve: {
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
       alias: {
@@ -99,20 +95,19 @@ export default defineConfig(({mode}) => {
       proxy
     },
     build: {
-    // minify: false,
+      // minify: false,
       manifest: true,
       outDir: '../dist',
       rollupOptions: {
         output: {
-          manualChunks (id) {
+          manualChunks: (id) => {
             if (id.includes('node_modules')) {
               return 'vendor'
             }
           }
         },
         input: {
-          main: path.resolve(__dirname, 'src/index.html'),
-          login: path.resolve(__dirname, 'src/login.html')
+          main: path.resolve(__dirname, 'src/index.html')
         }
       }
     }

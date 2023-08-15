@@ -1,5 +1,4 @@
 import '@a/scss/main.scss'
-
 import _ from 'lodash'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
@@ -138,6 +137,7 @@ window.addEventListener('load', async function () {
     vuetify,
     router,
     render: function (createElement) {
+      console.warn('will render component: ', this.$el.getAttribute('type'))
       return createElement(this.$el.getAttribute('type') === 'login' ? LoginApp : App)
     }
   })

@@ -174,7 +174,6 @@ class CreateTasks {
   createWatchTask () {
     gulp.task(this.watchTask, () => {
       livereload.listen({ port: pkg.config.port + this.liveReloadPort })
-      // TODO: hugo - to change
       gulp.watch([`./${this.name}/assets/scss/**/*.scss`], gulp.series(this.stylesTask))
       gulp.watch([`./${this.name}/**/*.html`], gulp.series(this.browserifyTask))
       gulp.watch([`./${this.name}/styles/main.css`], gulp.series(this.reloadCssTask))
@@ -395,10 +394,6 @@ class MainTask {
       }
     })
     gulp.task('default', done => runSequence('launch-server', 'launch-frontend', done))
-    gulp.task('build', () => {
-      console.warn('TODO: hugo - build')
-      // return run('npm run build').exec()
-    })
   }
 }
 

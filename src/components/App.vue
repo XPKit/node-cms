@@ -17,7 +17,7 @@
     </v-scroll-y-transition>
     <div v-if="user" class="cms-layout">
       <div class="cms-inner-layout" :class="getThemeClass()">
-        <nav-bar :config="config" :toolbar-title="toolbarTitle" :locale-class="{locale:localeList && localeList.length > 1}" :select-resource-group-callback="selectResourceGroup" :select-resource-callback="selectResource" :resource-list="resourceList" :plugins="pluginList" :selected-resource-group="selectedResourceGroup" :selected-item="selectedResource || selectedPlugin" />
+        <nav-bar v-if="resourceList.length > 0" :config="config" :toolbar-title="toolbarTitle" :locale-class="{locale:localeList && localeList.length > 1}" :select-resource-group-callback="selectResourceGroup" :select-resource-callback="selectResource" :resource-list="resourceList" :plugins="pluginList" :selected-resource-group="selectedResourceGroup" :selected-item="selectedResource || selectedPlugin" />
         <div class="resources">
           <locale-list v-if="localeList" :locale-list="localeList" />
         </div>
@@ -168,8 +168,8 @@ export default {
       try {
         const resourcesResponse = await axios.get(`${window.location.pathname}resources`)
         this.$loading.stop('init')
-        this.resourceList = _.sortBy(resourcesResponse.data, item => item.title)
-        this.resourceList = _.filter(this.resourceList, resource => {
+        const resourceList = _.sortBy(resourcesResponse.data, item => item.title)
+        this.resourceList = _.filter(resourceList, resource => {
           if (_.isUndefined(resource.allowed)) {
             return true
           }

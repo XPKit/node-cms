@@ -119,6 +119,14 @@ export default {
       return _.filter(groups, (group) => group.list && group.list.length !== 0)
     }
   },
+  mounted () {
+    this.$nextTick(() => {
+      if (_.isEmpty(this.selectedItem)) {
+        // NOTE: Selects first resource in first group
+        this.selectResourceCallback(_.first(_.get(_.first(this.groupedList), 'list', [])))
+      }
+    })
+  },
   methods: {
     getResourceTitle (resource) {
       return resource.displayname ? TranslateService.get(resource.displayname) : resource.title
