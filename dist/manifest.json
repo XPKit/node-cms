@@ -1,0 +1,54 @@
+{
+  "../node_modules/@mdi/font/fonts/materialdesignicons-webfont.eot": {
+    "file": "assets/materialdesignicons-webfont-67d24abe.eot",
+    "src": "../node_modules/@mdi/font/fonts/materialdesignicons-webfont.eot"
+  },
+  "../node_modules/@mdi/font/fonts/materialdesignicons-webfont.ttf": {
+    "file": "assets/materialdesignicons-webfont-a58ecb54.ttf",
+    "src": "../node_modules/@mdi/font/fonts/materialdesignicons-webfont.ttf"
+  },
+  "../node_modules/@mdi/font/fonts/materialdesignicons-webfont.woff": {
+    "file": "assets/materialdesignicons-webfont-80bb28b3.woff",
+    "src": "../node_modules/@mdi/font/fonts/materialdesignicons-webfont.woff"
+  },
+  "../node_modules/@mdi/font/fonts/materialdesignicons-webfont.woff2": {
+    "file": "assets/materialdesignicons-webfont-c1c004a9.woff2",
+    "src": "../node_modules/@mdi/font/fonts/materialdesignicons-webfont.woff2"
+  },
+  "../node_modules/vue-easytable/libs/font/iconfont.svg": {
+    "file": "assets/iconfont-6a109f38.svg",
+    "src": "../node_modules/vue-easytable/libs/font/iconfont.svg"
+  },
+  "_vendor-42c324d8.js": {
+    "assets": [
+      "assets/iconfont-6a109f38.svg",
+      "assets/materialdesignicons-webfont-67d24abe.eot",
+      "assets/materialdesignicons-webfont-c1c004a9.woff2",
+      "assets/materialdesignicons-webfont-80bb28b3.woff",
+      "assets/materialdesignicons-webfont-a58ecb54.ttf"
+    ],
+    "css": [
+      "assets/vendor-5e888afb.css"
+    ],
+    "file": "assets/vendor-42c324d8.js"
+  },
+  "index.css": {
+    "file": "assets/index-52efb14e.css",
+    "src": "index.css"
+  },
+  "index.html": {
+    "css": [
+      "assets/index-52efb14e.css"
+    ],
+    "file": "assets/main-4df4776e.js",
+    "imports": [
+      "_vendor-42c324d8.js"
+    ],
+    "isEntry": true,
+    "src": "index.html"
+  },
+  "vendor.css": {
+    "file": "assets/vendor-5e888afb.css",
+    "src": "vendor.css"
+  }
+}

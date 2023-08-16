@@ -17,4 +17,3 @@ view-edit-spreadsheets.pem
 logs/*
 ssl/*
 /lib/xptoolkitRequest
-dist
