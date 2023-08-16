@@ -15,7 +15,7 @@ class WebsocketService {
   }
 
   async init (config) {
-    this.serverUrl = `ws://${window.location.hostname}:${_.get(config, 'webserver.port', 9091)}`
+    this.serverUrl = `ws://${window.location.hostname}:${_.get(config, 'webserver.port', 9090)}`
     this.connect()
   }
 
@@ -38,7 +38,7 @@ class WebsocketService {
   }
 
   onClose (event) {
-    // console.info('Websocket - onClose', event)
+    console.info('Websocket - onClose', event)
     this.isConnecting = false
     this.isConnected = false
     this.events.emit('connected', false)
@@ -59,12 +59,11 @@ class WebsocketService {
 
   onMessage (event) {
     const msg = JSON.parse(event.data)
-    // console.info('ws msg received:', msg)
-    if (msg.action === 'ping') {
+    const action = _.get(msg, 'action', '??')
+    if (action === 'ping') {
       return this.pong()
-    } else if (msg.action === 'getSystemInfo') {
-      this.events.emit('getSystemInfo', _.get(msg, 'data', {}))
     }
+    this.events.emit(action, _.get(msg, 'data', {}))
   }
 
   pong () {

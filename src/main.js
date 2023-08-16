@@ -138,7 +138,7 @@ window.addEventListener('load', async function () {
     vuetify,
     router,
     render: function (createElement) {
-      console.warn('will render component: ', this.$el.getAttribute('type'))
+      // console.warn('will render component: ', this.$el.getAttribute('type'))
       return createElement(this.$el.getAttribute('type') === 'login' ? LoginApp : App)
     }
   })

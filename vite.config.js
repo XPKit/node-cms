@@ -27,29 +27,25 @@ const baseUrl = 'http://localhost'
 
 const proxy = {
   '^/(cms|i18n|config|login|logout|resources)': {
-    target: `${baseUrl}:${serverPort}/admin`,
-    ws: true,
-    changeOrigin: true
+    target: `${baseUrl}:${serverPort}/admin`
   },
   '^/admin/(fonts)': {
     target: `${baseUrl}:${devPort}`,
-    ws: true,
-    changeOrigin: true,
     configure: (proxy, _options) => configure('^/admin/(fonts)', devPort, proxy, _options)
   },
   '^/(admin)': {
     target: `${baseUrl}:${serverPort}/admin`,
-    ws: true,
     rewrite: (path) => path.replace(/^\/admin/, ''),
-    changeOrigin: true,
     configure: (proxy, _options) => configure('^/(admin)$', serverPort, proxy, _options)
   },
   '^/(api)': {
-    target: `${baseUrl}:${serverPort}`,
-    ws: true,
-    changeOrigin: true
+    target: `${baseUrl}:${serverPort}`
   }
 }
+_.each(proxy, (route) => {
+  route.ws = true
+  route.changeOrigin = true
+})
 
 export default defineConfig(({ command, mode, ssrBuild }) => {
   // console.warn(`vite mode = ${mode} - command = ${command}`)

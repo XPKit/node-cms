@@ -16,6 +16,7 @@ const mkdirp = require('mkdirp')
 const session = require('express-session')
 
 const UUID = require('./lib/util/uuid')
+const WebsocketManager = require('./lib/WebsocketManager')
 const SyslogManager = require('./lib/SyslogManager')
 const SystemManager = require('./lib/SystemManager')
 let Resource = null
@@ -157,6 +158,7 @@ class CMS {
     this.bootstrapFunctions.push(async (callback) => {
       SyslogManager.init(this, options)
       SystemManager.init(this, options)
+      this.websocketServer.init()
       callback()
     })
     this._app.use(SyslogManager.express())
@@ -209,6 +211,7 @@ class CMS {
         server = undefined
       }
       this.server = server
+      this.websocketServer = new WebsocketManager(this.options, SystemManager.getSystem, SyslogManager.getSyslogData)
       await pAll(_.map(this.bootstrapFunctions, bootstrap => {
         return async () => {
           await Q.nfcall(bootstrap)

@@ -1,42 +1,42 @@
 <template>
   <div class="cms-import">
     <h3>Cms Import</h3>
-    <div class="config-resources">
-      <h4>Resources</h4>
-      <v-chip-group
-        v-if="config && config.resources"
-        column
-      >
-        <v-chip
-          v-for="(item, index) in config.resources" :key="index" :ripple="false"
+    <div class="main-container">
+      <div class="config-resources">
+        <h4>Resources</h4>
+        <v-chip-group
+          v-if="config && config.resources"
+          column
         >
-          {{ item }}
-        </v-chip>
-      </v-chip-group>
-    </div>
-    <hr>
-    <h4>Actions</h4>
-    <div>
-      <v-btn dense @click="openFile()">Edit Google Sheet</v-btn>
-      <div class="other-actions">
-        <v-btn dense :disabled="loading" @click="checkStatus()">Check Difference</v-btn>
-        <v-btn dense :disabled="loading" @click="execute()">Import from Remote</v-btn>
+          <v-chip
+            v-for="(item, index) in config.resources" :key="index" :ripple="false"
+          >
+            {{ item }}
+          </v-chip>
+        </v-chip-group>
       </div>
-    </div>
-    <hr>
-    <div>
-      <h3>Upload Xlsx</h3>
+      <hr>
+      <h4>Actions</h4>
+      <div>
+        <v-btn dense @click="openFile()">Edit Google Sheet</v-btn>
+        <div class="other-actions">
+          <v-btn dense :disabled="loading" @click="checkStatus()">Check Difference</v-btn>
+          <v-btn dense :disabled="loading" @click="execute()">Import from Remote</v-btn>
+        </div>
+      </div>
+      <hr>
+      <h4>Upload Xlsx</h4>
       <v-file-input ref="xlsxFile" dense hide-details outlined type="file" @change="onChangeXlsxFile" />
       <div class="other-actions">
         <v-btn dense :disabled="loading || !uploadedXlsx" @click="checkXlsxStatus()">Check Difference</v-btn>
         <v-btn dense :disabled="loading || !uploadedXlsx" @click="executeXlsx()">Import from Remote</v-btn>
       </div>
-    </div>
-    <div v-if="status || error">
-      <h4 v-if="type == 0">Difference:</h4>
-      <h4 v-else>Status:</h4>
-      <pre v-html="status" />
-      <pre v-html="error" />
+      <div v-if="status || error">
+        <h4 v-if="type == 0">Difference:</h4>
+        <h4 v-else>Status:</h4>
+        <pre v-html="status" />
+        <pre v-html="error" />
+      </div>
     </div>
   </div>
 </template>
@@ -154,13 +154,14 @@ export default {
 <style lang="scss" scoped>
 .cms-import {
   padding: 20px;
-  height: calc(100% - 25px);
-  overflow: scroll;
   h3 {
     margin: 0px;
   }
   h4 {
     margin-bottom: 2px;
+  }
+  .main-container {
+    padding: 16px;
   }
   .config-resources {
     ul {

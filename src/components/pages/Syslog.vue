@@ -51,6 +51,7 @@ import _ from 'lodash'
 import axios from 'axios'
 import sift from 'sift'
 import JSON5 from 'json5'
+import WebsocketService from '@s/WebsocketService'
 
 export default {
   data () {
@@ -74,7 +75,6 @@ export default {
       errorQty: 0,
       ignoreNextScrollEvent: false,
       fakeData: [],
-      client: null,
       config: null
     }
   },
@@ -82,19 +82,10 @@ export default {
     const {data: config} = await axios.get(`${window.location.pathname}../api/_syslog/config`)
     this.config = config
     if (this.config.wss) {
-      const url = window.location.origin.replace(/^(http)/, 'ws')
-      const client = new WebSocket(url)
-      client.addEventListener('open', (event) => {
-        this.client = client
-      })
-      client.addEventListener('message', (event) => {
-        const list = JSON.parse(event.data)
-        this.isLoading = false
-        this.error = false
-        console.warn('MSG = ', list)
-        if (!_.isEmpty(list)) {
+      WebsocketService.events.on('syslog', (data) => {
+        if (!_.isEmpty(data)) {
           this.error = false
-          this.logLines.push(...list)
+          this.logLines.push(...data)
           this.lastId = _.last(this.logLines).id
           this.updateSysLog()
         }
@@ -194,8 +185,8 @@ export default {
     async refreshLog () {
       try {
         if (this.config.wss) {
-          if (this.client) {
-            this.client.send(JSON.stringify({id: this.lastId}))
+          if (WebsocketService.client) {
+            WebsocketService.send({action: 'syslog', id: this.lastId})
             this.isLoading = false
             this.error = false
           }
