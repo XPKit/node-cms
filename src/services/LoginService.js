@@ -26,12 +26,13 @@ class LoginService {
 
   async checkStatus () {
     let status
+    const userBefore = _.cloneDeep(this.user)
     try {
       status = await this.getStatus()
     } catch (error) {
     }
-    if (_.isEmpty(status)) {
-      // console.info('will logout')
+    if (_.isEmpty(status) && !_.isEmpty(userBefore)) {
+      console.info('will logout')
       await this.logout()
     }
   }
