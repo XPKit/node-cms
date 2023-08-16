@@ -211,7 +211,7 @@ class CMS {
         server = undefined
       }
       this.server = server
-      this.websocketServer = new WebsocketManager(this.options, SystemManager.getSystem, SyslogManager.getSyslogData)
+      this.websocketServer = new WebsocketManager(server, this.options, SystemManager.getSystem, SyslogManager.getSyslogData)
       await pAll(_.map(this.bootstrapFunctions, bootstrap => {
         return async () => {
           await Q.nfcall(bootstrap)
