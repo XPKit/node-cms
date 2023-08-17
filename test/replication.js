@@ -32,7 +32,10 @@ before(async () => {
     data: path.join(__dirname, 'master'),
     config: path.join(__dirname, 'master.json'),
     resources: path.join(__dirname, 'resources'),
-    netPort: helper.MASTER_NET_PORT
+    netPort: helper.MASTER_NET_PORT,
+    webserver: {
+      port: 9090
+    }
   })
   helper.master = {
     cms,
@@ -50,7 +53,11 @@ before(async () => {
     data: path.join(__dirname, 'slave'),
     config: path.join(__dirname, 'slave.json'),
     resources: path.join(__dirname, 'resources'),
-    netPort: helper.SLAVE_NET_PORT
+    netPort: helper.SLAVE_NET_PORT,
+    webserver: {
+      port: 9091
+    }
+
   })
   helper.slave = {
     app: express(),

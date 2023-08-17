@@ -36,6 +36,9 @@ before(async () => {
     tag: 'master',
     dbEngine: {
       type: 'mongodb'
+    },
+    webserver: {
+      port: 9092
     }
   })
   helper.master = {
@@ -60,6 +63,9 @@ before(async () => {
     tag: 'slave',
     dbEngine: {
       type: 'mongodb'
+    },
+    webserver: {
+      port: 9093
     }
   })
   helper.slave = {

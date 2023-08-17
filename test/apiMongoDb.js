@@ -31,7 +31,7 @@ before(async () => {
   let options = {
     data: DB,
     config: CONFIG,
-    mid: 'lat5di0f',
+    mid: 'jegvlp6w',
     autoload: true,
     apiVersion: 2,
     disableJwtLogin: false,
@@ -39,7 +39,7 @@ before(async () => {
     auth: { secret: 'auth.jwt.secret' },
     dbEngine: {
       type: 'mongodb',
-      url: 'localhost/node-cms'
+      url: '127.0.0.1/node-cms'
     }
   }
 

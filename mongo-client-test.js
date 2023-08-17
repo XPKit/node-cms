@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb')
 const Q = require('q')
 
-const host = 'mongodb://localhost'
+const host = 'mongodb://127.0.0.1'
 
 async function run () {
   const client = await Q.ninvoke(MongoClient, 'connect', host, {
