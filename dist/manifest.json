@@ -19,7 +19,7 @@
     "file": "assets/iconfont-6a109f38.svg",
     "src": "../node_modules/vue-easytable/libs/font/iconfont.svg"
   },
-  "_vendor-42c324d8.js": {
+  "_vendor-1e4d2904.js": {
     "assets": [
       "assets/iconfont-6a109f38.svg",
       "assets/materialdesignicons-webfont-67d24abe.eot",
@@ -28,27 +28,27 @@
       "assets/materialdesignicons-webfont-a58ecb54.ttf"
     ],
     "css": [
-      "assets/vendor-5e888afb.css"
+      "assets/vendor-169869b5.css"
     ],
-    "file": "assets/vendor-42c324d8.js"
+    "file": "assets/vendor-1e4d2904.js"
   },
   "index.css": {
-    "file": "assets/index-52efb14e.css",
+    "file": "assets/index-0c3c091b.css",
     "src": "index.css"
   },
   "index.html": {
     "css": [
-      "assets/index-52efb14e.css"
+      "assets/index-0c3c091b.css"
     ],
-    "file": "assets/main-4df4776e.js",
+    "file": "assets/main-58b16a96.js",
     "imports": [
-      "_vendor-42c324d8.js"
+      "_vendor-1e4d2904.js"
     ],
     "isEntry": true,
     "src": "index.html"
   },
   "vendor.css": {
-    "file": "assets/vendor-5e888afb.css",
+    "file": "assets/vendor-169869b5.css",
     "src": "vendor.css"
   }
 }

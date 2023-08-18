@@ -1,19 +1,17 @@
 <template>
-  <div class="custom-input">
-    <v-text-field
-      :class="[schema.labelClasses]" :type="getType()" :label="schema.label" :value="value" :input-value="value"
-      :max-length="schema.max" :autocomplete="getAutocomplete()"
-      :min-length="schema.min"
-      :rules="[validateField]"
-      :dense="get('dense')" :compact="get('compact')" :disabled="get('disabled')" :readonly="get('readonly')" :filled="get('filled')" :outlined="get('outlined')" :solo="get('solo')"
-      persistent-placeholder hide-details
-      @input="onChangeData"
-    >
-      <template v-if="schema.required" #label>
-        <span class="red--text"><strong>* </strong></span>{{ schema.label }}
-      </template>
-    </v-text-field>
-  </div>
+  <v-text-field
+    :class="[schema.labelClasses]" :type="getType()" :label="schema.label" :value="value" :input-value="value"
+    :max-length="schema.max" :autocomplete="getAutocomplete()"
+    :min-length="schema.min"
+    :rules="[validateField]"
+    :dense="get('dense')" :compact="get('compact')" :disabled="get('disabled')" :readonly="get('readonly')" :filled="get('filled')" :outlined="get('outlined')" :solo="get('solo')"
+    persistent-placeholder hide-details
+    @input="onChangeData"
+  >
+    <template v-if="schema.required" #label>
+      <span class="red--text"><strong>* </strong></span>{{ schema.label }}
+    </template>
+  </v-text-field>
 </template>
 
 <script>
@@ -52,6 +50,4 @@ export default {
 </script>
 
 <style lang="scss">
-  .custom-input {
-  }
 </style>
