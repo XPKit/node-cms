@@ -5,7 +5,7 @@
       @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
     >
       <v-file-input
-        ref="fileInput" :rules="getRules()"
+        ref="input" :rules="getRules()"
         :accept="model.input === 'image'? 'image/*': '*'" :clearable="false" :placeholder="getPlaceholder() | translate"
         dense outlined persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :disabled="isForMultipleImages() && isFieldDisabled()"
         @change="onChangeFile"

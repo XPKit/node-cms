@@ -1,5 +1,5 @@
 <template>
-  <div ref="json-editor" class="json-editor" :disabled="disabled" />
+  <div ref="input" class="json-editor" :disabled="disabled" />
 </template>
 
 <script>
@@ -24,7 +24,7 @@ export default {
     }
   },
   mounted () {
-    const element = _.get(this.$refs, 'json-editor', false)
+    const element = _.get(this.$refs, 'input', false)
     this.schema.jsonEditorOptions.title = ' '
     const options = {
       schema: this.schema.jsonEditorOptions,

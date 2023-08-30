@@ -130,8 +130,8 @@ export default {
       return kbLimit > 1000 ? `${kbLimit / 1000} MB` : `${kbLimit} KB`
     },
     removeImage (attachment) {
-      this.$refs.fileInput.internalValue = null
-      this.$refs.fileInput.$refs.input.value = null
+      this.$refs.input.internalValue = null
+      this.$refs.input.$refs.input.value = null
       this.localModel._attachments = _.filter(this.localModel._attachments, item => item !== attachment)
       this.attachments = _.filter(this.localModel._attachments, attachment => this.isSameAttachment(attachment))
       this.$forceUpdate()
@@ -150,8 +150,8 @@ export default {
       this.onUploadChanged(event.dataTransfer.files)
     },
     async onUploadChanged (files) {
-      this.$refs.fileInput.validate()
-      if (!this.$refs.fileInput.valid) {
+      this.$refs.input.validate()
+      if (!this.$refs.input.valid) {
         return
       }
       files = _.isNull(files) ? [] : files

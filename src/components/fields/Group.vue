@@ -3,7 +3,7 @@
     <div class="field-label">{{ schema.label }}</div>
     <div class="group">
       <custom-form
-        ref="vfg"
+        ref="input"
         :schema="schema.groupOptions"
         :model.sync="model"
         @error="onError"
@@ -30,18 +30,18 @@ export default {
       console.log(999, 'error', error)
     },
     validate () {
-      const isValid = this.$refs.vfg.validate()
+      const isValid = this.$refs.input.validate()
       if (!isValid) {
-        this.errors = this.$refs.vfg.errors
+        this.errors = this.$refs.input.errors
         throw new Error('group validation error')
       }
       return isValid
     },
     debouncedValidate () {
-      return this.$refs.vfg.debouncedValidate()
+      return this.$refs.input.debouncedValidate()
     },
     clearValidationErrors () {
-      return this.$refs.vfg.clearValidationErrors()
+      return this.$refs.input.clearValidationErrors()
     },
     onModelUpdated (value, model) {
       this.$emit('model-updated', value, model)

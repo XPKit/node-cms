@@ -2,6 +2,7 @@
   <div class="multiselect-wrapper">
     <v-autocomplete
       :id="selectOptions.id"
+      ref="input"
       :label="getLabel()"
       :chips="selectOptions.multiple"
       :value="objectValue"

@@ -1,5 +1,6 @@
 <template>
   <v-combobox
+    ref="input"
     v-model="tags"
     clearable hide-details outlined deletable-chips small-chips dense
     :hide-selected="!options['allowDuplicates']" :readonly="options['readOnly']" :placeholder="options['tagPlaceholder']" :multiple="options['multiple']"

@@ -3,6 +3,7 @@
     <div class="field-label">{{ schema.label }}</div>
     <div class="border-wrapper">
       <tiptap-vuetify
+        ref="input"
         v-model="localObj[key]"
         :card-props="{ flat: true }"
         :extensions="extensions"

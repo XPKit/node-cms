@@ -1,5 +1,6 @@
 <template>
   <div v-if="groupedList" class="resources-content">
+    <omnibar :select-resource-callback="selectResourceCallback" :grouped-list="groupedList" :selected-item="selectedItem" />
     <div class="resource-list">
       <div v-for="(resourceGroup, index) in groupedList" :key="`resource-group-${index}`" class="resource">
         <v-menu open-on-hover offset-y>
@@ -27,8 +28,10 @@
 <script>
 import _ from 'lodash'
 import TranslateService from '@s/TranslateService'
+import Omnibar from '@c/Omnibar'
 
 export default {
+  components: {Omnibar},
   props: {
     selectResourceCallback: {
       type: Function,

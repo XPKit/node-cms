@@ -18,7 +18,7 @@
         </div>
       </div>
       <div v-else class="combobox form-control" :disabled="disabled">
-        <div class="mainRow" :class="{ expanded: comboExpanded }" @click="onExpandCombo">
+        <div ref="input" class="mainRow" :class="{ expanded: comboExpanded }" @click="onExpandCombo">
           <div class="node-cms-info">{{ selectedCount }} {{ 'TL_SELECTED'|translate }}</div>
           <div class="arrow" />
         </div>

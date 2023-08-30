@@ -6,7 +6,7 @@
         @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
       >
         <v-file-input
-          ref="fileInput" :rules="getRules()"
+          ref="input" :rules="getRules()"
           :label="schema.label" :placeholder="getPlaceholder() | translate" :clearable="false"
           dense outlined persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
           @change="onUploadChanged"
@@ -70,3 +70,9 @@ export default {
   mixins: [AbstractField, FileInputField, DragList]
 }
 </script>
+
+<style lang="scss" scoped>
+.v-card {
+  background-color: transparent;
+}
+</style>

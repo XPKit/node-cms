@@ -119,6 +119,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^3.1.0",
     "eslint-plugin-vue": "^9.0.1",
+    "fuzzysort": "^2.0.4",
     "json5": "^2.2.3",
     "less": "^3.8.1",
     "mocha": "^7.2.0",

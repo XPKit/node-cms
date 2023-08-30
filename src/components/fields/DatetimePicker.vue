@@ -2,7 +2,8 @@
   <div :style="{width:width}" class="datetime-picker" @click="calendarClicked($event)">
     <div>
       <input
-        id="tj-datetime-input" readonly type="text" :value="display()" :name="name" autocomplete="off"
+        id="tj-datetime-input"
+        ref="input" readonly type="text" :value="display()" :name="name" autocomplete="off"
         @click="toggleCal"
       >
       <div class="calender-div" :class="{noDisplay: hideCal}">

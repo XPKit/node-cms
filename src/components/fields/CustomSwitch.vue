@@ -3,6 +3,7 @@
     <div class="field-label">{{ schema.label }}</div>
     <div class="border-wrapper">
       <v-switch
+        ref="input"
         class="switch"
         :input-value="getValue()"
         :compact="schema.compact ? true : false"

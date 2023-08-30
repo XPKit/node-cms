@@ -1,6 +1,6 @@
 <template>
   <div>
-    <datetime :format="schema.format" :value="get(model,schema.model)" @input="onChangeData" />
+    <datetime ref="input" :format="schema.format" :value="get(model,schema.model)" @input="onChangeData" />
   </div>
 </template>
 

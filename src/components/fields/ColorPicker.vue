@@ -2,6 +2,7 @@
   <div class="wrapper-color">
     <v-color-picker
       v-if="options.model"
+      ref="input"
       :key="schema.model + 'custom'"
       v-model="color"
       :dot-size="options.dotSize"

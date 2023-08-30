@@ -1,5 +1,6 @@
 <template>
   <v-text-field
+    ref="input"
     :class="[schema.labelClasses]" :type="getType()" :label="schema.label" :value="value" :input-value="value"
     :max-length="schema.max" :autocomplete="getAutocomplete()"
     :min-length="schema.min"
@@ -48,6 +49,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-</style>

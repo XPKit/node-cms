@@ -25,7 +25,7 @@ function attributesDirective (el, binding, vnode) {
 }
 
 export default {
-  props: ['model', 'schema', 'formOptions', 'disabled'],
+  props: ['model', 'schema', 'formOptions', 'disabled', 'focused'],
   data () {
     return {
       errors: [],
@@ -38,6 +38,35 @@ export default {
       bind: attributesDirective,
       updated: attributesDirective,
       componentUpdated: attributesDirective
+    }
+  },
+  watch: {
+    focused () {
+      if (this.focused === -1) {
+        return
+      }
+      let elem = objGet(this.$refs, 'input', false)
+      if (!elem) {
+        return console.error('no input ref for ', this.schema)
+      }
+      // console.warn('elem = ', elem, this.schema.model, this.schema)
+      if (this.focused) {
+        // console.log('WILL SCROLL to ', this.schema.model)
+        if (isFunction(objGet(elem, '$el.scrollIntoView', false))) {
+          elem.$el.scrollIntoView()
+        } else {
+          elem.scrollIntoView()
+        }
+      }
+      if (!isFunction(elem.focus)) {
+        return
+      }
+      if (this.focused) {
+        elem.focus()
+      } else {
+        elem.blur()
+      }
+      console.warn(`focused changed ${this.focused}`, this.schema, elem)
     }
   },
   computed: {

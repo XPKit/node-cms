@@ -29,6 +29,7 @@
       </v-card>
       <div slot="header">
         <v-select
+          ref="input"
           :label="schema.label" :value="selectedType"
           :menu-props="{ bottom: true, offsetY: true }" :items="types" item-text="label" item-value="label"
           hide-details outlined dense persistent-placeholder

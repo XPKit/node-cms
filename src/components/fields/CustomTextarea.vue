@@ -1,6 +1,7 @@
 <template>
   <div class="custom-textarea">
     <v-textarea
+      ref="input"
       :class="[schema.labelClasses]"
       :type="getType()"
       :value="value"

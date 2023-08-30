@@ -1,5 +1,5 @@
 <template>
-  <tree-view v-if="schema" :key="schema.model" :data="get(model,schema.model)" :options="options" @change-data="onChangeData" />
+  <tree-view v-if="schema" ref="input" :key="schema.model" :data="get(model,schema.model)" :options="options" @change-data="onChangeData" />
 </template>
 
 <script>

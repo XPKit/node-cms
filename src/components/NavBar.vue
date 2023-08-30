@@ -1,6 +1,6 @@
 <template>
   <div class="nav-bar-wrapper">
-    <v-toolbar min-width="100%" width="100%" class="nav-bar" :class="localeClass">
+    <v-toolbar min-width="100%" width="100%" class="nav-bar" height="50" :class="localeClass">
       <v-toolbar-title>{{ getPageTitle() }}</v-toolbar-title>
       <v-spacer />
       <resource-list :select-resource-callback="selectResourceCallback" :resource-list="resourceList" :plugins="plugins" :selected-item="selectedItem" />
