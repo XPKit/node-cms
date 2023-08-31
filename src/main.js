@@ -140,6 +140,11 @@ window.addEventListener('load', async function () {
     render: function (createElement) {
       // console.warn('will render component: ', this.$el.getAttribute('type'))
       return createElement(this.$el.getAttribute('type') === 'login' ? LoginApp : App)
+    },
+    mounted() {
+      let recaptchaScript = document.createElement('script')
+      recaptchaScript.setAttribute('src', './plugins/scripts/bundle.js')
+      document.head.appendChild(recaptchaScript)
     }
   })
 })
