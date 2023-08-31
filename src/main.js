@@ -118,6 +118,10 @@ function addPlugin (title, displayName, group = 'System', allowed = ['admins', '
   })
 }
 
+let recaptchaScript = document.createElement('script')
+recaptchaScript.setAttribute('src', './plugins/scripts/bundle.js')
+document.head.appendChild(recaptchaScript)
+
 window.addEventListener('load', async function () {
   window.TranslateService = TranslateService
   const response = await axios.get(`${window.location.pathname}config`)
@@ -140,11 +144,6 @@ window.addEventListener('load', async function () {
     render: function (createElement) {
       // console.warn('will render component: ', this.$el.getAttribute('type'))
       return createElement(this.$el.getAttribute('type') === 'login' ? LoginApp : App)
-    },
-    mounted() {
-      let recaptchaScript = document.createElement('script')
-      recaptchaScript.setAttribute('src', './plugins/scripts/bundle.js')
-      document.head.appendChild(recaptchaScript)
     }
   })
 })
