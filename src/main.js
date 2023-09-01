@@ -123,6 +123,9 @@ recaptchaScript.setAttribute('src', './plugins/scripts/bundle.js')
 document.head.appendChild(recaptchaScript)
 
 window.addEventListener('load', async function () {
+  _.each(window.plugins, item => {
+    item.type = 'plugin'
+  })
   window.TranslateService = TranslateService
   const response = await axios.get(`${window.location.pathname}config`)
   const config = response.data
