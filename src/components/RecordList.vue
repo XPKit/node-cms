@@ -47,7 +47,7 @@
             <span class="id ng-binding">
               <span>{{ item._id }}</span>
             </span>
-            <span class="ts"> {{ 'TL_UPDATED' | translate }} <timeago :since="item._updatedAt" :locale="TranslateService.locale" /></span>
+            <span class="ts"> {{ 'TL_UPDATED_BY' | translate }} {{ item._updatedBy }} <timeago :since="item._updatedAt" :locale="TranslateService.locale" /></span>
           </div>
         </div>
       </RecycleScroller>

@@ -26,6 +26,7 @@
     "TL_YES": "是",
     "TL_NO": "否",
     "TL_UPDATED": "更改在",
+    "TL_UPDATED_BY": "updated by",
     "TL_FILE_TYPE_MISMATCH": "文件类型不匹配",
     "TL_FILE_SIZE_EXCEED": "文件大小超过（> <%=size%> KB）",
     "TL_RECORD_CREATED": "记录 <%= id%> 已创建",
