@@ -50,23 +50,11 @@ export default {
         return console.error('no input ref for ', this.schema)
       }
       // console.warn('elem = ', elem, this.schema.model, this.schema)
-      if (this.focused) {
-        // console.log('WILL SCROLL to ', this.schema.model)
-        if (isFunction(objGet(elem, '$el.scrollIntoView', false))) {
-          elem.$el.scrollIntoView()
-        } else {
-          elem.scrollIntoView()
-        }
-      }
       if (!isFunction(elem.focus)) {
-        return
+        return console.warn('Cannot focus element', elem)
       }
-      if (this.focused) {
-        elem.focus()
-      } else {
-        elem.blur()
-      }
-      console.warn(`focused changed ${this.focused}`, this.schema, elem)
+      return this.focused ? elem.focus() : elem.blur()
+      // console.warn(`focused changed ${this.focused}`, this.schema, elem)
     }
   },
   computed: {

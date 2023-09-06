@@ -2,7 +2,7 @@
   <div v-if="schema != null" class="vue-form-generator">
     <fieldset v-if="schema.fields">
       <!-- <div v-for="field in schema.fields" :key="field.model" class="field-wrapper" :class="{focused: field.focused === -1}"> -->
-      <div v-for="field in schema.fields" :key="field.model" class="field-wrapper" :class="{focused: true}">
+      <div v-for="field in schema.fields" :id="field.model + '-' + formId" :key="field.model" class="field-wrapper" :data-model="field.model" :class="{focused: field.focused === -1}">
         <component :is="getFieldType(field)" :key="field.model" :schema="field" :model="model" :form-options="formOptions" :disabled="disabled" :focused="field.focused" @input="onInput" />
       </div>
     </fieldset>
@@ -14,7 +14,16 @@ import FieldSelectorService from '@s/FieldSelectorService'
 import TranslateService from '@s/TranslateService'
 
 export default {
-  props: ['schema', 'model', 'row', 'formOptions', 'disabled'],
+  props: ['formId', 'schema', 'model', 'row', 'formOptions', 'disabled'],
+  data () {
+    return {
+    }
+  },
+  watch: {
+    schema () {
+      console.warn('schema changed !', this.schema)
+    }
+  },
   created () {
     _.each(this.schema.fields, (field) => {
       const fieldType = this.getFieldType(field)
@@ -23,12 +32,16 @@ export default {
       }
       field.focused = false
     })
-    FieldSelectorService.events.on('select', (field) => {
-      // console.warn('RECEIVED FIELD', field)
+    FieldSelectorService.events.on('select', this.onFieldSelected)
+  },
+  beforeDestroy () {
+    FieldSelectorService.events.off('select', this.onFieldSelected)
+  },
+  methods: {
+    onFieldSelected (field) {
       _.each(this.schema.fields, (f) => {
         f.focused = f.model === `${f.localised ? `${TranslateService.locale}.` : ''}${field.field}`
         if (f.focused) {
-          // NOTE: Used to trigger watch in AbstractField
           setTimeout(() => {
             f.focused = -1
             this.$forceUpdate()
@@ -36,9 +49,7 @@ export default {
         }
       })
       this.$forceUpdate()
-    })
-  },
-  methods: {
+    },
     getFieldType (field) {
       return _.get(field, 'overrideType', _.get(field, 'type', false))
     },
@@ -54,38 +65,20 @@ export default {
 
 <style lang="scss" scoped>
 .field-wrapper {
-  // border: 10px solid transparent;
-  background-color: transparent;
+  box-shadow: 0px 0px 10px 0px transparent;
   &.focused {
-    // animation: borderPulse 0.3s;
-    // background-color: rgba(0, 153, 255, 0.5);
-
-    // animation: backgroundPulse 0.3s;
-
-  }
-}
-@keyframes borderPulse {
-  0% {
-    border-color: transparent;
-  }
-  50% {
-    // TODO: hugo change color later
-    border-color: rgba(0, 153, 255, 0.5);
-  }
-  100% {
-    border-color: transparent;
+    animation: backgroundPulse 0.5s ;
   }
 }
 @keyframes backgroundPulse {
   0% {
-    background-color: transparent;
+     box-shadow: 0px 0px 10px 0px transparent;
   }
   50% {
-    // TODO: hugo change color later
-    background-color: rgba(0, 153, 255, 0.5);
+    box-shadow: 0px 0px 10px 5px #868686;
   }
   100% {
-    background-color: transparent;
+    box-shadow: 0px 0px 10px 0px transparent;
   }
 }
 </style>

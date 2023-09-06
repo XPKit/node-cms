@@ -14,6 +14,7 @@
       </v-tab>
     </v-tabs>
     <v-form
+      :id="randomId"
       ref="vfg"
       v-model="formValid"
       lazy-validation
@@ -21,6 +22,7 @@
       <custom-form
         v-if="isReady"
         :schema="schema"
+        :form-id="randomId"
         :form-options="formOptions"
         :model.sync="editingRecord"
         :row="rowOptions"
@@ -41,6 +43,7 @@ import axios from 'axios/dist/axios.min'
 import _ from 'lodash'
 
 import TranslateService from '@s/TranslateService'
+import FieldSelectorService from '@s/FieldSelectorService'
 import AbstractEditorView from './AbstractEditorView'
 import Notification from '@m/Notification'
 
@@ -70,6 +73,7 @@ export default {
   },
   data () {
     return {
+      randomId: Math.random(),
       formValid: false,
       fileInputTypes: ['file', 'img', 'image', 'imageView', 'attachmentView'],
       cachedMap: {},
@@ -78,6 +82,7 @@ export default {
       originalFieldList: [],
       schema: { fields: [] },
       isReady: false,
+      formElem: false,
       formOptions: {
         validateAfterLoad: true,
         validateAfterChanged: true
@@ -111,8 +116,30 @@ export default {
     this.cloneEditingRecord()
     this.isReady = true
     console.warn('EDITING RECORD - ', this.editingRecord)
+    FieldSelectorService.events.on('select', this.onFieldSelected)
+    this.$nextTick(() => {
+      this.formElem = document.getElementById(this.randomId)
+    })
+  },
+  beforeDestroy () {
+    FieldSelectorService.events.off('select', this.onFieldSelected)
   },
   methods: {
+    getFieldRealOffset (elem) {
+      // NOTE: Minus the navbar height
+      return _.get(elem, '$el.offsetTop', elem.offsetTop) - 50
+    },
+    onFieldSelected (field) {
+      this.schema.fields = _.map(this.schema.fields, (f) => {
+        const key = `${f.localised ? `${TranslateService.locale}.` : ''}${field.field}`
+        if (f.model === key) {
+          const elem = document.getElementById(`${key}-${this.randomId}`)
+          const top = this.getFieldRealOffset(elem)
+          this.formElem.scrollTo({top})
+        }
+        return f
+      })
+    },
     back () {
       this.$emit('back')
     },

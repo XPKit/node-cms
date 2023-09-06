@@ -3,6 +3,7 @@
     id="omnibar" v-shortkey="shortcuts"
     @shortkey="interactiveSearch"
   >
+    <div id="omnibar-backdrop" :class="{displayed: showOmnibar}" @click="showHideOmnibar(false)" />
     <v-card v-show="showOmnibar" elevation="24">
       <v-card-title>
         <v-text-field
@@ -11,7 +12,7 @@
           :prefix="searchMode === 'all' ? '' : `${searchMode}:`"
         />
       </v-card-title>
-      <template v-if="results.length > 0">
+      <template v-if="results && results.length > 0">
         <v-divider />
         <v-list dense>
           <v-list-item
@@ -21,7 +22,7 @@
           >
             <v-list-item-content>
               <v-list-item-title>
-                <v-icon color="light-grey" small>{{ getIcon(result) }}</v-icon>
+                <v-icon color="light-grey" small>{{ getIconForResult(result) }}</v-icon>
                 <span v-html="result.html" />
               </v-list-item-title>
             </v-list-item-content>
@@ -70,26 +71,32 @@ export default {
         'all': ['shift', 'a'],
         'resources': ['shift', 'r'],
         'fields': ['shift', 'f']
+      },
+      searchOptions: {
+        keys: ['displayname'],
+        scoreFn: a => {
+          if (!a[0]) {
+            return -10000000
+          }
+          return a[0].score + (this.isResultInCurrentResource(a) ? 10000000 : 0)
+        }
       }
     }
   },
   watch: {
     search () {
       this.highlightedItem = 0
-      let results = []
       this.results = []
-      if (this.searchMode === 'all') {
-        results = fuzzysort.go(this.search, _.concat(this.resourcesList, this.fieldsList), {key: 'displayname'})
-      } else if (this.searchMode === 'resources') {
-        results = fuzzysort.go(this.search, this.resourcesList, {key: 'title'})
-      } else if (this.searchMode === 'fields') {
-        results = fuzzysort.go(this.search, this.fieldsList, {key: 'title'})
-      }
-      this.results = _.map(results, (result) => {
-        result.html = fuzzysort.highlight(result)
-        return result
-      })
-      // console.warn('results are = ', this.results)
+      const results = fuzzysort.go(this.search, this.getDataForSearch(), this.searchOptions)
+      this.results = _.compact(_.map(results, (result) => {
+        if (_.isNull(_.get(result, '[0]', null))) {
+          return false
+        }
+        result.obj.html = fuzzysort.highlight(result[0])
+        result.obj.score = result.score
+        return result.obj
+      }))
+      // console.warn('RESULTS =', _.map(this.results, (result) => `${result.displayname} - ${result.score}`))
     }
   },
   mounted () {
@@ -106,17 +113,22 @@ export default {
         return field
       })
     }))
-    // console.warn('omnibar mounted ', this.groupedList, this.resourcesList, this.fieldsList)
   },
   methods: {
-    getIcon (result) {
+    isResultInCurrentResource (result) {
+      return _.startsWith(_.get(result[0], 'target', ''), _.get(this.selectedItem, 'displayname', ''))
+    },
+    getDataForSearch () {
       if (this.searchMode === 'all') {
-        return result.obj.type === 'resource' ? 'mdi-package' : 'mdi-cursor-text'
+        return _.concat(this.resourcesList, this.fieldsList)
       }
-      if (this.searchMode === 'resource') {
-        return 'mdi-package'
-      }
-      return 'mdi-cursor-text'
+      return this.searchMode === 'resources' ? this.resourcesList : this.fieldsList
+    },
+    getIconForResult (result) {
+      return this.getIcon(this.searchMode === 'all' ? result.type : this.searchMode)
+    },
+    getIcon (type) {
+      return `mdi-${type === 'resource' ? 'package' : 'cursor-text'}`
     },
     isCharHighlighted (result, i) {
       return _.includes(_.values(result._indexes), i)
@@ -132,7 +144,7 @@ export default {
       }
     },
     selectResult (i = -1) {
-      const result = _.get(this.results, `[${i === -1 ? this.highlightedItem : i}].obj`, false)
+      const result = _.get(this.results, `[${i === -1 ? this.highlightedItem : i}]`, false)
       const resultResource = _.includes(['resource', 'plugin'], result.type) ? result : result.resource
       if (resultResource !== this.selectedItem) {
         console.info(`Switching to resource ${resultResource.title}`)
@@ -174,14 +186,19 @@ export default {
 }
 </script>
 <style lang="scss">
-#omnibar {
+#omnibar, #omnibar-backdrop {
   position: fixed;
-  top: 20vh;
-  left: 50vw;
-  transform: translateX(-50%);
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  touch-action: none;
+}
+#omnibar {
   .v-list-item {
     &.highlighted {
-      // background-color: lightblue;
+      background-color: lightblue;
     }
   }
   .v-text-field__prefix {
@@ -191,6 +208,24 @@ export default {
   span {
     b {
       color: black;
+    }
+  }
+  .v-card {
+    top: 25vh;
+    left: 50vw;
+    max-width: 30vw;
+    transform: translateX(-50%);
+     pointer-events: auto;
+      touch-action: auto;
+  }
+  #omnibar-backdrop {
+    background-color: rgba(0,0,0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s;
+    &.displayed {
+      opacity: 1;
+      pointer-events: auto;
+      touch-action: auto;
     }
   }
 }

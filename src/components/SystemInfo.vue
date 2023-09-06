@@ -109,7 +109,7 @@ export default {
       return _.get(LoginService, 'user.theme', 'light') === 'dark'
     },
     async onChangeTheme (value) {
-      // await LoginService.changeTheme(value)
+      await LoginService.changeTheme(value)
       this.$vuetify.theme.dark = value
     },
     async logout () {

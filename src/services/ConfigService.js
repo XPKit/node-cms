@@ -9,6 +9,7 @@ class ConfigService {
     try {
       const { data } = await axios.get(`${window.location.pathname}config`)
       this.config = data
+      // console.warn('Config:', data)
     } catch (error) {
       console.error('Error during init of ConfigService:', error)
     }
