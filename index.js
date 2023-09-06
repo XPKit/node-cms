@@ -62,6 +62,8 @@ class CMS {
     this.api = this.api.bind(this)
     this.use = this.use.bind(this)
     this.express = this.express.bind(this)
+    // NOTE: Min auth key length
+    this.requiredKeyLength = 16
     const configPath = path.resolve((options != null ? options.config : undefined) || './cms.json')
     if (options) {
       delete options.config
@@ -122,9 +124,11 @@ class CMS {
       }
     }))
     if (!options.disableAuthentication || !options.disableJwtLogin) {
-      const secret = _.get(this.options, 'session.secret')
+      const secret = _.get(this.options, 'auth.secret')
       if (_.isEmpty(secret)) {
-        throw new Error('config.session.secret is missing')
+        throw new Error('config.auth.secret is missing')
+      } else if (_.get(secret, 'length', 0) <= this.requiredKeyLength) {
+        throw new Error(`config.auth.secret isn't long enough, adjust the value to have minimum ${this.requiredKeyLength} characters`)
       }
       this._app.use(session(_.extend({cookie: {}}, this.options.session)))
     }
