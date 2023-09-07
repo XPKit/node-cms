@@ -25,7 +25,6 @@
         :form-id="randomId"
         :form-options="formOptions"
         :model.sync="editingRecord"
-        :row="rowOptions"
         @error="onError"
         @input="onModelUpdated"
       />
@@ -86,9 +85,7 @@ export default {
       formOptions: {
         validateAfterLoad: true,
         validateAfterChanged: true
-      },
-      // TODO: hugo - LATER -  put the formatting in the resource's definition to allow custom layout
-      rowOptions: { justify: 'start', align: 'start', noGutters: false }
+      }
     }
   },
   watch: {

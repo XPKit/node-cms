@@ -4,7 +4,7 @@
     <div class="border-wrapper">
       <tiptap-vuetify
         ref="input"
-        v-model="localObj[key]"
+        v-model="value"
         :card-props="{ flat: true }"
         :extensions="extensions"
         :toolbar-attributes="{ color: getColorForToolbar(), dense: true, outlined: true, elevation: 1 }"
@@ -28,7 +28,6 @@ export default {
   mixins: [AbstractField],
   data () {
     return {
-      localObj: this.model,
       loaded: false,
       key: null,
       extensions: [
@@ -86,12 +85,6 @@ export default {
       if (!_.get(this.schema, 'model', false)) {
         return false
       }
-      const list = this.schema.model.split('.')
-      this.key = list.pop()
-      this.localObj = _.reduce(list, (memo, item) => {
-        return memo[item]
-      }, this.model)
-      this.localObj[this.key] = this.localObj[this.key] || ''
       this.loaded = true
     }
   }

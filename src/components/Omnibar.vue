@@ -60,7 +60,7 @@ export default {
       resourcesList: [],
       results: [],
       highlightedItem: 0,
-      searchModes: ['all', 'resources', 'fields'],
+      searchModes: ['all', 'resource', 'field'],
       searchMode: 'all',
       shortcuts: {
         'esc': ['esc'],
@@ -69,8 +69,8 @@ export default {
         'arrow-down': ['arrowdown'],
         'enter': ['enter'],
         'all': ['shift', 'a'],
-        'resources': ['shift', 'r'],
-        'fields': ['shift', 'f']
+        'resource': ['shift', 'r'],
+        'field': ['shift', 'f']
       },
       searchOptions: {
         keys: ['displayname'],
@@ -122,7 +122,7 @@ export default {
       if (this.searchMode === 'all') {
         return _.concat(this.resourcesList, this.fieldsList)
       }
-      return this.searchMode === 'resources' ? this.resourcesList : this.fieldsList
+      return this.searchMode === 'resource' ? this.resourcesList : this.fieldsList
     },
     getIconForResult (result) {
       return this.getIcon(this.searchMode === 'all' ? result.type : this.searchMode)
@@ -145,6 +145,9 @@ export default {
     },
     selectResult (i = -1) {
       const result = _.get(this.results, `[${i === -1 ? this.highlightedItem : i}]`, false)
+      if (!result) {
+        return
+      }
       const resultResource = _.includes(['resource', 'plugin'], result.type) ? result : result.resource
       if (resultResource !== this.selectedItem) {
         console.info(`Switching to resource ${resultResource.title}`)

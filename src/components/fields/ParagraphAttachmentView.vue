@@ -84,8 +84,8 @@ export default {
       })
     },
     onChangeFile (files) {
-      this.$refs.fileInput.validate()
-      if (!this.$refs.fileInput.valid) {
+      this.$refs.input.validate()
+      if (!this.$refs.input.valid) {
         return
       }
       if (!_.isArray(files)) {

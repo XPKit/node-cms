@@ -14,7 +14,7 @@ import FieldSelectorService from '@s/FieldSelectorService'
 import TranslateService from '@s/TranslateService'
 
 export default {
-  props: ['formId', 'schema', 'model', 'row', 'formOptions', 'disabled'],
+  props: ['formId', 'schema', 'model', 'formOptions', 'disabled'],
   data () {
     return {
     }

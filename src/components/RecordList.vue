@@ -13,6 +13,7 @@
         <template v-if="maxCount <= 0 || listCount < maxCount">
           <div class="new" @click="onClickNew">+</div>
         </template>
+        <!-- <div class="number-of-records">{{ list.length }}</div> -->
       </div>
     </div>
 
@@ -47,7 +48,7 @@
             <span class="id ng-binding">
               <span>{{ item._id }}</span>
             </span>
-            <span class="ts"> {{ 'TL_UPDATED_BY' | translate }} {{ item._updatedBy }} <timeago :since="item._updatedAt" :locale="TranslateService.locale" /></span>
+            <span class="ts"><template v-if="item._updatedBy"> {{ 'TL_UPDATED_BY' | translate }} {{ item._updatedBy }}</template><template v-else> {{ 'TL_UPDATED' | translate }}</template> <timeago :since="item._updatedAt" :locale="TranslateService.locale" /></span>
           </div>
         </div>
       </RecycleScroller>
@@ -311,5 +312,8 @@ export default {
     .search-bar {
       border-radius: 0px;
     }
+  }
+  .number-of-records {
+    // TODO: hugo - css
   }
 </style>
