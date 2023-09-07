@@ -15,15 +15,6 @@ import TranslateService from '@s/TranslateService'
 
 export default {
   props: ['formId', 'schema', 'model', 'formOptions', 'disabled'],
-  data () {
-    return {
-    }
-  },
-  watch: {
-    schema () {
-      console.warn('schema changed !', this.schema)
-    }
-  },
   created () {
     _.each(this.schema.fields, (field) => {
       const fieldType = this.getFieldType(field)

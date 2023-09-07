@@ -86,11 +86,15 @@ export default {
       }
       return this.selectOptions.label
     },
-    updateSelected (value /* , id */) {
+    updateSelected (value) {
       this.objectValue = value
       const key = _.get(this.schema, 'selectOptions.key')
       if (key) {
-        this.value = _.get(this.objectValue, key)
+        if (_.isString(this.objectValue)) {
+          this.value = this.objectValue
+        } else {
+          this.value = _.get(this.objectValue, key)
+        }
       } else {
         this.value = this.objectValue
       }

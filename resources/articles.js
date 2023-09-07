@@ -32,9 +32,9 @@ exports = (module.exports = {
       localised: false,
       options: {
         types: [
+          'wysiwyg',
           'text',
-          'file',
-          'image',
+          'string',
           {
             input: 'select',
             source: 'comments',
@@ -108,5 +108,21 @@ exports = (module.exports = {
     'enUS',
     'zhCN'
   ],
+  layout: {
+    // TODO: hugo - add options for custom layout / lines
+    lines: [
+      {
+        slots: 3,
+        fields: [
+          {
+            field: 'string', width: 1
+          },
+          {
+            field: 'rate', width: 2
+          }
+        ]
+      }
+    ]
+  },
   type: 'normal'
 })
