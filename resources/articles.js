@@ -109,16 +109,50 @@ exports = (module.exports = {
     'zhCN'
   ],
   layout: {
-    // TODO: hugo - add options for custom layout / lines
     lines: [
       {
         slots: 3,
         fields: [
           {
-            field: 'string', width: 1
+            model: 'string', width: 1
           },
           {
-            field: 'rate', width: 2
+            model: 'rate', width: 2
+          }
+        ]
+      },
+      {
+        slots: 2,
+        fields: [
+          {
+            model: 'paragraph'
+          },
+          {
+            model: 'localizedParagraph'
+          }
+        ]
+      },
+      {
+        slots: 3,
+        fields: [
+          {
+            model: 'wysiwyg'
+          }
+        ]
+      },
+      {
+        fields: [
+          {
+            model: 'relatedArticles'
+          },
+          {
+            model: 'comment'
+          },
+          {
+            model: 'comments'
+          },
+          {
+            model: 'localizedComments'
           }
         ]
       }

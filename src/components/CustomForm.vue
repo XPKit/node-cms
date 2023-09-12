@@ -1,8 +1,14 @@
 <template>
   <div v-if="schema != null" class="vue-form-generator">
     <fieldset v-if="schema.fields">
-      <!-- <div v-for="field in schema.fields" :key="field.model" class="field-wrapper" :class="{focused: field.focused === -1}"> -->
-      <div v-for="field in schema.fields" :id="field.model + '-' + formId" :key="field.model" class="field-wrapper" :data-model="field.model" :class="{focused: field.focused === -1}">
+      <template v-if="schema.layout && schema.layout.lines">
+        <div v-for="(line, i) in schema.layout.lines" :id="formId + '-' + i" :key="i" class="line-wrapper" :class="getLineClasses(line)">
+          <div v-for="field in line.fields" :id="field.model + '-' + formId" :key="field.model" class="field-wrapper" :data-model="field.model" :class="getFieldClasses(field)">
+            <component :is="getFieldType(field.schema)" v-if="field.schema" :key="field.model" :schema="field.schema" :model="model" :form-options="formOptions" :disabled="disabled" :focused="field.schema.focused" @input="onInput" />
+          </div>
+        </div>
+      </template>
+      <div v-for="field in schema.fields" v-else :id="field.model + '-' + formId" :key="field.model" class="field-wrapper" :data-model="field.model" :class="{focused: field.focused === -1}">
         <component :is="getFieldType(field)" :key="field.model" :schema="field" :model="model" :form-options="formOptions" :disabled="disabled" :focused="field.focused" @input="onInput" />
       </div>
     </fieldset>
@@ -29,6 +35,16 @@ export default {
     FieldSelectorService.events.off('select', this.onFieldSelected)
   },
   methods: {
+    getFieldClasses (field) {
+      const classes = [`width-${_.get(field, 'width', '1')}`]
+      if (field.schema && field.schema.focused === -1) {
+        classes.push('focused')
+      }
+      return classes
+    },
+    getLineClasses (line) {
+      return [`slots-${_.get(line, 'slots', '1')}`, `nb-fields-${_.get(line, 'fields.length', 1)}`]
+    },
     onFieldSelected (field) {
       _.each(this.schema.fields, (f) => {
         f.focused = f.model === `${f.localised ? `${TranslateService.locale}.` : ''}${field.field}`
@@ -59,6 +75,32 @@ export default {
   box-shadow: 0px 0px 10px 0px transparent;
   &.focused {
     animation: backgroundPulse 0.5s ;
+  }
+}
+$maxColumns: 12;
+$gapBetweenFields: 16px;
+
+.line-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  flex-grow: 1;
+  align-content: flex-start;
+  align-items: flex-start;
+  gap: $gapBetweenFields;
+  @for $nbSlots from 1 through $maxColumns {
+    @for $nbFields from 1 through $maxColumns {
+      &.nb-fields-#{$nbFields} {
+        &.slots-#{$nbSlots} {
+          >.field-wrapper {
+              @for $i from 1 through $maxColumns {
+                &.width-#{$i} {
+                  width: calc(100% / #{$nbSlots} * #{$i} - (#{$gapBetweenFields} / #{$nbFields} * (#{$nbFields} - 1)));
+                }
+              }
+          }
+        }
+      }
+    }
   }
 }
 @keyframes backgroundPulse {
