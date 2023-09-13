@@ -3,16 +3,19 @@
     <omnibar :select-resource-callback="selectResourceCallback" :grouped-list="groupedList" :selected-item="selectedItem" />
     <div class="resource-list">
       <div v-for="(resourceGroup, index) in groupedList" :key="`resource-group-${index}`" class="resource">
-        <v-menu open-on-hover offset-y>
+        <v-menu auto open-on-hover offset-y :close-on-content-click="false">
           <template #activator="{ on, attrs }">
-            <v-btn :outlined="groupSelected(resourceGroup)" text small v-bind="attrs" :class="{selected: groupSelected(resourceGroup)}" v-on="on">
-              {{ resourceGroup.name | translate }}
-            </v-btn>
+            <div class="menu-btn-wrapper" v-bind="attrs" v-on="on">
+              <v-btn :outlined="groupSelected(resourceGroup)" text rounded small :class="{selected: groupSelected(resourceGroup)}">
+                {{ resourceGroup.name | translate }}
+              </v-btn>
+            </div>
           </template>
-          <v-list dense nav>
+          <v-list rounded>
             <v-list-item
               v-for="resource in resourceGroup.list"
-              :key="resource.name" dense
+              :key="resource.name"
+              dense
               :class="{selected: selectedItem === resource}"
               @click="selectResourceCallback(resource)"
             >
@@ -149,6 +152,8 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+@import '@a/scss/variables.scss';
+
 .resources-content {
   flex: 1;
   display: flex;
@@ -159,23 +164,74 @@ export default {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    height: 100%;
+    height: $navbar-height;
     &:after {
       display: block;
       content: '';
     }
   }
 }
-.v-btn, .v-list-item {
-  &.selected {
-    font-weight: bold !important;
-    font-size: 14px !important;
+
+.resource, .menu-btn-wrapper {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.v-menu__content, .v-list {
+  border-radius: 0px 0px 8px 8px !important;
+}
+
+.v-menu__content {
+  background-color: transparent;
+  max-height: 40vh !important;
+}
+
+.v-list {
+  @include blurred-background;
+  transform: translate3d(0,0,0 );
+  display: flex;
+  padding-left: vw(16px) ;
+  flex-direction: column;
+  align-items: flex-start;
+  .v-list-item {
+    display: inline-block;
+    .v-list-item__title {
+      line-height: 26px;
+    }
   }
 }
-.v-list-item.selected {
-  background-color: rgba($color: #000000, $alpha: 0.25);
+
+.v-btn, .v-list-item {
+  color: white;
+  min-height: 26px;
+  @include cta-text;
+  font-weight: normal;
+  font-style: normal;
+  background-color: $navbar-resource-group-background;
+  &.selected {
     font-weight: bold !important;
-    font-size: 14px !important;
+    background-color: $navbar-resource-group-background-selected;
+  }
+}
+
+.v-btn {
+  color: $navbar-resource-group-title-color;
+}
+
+.v-list-item {
+  .v-list-item__title {
+    @include cta-text;
+    font-style: normal;
+    color: $navbar-resource-title-color;
+  }
+  &.selected {
+    font-weight: bold !important;
+    font-size: vw(14px) !important;
+    .v-list-item__title {
+      color: $navbar-resource-title-color-selected;
+    }
+  }
 }
 
 </style>

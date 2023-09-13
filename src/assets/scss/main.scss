@@ -1,3 +1,4 @@
+@import "./variables.scss";
 @import "./components/LocaleList";
 @import "./components/RecordList";
 @import "./components/RecordEditor";
@@ -39,6 +40,7 @@ ul, li {
 }
 
 body {
+  // TODO: hugo - change to use vars instead
   .theme--light.v-application {
     background: white;
     color: rgba(0, 0, 0, 0.87);

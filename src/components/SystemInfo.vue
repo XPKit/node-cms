@@ -1,6 +1,6 @@
 <template>
   <div class="system-info">
-    <v-menu content-class="system-info-menu" offset-y :close-on-content-click="false">
+    <v-menu content-class="system-info-menu" offset-y :close-on-content-click="false" nudge-bottom="5px">
       <template #activator="{ on, attrs }">
         <v-btn icon v-bind="attrs" v-on="on">
           <v-icon>mdi-cog-outline</v-icon>
@@ -15,7 +15,6 @@
         </div>
         <div class="node-cms-title flex">
           {{ 'TL_SYSTEM' | translate }}
-          <v-btn v-if="showLogoutButton" color="error" small @click="logout()"><v-icon small color="black">mdi-link-variant-off</v-icon>{{ 'TL_LOGOUT' | translate }}</v-btn>
         </div>
         <div class="stats cpu">
           <div class="node-cms-title"><small><b>CPU Usage</b></small></div>
@@ -44,6 +43,9 @@
         </div>
       </div>
     </v-menu>
+    <v-btn v-if="showLogoutButton" icon @click="logout()">
+      <v-icon>mdi-logout</v-icon>
+    </v-btn>
   </div>
 </template>
 
@@ -149,6 +151,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+@import '@a/scss/variables.scss';
 .system-info {
   position: sticky;
   padding: 4px;
@@ -172,20 +175,20 @@ export default {
       width: 50%;
     }
   }
+  .v-icon {
+    color: $navbar-system-info-icon-color;
+  }
 }
 .system-info-wrapper {
   min-width: 400px;
-  padding: 16px;
+  @include blurred-background;
   button {
     user-select: none;
     display: inline-block;
     line-height: 20px;
     text-align: center;
-    background: #f0f0f0;
     font-size: 12px;
-    color: black;
     box-sizing: border-box;
-    border: 1px solid #c7c7c7;
     cursor: pointer;
     i {
       margin-right: 5px;
@@ -211,7 +214,10 @@ export default {
   }
 }
 .system-info-menu {
-  background-color: inherit;
+  background-color: transparent;
+  right: 0px;
+  left: auto !important;
+  width: auto;
 }
 .v-input--selection-controls {
   margin-top: 0;

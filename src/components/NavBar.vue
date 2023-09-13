@@ -1,6 +1,6 @@
 <template>
   <div class="nav-bar-wrapper">
-    <v-toolbar min-width="100%" width="100%" class="nav-bar" height="50" :class="localeClass">
+    <v-toolbar min-width="100%" width="100%" class="nav-bar" height="58" :class="localeClass">
       <v-toolbar-title>{{ getPageTitle() }}</v-toolbar-title>
       <v-spacer />
       <resource-list :select-resource-callback="selectResourceCallback" :resource-list="resourceList" :plugins="plugins" :selected-item="selectedItem" />
@@ -72,13 +72,24 @@ export default {
 <style lang="scss">
 .nav-bar-wrapper {
   z-index: 2001;
+  .v-toolbar.v-sheet {
+    &.theme--light {
+      // TODO: hugo - change to vars
+      background-color: black;
+      color: white;
+    }
+  }
 }
+
 .nav-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: relative;
-  background-color: green;
+  .v-toolbar__title {
+    max-width: 200px;
+    width: 200px;
+  }
   .v-toolbar__content {
     width: 100%;
   }
