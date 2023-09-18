@@ -217,7 +217,7 @@ export default {
       return _.get(this.localMultiselectItems, 'length', 0) === _.get(this.list, 'length', 0)
     },
     isItemSelected (item) {
-      return item === this.selectedItem || _.includes(_.map(this.multiselectItems, '_id'), item._id)
+      return item === this.selectedItem || _.includes(_.map(this.localMultiselectItems, '_id'), item._id)
     },
     getTypePrefix (type) {
       let typePrefix = 'TL_ERROR_ON_RECORD_'
@@ -246,7 +246,7 @@ export default {
     },
     async deleteSelectedRecords () {
       if (!window.confirm(
-        TranslateService.get('TL_ARE_YOU_SURE_TO_DELETE_RECORDS', null, {num: _.size(this.multiselectItems)}),
+        TranslateService.get('TL_ARE_YOU_SURE_TO_DELETE_RECORDS', null, {num: _.size(this.localMultiselectItems)}),
         TranslateService.get('TL_YES'),
         TranslateService.get('TL_NO')
       )) {
@@ -254,7 +254,7 @@ export default {
       }
       this.$loading.start('onDeleteMultiselectedItems')
       try {
-        await pAll(_.map(this.multiselectItems, item => {
+        await pAll(_.map(this.localMultiselectItems, item => {
           return async () => {
             try {
               await axios.delete(`../api/${this.resource.title}/${item._id}`)
@@ -328,15 +328,15 @@ export default {
     },
     select (item, clickedCheckbox = false) {
       if (!clickedCheckbox) {
-        if (_.includes(this.multiselectItems, item)) {
+        if (this.isItemSelected(item)) {
           this.localMultiselectItems = []
         } else {
           this.localMultiselectItems = [item]
         }
         this.$emit('selectItem', item)
       } else {
-        if (_.includes(this.multiselectItems, item)) {
-          this.localMultiselectItems = _.difference(this.localMultiselectItems, [item])
+        if (this.isItemSelected(item)) {
+          this.localMultiselectItems = _.filter(this.localMultiselectItems, (i) => i._id !== item._id)
         } else {
           this.localMultiselectItems.push(item)
         }

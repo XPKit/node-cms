@@ -88,17 +88,6 @@ export default {
         console.error(error)
       }
     },
-    // getPageTitle () {
-    //   const nameParts = []
-    //   if (this.toolbarTitle) {
-    //     nameParts.push(this.toolbarTitle)
-    //   }
-    //   const selectedItemName = this.getSelectedItemName()
-    //   if (selectedItemName) {
-    //     nameParts.push(selectedItemName)
-    //   }
-    //   return _.join(nameParts, ' - ')
-    // },
     getSelectedItemName () {
       if (_.get(this.selectedItem, 'displayname', false)) {
         return TranslateService.get(this.selectedItem.displayname)

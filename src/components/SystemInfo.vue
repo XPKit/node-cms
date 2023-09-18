@@ -9,7 +9,7 @@
       <div class="links-wrapper">
         <div v-for="(group, i) in settingsData.linksGroups" :key="i" class="group">
           <div class="node-cms-title">{{ group.value.title }}</div>
-          <a v-for="(link, y) in group.value.links" :key="y" class="link" :href="link.value.url">{{ link.value.name }}</a>
+          <a v-for="(link, y) in group.value.links" :key="y" class="link" :href="link.value.url" :class="{active: isActiveLink(link.value.url)}">{{ link.value.name }}</a>
           <v-divider v-if="i < settingsData.linksGroups.length - 1" />
         </div>
       </div>
@@ -124,6 +124,11 @@ export default {
     clearTimeout(this.timer)
   },
   methods: {
+    isActiveLink (url) {
+      const urlA = new URL(window.location)
+      const urlB = new URL(url)
+      return urlA.host === urlB.host
+    },
     getTheme () {
       return _.get(LoginService, 'user.theme', 'light') === 'dark'
     },
@@ -260,7 +265,7 @@ export default {
     @include subtext;
   }
 }
-.system-info-menu {
+.system-info-menu, .links-menu {
   background-color: transparent;
   right: 0px;
   left: auto !important;
@@ -301,6 +306,9 @@ export default {
     padding-left: 16px;
     &:hover {
       background-color: $imag-blue;
+    }
+    &.active {
+      font-weight: bold;
     }
   }
   .v-divider {
