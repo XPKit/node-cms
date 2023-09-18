@@ -47,8 +47,7 @@
         >
           <div class="checkbox" @click.exact="select(item, true)" @click.shift="selectTo(item)">
             <template v-if="item._local">
-              <v-icon :class="{displayed: isItemSelected(item)}">mdi-checkbox-outline</v-icon>
-              <v-icon :class="{displayed: !isItemSelected(item)}">mdi-checkbox-blank-outline</v-icon>
+              <v-icon :class="{displayed: isItemSelected(item)}">mdi-check-bold</v-icon>
             </template>
           </div>
           <div class="item-info" @click.exact="select(item)">
@@ -424,7 +423,7 @@ export default {
     text-transform: none;
     letter-spacing: normal;
     .v-icon, .btn__content {
-      color: $sidebar-records-list-checkbox-color;
+      color: $sidebar-records-list-delete-icon-color;
     }
   }
 }

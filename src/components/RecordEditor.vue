@@ -49,10 +49,6 @@ import Notification from '@m/Notification'
 export default {
   mixins: [AbstractEditorView, Notification],
   props: {
-    resourceList: {
-      type: [Array, Boolean],
-      default: () => []
-    },
     resource: {
       type: Object,
       default: () => {}

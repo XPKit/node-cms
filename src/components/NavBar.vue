@@ -11,7 +11,7 @@
         <img v-else :src="getDefaultLogo()" class="logo">
       </v-toolbar-title>
       <v-spacer />
-      <resource-list :select-resource-callback="selectResourceCallback" :grouped-list="groupedList" :resource-list="resourceList" :plugins="plugins" :selected-item="selectedItem" />
+      <resource-list :select-resource-callback="selectResourceCallback" :grouped-list="groupedList" :selected-item="selectedItem" />
       <v-spacer />
       <system-info v-if="config" :config="config" :settings-data="settingsData" />
     </v-toolbar>
@@ -48,14 +48,6 @@ export default {
     selectResourceCallback: {
       type: Function,
       default: () => {}
-    },
-    resourceList: {
-      type: Array,
-      default: () => []
-    },
-    plugins: {
-      type: Array,
-      default: () => []
     },
     selectedItem: {
       type: Object,

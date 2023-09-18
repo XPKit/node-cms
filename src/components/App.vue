@@ -18,7 +18,7 @@
     <div v-if="user" class="cms-layout">
       <div class="cms-inner-layout" :class="getThemeClass()">
         <nav-bar
-          v-if="resourceList.length > 0" :config="config" :toolbar-title="toolbarTitle" :locale-class="{locale:localeList && localeList.length > 1}" :select-resource-group-callback="selectResourceGroup" :select-resource-callback="selectResource" :resource-list="resourceList" :grouped-list="groupedList" :plugins="pluginList" :selected-resource-group="selectedResourceGroup"
+          v-if="resourceList.length > 0" :config="config" :toolbar-title="toolbarTitle" :locale-class="{locale:localeList && localeList.length > 1}" :select-resource-group-callback="selectResourceGroup" :select-resource-callback="selectResource" :grouped-list="groupedList" :selected-resource-group="selectedResourceGroup"
           :selected-item="selectedResource || selectedPlugin"
         />
         <div class="resources">
@@ -40,13 +40,13 @@
               @updateRecordList="updateRecordList"
             />
             <record-editor
-              v-if="selectedRecord" :key="selectedRecord._id" :resource-list="resourceList" :record.sync="selectedRecord" :resource="selectedResource" :locale.sync="locale"
+              v-if="selectedRecord" :key="selectedRecord._id" :record.sync="selectedRecord" :resource="selectedResource" :locale.sync="locale"
               :user-locale="TranslateService.locale" @updateRecordList="updateRecordList"
             />
           </template>
           <record-table
-            v-if="selectedResource && selectedResource.view == 'table'" :record-list="recordList" :resource-list="resourceList" :resource="selectedResource" :record.sync="selectedRecord" :locale.sync="locale"
-            :user-locale="TranslateService.locale"
+            v-if="selectedResource && selectedResource.view == 'table'"
+            :record-list="recordList" :resource="selectedResource" :record.sync="selectedRecord" :locale.sync="locale" :user-locale="TranslateService.locale"
             @unsetRecord="unsetSelectedRecord" @updateRecordList="updateRecordList"
           />
           <plugin-page v-if="selectedPlugin" :plugin="selectedPlugin" />
@@ -124,7 +124,7 @@ export default {
       const others = { name: 'TL_OTHERS' }
       const plugins = { name: 'TL_PLUGINS' }
       let groups = [others, plugins]
-      let list = _.union(this.resourceList, _.map(this.plugins, (item) => _.extend(item, {type: 'plugin'})))
+      let list = _.union(this.resourceList, _.map(this.pluginList, (item) => _.extend(item, {type: 'plugin'})))
       _.each(list, (item) => {
         if (_.isEmpty(item.group)) {
           return

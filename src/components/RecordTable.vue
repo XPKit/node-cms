@@ -41,7 +41,6 @@
       v-if="record"
       :key="record._id"
       class="has-back-button"
-      :resource-list="resourceList"
       :record.sync="localRecord"
       :resource="resource"
       :locale.sync="localLocale"
@@ -74,10 +73,6 @@ export default {
   },
   mixins: [AbstractEditorView, Notification],
   props: {
-    resourceList: {
-      type: Array,
-      default: () => []
-    },
     recordList: {
       type: Array,
       default: () => []

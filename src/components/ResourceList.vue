@@ -44,14 +44,6 @@ export default {
       type: Array,
       default: () => []
     },
-    resourceList: {
-      type: Array,
-      default: () => []
-    },
-    plugins: {
-      type: Array,
-      default: () => []
-    },
     selectedItem: {
       type: Object,
       default: () => {}
