@@ -40,25 +40,27 @@
       <img v-if="isImage()" :src="getImageSrc()">
       <v-btn v-else small @click="viewFile()">{{ 'TL_VIEW' | translate }}</v-btn>
     </div>
-    <template v-if="isForMultipleImages()">
-      <div class="help-block">
+    <template v-if="model._local && !disabled">
+      <template v-if="isForMultipleImages()">
+        <div class="help-block">
+          <v-icon small>mdi-information</v-icon>
+          <span v-if="getMaxCount() !== -1 ">{{ 'TL_MAX_NUMBER_OF_FILES' | translate(null, { num: getMaxCount() }) }}</span>
+          <span v-else>{{ 'TL_UNLIMITED_NUMBER_OF_FILES' | translate }}</span>
+        </div>
+      </template>
+      <div v-if="(schema.width && schema.height)" class="help-block">
         <v-icon small>mdi-information</v-icon>
-        <span v-if="getMaxCount() !== -1 ">{{ 'TL_MAX_NUMBER_OF_FILES' | translate(null, { num: getMaxCount() }) }}</span>
-        <span v-else>{{ 'TL_UNLIMITED_NUMBER_OF_FILES' | translate }}</span>
+        <span>{{ 'TL_THIS_FIELD_REQUIRES_THE_FOLLOWING_SIZE'|translate }}:{{ schema.width }}x{{ schema.height }}</span>
+      </div>
+      <div v-if="(schema.limit)" class="help-block">
+        <v-icon small>mdi-information</v-icon>
+        <span>{{ 'TL_THIS_FIELD_REQUIRES_A_FILE_SIZE'|translate }}: {{ getFileSizeLimit(schema.limit) }}</span>
+      </div>
+      <div v-if="(schema.accept)" class="help-block">
+        <v-icon small>mdi-information</v-icon>
+        <span>{{ 'TL_THIS_FIELD_REQUIRES'|translate }}: {{ schema.accept }}</span>
       </div>
     </template>
-    <div v-if="(schema.width && schema.height)" class="help-block">
-      <v-icon small>mdi-information</v-icon>
-      <span>{{ 'TL_THIS_FIELD_REQUIRES_THE_FOLLOWING_SIZE'|translate }}:{{ schema.width }}x{{ schema.height }}</span>
-    </div>
-    <div v-if="(schema.limit)" class="help-block">
-      <v-icon small>mdi-information</v-icon>
-      <span>{{ 'TL_THIS_FIELD_REQUIRES_A_FILE_SIZE'|translate }}: {{ getFileSizeLimit(schema.limit) }}</span>
-    </div>
-    <div v-if="(schema.accept)" class="help-block">
-      <v-icon small>mdi-information</v-icon>
-      <span>{{ 'TL_THIS_FIELD_REQUIRES'|translate }}: {{ schema.accept }}</span>
-    </div>
   </div>
 </template>
 

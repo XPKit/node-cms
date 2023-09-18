@@ -25,7 +25,7 @@
               @input="onModelUpdated"
             />
           </div>
-          <v-btn class="add-new-item" fab small @click="onClickRemoveItem(item)"><v-icon>mdi-minus</v-icon></v-btn>
+          <v-btn class="add-new-item" :disabled="disabled || schema.disabled" fab small @click="onClickRemoveItem(item)"><v-icon>mdi-minus</v-icon></v-btn>
         </div>
       </v-card>
       <div slot="header">
@@ -34,9 +34,10 @@
           :label="schema.label" :value="selectedType"
           :menu-props="{ bottom: true, offsetY: true }" :items="types" item-text="label" item-value="label"
           hide-details outlined dense persistent-placeholder
+          :disabled="disabled || schema.disabled"
           @change="onChangeType"
         />
-        <v-btn class="add-new-item" fab small @click="onClickAddNewItem"><v-icon>mdi-plus</v-icon></v-btn>
+        <v-btn class="add-new-item" fab small :disabled="disabled || schema.disabled" @click="onClickAddNewItem"><v-icon>mdi-plus</v-icon></v-btn>
       </div>
     </draggable>
   </div>

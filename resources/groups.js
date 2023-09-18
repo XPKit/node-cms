@@ -80,13 +80,7 @@ exports = (module.exports = {
       field: 'tel',
       input: 'string',
       localised: false
-    },
-    {
-      field: 'tel',
-      input: 'string',
-      localised: false
     }
-
   ],
   locales: [
     'enUS',

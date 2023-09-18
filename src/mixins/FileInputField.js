@@ -88,7 +88,10 @@ export default {
       if (maxCount === -1) {
         return false
       }
-      return this.getAttachments().length >= maxCount
+      if (this.getAttachments().length >= maxCount) {
+        return true
+      }
+      return this.disabled || _.get(this.schema, 'disabled', false)
     },
     getFieldType () {
       return _.toUpper(_.get(this.schema, 'type', 'ImageView') === 'ImageView' ? 'image' : 'file')

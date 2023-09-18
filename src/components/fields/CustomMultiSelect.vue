@@ -9,7 +9,7 @@
       :items="formattedOptions"
       :deletable-chips="selectOptions.multiple"
       :hide-selected="selectOptions.hideSelected"
-      :disabled="disabled"
+      :disabled="disabled || schema.disabled"
       :placeholder="schema.placeholder"
       :multiple="selectOptions.multiple"
       clearable persistent-placeholder outlined dense hide-details

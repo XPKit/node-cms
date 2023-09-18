@@ -32,9 +32,9 @@
         <!-- <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect"><v-icon color="black">mdi-list-box</v-icon></div> -->
       </div>
     </div>
-    <div class="records-top-bar">
+    <div v-if="hasEditableRecords()" class="records-top-bar">
       <v-btn rounded dense text class="select-all" @click="selectAll">{{ (allRecordsSelected() ? 'TL_DESELECT_ALL' : 'TL_SELECT_ALL') | translate }}</v-btn>
-      <v-btn class="delete-records" dense rounded text @click="deleteSelectedRecords()">
+      <v-btn v-if="localMultiselectItems.length > 0" class="delete-records" dense rounded text @click="deleteSelectedRecords()">
         <v-icon>mdi-trash-can</v-icon>
         <span>{{ 'TL_DELETE' | translate }}</span>
       </v-btn>
@@ -46,8 +46,10 @@
           :class="{selected: item === selectedItem, frozen:!item._local}"
         >
           <div class="checkbox" @click.exact="select(item, true)" @click.shift="selectTo(item)">
-            <v-icon :class="{displayed: isItemSelected(item)}">mdi-checkbox-outline</v-icon>
-            <v-icon :class="{displayed: !isItemSelected(item)}">mdi-checkbox-blank-outline</v-icon>
+            <template v-if="item._local">
+              <v-icon :class="{displayed: isItemSelected(item)}">mdi-checkbox-outline</v-icon>
+              <v-icon :class="{displayed: !isItemSelected(item)}">mdi-checkbox-blank-outline</v-icon>
+            </template>
           </div>
           <div class="item-info" @click.exact="select(item)">
             <div v-if="item" class="main">{{ getName(item) }}</div>
@@ -213,6 +215,9 @@ export default {
     }
   },
   methods: {
+    hasEditableRecords () {
+      return _.get(_.filter(this.filteredList, (item) => _.get(item, '_local', false)), 'length', 0) !== 0
+    },
     allRecordsSelected () {
       return _.get(this.localMultiselectItems, 'length', 0) === _.get(this.list, 'length', 0)
     },
@@ -327,12 +332,11 @@ export default {
       return action === 'esc' ? elem.blur() : elem.focus()
     },
     select (item, clickedCheckbox = false) {
+      if (!item._local) {
+        return this.$emit('selectItem', item)
+      }
       if (!clickedCheckbox) {
-        if (this.isItemSelected(item)) {
-          this.localMultiselectItems = []
-        } else {
-          this.localMultiselectItems = [item]
-        }
+        this.localMultiselectItems = [item]
         this.$emit('selectItem', item)
       } else {
         if (this.isItemSelected(item)) {
