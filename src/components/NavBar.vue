@@ -8,7 +8,7 @@
             {{ settingsData.title }}
           </template>
         </template>
-        <template v-else>{{ getPageTitle() }}</template>
+        <img v-else :src="getDefaultLogo()" class="logo">
       </v-toolbar-title>
       <v-spacer />
       <resource-list :select-resource-callback="selectResourceCallback" :grouped-list="groupedList" :resource-list="resourceList" :plugins="plugins" :selected-item="selectedItem" />
@@ -24,6 +24,7 @@ import TranslateService from '@s/TranslateService'
 import SystemInfo from '@c/SystemInfo'
 import ResourceService from '@s/ResourceService'
 import ResourceList from '@c/ResourceList'
+import defaultLogo from '@a/logo.svg'
 
 export default {
   components: {SystemInfo, ResourceList},
@@ -70,6 +71,9 @@ export default {
     this.getSettingsData()
   },
   methods: {
+    getDefaultLogo () {
+      return defaultLogo
+    },
     getLogo () {
       const foundLogo = _.find(_.get(this.settingsData, '_attachments', []), {_name: 'logo'})
       return _.isUndefined(foundLogo) ? false : _.get(foundLogo, 'url', '')
@@ -84,17 +88,17 @@ export default {
         console.error(error)
       }
     },
-    getPageTitle () {
-      const nameParts = []
-      if (this.toolbarTitle) {
-        nameParts.push(this.toolbarTitle)
-      }
-      const selectedItemName = this.getSelectedItemName()
-      if (selectedItemName) {
-        nameParts.push(selectedItemName)
-      }
-      return _.join(nameParts, ' - ')
-    },
+    // getPageTitle () {
+    //   const nameParts = []
+    //   if (this.toolbarTitle) {
+    //     nameParts.push(this.toolbarTitle)
+    //   }
+    //   const selectedItemName = this.getSelectedItemName()
+    //   if (selectedItemName) {
+    //     nameParts.push(selectedItemName)
+    //   }
+    //   return _.join(nameParts, ' - ')
+    // },
     getSelectedItemName () {
       if (_.get(this.selectedItem, 'displayname', false)) {
         return TranslateService.get(this.selectedItem.displayname)
@@ -123,6 +127,7 @@ export default {
   justify-content: space-between;
   position: relative;
   .v-toolbar__title {
+    padding-left: vw(16px);
     max-height: 100%;
     max-width: 200px;
     width: 200px;
