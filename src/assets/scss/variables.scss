@@ -2,6 +2,7 @@
 $imag-black: #000;
 $imag-white: #FFF;
 $imag-pale-grey: #B8BABC;
+$imag-light-grey: #EDEDED;
 $imag-grey: #818386;
 $imag-blue: #71DBD4;
 $imag-purple: #8094DD;
@@ -9,7 +10,13 @@ $imag-orange: #FF5C39;
 $imag-yellow: #E1E000;
 $imag-green: #8DE971 ;
 
+$layout-background: var(--layout-background);
+$layout-color: var(--layout-color);
+$layout-width: var(--layout-width);
+
 $navbar-height: var(--navbar-height);
+$navbar-background: var(--navbar-background);
+$navbar-color: var(--navbar-color);
 $navbar-resource-group-background: var(--navbar-resource-group-background);
 $navbar-resource-group-background-selected: var(--navbar-resource-group-background-selected);
 $navbar-resource-group-title-color: var(--navbar-resource-group-title-color);
@@ -18,7 +25,24 @@ $navbar-resource-title-color: var(--navbar-resource-title-color);
 $navbar-resource-title-color-selected: var(--navbar-resource-title-color-selected);
 $navbar-system-info-icon-color: var(--navbar-system-info-icon-color);
 
-$layout-width: var(--layout-width);
+$system-info-background: var(--system-info-background);
+$system-info-color: var(--system-info-color);
+$system-info-progress-bar: var(--system-info-progress-bar);
+$system-info-progress-bar-background: var(--system-info-progress-bar-background);
+
+$sidebar-resource-selector-height: var(--sidebar-resource-selector-height);
+$sidebar-resource-selector-background: var(--sidebar-resource-selector-background);
+$sidebar-resource-selector-background-opened: var(--sidebar-resource-selector-background-opened);
+$sidebar-resource-selector-color: var(--sidebar-resource-selector-color);
+$sidebar-search-icon-color: var(--sidebar-search-icon-color);
+$sidebar-records-list-background: var(--sidebar-records-list-background);
+$sidebar-records-list-checkbox-color: var(--sidebar-records-list-checkbox-color);
+$sidebar-records-list-item-background: var(--sidebar-records-list-item-background);
+$sidebar-records-list-item-background-selected: var(--sidebar-records-list-item-background-selected);
+$sidebar-records-list-item-background-disabled: var(--sidebar-records-list-item-background-disabled);
+
+$btn-action-background: var(--btn-action-background);
+$btn-action-color: var(--btn-action-color);
 
 @function vw($px-vw, $base-vw: 1440px) {
   @return ($px-vw * 100vw) / $base-vw;
@@ -61,7 +85,7 @@ $layout-width: var(--layout-width);
 @mixin h5 {
   font-size: vw(19px);
   font-weight: 700;
-  @include italic-text;
+  @include normal-text;
 }
 @mixin h6 {
   font-size: vw(16px);
@@ -107,7 +131,11 @@ $layout-width: var(--layout-width);
 .v-application {
   font-family: Source Sans Pro !important;
   --navbar-height: 58px;
+  --layout-background: #{$imag-white};
+  --layout-color: #{$imag-black};
   --layout-width: 1440px;
+  --navbar-background: #{$imag-black};
+  --navbar-color: #{$imag-white};
   --navbar-resource-title-color: #{$imag-white};
   --navbar-resource-title-color-selected: #{$imag-black};
   --navbar-resource-group-background: transparent;
@@ -117,6 +145,25 @@ $layout-width: var(--layout-width);
   --navbar-resource-title-color: #{$imag-black};
   --navbar-resource-title-color-selected: #{$imag-white};
   --navbar-system-info-icon-color: #{$imag-white};
+
+  --system-info-background: #{$imag-white};
+  --system-info-color: #{$imag-black};
+  --system-info-progress-bar: #{$imag-purple};
+  --system-info-progress-bar-background: #{$imag-black};
+
+  --sidebar-resource-selector-height: 56px;
+  --sidebar-resource-selector-background: #{$imag-blue};
+  --sidebar-resource-selector-background-opened: #{$imag-purple};
+  --sidebar-resource-selector-color: #{$imag-white};
+  --sidebar-search-icon-color: #{$imag-black};
+  --sidebar-records-list-background: #{$imag-light-grey};
+  --sidebar-records-list-checkbox-color: #{$imag-black};
+  --sidebar-records-list-item-background: #{$imag-white};
+  --sidebar-records-list-item-background-selected: #{$imag-purple};
+  --sidebar-records-list-item-background-disabled: #{$imag-grey};
+
+  --btn-action-background: #{$imag-blue};
+  --btn-action-color: #{$imag-white};
   &.theme--dark {
     // TODO: hugo
   }

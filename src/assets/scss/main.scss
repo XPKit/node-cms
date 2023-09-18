@@ -39,13 +39,60 @@ ul, li {
       position: relative;
 }
 
+.v-application {
+
+  .resources-menu {
+    border-radius: 0px 0px 8px 8px !important;
+    background-color: transparent;
+    max-height: 40vh !important;
+
+    .v-list {
+      border-radius: 0px 0px 8px 8px !important;
+      @include blurred-background;
+      transform: translate3d(0, 0, 0);
+      display: flex;
+      padding-left: vw(16px);
+      flex-direction: column;
+      align-items: flex-start;
+
+      .v-list-item {
+        display: inline-block;
+        color: white;
+        min-height: 26px;
+        @include cta-text;
+        font-weight: normal;
+        font-style: normal;
+        background-color: $navbar-resource-group-background;
+        .v-list-item__title {
+          @include cta-text;
+          font-style: normal;
+          color: $navbar-resource-title-color;
+          line-height: 26px;
+        }
+        &.selected {
+          font-weight: bold !important;
+          background-color: $navbar-resource-group-background-selected;
+          font-size: vw(14px) !important;
+          .v-list-item__title {
+            color: $navbar-resource-title-color-selected;
+          }
+        }
+      }
+    }
+    &.sidebar {
+      left: 0 !important;
+      min-width: 364px !important;
+    }
+  }
+}
+
 body {
-  // TODO: hugo - change to use vars instead
-  .theme--light.v-application {
-    background: white;
-    color: rgba(0, 0, 0, 0.87);
+  .v-application {
+    background: $layout-background;
+    color: $layout-color;
   }
   .theme--dark.v-application {
+  // TODO: hugo - change to use vars instead
     background: #4e4e4e;
     color: rgba(255, 255, 255, 0.87);
     .buttons {

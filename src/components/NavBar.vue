@@ -1,11 +1,19 @@
 <template>
   <div class="nav-bar-wrapper">
     <v-toolbar min-width="100%" width="100%" class="nav-bar" height="58" :class="localeClass">
-      <v-toolbar-title>{{ getPageTitle() }}</v-toolbar-title>
+      <v-toolbar-title>
+        <template v-if="settingsData && hasLogoOrTitle()">
+          <img v-if="getLogo()" :src="getLogo()" class="logo">
+          <template v-else-if="settingsData.title && settingsData.title.length > 0">
+            {{ settingsData.title }}
+          </template>
+        </template>
+        <template v-else>{{ getPageTitle() }}</template>
+      </v-toolbar-title>
       <v-spacer />
-      <resource-list :select-resource-callback="selectResourceCallback" :resource-list="resourceList" :plugins="plugins" :selected-item="selectedItem" />
+      <resource-list :select-resource-callback="selectResourceCallback" :grouped-list="groupedList" :resource-list="resourceList" :plugins="plugins" :selected-item="selectedItem" />
       <v-spacer />
-      <system-info v-if="config" :config="config" />
+      <system-info v-if="config" :config="config" :settings-data="settingsData" />
     </v-toolbar>
   </div>
 </template>
@@ -14,6 +22,7 @@
 import _ from 'lodash'
 import TranslateService from '@s/TranslateService'
 import SystemInfo from '@c/SystemInfo'
+import ResourceService from '@s/ResourceService'
 import ResourceList from '@c/ResourceList'
 
 export default {
@@ -22,6 +31,10 @@ export default {
     toolbarTitle: {
       type: [String, Boolean],
       default: false
+    },
+    groupedList: {
+      type: Array,
+      default: () => []
     },
     config: {
       type: [Object, Boolean],
@@ -48,7 +61,29 @@ export default {
       default: () => {}
     }
   },
+  data () {
+    return {
+      settingsData: false
+    }
+  },
+  mounted () {
+    this.getSettingsData()
+  },
   methods: {
+    getLogo () {
+      const foundLogo = _.find(_.get(this.settingsData, '_attachments', []), {_name: 'logo'})
+      return _.isUndefined(foundLogo) ? false : _.get(foundLogo, 'url', '')
+    },
+    hasLogoOrTitle () {
+      return this.getLogo() || _.get(this.settingsData, 'title', false)
+    },
+    async getSettingsData () {
+      try {
+        this.settingsData = _.first(await ResourceService.cache('_settings'))
+      } catch (error) {
+        console.error(error)
+      }
+    },
     getPageTitle () {
       const nameParts = []
       if (this.toolbarTitle) {
@@ -70,13 +105,14 @@ export default {
 }
 </script>
 <style lang="scss">
+@import '@a/scss/variables.scss';
+
 .nav-bar-wrapper {
   z-index: 2001;
   .v-toolbar.v-sheet {
     &.theme--light {
-      // TODO: hugo - change to vars
-      background-color: black;
-      color: white;
+      background-color: $navbar-background;
+      color: $navbar-color;
     }
   }
 }
@@ -87,11 +123,16 @@ export default {
   justify-content: space-between;
   position: relative;
   .v-toolbar__title {
+    max-height: 100%;
     max-width: 200px;
     width: 200px;
   }
   .v-toolbar__content {
     width: 100%;
+  }
+  .logo {
+    max-width: 200px;
+    max-height: $navbar-height;
   }
 }
 </style>

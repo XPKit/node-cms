@@ -20,7 +20,7 @@ import FieldSelectorService from '@s/FieldSelectorService'
 import TranslateService from '@s/TranslateService'
 
 export default {
-  props: ['formId', 'schema', 'model', 'formOptions', 'disabled'],
+  props: ['formId', 'schema', 'model', 'formOptions', 'disabled', 'paragraphIndex'],
   created () {
     _.each(this.schema.fields, (field) => {
       const fieldType = this.getFieldType(field)
@@ -64,7 +64,7 @@ export default {
       if (_.isUndefined(model)) {
         model = _.get(_.first(value), 'parentKey', false)
       }
-      this.$emit('input', value, model)
+      this.$emit('input', value, model, this.paragraphIndex)
     }
   }
 }

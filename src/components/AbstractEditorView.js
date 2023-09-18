@@ -88,17 +88,17 @@ export default {
       console.error(errorMessage, record)
       this.notify(errorMessage, 'error')
     },
-    formatSchemaLayout () {
-      if (!_.get(this.schema, 'layout.lines', false)) {
-        return
+    formatSchemaLayout (schema) {
+      if (!_.get(schema, 'layout.lines', false)) {
+        return schema
       }
       const alreadyPlacedFields = []
-      _.each(this.schema.layout.lines, (line) => {
+      _.each(schema.layout.lines, (line) => {
         line.slots = line.slots || _.get(line, 'fields.length', 1)
         _.each(line.fields, (field) => {
-          field.schema = _.find(this.schema.fields, {model: field.model})
+          field.schema = _.find(schema.fields, {model: field.model})
           if (_.isUndefined(field.schema)) {
-            field.schema = _.find(this.schema.fields, {originalModel: field.model})
+            field.schema = _.find(schema.fields, {originalModel: field.model})
           }
           if (_.isUndefined(field.schema)) {
             console.error(`Couldn't find schema for field ${field.model}`)
@@ -107,22 +107,24 @@ export default {
           }
         })
       })
-      _.each(this.schema.fields, (field) => {
+      _.each(schema.fields, (field) => {
         if (!_.includes(alreadyPlacedFields, field.model) && !_.includes(alreadyPlacedFields, field.originalModel)) {
-          this.schema.layout.lines.push({fields: [{model: field.model, schema: field}]})
+          schema.layout.lines.push({fields: [{model: field.model, schema: field}]})
         }
       })
+      return schema
     },
     async updateSchema () {
       try {
         const disabled = !(this.record && this.record._local)
         this.$loading.start('loading-schema')
         const fields = SchemaService.getSchemaFields(this.resource.schema, this.resource, this.locale || this.userLocale, this.userLocale, disabled, this.resource.extraSources)
-        this.$loading.stop('loading-schema')
         const groups = SchemaService.getNestedGroups(this.resource, fields, 0)
-        this.schema.fields = groups
-        this.schema.layout = this.resource.layout
-        this.formatSchemaLayout()
+        this.schema = this.formatSchemaLayout({
+          fields: groups,
+          layout: _.cloneDeep(this.resource.layout)
+        })
+        this.$loading.stop('loading-schema')
         // console.warn('AbstractEditorView - schema ', this.schema)
         this.originalFieldList = fields
         // console.warn('AbstractEditorView - updateSchema', this.schema)

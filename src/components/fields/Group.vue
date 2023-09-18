@@ -44,7 +44,7 @@ export default {
       return this.$refs.input.clearValidationErrors()
     },
     onModelUpdated (value, model) {
-      this.$emit('model-updated', value, model)
+      this.$emit('input', value, model)
     }
   }
 }

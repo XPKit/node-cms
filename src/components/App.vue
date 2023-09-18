@@ -17,7 +17,10 @@
     </v-scroll-y-transition>
     <div v-if="user" class="cms-layout">
       <div class="cms-inner-layout" :class="getThemeClass()">
-        <nav-bar v-if="resourceList.length > 0" :config="config" :toolbar-title="toolbarTitle" :locale-class="{locale:localeList && localeList.length > 1}" :select-resource-group-callback="selectResourceGroup" :select-resource-callback="selectResource" :resource-list="resourceList" :plugins="pluginList" :selected-resource-group="selectedResourceGroup" :selected-item="selectedResource || selectedPlugin" />
+        <nav-bar
+          v-if="resourceList.length > 0" :config="config" :toolbar-title="toolbarTitle" :locale-class="{locale:localeList && localeList.length > 1}" :select-resource-group-callback="selectResourceGroup" :select-resource-callback="selectResource" :resource-list="resourceList" :grouped-list="groupedList" :plugins="pluginList" :selected-resource-group="selectedResourceGroup"
+          :selected-item="selectedResource || selectedPlugin"
+        />
         <div class="resources">
           <locale-list v-if="localeList" :locale-list="localeList" />
         </div>
@@ -25,12 +28,16 @@
           <template v-if="selectedResource && (!selectedResource.view || selectedResource.view == 'list')">
             <record-list
               v-if="selectedResource" :list="recordList" :locale="locale" :selected-item="selectedRecord"
+              :grouped-list="groupedList"
+              :resource-group="selectedResourceGroup"
               :resource="selectedResource"
+              :select-resource-callback="selectResource"
               :multiselect="multiselect"
               :multiselect-items="multiselectItems"
               @selectItem="selectRecord"
               @changeMultiselectItems="onChangeMultiselectItems"
               @selectMultiselect="onSelectMultiselect"
+              @updateRecordList="updateRecordList"
             />
             <record-editor
               v-if="selectedRecord" :key="selectedRecord._id" :resource-list="resourceList" :record.sync="selectedRecord" :resource="selectedResource" :locale.sync="locale"
@@ -113,6 +120,76 @@ export default {
     }
   },
   computed: {
+    groupedList () {
+      const others = { name: 'TL_OTHERS' }
+      const plugins = { name: 'TL_PLUGINS' }
+      let groups = [others, plugins]
+      let list = _.union(this.resourceList, _.map(this.plugins, (item) => _.extend(item, {type: 'plugin'})))
+      _.each(list, (item) => {
+        if (_.isEmpty(item.group)) {
+          return
+        }
+        if (!_.isString(item.group)) {
+          const oldGroup = _.find(groups, (group) => {
+            if (_.isEqual(group.name, item.group)) {
+              return group
+            }
+          })
+          if (!oldGroup) {
+            groups.push({ name: item.group })
+          }
+        }
+      })
+      _.each(list, (item) => {
+        if (_.isEmpty(item.group)) {
+          return
+        }
+        if (_.isString(item.group)) {
+          const oldGroup = _.find(groups, (group) => {
+            if (group === item.group) {
+              return group
+            }
+            if (group.name === item.group) {
+              return group
+            }
+            if (_.includes(_.values(group.name), item.group)) {
+              return group
+            }
+          })
+          if (!oldGroup) {
+            groups.push({ name: item.group })
+          }
+        }
+      })
+      _.each(list, (item) => {
+        const oldGroup = _.find(groups, (group) => {
+          if (_.isEqual(group.name, item.group) || group === item.group || group.name === item.group || _.includes(_.values(group.name), item.group)) {
+            return group
+          }
+        })
+        if (oldGroup) {
+          oldGroup.list = oldGroup.list || []
+          oldGroup.list.push(item)
+          return
+        }
+        if (item.type === 'plugin') {
+          plugins.list = plugins.list || []
+          plugins.list.push(item)
+        } else {
+          others.list = others.list || []
+          others.list.push(item)
+        }
+      })
+      groups = _.orderBy(groups, (item) => {
+        if (item.name === 'CMS') {
+          return String.fromCharCode(0x00)
+        } else if (item === others) {
+          return String.fromCharCode(0xff)
+        }
+        return `${TranslateService.get(item.name, 'enUS')}`.toLowerCase()
+      }, 'asc')
+      return _.filter(groups, (group) => group.list && group.list.length !== 0)
+    },
     pluginList () {
       let list = _.filter(window.plugins, (item) => {
         if (_.isUndefined(item.allowed)) {
@@ -247,10 +324,10 @@ export default {
     async cacheRelatedResources (resource) {
       let resources = _.union([resource.title], _.values(resource.extraSources))
 
-      const extraResrouces = (obj) => {
+      const extraResources = (obj) => {
         if (_.isArray(obj)) {
           _.each(obj, item => {
-            extraResrouces(item)
+            extraResources(item)
           })
         } else {
           _.each(obj, (value, key) => {
@@ -270,9 +347,9 @@ export default {
                     break
                   case 'paragraph':
                     _.each(_.get(obj, 'options.types'), item => {
-                      extraResrouces(item)
+                      extraResources(item)
                       const paragraphSchema = _.get(item, 'schema')
-                      extraResrouces(paragraphSchema)
+                      extraResources(paragraphSchema)
                     })
                 }
                 break
@@ -283,7 +360,7 @@ export default {
           })
         }
       }
-      extraResrouces(resource.schema)
+      extraResources(resource.schema)
       resources = _.uniq(resources)
 
       await pAll(_.map(resources, item => {

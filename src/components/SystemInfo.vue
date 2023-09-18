@@ -1,34 +1,48 @@
 <template>
   <div class="system-info">
-    <v-menu content-class="system-info-menu" offset-y :close-on-content-click="false" nudge-bottom="5px">
+    <v-menu v-if="settingsData && settingsData.linksGroups && settingsData.linksGroups.length > 0" content-class="links-menu" offset-y :close-on-content-click="false" nudge-bottom="5px" transition="slide-y-transition">
+      <template #activator="{ on, attrs }">
+        <v-btn icon v-bind="attrs" v-on="on">
+          <v-icon>mdi-dots-vertical</v-icon>
+        </v-btn>
+      </template>
+      <div class="links-wrapper">
+        <div v-for="(group, i) in settingsData.linksGroups" :key="i" class="group">
+          <div class="node-cms-title">{{ group.value.title }}</div>
+          <a v-for="(link, y) in group.value.links" :key="y" class="link" :href="link.value.url">{{ link.value.name }}</a>
+          <v-divider v-if="i < settingsData.linksGroups.length - 1" />
+        </div>
+      </div>
+    </v-menu>
+
+    <v-menu content-class="system-info-menu" offset-y :close-on-content-click="false" nudge-bottom="5px" transition="slide-y-transition">
       <template #activator="{ on, attrs }">
         <v-btn icon v-bind="attrs" v-on="on">
           <v-icon>mdi-cog-outline</v-icon>
         </v-btn>
       </template>
       <div class="system-info-wrapper">
-        <div class="theme-switch">
-          <div class="theme-switch-container">
-            <v-icon>mdi-theme-light-dark</v-icon>
-            <v-switch :input-value="getTheme()" compact dense hide-details solo @change="onChangeTheme" />
-          </div>
-        </div>
         <div class="node-cms-title flex">
-          {{ 'TL_SYSTEM' | translate }}
+          <span>{{ 'TL_SYSTEM' | translate }}</span>
+          <div class="theme-switch" @click="onChangeTheme()">
+            <v-icon :class="{selected: !getTheme()}">mdi-weather-sunny</v-icon>
+            <v-icon :class="{selected: getTheme()}">mdi-weather-night</v-icon>
+            <!-- <v-switch :input-value="getTheme()" inset compact dense hide-details solo @change="onChangeTheme" /> -->
+          </div>
         </div>
         <div class="stats cpu">
           <div class="node-cms-title"><small><b>CPU Usage</b></small></div>
-          <v-progress-linear color="#6af" rounded :value="system.cpu.usage" />
+          <v-progress-linear rounded :value="system.cpu.usage" />
           <small class="text">{{ system.cpu.count }} cores ({{ system.cpu.model }})</small>
         </div>
         <div class="stats ram">
           <div class="node-cms-title"><small><b>Memory Usage</b></small></div>
-          <v-progress-linear color="#6af" rounded :value="100 - system.memory.freeMemPercentage" />
+          <v-progress-linear rounded :value="100 - system.memory.freeMemPercentage" />
           <small class="text">{{ convertBytes(system.memory.usedMemMb) }} / {{ convertBytes(system.memory.totalMemMb) }}</small>
         </div>
         <div v-if="system.drive != 'not supported'" class="stats drive">
           <div class="node-cms-title"><small><b>Disk Usage</b></small></div>
-          <v-progress-linear color="#6af" rounded :value="100 - system.drive.usedPercentage" />
+          <v-progress-linear rounded :value="100 - system.drive.usedPercentage" />
           <small class="text">{{ convertBytes(system.drive.usedGb * 1024) }} / {{ convertBytes(system.drive.totalGb * 1024) }}</small>
         </div>
         <div class="stats two-by-two">
@@ -37,8 +51,7 @@
             <small class="text">{{ convertBytes(system.network.total.outputMb) }} <v-icon>mdi-arrow-up</v-icon> / {{ convertBytes(system.network.total.inputMb) }} <v-icon>mdi-arrow-down</v-icon></small>
           </div>
           <div class="stats uptime">
-            <div class="node-cms-title"><small><b>Uptime</b></small></div>
-            <small class="text">{{ timeAgo(system.uptime) }}</small>
+            <div class="node-cms-title"><small><b>Uptime:</b></small> <small class="text">{{ timeAgo(system.uptime) }}</small></div>
           </div>
         </div>
       </div>
@@ -61,6 +74,10 @@ Dayjs.extend(relativeTime)
 export default {
   props: {
     config: {
+      type: [Object, Boolean],
+      default: false
+    },
+    settingsData: {
       type: [Object, Boolean],
       default: false
     }
@@ -110,9 +127,9 @@ export default {
     getTheme () {
       return _.get(LoginService, 'user.theme', 'light') === 'dark'
     },
-    async onChangeTheme (value) {
-      await LoginService.changeTheme(value)
-      this.$vuetify.theme.dark = value
+    async onChangeTheme () {
+      const value = _.get(LoginService, 'user.theme', 'light') === 'light' ? 'dark' : 'light'
+      this.$vuetify.theme.dark = await LoginService.changeTheme(value) === 'dark'
     },
     async logout () {
       await LoginService.logout()
@@ -158,13 +175,20 @@ export default {
   box-sizing: border-box;
   font-size: 11.2px;
   font-weight: 400;
+  >button:last-child {
+    margin-left: vw(16px);
+  }
   .stats {
+    font-size: 0;
     .text {
       text-overflow: ellipsis;
       padding: 4px;
     }
     .progress {
       margin: 0 4px;
+    }
+    .node-cms-title {
+      @include h6;
     }
   }
   .two-by-two {
@@ -179,9 +203,17 @@ export default {
     color: $navbar-system-info-icon-color;
   }
 }
-.system-info-wrapper {
+.system-info-wrapper, .links-wrapper {
   min-width: 400px;
+  display: flex;
+  flex-direction: column;
   @include blurred-background;
+  .node-cms-title {
+    @include h6;
+  }
+}
+.system-info-wrapper {
+  gap: 16px;
   button {
     user-select: none;
     display: inline-block;
@@ -196,21 +228,36 @@ export default {
   }
   .node-cms-title {
     &.flex {
+      @include h5;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
   }
   .theme-switch {
-    position: absolute;
-    bottom: 6px;
-    right: 6px;
-    .theme-switch-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 4px;
+    border: 2px solid $imag-pale-grey;
+    border-radius: 100px;
+    .v-icon {
+      // padding: 6px;
+      color: black;
+      background-color: transparent;
+      transition: all 0.3s;
+      border-radius: 50%;
+      padding: 2px;
+      &.selected {
+        color: white;
+        background-color: $imag-purple;
+      }
     }
+  }
+  small {
+    @include subtext;
   }
 }
 .system-info-menu {
@@ -221,5 +268,44 @@ export default {
 }
 .v-input--selection-controls {
   margin-top: 0;
+}
+</style>
+
+<style lang="scss">
+@import '@a/scss/variables.scss';
+
+.system-info-wrapper {
+  color: $system-info-color;
+  .v-progress-linear {
+    margin: 8px 0;
+    .v-progress-linear__buffer {
+      background-color: $system-info-progress-bar-background;
+    }
+    .v-progress-linear__determinate {
+      border-radius: 100px;
+      background-color: $system-info-progress-bar !important;
+      border-color: $system-info-progress-bar !important;
+    }
+  }
+}
+.links-menu {
+  .node-cms-title {
+    user-select: none;
+  }
+  .link {
+    display: block;
+    @include h6;
+    background-color: transparent;
+    transition: background-color 0.15s;
+    text-decoration: none;
+    padding-left: 16px;
+    &:hover {
+      background-color: $imag-blue;
+    }
+  }
+  .v-divider {
+    margin: 8px 0;
+    border-color: black;
+  }
 }
 </style>

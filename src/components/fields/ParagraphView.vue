@@ -20,6 +20,7 @@
             <custom-form
               :schema="getSchema(item)"
               :model="item"
+              :paragraph-index="idx"
               @error="onError"
               @input="onModelUpdated"
             />
@@ -183,7 +184,7 @@ export default {
         const newItem = _.cloneDeep(this.selectedType)
         this.items.push(newItem)
         _.set(this.localModel, this.schema.model, this.items)
-        // console.warn('NEW ITEM ADDED: ', this.selectedType, this.localModel)
+        // console.warn('NEW ITEM ADDED: ', this.schema.model, this.selectedType, this.localModel)
         this.$emit('input', this.localModel, this.schema.model)
       }
     },
@@ -230,8 +231,11 @@ export default {
       this.key = uuid()
       this.$emit('input', this.items, this.schema.model)
     },
-    onModelUpdated (value, model) {
+    onModelUpdated (value, model, paragraphIndex) {
       _.set(this.localModel, this.schema.model, this.items)
+      if (_.includes(model, '.')) {
+        _.set(this.items, `[${paragraphIndex}].${model}`, value)
+      }
       this.$emit('input', this.items, this.schema.model)
     }
   }

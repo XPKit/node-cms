@@ -1,6 +1,6 @@
 .record-list {
-  min-width: 350px;
-  max-width: 350px;
+  min-width: 364px;
+  max-width: 364px;
   border-right: 1px solid #c7c7c7;
   overflow: auto;
   height: 100%;
@@ -12,6 +12,41 @@
   .top-bar {
     flex: auto 0 0;
     position: sticky;
+  }
+
+  .resource-selector {
+    cursor: pointer;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: $sidebar-resource-selector-height;
+    background-color: $sidebar-resource-selector-background;
+    color: $sidebar-resource-selector-color;
+    transition: all 0.15s;
+    .resource-title {
+      @include h5;
+    }
+    .v-icon {
+      color: $sidebar-resource-selector-color;
+    }
+    &.opened {
+      .v-icon {
+        transform: rotate(180deg);
+      }
+      background-color: $sidebar-resource-selector-background-opened;
+    }
+  }
+
+  .new-record {
+    line-height: 40px;
+    user-select: none;
+    position: absolute;
+    bottom: vw(32px);
+    left: 50%;
+    transform: translate(-50%, 0);
+    background-color: $btn-action-background !important;
+    color: $btn-action-color !important;
   }
 
   .search {
@@ -42,41 +77,62 @@
       }
     }
   }
-  .new, .multiselect {
-    display: inline-block;
-    $width: 38px;
-    width: $width;
-    height: 40px;
-    line-height: 35px;
-    text-align: center;
-    background: #f0f0f0;
-    font-size: 24px;
-    border-bottom: 1px solid #c7c7c7;
-    color: #aaa;
-    box-sizing: border-box;
-    border-left: 1px solid #c7c7c7;
-    cursor: pointer;
-    &:hover {
-      color: #69f;
+  .main {
+    min-height: 24px
+  }
+  .meta {
+    .id, .ts {
+      @include subtext;
     }
-    &:active {
-      color: #f0f0f0;
-      background: #69f;
+    .id {
+      font-style: normal;
     }
-    &.multiselect {
-      &.active {
-        background-color: #69f;
-        color: #c7c7c7;
-      }
+    .ts {
+      user-select: none;
     }
   }
-
+  .records, .records-top-bar {
+    background-color: $sidebar-records-list-background;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+  }
   .records {
     margin: 0px;
     padding: 0px;
     flex: 100% 1 1;
     position: relative;
-
+    .records-top-bar {
+      .select-all {
+        cursor: pointer;
+      }
+      .delete-records {
+        .v-icon {
+          color: red;
+        }
+      }
+    }
+    .checkbox {
+      position: relative;
+      margin-left: 16px;
+      margin-right: 8px;
+      width: 24px;
+      height: 24px;
+      .v-icon {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        color: $sidebar-records-list-checkbox-color;
+        opacity: 0;
+        transition: opacity 0.15s;
+        &.displayed {
+          opacity: 1;
+        }
+      }
+    }
     .list {
       position: absolute;
       top: 0;
@@ -84,91 +140,33 @@
       left: 0;
       right: 0;
     }
-    .item {
-      height: 80px;
+   .item {
       cursor: pointer;
-      user-select: none;
-
-      .id {
-        user-select: all;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      .item-info {
+        flex-grow: 1;
+        margin-right: 16px;
+        min-height: 64px;
+        padding: 4px;
+        border-radius: 8px;
+        background-color: $sidebar-records-list-item-background;
+        transition: background-color 0.15s;
       }
-
-      .icon {
-        width: 16px;
-        height: 16px;
-        display: inline-block;
-        background: #6af;
-        box-shadow: 0px 0px 0px 1px #06d inset;
-        border-radius: 2px;
-        margin-right: 10px;
-        position: relative;
-        .searchable {
-          display: grid;
-          justify-content: center;
-          align-items: center;
-          color: white;
-          opacity: 0.8;
-          font-size: 12px;
-          box-sizing: border-box;
-          text-align: center;
-          width: 100%;
-          position: relative;
-          height: 16px;
-          ::before {
-            color: white;
-          }
-          i.default::before {
-            opacity: 0;
-          }
-        }
-      }
-
-      &:hover {
-        background: #eff;
-      }
-
       &.selected {
-        background: #f1ffee;
-        cursor: auto;
-        color: #4c4c4c;
-
-        .icon {
-          background: #2ac12a;
-          box-shadow: 0px 0px 0px 1px #008a00 inset;
+        .item-info {
+          background-color: $sidebar-records-list-item-background-selected;
         }
       }
-
 
       &.frozen {
-        .icon {
-          background: #b9b9b9;
-          box-shadow: 0px 0px 0px 1px #777777 inset;
+        .item-info {
+          background-color: $sidebar-records-list-item-background-disabled;
         }
       }
-
-      .main {
-        display: flex;
-        line-height: 18px;
-        padding: 10px 0;
-        margin: 0 20px;
-        font-weight: bold;
-        font-size: 14px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        min-height: 18px;
-        border-bottom: 1px solid #f0f0f0;
-      }
-      .meta {
-        padding: 10px 20px 9px 20px;
-        line-height: 21px;
-        font-size: 12px;
-        color: #888;
-        white-space: nowrap;
-        border-bottom: 1px solid #f0f0f0;
-      }
-    }
-  }
+   }
+ }
 }
 
 

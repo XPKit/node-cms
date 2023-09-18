@@ -53,8 +53,11 @@ export default {
       if (!isFunction(elem.focus)) {
         return console.warn('Cannot focus element', elem)
       }
-      return this.focused ? elem.focus() : elem.blur()
+      if (this.focused) {
+        elem.focus()
+      }
       // console.warn(`focused changed ${this.focused}`, this.schema, elem)
+      // return this.focused ? elem.focus() : elem.blur()
     }
   },
   computed: {

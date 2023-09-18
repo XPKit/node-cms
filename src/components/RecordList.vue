@@ -1,71 +1,83 @@
 <template>
   <div v-if="maxCount != 1" class="record-list">
     <div class="top-bar">
+      <v-menu v-if="selectedResourceGroup && groupedList" v-model="menuOpened" auto content-class="resources-menu sidebar" offset-y :close-on-content-click="true">
+        <template #activator="{ on, attrs }">
+          <div class="resource-selector" v-bind="attrs" :class="{opened: menuOpened}" v-on="on">
+            <div class="resource-title">{{ getResourceTitle(resource) }}</div>
+            <v-icon large>mdi-chevron-down</v-icon>
+          </div>
+        </template>
+        <v-list rounded>
+          <v-list-item
+            v-for="r in selectedResourceGroup.list"
+            :key="r.name"
+            dense
+            :class="{selected: r === resource}"
+            @click="selectResourceCallback(r)"
+          >
+            <v-list-item-title>{{ getResourceTitle(r) }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
       <div
         v-shortkey="{esc: ['esc'], open: ['/']}" class="search"
         :class="{'is-query': sift.isQuery, 'is-valid': sift.isQuery && sift.isValid == true, 'is-invalid': sift.isQuery && sift.isValid == false}" @shortkey="interactiveSearch"
       >
         <v-text-field
-          ref="search" v-model="search" class="search-bar" flat outlined hide-details dense :placeholder="'TL_SEARCH' | translate" type="text"
+          ref="search" v-model="search"
+          prepend-inner-icon="mdi-magnify" class="search-bar" flat filled rounded hide-details dense :placeholder="'TL_SEARCH' | translate" type="text"
           name="search"
         />
-        <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect"><v-icon color="black">mdi-list-box</v-icon></div>
-        <template v-if="maxCount <= 0 || listCount < maxCount">
-          <div class="new" @click="onClickNew">+</div>
-        </template>
-        <!-- <div class="number-of-records">{{ list.length }}</div> -->
+        <!-- <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect"><v-icon color="black">mdi-list-box</v-icon></div> -->
       </div>
     </div>
-
+    <div class="records-top-bar">
+      <v-btn rounded dense text class="select-all" @click="selectAll">{{ (allRecordsSelected() ? 'TL_DESELECT_ALL' : 'TL_SELECT_ALL') | translate }}</v-btn>
+      <v-btn class="delete-records" dense rounded text @click="deleteSelectedRecords()">
+        <v-icon>mdi-trash-can</v-icon>
+        <span>{{ 'TL_DELETE' | translate }}</span>
+      </v-btn>
+    </div>
     <div v-shortkey="multiselect ? ['ctrl', 'a'] : false" class="records" @shortkey="selectAll()">
-      <RecycleScroller
-        v-slot="{ item }"
-        class="list"
-        :items="filteredList"
-        :item-size="80"
-        key-field="_id"
-      >
+      <RecycleScroller v-slot="{ item }" class="list" :items="filteredList" :item-size="72" key-field="_id">
         <div
           class="item"
-          :class="{selected: (item == selectedItem) || (multiselect && includes(multiselectItems, item)), frozen:!item._local}"
-          @click.exact="select(item)" @click.shift="selectTo(item)"
+          :class="{selected: item === selectedItem, frozen:!item._local}"
         >
-          <div v-if="item" class="main">
-            <span class="icon">
-              <span v-if="item._searchable" class="searchable">
-                <v-icon v-if="item._searchable.query == true">mdi-target</v-icon>
-                <v-icon v-else-if="item._searchable.id == true">mdi-key</v-icon>
-                <v-icon v-else-if="item._searchable.keyFields == true">mdi-format-list-bulleted</v-icon>
-                <v-icon v-else class="default">mdi-format-list-bulleted</v-icon>
-              </span>
-            </span>
-            <span>
-              <!-- {{ item._recordDisplayName }} -->
-              {{ getName(item) }}
-            </span>
+          <div class="checkbox" @click.exact="select(item, true)" @click.shift="selectTo(item)">
+            <v-icon :class="{displayed: isItemSelected(item)}">mdi-checkbox-outline</v-icon>
+            <v-icon :class="{displayed: !isItemSelected(item)}">mdi-checkbox-blank-outline</v-icon>
           </div>
-          <div class="meta">
-            <span class="id ng-binding">
-              <span>{{ item._id }}</span>
-            </span>
-            <span class="ts"><template v-if="item._updatedBy"> {{ 'TL_UPDATED_BY' | translate }} {{ item._updatedBy }}</template><template v-else> {{ 'TL_UPDATED' | translate }}</template> <timeago :since="item._updatedAt" :locale="TranslateService.locale" /></span>
+          <div class="item-info" @click.exact="select(item)">
+            <div v-if="item" class="main">{{ getName(item) }}</div>
+            <div class="meta">
+              <div class="id">{{ item._id }}</div>
+              <div class="ts">
+                <template v-if="item._updatedBy"> {{ 'TL_UPDATED_BY' | translate }} {{ item._updatedBy }}</template><template v-else> {{ 'TL_UPDATED' | translate }}</template> <timeago :since="item._updatedAt" :locale="TranslateService.locale" />
+              </div>
+            </div>
           </div>
         </div>
       </RecycleScroller>
     </div>
+    <v-btn v-if="maxCount <= 0 || listCount < maxCount" rounded class="new-record" @click="onClickNew">{{ 'TL_ADD_NEW_RECORD' | translate }}</v-btn>
   </div>
 </template>
 
 <script>
+import pAll from 'p-all'
+import axios from 'axios'
 import _ from 'lodash'
 import TranslateService from '@s/TranslateService'
+import Notification from '@m/Notification'
 import RecordNameHelper from './RecordNameHelper'
 import qs from 'qs'
 import sift from 'sift'
 import JSON5 from 'json5'
 
 export default {
-  mixins: [RecordNameHelper],
+  mixins: [Notification, RecordNameHelper],
   props: {
     list: {
       type: [Array, Boolean],
@@ -75,8 +87,24 @@ export default {
       type: [Object, Boolean],
       default: () => {}
     },
+    groupedList: {
+      type: [Array, Boolean],
+      default: () => []
+    },
+    resourceGroup: {
+      type: [Object, Boolean],
+      default: () => {}
+    },
     selectedItem: {
       type: Object,
+      default: () => {}
+    },
+    selectResourceCallback: {
+      type: Function,
+      default: () => {}
+    },
+    updateRecordList: {
+      type: Function,
       default: () => {}
     },
     locale: {
@@ -94,7 +122,7 @@ export default {
   },
   data () {
     return {
-      cachedMap: {},
+      menuOpened: false,
       search: null,
       TranslateService,
       sift: {
@@ -102,11 +130,13 @@ export default {
         isValid: false
       },
       query: {},
-      localMultiselectItems: [],
-      includes: _.includes
+      localMultiselectItems: []
     }
   },
   computed: {
+    selectedResourceGroup () {
+      return _.find(this.groupedList, (resourceGroup) => this.groupSelected(resourceGroup))
+    },
     maxCount () {
       return _.get(this.resource, 'maxCount', 0)
     },
@@ -164,10 +194,7 @@ export default {
     }
   },
   watch: {
-    // list: function () {
-    //   this.injectDisplayNameToList()
-    // },
-    search: function () {
+    search () {
       this.query = this.flatten(qs.parse(this.search))
       this.sift.isQuery = false
       try {
@@ -185,19 +212,84 @@ export default {
       this.localMultiselectItems = _.cloneDeep(this.multiselectItems)
     }
   },
-  async mounted () {
-    // this.injectDisplayNameToList()
-  },
   methods: {
-    // injectDisplayNameToList () {
-    //   _.each(this.list, item => {
-    //     item._recordDisplayName = this.getName(item)
-    //   })
-    // },
-    selectAll () {
-      if (!this.multiselect) {
+    allRecordsSelected () {
+      return _.get(this.localMultiselectItems, 'length', 0) === _.get(this.list, 'length', 0)
+    },
+    isItemSelected (item) {
+      return item === this.selectedItem || _.includes(_.map(this.multiselectItems, '_id'), item._id)
+    },
+    getTypePrefix (type) {
+      let typePrefix = 'TL_ERROR_ON_RECORD_'
+      if (type === 'create') {
+        typePrefix += 'CREATION'
+      } else if (type === 'update') {
+        typePrefix += 'UPDATE'
+      } else if (type === 'delete') {
+        typePrefix += 'DELETE'
+      }
+      return typePrefix ? TranslateService.get(typePrefix) : 'Error'
+    },
+    manageError (error, type, record) {
+      let typePrefix = this.getTypePrefix(type)
+      let errorMessage = typePrefix
+      if (_.get(error, 'response.data.code', 500) === 400) {
+        const serverError = _.get(error, 'response.data')
+        if (_.get(serverError, 'message', false)) {
+          errorMessage = `${typePrefix}: ${serverError.message}`
+        } else {
+          errorMessage = `${typePrefix}: ${TranslateService.get('TL_UNKNOWN_ERROR')}`
+        }
+      }
+      console.error(errorMessage, record)
+      this.notify(errorMessage, 'error')
+    },
+    async deleteSelectedRecords () {
+      if (!window.confirm(
+        TranslateService.get('TL_ARE_YOU_SURE_TO_DELETE_RECORDS', null, {num: _.size(this.multiselectItems)}),
+        TranslateService.get('TL_YES'),
+        TranslateService.get('TL_NO')
+      )) {
         return
       }
+      this.$loading.start('onDeleteMultiselectedItems')
+      try {
+        await pAll(_.map(this.multiselectItems, item => {
+          return async () => {
+            try {
+              await axios.delete(`../api/${this.resource.title}/${item._id}`)
+              this.notify(TranslateService.get('TL_RECORD_DELETED', null, { id: item._id }))
+            } catch (error) {
+              console.error(error)
+              this.manageError(error, 'delete', item)
+            }
+          }
+        }), {concurrency: 1})
+      } catch (error) {
+        console.error(error)
+      }
+      this.$loading.stop('onDeleteMultiselectedItems')
+      this.$emit('updateRecordList', null)
+      this.$emit('cancel')
+    },
+    groupSelected (resourceGroup) {
+      if (!this.resource) {
+        return false
+      }
+      const selectedItemGroup = _.get(this.resource, 'group.enUS', _.get(this.resource, 'group', false))
+      const groupName = _.get(resourceGroup, 'name.enUS', resourceGroup.name)
+      if (groupName === 'TL_OTHERS' && !selectedItemGroup) {
+        return true
+      }
+      return groupName === selectedItemGroup
+    },
+    getResourceTitle (resource) {
+      if (!resource) {
+        return ''
+      }
+      return resource.displayname ? TranslateService.get(resource.displayname) : resource.title
+    },
+    selectAll () {
       if (this.localMultiselectItems.length === this.filteredList.length) {
         this.localMultiselectItems = []
       } else {
@@ -210,11 +302,9 @@ export default {
         if (i in into) {
           let newKey = i
           let newVal = into[i]
-
           if (currentKey.length > 0) {
             newKey = currentKey + '.' + i
           }
-
           if (typeof newVal === 'object') {
             this.dive(newKey, newVal, target)
           } else {
@@ -223,7 +313,6 @@ export default {
         }
       }
     },
-
     flatten (arr) {
       let newObj = {}
       this.dive('', arr, newObj)
@@ -237,45 +326,41 @@ export default {
       }
       return action === 'esc' ? elem.blur() : elem.focus()
     },
-    select (item) {
-      if (this.multiselect) {
+    select (item, clickedCheckbox = false) {
+      if (!clickedCheckbox) {
+        if (_.includes(this.multiselectItems, item)) {
+          this.localMultiselectItems = []
+        } else {
+          this.localMultiselectItems = [item]
+        }
+        this.$emit('selectItem', item)
+      } else {
         if (_.includes(this.multiselectItems, item)) {
           this.localMultiselectItems = _.difference(this.localMultiselectItems, [item])
         } else {
           this.localMultiselectItems.push(item)
         }
-        this.$emit('changeMultiselectItems', this.localMultiselectItems)
-      } else {
-        this.$emit('selectItem', item)
       }
+      this.$emit('changeMultiselectItems', this.localMultiselectItems)
     },
     selectTo (item) {
-      if (this.multiselect) {
-        const start = _.first(this.localMultiselectItems)
-        let found = false
-        for (const iterator of this.filteredList) {
-          if (iterator === start) {
-            this.localMultiselectItems = [iterator]
-          }
-          if (found === true) {
-            this.localMultiselectItems.push(iterator)
-          }
-          if (iterator === start) {
-            found = true
-          }
-          if (iterator === item) {
-            found = false
-          }
+      const start = _.first(this.localMultiselectItems)
+      let found = false
+      for (const iterator of this.filteredList) {
+        if (iterator === start) {
+          this.localMultiselectItems = [iterator]
         }
-        this.$emit('changeMultiselectItems', this.localMultiselectItems)
-      } else {
-        this.$emit('selectItem', item)
+        if (found === true) {
+          this.localMultiselectItems.push(iterator)
+        }
+        if (iterator === start) {
+          found = true
+        }
+        if (iterator === item) {
+          found = false
+        }
       }
-    },
-    onClickMultiselect () {
-      this.localMultiselectItems = []
       this.$emit('changeMultiselectItems', this.localMultiselectItems)
-      this.$emit('selectMultiselect', !this.multiselect)
     },
     onClickNew () {
       this.localMultiselectItems = []
@@ -287,33 +372,56 @@ export default {
       return _.filter(this.resource.schema, item => item.searchable === true)
     },
     doesMatch (search, values) {
-      let found = false
-      _.forEach(values, (value) => {
-        found = new RegExp(this.search, 'i').test(value)
-        if (found) {
-          return false // Exist loop
-        }
-      })
-      return found
+      return _.find(values, (value) => !!new RegExp(this.search, 'i').test(value))
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-  .multiselect i:before {
-    // color: #aaa;
-    line-height: 40px;
-  }
-  .new {
-    line-height: 40px;
-    user-select: none;
-  }
-  .top-bar {
-    .search-bar {
-      border-radius: 0px;
+
+</style>
+
+<style lang="scss">
+@import '@a/scss/variables.scss';
+.record-list {
+  .search-bar {
+    margin: 16px;
+    .v-input__slot {
+      padding: 8px;
+      @include cta-text;
+      display: flex;
+      align-items: center;
+      align-content: center;
+      justify-content: flex-start;
+      min-height: auto !important;
+    }
+    .v-input__prepend-inner, .v-input__icon, .v-icon{
+      width: 18px !important;
+      height: 18px !important;
+      min-width: 18px !important;
+      margin-top: 0 !important;
+      font-size: 18px;
+    }
+    .v-icon {
+      color: $sidebar-search-icon-color;
+    }
+    input {
+      height: 18px !important;
+      padding: 0 !important;
+      margin-left: 8px;
     }
   }
-  .number-of-records {
-    // TODO: hugo - css
+  .vue-recycle-scroller__item-wrapper {
+    top: 8px;
   }
+  .delete-records, .select-all {
+    padding: 0 !important;
+    @include cta-text;
+    text-transform: none;
+    letter-spacing: normal;
+    .v-icon, .btn__content {
+      color: $sidebar-records-list-checkbox-color;
+    }
+  }
+}
 </style>

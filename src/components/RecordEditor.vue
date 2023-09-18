@@ -32,7 +32,7 @@
     <div class="buttons">
       <v-btn class="back" @click="back">{{ "TL_BACK" | translate }}</v-btn>
       <v-btn class="update" color="primary" @click="createUpdateClicked">{{ (editingRecord._id? "TL_UPDATE": "TL_CREATE") | translate }}</v-btn>
-      <v-btn class="delete" color="error" @click="deleteRecord">{{ 'TL_DELETE' | translate }}</v-btn>
+      <v-btn v-if="editingRecord._id" class="delete" color="error" @click="deleteRecord">{{ 'TL_DELETE' | translate }}</v-btn>
     </div>
   </div>
 </template>
@@ -112,7 +112,7 @@ export default {
     await this.updateSchema()
     this.cloneEditingRecord()
     this.isReady = true
-    console.warn('EDITING RECORD - ', this.editingRecord)
+    // console.warn('EDITING RECORD - ', this.editingRecord)
     FieldSelectorService.events.on('select', this.onFieldSelected)
     this.$nextTick(() => {
       this.formElem = document.getElementById(this.randomId)
