@@ -368,7 +368,7 @@ export default {
     onModelUpdated (value, model) {
       this.updateFields(value, model)
       console.info('editingRecord =', this.editingRecord)
-      this.$refs.vfg.validate()
+      // this.$refs.vfg.validate()
       this.checkDirty()
     },
     isAttachmentField (model) {

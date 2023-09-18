@@ -4,6 +4,7 @@
     :class="[schema.labelClasses]" :type="getType()" :label="schema.label" :value="value" :input-value="value"
     :max-length="schema.max" autocomplete="off"
     :min-length="schema.min"
+    validate-on-submit
     :rules="[validateField]"
     :dense="get('dense')" :compact="get('compact')" :disabled="get('disabled')" :readonly="get('readonly')" :filled="get('filled')" :outlined="get('outlined')" :solo="get('solo')"
     persistent-placeholder hide-details
@@ -22,7 +23,9 @@ import AbstractField from '@m/AbstractField'
 export default {
   mixins: [AbstractField],
   data () {
-    return {}
+    return {
+      rules: []
+    }
   },
   methods: {
     onChangeData (data) {
