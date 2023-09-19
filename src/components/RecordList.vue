@@ -45,12 +45,12 @@
           class="item"
           :class="{selected: item === selectedItem, frozen:!item._local}"
         >
-          <div class="checkbox" @click.exact="select(item, true)" @click.shift="selectTo(item)">
+          <div class="checkbox" :class="{'blink-background': isItemSelected(item)}" @click.exact="select(item, true)" @click.shift="selectTo(item)" @click.ctrl="selectTo(item, true)">
             <template v-if="item._local">
               <v-icon :class="{displayed: isItemSelected(item)}">mdi-check-bold</v-icon>
             </template>
           </div>
-          <div class="item-info" @click.exact="select(item)">
+          <div class="item-info" @click.exact="select(item)" @click.shift="selectTo(item)" @click.ctrl="selectTo(item, true)">
             <div v-if="item" class="main">{{ getName(item) }}</div>
             <div class="meta">
               <div class="id">{{ item._id }}</div>
@@ -123,6 +123,7 @@ export default {
   },
   data () {
     return {
+      lastSelectedItem: false,
       menuOpened: false,
       search: null,
       TranslateService,
@@ -334,6 +335,7 @@ export default {
       if (!item._local) {
         return this.$emit('selectItem', item)
       }
+      this.lastSelectedItem = item._id
       if (!clickedCheckbox) {
         this.localMultiselectItems = [item]
         this.$emit('selectItem', item)
@@ -346,23 +348,50 @@ export default {
       }
       this.$emit('changeMultiselectItems', this.localMultiselectItems)
     },
-    selectTo (item) {
-      const start = _.first(this.localMultiselectItems)
-      let found = false
-      for (const iterator of this.filteredList) {
-        if (iterator === start) {
-          this.localMultiselectItems = [iterator]
+    selectTo (item, ctrlPressed = false) {
+      if (ctrlPressed || item._id === this.lastSelectedItem) {
+        if (_.isUndefined(_.find(this.localMultiselectItems, {_id: item._id}))) {
+          this.localMultiselectItems.push(item)
+        } else {
+          this.localMultiselectItems = _.filter(this.localMultiselectItems, (i) => i._id !== item._id)
         }
-        if (found === true) {
-          this.localMultiselectItems.push(iterator)
+        return this.$emit('changeMultiselectItems', this.localMultiselectItems)
+      }
+      if (!this.lastSelectedItem) {
+        this.lastSelectedItem = item._id
+      }
+      const state = _.isUndefined(_.find(this.localMultiselectItems, {_id: item._id})) ? 'check' : 'uncheck'
+      const start = _.findIndex(this.filteredList, (i) => i._id === item._id)
+      const end = _.findIndex(this.filteredList, (i) => i._id === this.lastSelectedItem)
+      const firstIndex = start <= end ? start : end
+      let lastIndex = -1
+      if (start <= end) {
+        if (end + 1 <= this.filteredList.length) {
+          lastIndex = end + 1
+        } else {
+          lastIndex = -1
         }
-        if (iterator === start) {
-          found = true
-        }
-        if (iterator === item) {
-          found = false
+      } else {
+        if (start + 1 <= this.filteredList.length) {
+          lastIndex = start + 1
+        } else {
+          lastIndex = -1
         }
       }
+      const selectedItems = _.slice(this.filteredList, firstIndex, lastIndex)
+      if (state === 'check') {
+        _.each(selectedItems, (i) => {
+          if (_.isUndefined(_.find(this.localMultiselectItems, {_id: i._id}))) {
+            this.localMultiselectItems.push(i)
+          }
+        })
+      } else {
+        const ids = _.map(selectedItems, '_id')
+        this.localMultiselectItems = _.filter(this.localMultiselectItems, (i) => {
+          return !_.includes(ids, i._id)
+        })
+      }
+      this.lastSelectedItem = item._id
       this.$emit('changeMultiselectItems', this.localMultiselectItems)
     },
     onClickNew () {

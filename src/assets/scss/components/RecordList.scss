@@ -134,6 +134,9 @@
           opacity: 1;
         }
       }
+      &.blink-background {
+        animation: blinkBackground 0.3s;
+      }
     }
     .list {
       position: absolute;
@@ -155,6 +158,9 @@
         border-radius: 8px;
         background-color: $sidebar-records-list-item-background;
         transition: background-color 0.15s;
+        &:hover {
+          background-color: $imag-blue;
+        }
       }
       &.selected {
         .item-info {
@@ -169,6 +175,17 @@
       }
    }
  }
+  @keyframes blinkBackground {
+    0% {
+      background-color: white;
+    }
+    50% {
+      background-color: rgba(255, 255, 255, 0.25);
+    }
+    100% {
+      background-color: white;
+    }
+  }
 }
 
 
