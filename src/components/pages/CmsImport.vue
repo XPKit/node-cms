@@ -1,43 +1,58 @@
 <template>
-  <div class="cms-import">
-    <h3>Cms Import</h3>
-    <div class="main-container">
-      <div class="config-resources">
-        <h4>Resources</h4>
-        <v-chip-group
-          v-if="config && config.resources"
-          column
-        >
-          <v-chip
-            v-for="(item, index) in config.resources" :key="index" :ripple="false"
+  <div class="plugin-wrapper">
+    <div class="plugin-title">
+      <h5>Cms Import</h5>
+    </div>
+    <v-card elevation="0" class="cms-import">
+      <div class="main-container">
+        <div class="config-resources">
+          <h5>Resources</h5>
+          <v-chip-group
+            v-if="config && config.resources"
+            column
           >
-            {{ item }}
-          </v-chip>
-        </v-chip-group>
-      </div>
-      <hr>
-      <h4>Actions</h4>
-      <div>
-        <v-btn dense @click="openFile()">Edit Google Sheet</v-btn>
-        <div class="other-actions">
-          <v-btn dense :disabled="loading" @click="checkStatus()">Check Difference</v-btn>
-          <v-btn dense :disabled="loading" @click="execute()">Import from Remote</v-btn>
+            <v-chip
+              v-for="(item, index) in config.resources"
+              :key="index" small :ripple="false"
+            >
+              {{ item }}
+            </v-chip>
+          </v-chip-group>
+        </div>
+        <div class="divider dashed" />
+        <h5>Actions</h5>
+        <div>
+          <v-btn rounded dense @click="openFile()">Edit Google Sheet</v-btn>
+          <div class="other-actions">
+            <v-btn rounded dense :disabled="loading" @click="checkStatus()">Check Difference</v-btn>
+            <v-btn rounded dense :disabled="loading" @click="execute()">Import from Remote</v-btn>
+          </div>
+        </div>
+        <div class="divider dashed" />
+        <h5>Upload Xlsx</h5>
+        <div class="subtext">Import Excel</div>
+        <v-card
+          class="file-input-card" elevation="0" :class="{ 'drag-and-drop': dragover, bold: uploadedXlsx && uploadedXlsx.name }"
+          @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @click="clickOnFileInput()" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
+        >
+          <template v-if="!uploadedXlsx">Click or drag & drop to import an .xlsx file</template><template v-else>{{ uploadedXlsx.name }}</template>
+          <v-file-input
+            ref="xlsxFile" accept=".xlsx, .xls, .csv"
+            :rules="getRules()" class="hidden-field" flat dense hide-details type="file" @change="onChangeXlsxFile"
+          />
+        </v-card>
+        <div class="other-actions margin-top">
+          <v-btn rounded dense :disabled="loading || !uploadedXlsx" @click="checkXlsxStatus()">Check Difference</v-btn>
+          <v-btn rounded dense :disabled="loading || !uploadedXlsx" @click="executeXlsx()">Import from Remote</v-btn>
+        </div>
+        <div v-if="status || error">
+          <h6 v-if="type == 0">Difference:</h6>
+          <h6 v-else>Status:</h6>
+          <pre v-html="status" />
+          <pre v-html="error" />
         </div>
       </div>
-      <hr>
-      <h4>Upload Xlsx</h4>
-      <v-file-input ref="xlsxFile" dense hide-details outlined type="file" @change="onChangeXlsxFile" />
-      <div class="other-actions">
-        <v-btn dense :disabled="loading || !uploadedXlsx" @click="checkXlsxStatus()">Check Difference</v-btn>
-        <v-btn dense :disabled="loading || !uploadedXlsx" @click="executeXlsx()">Import from Remote</v-btn>
-      </div>
-      <div v-if="status || error">
-        <h4 v-if="type == 0">Difference:</h4>
-        <h4 v-else>Status:</h4>
-        <pre v-html="status" />
-        <pre v-html="error" />
-      </div>
-    </div>
+    </v-card>
   </div>
 </template>
 
@@ -52,7 +67,8 @@ export default {
       error: null,
       type: 0,
       loading: false,
-      uploadedXlsx: null
+      uploadedXlsx: null,
+      dragover: false
     }
   },
   async mounted () {
@@ -60,9 +76,22 @@ export default {
     this.config = response.data.import
   },
   methods: {
-    async onChangeXlsxFile (event) {
+    getRules () {
+      return [(value) => !value || value.type === 'text/xlsx' || value.type === 'text/xls' || value.type === 'text/csv' || 'Only XLSX/XLS/CSV files allowed']
+    },
+    clickOnFileInput () {
+      this.$refs.xlsxFile.$refs.input.click()
+    },
+    onDrop (event) {
+      this.dragover = false
+      if (event.dataTransfer.files.length > 1) {
+        return console.error('Only one file can be uploaded at a time..')
+      }
+      this.onChangeXlsxFile(event, event.dataTransfer.files)
+    },
+    async onChangeXlsxFile (event, files = false) {
       this.uploadedXlsx = null
-      const file = _.first(event.target.files)
+      const file = _.first(files || _.get(event, 'target.files', event)) || event
       if (!file) {
         return
       }
@@ -152,46 +181,107 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@a/scss/variables.scss';
 .cms-import {
-  padding: 20px;
-  h3 {
-    margin: 0px;
+  margin: 16px;
+  padding: 16px;
+  background-color: $layout-card-background;
+  border-radius: 12px;
+  h5 {
+    @include h5;
+    margin-bottom: 8px;
   }
-  h4 {
-    margin-bottom: 2px;
+  h6 {
+    @include h6;
   }
-  .main-container {
-    padding: 16px;
-  }
-  .config-resources {
-    ul {
-      padding-left: 17px;
-      li {
-        list-style: circle;
-        text-transform: capitalize;
-      }
+  .divider {
+    border-bottom: 1px solid $imag-grey;
+    margin: 16px 0;
+    &.dashed {
+      border-bottom: 1px dashed $imag-grey;
     }
   }
-  .config {
-    margin-top: 0px;
-    background: #f3f3f3;
-    padding: 10px;
-    border: 1px solid #c7c7c7;
-    border-radius: 6px;
-    color: green;
-    font-size: 11px;
-  }
   .other-actions {
-    margin-top: 12px;
+    .v-btn {
+      margin-bottom: 0;
+    }
+    &.margin-top {
+      margin-top: 16px;
+    }
+  }
+  .v-btn {
+    background-color: $cms-import-btn-background !important;
+    color: $cms-import-btn-color !important;
+    margin-bottom: 16px;
+  }
+  .v-btn + .v-btn {
+    margin-left: 8px;
+  }
+   .subtext {
+    padding-left: 16px;
+  }
+  .v-btn__content {
+    text-transform: none;
+  }
+  .file-input-card {
+    cursor: pointer;
+    background-color: $imag-light-grey;
     display: flex;
-    gap: 12px;
     align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    user-select: none;
+    &.bold {
+      font-weight: bold;
+    }
+    &.drag-and-drop {
+      background-color: $imag-grey;
+    }
   }
-  .v-file-input {
-    max-width: 200px;
+  .hidden-field {
+    display: none;
+    opacity: 0;
+    user-select: none;
   }
-  hr {
-    margin: 12px 0;
+  .v-slide-group__content {
+    padding: 0 !important;
+  }
+  .v-chip, .subtext {
+    @include subtext;
+  }
+  .v-chip {
+    background-color: $cms-import-resource-background !important;
+    color: $cms-import-resource-color !important;
+    padding: 4px 8px;
+    .v-chip__content {
+      padding: 0;
+      line-height: 1;
+    }
+  }
+}
+/*
+  $cms-import-title-background: var(--cms-import-resource-background);
+  $cms-import-title-color: var(--cms-import-resource-color);
+  $cms-import-section-background: var(--cms-import-section-background);
+  $cms-import-section-color: var(--cms-import-section-color);
+  $cms-import-resource-background: var(--cms-import-resource-background);
+  $cms-import-resource-color: var(--cms-import-resource-color);
+  $cms-import-btn-background: var(--cms-import-btn-background);
+  $cms-import-btn-color: var(--cms-import-btn-color);
+*/
+
+</style>
+
+<style lang="scss">
+@import '@a/scss/variables.scss';
+
+.cms-import {
+  .v-btn__content {
+    text-transform: none;
+    letter-spacing: 0;
+    @include h6;
+    font-weight: 700;
+    font-style: normal;
   }
 }
 </style>

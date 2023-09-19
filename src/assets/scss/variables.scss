@@ -11,6 +11,7 @@ $imag-yellow: #E1E000;
 $imag-green: #8DE971 ;
 
 $layout-background: var(--layout-background);
+$layout-card-background: var(--layout-card-background);
 $layout-color: var(--layout-color);
 $layout-width: var(--layout-width);
 
@@ -42,6 +43,18 @@ $sidebar-records-list-delete-icon-color: var(--sidebar-records-list-delete-icon-
 $sidebar-records-list-item-background: var(--sidebar-records-list-item-background);
 $sidebar-records-list-item-background-selected: var(--sidebar-records-list-item-background-selected);
 $sidebar-records-list-item-background-disabled: var(--sidebar-records-list-item-background-disabled);
+
+$plugin-title-background: var(--plugin-title-background);
+$plugin-title-color: var(--plugin-title-color);
+
+$cms-import-section-background: var(--cms-import-section-background);
+$cms-import-section-color: var(--cms-import-section-color);
+$cms-import-resource-background: var(--cms-import-resource-background);
+$cms-import-resource-color: var(--cms-import-resource-color);
+$cms-import-btn-background: var(--cms-import-btn-background);
+$cms-import-btn-color: var(--cms-import-btn-color);
+
+
 
 $btn-action-background: var(--btn-action-background);
 $btn-action-color: var(--btn-action-color);
@@ -133,7 +146,9 @@ $btn-action-color: var(--btn-action-color);
 .v-application {
   font-family: Source Sans Pro !important;
   --navbar-height: 58px;
-  --layout-background: #{$imag-white};
+  --layout-background: #{$imag-light-grey};
+  // TODO: hugo - to implement in all screens
+  --layout-card-background: #{$imag-white};
   --layout-color: #{$imag-black};
   --layout-width: 1440px;
   --navbar-background: #{$imag-black};
@@ -165,6 +180,16 @@ $btn-action-color: var(--btn-action-color);
   --sidebar-records-list-item-background: #{$imag-white};
   --sidebar-records-list-item-background-selected: #{$imag-purple};
   --sidebar-records-list-item-background-disabled: #{$imag-grey};
+
+
+  --plugin-title-background: #{$imag-blue};
+  --plugin-title-color: #{$imag-white};
+  --cms-import-section-background: #{$imag-white};
+  --cms-import-section-color: #{$imag-black};
+  --cms-import-resource-background: #{$imag-black};
+  --cms-import-resource-color: #{$imag-white};
+  --cms-import-btn-background: #{$imag-blue};
+  --cms-import-btn-color: #{$imag-white};
 
   --btn-action-background: #{$imag-blue};
   --btn-action-color: #{$imag-white};

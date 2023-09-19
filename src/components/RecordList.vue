@@ -55,7 +55,7 @@
             <div class="meta">
               <div class="id">{{ item._id }}</div>
               <div class="ts">
-                <template v-if="item._updatedBy"> {{ 'TL_UPDATED_BY' | translate }} {{ item._updatedBy }}</template><template v-else> {{ 'TL_UPDATED' | translate }}</template> <timeago :since="item._updatedAt" :locale="TranslateService.locale" />
+                <template v-if="item._updatedBy"> {{ item._updatedBy }} - </template><template v-else> {{ 'TL_UPDATED' | translate }}</template> <timeago :since="item._updatedAt" :locale="TranslateService.locale" />
               </div>
             </div>
           </div>

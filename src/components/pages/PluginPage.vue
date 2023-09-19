@@ -7,22 +7,26 @@
 <script>
 
 export default {
-  props: [
-    'plugin'
-  ],
-  data () {
-    return {
-    }
-  },
-  watch: {
-
-  },
-  mounted () {
-    // console.log(this.plugin)
-  },
-  methods: {
-
-  }
-
+  props: ['plugin']
 }
 </script>
+<style lang="scss" scoped>
+@import '@a/scss/variables.scss';
+.plugin-page {
+  background-color: $layout-background;
+}
+</style>
+
+<style lang="scss">
+@import '@a/scss/variables.scss';
+.plugin-page {
+  .plugin-title {
+    background-color: $plugin-title-background;
+    padding: 16px 25px;
+    h5 {
+      @include h5;
+      color: $plugin-title-color;
+    }
+  }
+}
+</style>
