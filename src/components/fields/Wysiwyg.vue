@@ -90,9 +90,29 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+@import '@a/scss/variables.scss';
+
 .wysiwyg-wrapper {
   position: relative;
+  .tiptap-vuetify-editor {
+    // TODO: hugo - adapt style
 
+    // .tiptap-vuetify-editor__content {
+    //   background-color: $field-background;
+    //   padding: 0;
+    //   min-height: 100px;
+    //   p {
+    //     margin: 8px 0 !important;
+    //   margin-left: 16px !important;
+    //   }
+    // }
+    // .tiptap-vuetify-editor__paragraph--is-empty {
+    //   height: 100%;
+    // }
+    // .ProseMirror {
+    //   margin: 0 !important;
+    // }
+  }
 }
 </style>

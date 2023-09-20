@@ -401,6 +401,7 @@ export default {
 }
 </script>
 <style lang="scss">
+@import '@a/scss/variables.scss';
 .cms-layout {
   display: flex;
   flex-direction: column;
@@ -463,6 +464,7 @@ export default {
       }
     }
     .records {
+      background-color: $record-editor-background;
       flex: 1 1 0;
       display: flex;
       align-items: stretch;
@@ -470,14 +472,8 @@ export default {
     }
   }
   .field-label {
-    position: absolute;
-    top: -10px;
-    left: 12px;
-    background-color: white;
-    z-index: 2;
-    padding: 0 4px;
-    font-size: 12px;
-    color: rgba(0,0,0,.6);
+    @include subtext;
+    padding-left: 16px;
   }
   .border-wrapper  {
     border: 1px solid rgba(0,0,0,.42);

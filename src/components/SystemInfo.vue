@@ -271,6 +271,12 @@ export default {
   left: auto !important;
   width: auto;
 }
+
+.links-wrapper {
+  .node-cms-title {
+    font-weight: bold;
+  }
+}
 .v-input--selection-controls {
   margin-top: 0;
 }
@@ -304,11 +310,14 @@ export default {
     transition: background-color 0.15s;
     text-decoration: none;
     padding-left: 16px;
+    border-radius: 50px;
     &:hover {
       background-color: $imag-blue;
     }
     &.active {
       font-weight: bold;
+      background-color: $imag-purple;
+
     }
   }
   .v-divider {

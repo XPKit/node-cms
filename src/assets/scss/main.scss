@@ -41,43 +41,71 @@ ul, li {
 
 .v-application {
 
-  .resources-menu {
-    border-radius: 0px 0px 8px 8px !important;
-    background-color: transparent;
-    max-height: 40vh !important;
-
+  .v-menu__content.v-autocomplete__content, .resources-menu {
     .v-list {
       border-radius: 0px 0px 8px 8px !important;
       @include blurred-background;
       transform: translate3d(0, 0, 0);
       display: flex;
-      padding-left: vw(16px);
+      padding-left: 24px;
       flex-direction: column;
       align-items: flex-start;
-
+      gap: 16px;
       .v-list-item {
         display: inline-block;
-        color: white;
-        min-height: 26px;
         @include cta-text;
         font-weight: normal;
         font-style: normal;
         background-color: $navbar-resource-group-background;
+        border-radius: 50px;
+        min-height: 18px;
+        height: 18px;
+        padding: 4px 16px;
         .v-list-item__title {
           @include cta-text;
           font-style: normal;
           color: $navbar-resource-title-color;
-          line-height: 26px;
+          line-height: 18px;
         }
-        &.selected {
+        .v-list-item__content {
+          padding: 0;
+        }
+        &:before {
+          border-radius: 50px;
+          opacity: 1;
+          background-color: $imag-blue !important;
+        }
+        &:before {
+          opacity: 0;
+          z-index: -1;
+        }
+        &:hover {
+          .v-list-item__title {
+            color: $navbar-resource-title-color-selected;
+          }
+          &::before {
+            opacity: 1;
+          }
+        }
+        &.v-list-item--highlighted {
           font-weight: bold !important;
           background-color: $navbar-resource-group-background-selected;
           font-size: vw(14px) !important;
           .v-list-item__title {
             color: $navbar-resource-title-color-selected;
           }
+          &:before {
+            opacity: 0;
+          }
         }
       }
+    }
+  }
+
+  .resources-menu {
+    max-height: 40vh !important;
+    .v-list {
+      gap: 0;
     }
     &.sidebar {
       left: 0 !important;
@@ -87,6 +115,50 @@ ul, li {
 }
 
 body {
+  .v-input {
+    flex-direction: column;
+    .v-input__slot, .v-input__prepend-outer {
+      padding: 0 16px !important;
+    }
+    .v-input__prepend-outer {
+      margin-top: 0 !important;
+      @include subtext;
+    }
+    .v-input__slot {
+      @include cta-text;
+      font-weight: normal;
+      min-height: 34px !important;
+      &:before {
+        display: none;
+      }
+    }
+    input {
+      &.focus {
+        border: none !important;
+        box-shadow: none !important;
+      }
+    }
+  }
+  .v-file-input {
+    min-height: 80px;
+    padding: 32px 16px 16px 16px;
+    gap: 10px;
+    border-radius: 8px !important;
+    .v-input__slot {
+      min-height: 80px !important;
+    }
+    .v-text-field__slot {
+      align-items: center;
+      justify-content: center;
+    }
+    .v-file-input__text {
+      justify-content: center;
+      cursor: pointer;
+      @include h6;
+      font-style: normal;
+      color: $imag-black !important;
+    }
+  }
   .v-application {
     background: $layout-background;
     color: $layout-color;
@@ -95,41 +167,8 @@ body {
   // TODO: hugo - change to use vars instead
     background: #4e4e4e;
     color: rgba(255, 255, 255, 0.87);
-    .buttons {
-      background: #4e4e4e;
-    }
     .node-cms-title {
       color: white;
-    }
-  }
-  .locales {
-    height: 39px;
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    align-items: stretch;
-    align-content: stretch;
-    margin-bottom: 0px;
-
-    li {
-      width: 100%;
-      flex: 0 1 auto;
-      cursor: pointer;
-      align-self: auto;
-      text-align: center;
-      line-height: 38px;
-      border-left: 1px solid #c7c7c7;
-      background: #f9f9f9;
-      border-bottom: 1px solid #c7c7c7;
-
-      &:first-child {
-        border-left: 0;
-      }
-
-      &.selected {
-        background: none;
-        border-bottom: none;
-      }
     }
   }
 
@@ -148,8 +187,4 @@ body {
       }
     }
   }
-  .theme-light {
-
-  }
-
 }

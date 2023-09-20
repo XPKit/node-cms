@@ -232,15 +232,6 @@
 }
 .theme--dark {
   .record-table {
-    .locales {
-      li {
-        cursor: pointer;
-        color: black;
-        &.selected {
-          color: white;
-        }
-      }
-    }
     .table {
       .row {
         .cell {

@@ -1,14 +1,15 @@
 <template>
   <div class="attachment-view">
     <form v-if="!disabled" enctype="multipart/form-data">
+      <div class="field-label"><span v-if="schema.required" class="red--text"><strong>* </strong></span>{{ schema.label }}</div>
       <v-card
         class="file-input-card" elevation="0" :class="{ 'drag-and-drop': dragover }"
         @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
       >
         <v-file-input
-          ref="input" :rules="getRules()"
-          :label="schema.label" :placeholder="getPlaceholder() | translate" :clearable="false"
-          dense outlined persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
+          ref="input" :rules="getRules()" prepend-icon=""
+          :placeholder="getPlaceholder() | translate" :clearable="false" :hide-details="isFieldValid()"
+          dense filled rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
           @change="onUploadChanged"
         >
           <template #selection="{index}">
@@ -25,20 +26,20 @@
         draggable=".preview-attachment" handle=".row-handle" ghost-class="ghost"
         v-bind="dragOptions" :class="{disabled}" @end="onEndDrag" @start="onStartDrag"
       >
-        <v-card v-for="(a, i) in getAttachments()" :key="`${a._filename}-${i}`" class="preview-attachment" :class="{odd: i % 2 !== 0}">
-          <v-chip class="filename" close @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
+        <v-card v-for="(a, i) in getAttachments()" :key="`${a._filename}-${i}`" elevation="0" class="preview-attachment" :class="{odd: i % 2 !== 0}">
           <div class="row-handle">
             <img v-if="isImage()" :src="getImageSrc(a)">
             <v-btn v-else small @click="viewFile(a)">{{ 'TL_VIEW' | translate }}</v-btn>
             <v-icon>mdi-drag</v-icon>
           </div>
+          <v-chip outlined class="filename" close close-icon="mdi-close-circle-outline" @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
         </v-card>
       </draggable>
     </div>
     <div v-else-if="attachment()" class="preview-single-attachment">
-      <v-chip class="filename" close @click:close="removeImage(attachment())">{{ attachment()._filename | truncate(10) }} ({{ imageSize(attachment()) }})</v-chip>
       <img v-if="isImage()" :src="getImageSrc()">
       <v-btn v-else small @click="viewFile()">{{ 'TL_VIEW' | translate }}</v-btn>
+      <v-chip class="filename" close @click:close="removeImage(attachment())">{{ attachment()._filename | truncate(10) }} ({{ imageSize(attachment()) }})</v-chip>
     </div>
     <template v-if="model._local && !disabled">
       <template v-if="isForMultipleImages()">

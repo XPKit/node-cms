@@ -1,15 +1,16 @@
 <template>
   <div class="image-view" :class="{'full-width': !(schema.width && schema.height)}">
     <form v-if="!disabled" enctype="multipart/form-data">
+      <div class="field-label"><span v-if="schema.required" class="red--text"><strong>* </strong></span>{{ schema.label }}</div>
       <v-card
         v-if="schema.disabled"
         class="file-input-card" elevation="0" :class="{ 'drag-and-drop': dragover }"
         @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
       >
         <v-file-input
-          ref="input" :rules="getRules()" :hide-details="isFieldValid()"
-          :label="schema.label" :placeholder="getPlaceholder() | translate" :clearable="false"
-          dense outlined persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="true"
+          ref="input" :rules="getRules()" :hide-details="isFieldValid()" prepend-icon=""
+          :placeholder="getPlaceholder() | translate" :clearable="false"
+          dense filled rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="true"
           @change="onUploadChanged"
         >
           <template #selection="{index}">
@@ -25,9 +26,9 @@
         @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
       >
         <v-file-input
-          ref="input" :rules="getRules()" :hide-details="isFieldValid()"
-          :label="schema.label" :placeholder="getPlaceholder() | translate" :clearable="false"
-          dense outlined persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
+          ref="input" :rules="getRules()" :hide-details="isFieldValid()" prepend-icon=""
+          :placeholder="getPlaceholder() | translate" :clearable="false"
+          dense filled rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
           @change="onUploadChanged"
         >
           <template #selection="{index}">
@@ -44,12 +45,12 @@
         draggable=".preview-attachment" handle=".row-handle" ghost-class="ghost"
         v-bind="dragOptions" :class="{disabled}" @end="onEndDrag" @start="onStartDrag"
       >
-        <v-card v-for="(a, i) in getAttachments()" :key="`${a._filename}-${i}`" class="preview-attachment" :class="{odd: i % 2 !== 0}">
-          <v-chip class="filename" close :disabled="disabled || schema.disabled" @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
+        <v-card v-for="(a, i) in getAttachments()" :key="`${a._filename}-${i}`" elevation="0" class="preview-attachment" :class="{odd: i % 2 !== 0}">
           <div class="row-handle">
             <img :src="getImageSrc(a)">
             <v-icon>mdi-drag</v-icon>
           </div>
+          <v-chip class="filename" close close-icon="mdi-close-circle-outline" :disabled="disabled || schema.disabled" @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
         </v-card>
       </draggable>
     </div>

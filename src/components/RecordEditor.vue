@@ -1,40 +1,41 @@
 <template>
-  <div v-if="record" class="record-editor" :class="{frozen:!record._local}">
-    <v-tabs
-      v-show="resource.locales"
-      v-model="activeLocale"
-      fixed-tabs background-color="white" dark height="39" hide-slider
-    >
-      <v-tab
-        v-for="item in resource.locales" :key="item"
-        class="locale"
-        @click="selectLocale(item)"
-      >
-        {{ 'TL_'+item.toUpperCase() | translate }}
-      </v-tab>
-    </v-tabs>
-    <v-form
-      :id="randomId"
-      ref="vfg"
-      v-model="formValid"
-      lazy-validation
-    >
-      <custom-form
-        v-if="isReady"
-        :schema="schema"
-        :form-id="randomId"
-        :form-options="formOptions"
-        :model.sync="editingRecord"
-        @error="onError"
-        @input="onModelUpdated"
-      />
-    </v-form>
-    <div class="buttons">
-      <v-btn class="back" @click="back">{{ "TL_BACK" | translate }}</v-btn>
-      <v-btn class="update" color="primary" @click="createUpdateClicked">{{ (editingRecord._id? "TL_UPDATE": "TL_CREATE") | translate }}</v-btn>
-      <v-btn v-if="editingRecord._id" class="delete" color="error" @click="deleteRecord">{{ 'TL_DELETE' | translate }}</v-btn>
+  <v-card v-if="record" elevation="0" class="record-editor" :class="{frozen:!record._local}">
+    <div class="top-bar">
+      <template v-if="resource.locales && resource.locales.length === 2">
+        <div v-show="resource.locales" class="locales toggle-mode" @click="toggleLocale()">
+          <v-btn elevation="0" class="back" rounded text small @click="back"><v-icon>mdi-chevron-left</v-icon> {{ "TL_BACK" | translate }}</v-btn>
+          <v-chip v-for="(item, i) in resource.locales" :key="i" small :ripple="false" :class="{selected: activeLocale === i}">
+            {{ getLocaleTranslation(item) }}
+          </v-chip>
+        </div>
+      </template>
+      <template v-else>
+        <div v-show="resource.locales" class="locales">
+          <v-btn elevation="0" class="back" rounded text small @click="back"><v-icon>mdi-chevron-left</v-icon> {{ "TL_BACK" | translate }}</v-btn>
+          <v-chip v-for="(item, i) in resource.locales" :key="i" small :ripple="false" :class="{selected: activeLocale === i}" @click="selectLocale(item)">
+            {{ getLocaleTranslation(item) }}
+          </v-chip>
+        </div>
+      </template>
+      <div class="buttons">
+        <v-btn v-if="editingRecord._id" elevation="0" class="delete" icon rounded @click="deleteRecord"><v-icon>mdi-trash-can</v-icon></v-btn>
+        <v-btn elevation="0" class="update" rounded @click="createUpdateClicked">{{ (editingRecord._id? "TL_UPDATE": "TL_CREATE") | translate }}</v-btn>
+      </div>
     </div>
-  </div>
+    <div class="scroll-wrapper" :class="{'scrolled-to-bottom': scrolledToBottom}" @scroll="onScroll">
+      <v-form :id="randomId" ref="vfg" v-model="formValid" class="record-editor-form" lazy-validation>
+        <custom-form
+          v-if="isReady"
+          :schema="schema"
+          :form-id="randomId"
+          :form-options="formOptions"
+          :model.sync="editingRecord"
+          @error="onError"
+          @input="onModelUpdated"
+        />
+      </v-form>
+    </div>
+  </v-card>
 </template>
 
 <script>
@@ -68,6 +69,7 @@ export default {
   },
   data () {
     return {
+      scrolledToBottom: false,
       randomId: Math.random(),
       formValid: false,
       fileInputTypes: ['file', 'img', 'image', 'imageView', 'attachmentView'],
@@ -99,10 +101,10 @@ export default {
       await this.updateSchema()
       this.editingRecord = _.clone(this.editingRecord)
       this.checkDirty()
-    },
-    model () {
-      console.warn('MODEL CHANGED: ', this.model)
     }
+    // model () {
+    //   console.warn('MODEL CHANGED: ', this.model)
+    // }
   },
   async mounted () {
     await this.updateSchema()
@@ -118,6 +120,15 @@ export default {
     FieldSelectorService.events.off('select', this.onFieldSelected)
   },
   methods: {
+    onScroll ({ target: { scrollTop, clientHeight, scrollHeight } }) {
+      this.scrolledToBottom = scrollTop + clientHeight >= scrollHeight
+    },
+    toggleLocale () {
+      this.selectLocale(this.resource.locales[this.activeLocale === 0 ? 1 : 0])
+    },
+    getLocaleTranslation (locale) {
+      return TranslateService.get('TL_' + locale.toUpperCase())
+    },
     getFieldRealOffset (elem) {
       // NOTE: Minus the navbar height
       return _.get(elem, '$el.offsetTop', elem.offsetTop) - 50
@@ -363,7 +374,7 @@ export default {
     },
     onModelUpdated (value, model) {
       this.updateFields(value, model)
-      console.info('editingRecord =', this.editingRecord)
+      // console.info('editingRecord =', this.editingRecord)
       // this.$refs.vfg.validate()
       this.checkDirty()
     },

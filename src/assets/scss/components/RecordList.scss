@@ -1,7 +1,6 @@
 .record-list {
   min-width: 364px;
   max-width: 364px;
-  border-right: 1px solid #c7c7c7;
   overflow: auto;
   height: 100%;
   position: relative;
@@ -50,7 +49,12 @@
   }
 
   .search {
+    background-color: $layout-card-background;
     display: flex;
+    height: 66px;
+    .v-input__slot, input {
+      height: 34px !important;
+    }
     input {
       width: calc(100% - 20px);
       margin: 0;
@@ -67,6 +71,10 @@
       // &:hover, &:focus {
       //   box-shadow: 0px 0px 3px 0px #eee inset;
       // }
+    }
+    .v-input__prepend-inner {
+      height: 34px !important;
+      align-items: center;
     }
     &.is-query {
       &.is-valid {
@@ -103,6 +111,7 @@
     padding: 0px;
     flex: 100% 1 1;
     position: relative;
+    background-color: $sidebar-records-list-background !important;
     .records-top-bar {
       .select-all {
         cursor: pointer;
@@ -134,8 +143,11 @@
           opacity: 1;
         }
       }
+      &:hover {
+        background-color: rgba(255,255,255, 0.25);
+      }
       &.blink-background {
-        animation: blinkBackground 0.3s;
+        animation: blinkBackground 0.1s;
       }
     }
     .list {

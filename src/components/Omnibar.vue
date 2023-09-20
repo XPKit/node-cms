@@ -1,6 +1,6 @@
 <template>
   <div
-    id="omnibar" v-shortkey="shortcuts"
+    id="omnibar" v-shortkey="showOmnibar ? shortcuts : shortcutsWhenClosed"
     @shortkey="interactiveSearch"
   >
     <div id="omnibar-backdrop" :class="{displayed: showOmnibar}" @click="showHideOmnibar(false)" />
@@ -62,6 +62,9 @@ export default {
       highlightedItem: 0,
       searchModes: ['all', 'resource', 'field'],
       searchMode: 'all',
+      shortcutsWhenClosed: {
+        'open': ['ctrl', 'p']
+      },
       shortcuts: {
         'esc': ['esc'],
         'open': ['ctrl', 'p'],

@@ -136,5 +136,7 @@
     "TL_HIDE_RECORD_SELECTION": "Hide record selection",
     "TL_DELETE_SELECTED_RECORDS": "Delete selected records",
     "TL_RECORD_SELECTION": "Record selection",
-    "TL_ADD_NEW_RECORD": "Add new record"
+    "TL_ADD_NEW_RECORD": "Add new record",
+    "TL_ADD_NEW_FIELD": "Add new field",
+    "TL_NB_SELECTED_ITEMS": "Selected <%=num%> items"
   }

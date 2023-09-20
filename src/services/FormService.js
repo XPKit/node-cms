@@ -293,7 +293,8 @@ let typeMapper = {
 
 _.each(typeMapper, (type) => {
   type.dense = true
-  type.outlined = true
+  type.rounded = true
+  type.filled = true
 })
 
 class FormService {

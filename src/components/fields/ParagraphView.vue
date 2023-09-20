@@ -25,20 +25,28 @@
               @input="onModelUpdated"
             />
           </div>
-          <v-btn class="add-new-item" :disabled="disabled || schema.disabled" fab small @click="onClickRemoveItem(item)"><v-icon>mdi-minus</v-icon></v-btn>
+          <div class="add-btn-wrapper">
+            <v-btn class="add-new-item" :disabled="disabled || schema.disabled" text rounded small @click="onClickRemoveItem(item)"><v-icon>mdi-minus-circle-outline</v-icon></v-btn>
+          </div>
         </div>
       </v-card>
-      <div slot="header">
+      <div slot="header" class="paragraph-header">
         <v-select
           ref="input"
           transition="none"
-          :label="schema.label" :value="selectedType"
-          :menu-props="{ bottom: true, offsetY: true }" :items="types" item-text="label" item-value="label"
-          hide-details outlined dense persistent-placeholder
+          :value="selectedType" :menu-props="{ bottom: true, offsetY: true }" :items="types" item-text="label" item-value="label"
+          hide-details filled rounded dense persistent-placeholder
           :disabled="disabled || schema.disabled"
           @change="onChangeType"
-        />
-        <v-btn class="add-new-item" fab small :disabled="disabled || schema.disabled" @click="onClickAddNewItem"><v-icon>mdi-plus</v-icon></v-btn>
+        >
+          <template #prepend>
+            <span v-if="schema.required" class="red--text"><strong>* </strong></span>{{ schema.label }}
+          </template>
+          <template #label />
+        </v-select>
+        <div class="add-btn-wrapper">
+          <v-btn elevation="0" class="add-new-item" text rounded small :disabled="disabled || schema.disabled" @click="onClickAddNewItem"><v-icon small>mdi-plus-thick</v-icon><span>{{ 'TL_ADD_NEW_FIELD' | translate }}</span></v-btn>
+        </div>
       </div>
     </draggable>
   </div>
@@ -186,12 +194,10 @@ export default {
         const newItem = _.cloneDeep(this.selectedType)
         this.items.push(newItem)
         _.set(this.localModel, this.schema.model, this.items)
-        // console.warn('NEW ITEM ADDED: ', this.schema.model, this.selectedType, this.localModel)
-        this.$emit('input', this.localModel, this.schema.model)
+        this.$emit('input', this.items, this.schema.model)
       }
     },
     onClickRemoveItem (item) {
-      console.warn('onClickRemoveItem -', item)
       let attachments = _.get(this.model, '_attachments', [])
       if (_.includes(['image', 'file', 'group'], item.input)) {
         const findIds = obj => {
@@ -234,10 +240,10 @@ export default {
       this.$emit('input', this.items, this.schema.model)
     },
     onModelUpdated (value, model, paragraphIndex) {
-      _.set(this.localModel, this.schema.model, this.items)
       if (_.includes(model, '.')) {
         _.set(this.items, `[${paragraphIndex}].${model}`, value)
       }
+      _.set(this.localModel, this.schema.model, this.items)
       this.$emit('input', this.items, this.schema.model)
     }
   }
@@ -245,6 +251,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@a/scss/variables.scss';
 .paragraph-view {
   width: 100%;
 }
@@ -303,7 +310,24 @@ export default {
   pointer-events: none;
 }
 .add-new-item {
-  margin: 6px;
+  margin: 6px 0;
+  text-align: right;
+  .v-btn__content {
+    justify-content: flex-end;
+  }
+  span {
+    @include subtext;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+}
+.paragraph-header {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  align-content: stretch;
+  justify-content: flex-start;
 }
 
 </style>
@@ -321,11 +345,12 @@ export default {
       margin-bottom: 0;
     }
   }
-  .v-input {
-    padding-top: 12px;
-  }
   .custom-switch {
     margin-top: 12px;
+  }
+  .add-btn-wrapper {
+    display: flex;
+    justify-content: flex-end;
   }
 }
 </style>

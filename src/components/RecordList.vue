@@ -62,7 +62,7 @@
         </div>
       </RecycleScroller>
     </div>
-    <v-btn v-if="maxCount <= 0 || listCount < maxCount" rounded class="new-record" @click="onClickNew">{{ 'TL_ADD_NEW_RECORD' | translate }}</v-btn>
+    <v-btn v-if="maxCount <= 0 || listCount < maxCount" elevation="0" rounded class="new-record" @click="onClickNew">{{ 'TL_ADD_NEW_RECORD' | translate }}</v-btn>
   </div>
 </template>
 

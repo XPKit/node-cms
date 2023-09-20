@@ -3,20 +3,28 @@
     <v-autocomplete
       :id="selectOptions.id"
       ref="input"
-      :label="getLabel()"
-      :chips="selectOptions.multiple"
+      :chips="selectOptions.chips"
       :value="objectValue"
       :items="formattedOptions"
-      :deletable-chips="selectOptions.multiple"
+      :deletable-chips="selectOptions.deletableChips"
       :hide-selected="selectOptions.hideSelected"
       :disabled="disabled || schema.disabled"
       :placeholder="schema.placeholder"
       :multiple="selectOptions.multiple"
-      clearable persistent-placeholder outlined dense hide-details
+      :clearable="selectOptions.clearable"
+      filled dense rounded hide-details
       @change="updateSelected"
       @search-change="onSearchChange"
       @tag="addTag"
-    />
+    >
+      <template #prepend>
+        <span v-if="schema.required" class="red--text"><strong>* </strong></span>{{ getLabel() }}
+      </template>
+      <template #label />
+      <!-- <template #selection="{index}">
+        <span v-if="index === objectValue.length - 1">{{ 'TL_NB_SELECTED_ITEMS' | translate(null, { num: objectValue.length }) }}</span>
+      </template> -->
+    </v-autocomplete>
   </div>
 </template>
 <script>

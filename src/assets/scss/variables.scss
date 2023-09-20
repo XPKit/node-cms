@@ -3,6 +3,7 @@ $imag-black: #000;
 $imag-white: #FFF;
 $imag-pale-grey: #B8BABC;
 $imag-light-grey: #EDEDED;
+$imag-light-grey-2: #E1E1E1;
 $imag-grey: #818386;
 $imag-blue: #71DBD4;
 $imag-purple: #8094DD;
@@ -47,6 +48,7 @@ $sidebar-records-list-item-background-disabled: var(--sidebar-records-list-item-
 $plugin-title-background: var(--plugin-title-background);
 $plugin-title-color: var(--plugin-title-color);
 
+
 $cms-import-section-background: var(--cms-import-section-background);
 $cms-import-section-color: var(--cms-import-section-color);
 $cms-import-resource-background: var(--cms-import-resource-background);
@@ -55,9 +57,19 @@ $cms-import-btn-background: var(--cms-import-btn-background);
 $cms-import-btn-color: var(--cms-import-btn-color);
 
 
+$locales-color: var(--locales-color);
+$locales-selected-color: var(--locales-selected-color);
+$locales-background: var(--locales-background);
+$locales-selected-background: var(--locales-selected-background);
+$locales-border-color: var(--locales-border-color);
+$record-editor-top-height: var(--record-editor-top-height);
+$record-editor-background: var(--record-editor-background);
+$field-background: var(--field-background);
+
 
 $btn-action-background: var(--btn-action-background);
 $btn-action-color: var(--btn-action-color);
+$btn-icon-color: var(--btn-icon-color);
 
 @function vw($px-vw, $base-vw: 1440px) {
   @return ($px-vw * 100vw) / $base-vw;
@@ -145,12 +157,13 @@ $btn-action-color: var(--btn-action-color);
 
 .v-application {
   font-family: Source Sans Pro !important;
-  --navbar-height: 58px;
+
   --layout-background: #{$imag-light-grey};
-  // TODO: hugo - to implement in all screens
   --layout-card-background: #{$imag-white};
   --layout-color: #{$imag-black};
   --layout-width: 1440px;
+
+  --navbar-height: 58px;
   --navbar-background: #{$imag-black};
   --navbar-color: #{$imag-white};
   --navbar-resource-title-color: #{$imag-white};
@@ -181,9 +194,9 @@ $btn-action-color: var(--btn-action-color);
   --sidebar-records-list-item-background-selected: #{$imag-purple};
   --sidebar-records-list-item-background-disabled: #{$imag-grey};
 
-
   --plugin-title-background: #{$imag-blue};
   --plugin-title-color: #{$imag-white};
+
   --cms-import-section-background: #{$imag-white};
   --cms-import-section-color: #{$imag-black};
   --cms-import-resource-background: #{$imag-black};
@@ -193,8 +206,18 @@ $btn-action-color: var(--btn-action-color);
 
   --btn-action-background: #{$imag-blue};
   --btn-action-color: #{$imag-white};
+  --btn-icon-color: #{$imag-black};
+
+
+  --locales-border-color: #{$imag-light-grey};
+  --field-background: #{$imag-light-grey};
+  --record-editor-top-height: 34px;
+  --record-editor-background: #{$imag-light-grey-2};
+  --locales-color: #{$imag-black};
+  --locales-selected-color: #{$imag-white};
+  --locales-background: #{$imag-white};
+  --locales-selected-background: #{$imag-purple};
   &.theme--dark {
-    // TODO: hugo
   }
 }
 
