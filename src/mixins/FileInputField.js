@@ -167,7 +167,7 @@ export default {
       const maxCount = this.getMaxCount()
       const totalNbFiles = this.getAttachments().length + files.length
       if (maxCount > 1 && totalNbFiles > maxCount) {
-        console.warn('reached max', totalNbFiles, maxCount)
+        console.info(`Reached max number of files for ${this.schema.model}`, totalNbFiles, maxCount)
         files = _.take(files, files.length - (totalNbFiles - maxCount))
       } else if (maxCount === 1 && totalNbFiles > 1) {
         this.localModel._attachments = _.filter(this.localModel._attachments, (attachment) => !this.isSameAttachment(attachment))
@@ -185,14 +185,14 @@ export default {
           reader.onload = (element) => {
             const { key, locale } = vm.getKeyLocale()
             const newAttachment = {
-              _filename: file.name,
+              _filename: _.get(file, '[0].name', file.name),
               _name: key,
               _fields: {
                 locale
               },
               field: this.schema.model,
               localised: this.schema.localised,
-              file,
+              file: _.get(file, '[0]', file),
               data: element.target.result
             }
             vm.localModel._attachments.push(newAttachment)
@@ -209,8 +209,9 @@ export default {
             }
           }
           try {
-            reader.readAsDataURL(file)
+            reader.readAsDataURL(_.get(file, '[0]', file))
           } catch (error) {
+            console.error('Error while reading file:', error)
           }
         })
       })
