@@ -1,22 +1,7 @@
 <template>
   <v-card v-if="record" elevation="0" class="record-editor" :class="{frozen:!record._local}">
     <div class="top-bar">
-      <template v-if="resource.locales && resource.locales.length === 2">
-        <div v-show="resource.locales" class="locales toggle-mode" @click="toggleLocale()">
-          <v-btn elevation="0" class="back" rounded text small @click="back"><v-icon>mdi-chevron-left</v-icon> {{ "TL_BACK" | translate }}</v-btn>
-          <v-chip v-for="(item, i) in resource.locales" :key="i" small :ripple="false" :class="{selected: activeLocale === i}">
-            {{ getLocaleTranslation(item) }}
-          </v-chip>
-        </div>
-      </template>
-      <template v-else>
-        <div v-show="resource.locales" class="locales">
-          <v-btn elevation="0" class="back" rounded text small @click="back"><v-icon>mdi-chevron-left</v-icon> {{ "TL_BACK" | translate }}</v-btn>
-          <v-chip v-for="(item, i) in resource.locales" :key="i" small :ripple="false" :class="{selected: activeLocale === i}" @click="selectLocale(item)">
-            {{ getLocaleTranslation(item) }}
-          </v-chip>
-        </div>
-      </template>
+      <top-bar-locale-list :locales="resource.locales" :locale="locale" :select-locale="selectLocale" :back="back" />
       <div class="buttons">
         <v-btn v-if="editingRecord._id" elevation="0" class="delete" icon rounded @click="deleteRecord"><v-icon>mdi-trash-can</v-icon></v-btn>
         <v-btn elevation="0" class="update" rounded @click="createUpdateClicked">{{ (editingRecord._id? "TL_UPDATE": "TL_CREATE") | translate }}</v-btn>
@@ -75,7 +60,6 @@ export default {
       fileInputTypes: ['file', 'img', 'image', 'imageView', 'attachmentView'],
       cachedMap: {},
       editingRecord: {},
-      activeLocale: _.indexOf(this.resource.locales, this.locale),
       originalFieldList: [],
       schema: { fields: [] },
       isReady: false,
@@ -90,7 +74,6 @@ export default {
     async locale () {
       await this.updateSchema()
       this.editingRecord = _.clone(this.editingRecord)
-      this.activeLocale = _.indexOf(this.resource.locales, this.locale)
       this.checkDirty()
     },
     async record () {
@@ -124,7 +107,7 @@ export default {
       this.scrolledToBottom = scrollTop + clientHeight >= scrollHeight
     },
     toggleLocale () {
-      this.selectLocale(this.resource.locales[this.activeLocale === 0 ? 1 : 0])
+      this.selectLocale(_.find(this.resource.locales, (l) => l !== this.locale))
     },
     getLocaleTranslation (locale) {
       return TranslateService.get('TL_' + locale.toUpperCase())
@@ -151,7 +134,6 @@ export default {
       console.log(999, 'error', error)
     },
     selectLocale (item) {
-      this.activeLocale = _.indexOf(this.resource.locales, item)
       this.$emit('update:locale', item)
     },
     cloneEditingRecord () {

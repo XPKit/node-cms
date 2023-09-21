@@ -45,12 +45,12 @@
         draggable=".preview-attachment" handle=".row-handle" ghost-class="ghost"
         v-bind="dragOptions" :class="{disabled}" @end="onEndDrag" @start="onStartDrag"
       >
-        <v-card v-for="(a, i) in getAttachments()" :key="`${a._filename}-${i}`" elevation="0" class="preview-attachment" :class="{odd: i % 2 !== 0}">
+        <v-card v-for="(a, i) in getAttachments()" :key="`${a._filename}-${i}`" elevation="0" class="preview-attachment">
           <div class="row-handle">
             <img :src="getImageSrc(a)">
             <v-icon>mdi-drag</v-icon>
           </div>
-          <v-chip class="filename" close close-icon="mdi-close-circle-outline" :disabled="disabled || schema.disabled" @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
+          <v-chip class="filename" outlined close close-icon="mdi-close-circle-outline" :disabled="disabled || schema.disabled" @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
         </v-card>
       </draggable>
     </div>

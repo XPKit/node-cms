@@ -106,6 +106,19 @@ ul, li {
     max-height: 40vh !important;
     .v-list {
       gap: 0;
+      .v-list-item {
+        &.selected {
+          background-color: $navbar-resource-group-background-selected;
+          .v-list-item__title {
+            color: $navbar-resource-title-color-selected;
+          }
+        }
+      }
+    }
+    &.sidebar, &.full-width {
+      .v-list {
+        align-items: stretch;
+      }
     }
     &.sidebar {
       left: 0 !important;
@@ -169,6 +182,140 @@ body {
     color: rgba(255, 255, 255, 0.87);
     .node-cms-title {
       color: white;
+    }
+  }
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 2px solid $locales-border-color;
+    .locales,
+    .buttons {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .buttons {
+      gap: 16px;
+      .delete {
+        color: $btn-icon-color;
+        // display: none;
+      }
+      .update {
+        color: $btn-action-color;
+        background-color: $btn-action-background;
+      }
+    }
+  }
+  .record-editor, .record-table {
+    $buttons-height: 86px;
+    $margin-left: 722px;
+    border-radius: 12px !important;
+    margin: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+  .search {
+    background-color: $layout-card-background;
+    display: flex;
+    .v-input__slot,
+    input {
+      height: 34px !important;
+    }
+    input {
+      width: calc(100% - 20px);
+      margin: 0;
+      padding: 10px;
+      height: 19px;
+      border: none;
+      outline: none;
+      line-height: 18px;
+      display: block;
+      // border-bottom: 1px solid #c7c7c7;
+      background: transparent;
+      cursor: pointer;
+      transition: all .3s;
+      // &:hover, &:focus {
+      //   box-shadow: 0px 0px 3px 0px #eee inset;
+      // }
+    }
+    .v-input__prepend-inner {
+      height: 100% !important;
+      align-items: center;
+    }
+    .search-bar {
+      .v-input__slot {
+        padding: 8px;
+        @include cta-text;
+        display: flex;
+        align-items: center;
+        align-content: center;
+        justify-content: flex-start;
+        min-height: auto !important;
+      }
+      .v-input__prepend-inner,
+      .v-input__icon,
+      .v-icon {
+        width: 18px !important;
+        height: 100% !important;
+        min-width: 18px !important;
+        margin-top: 0 !important;
+        font-size: 18px;
+      }
+      .v-icon {
+        color: $search-icon-color;
+      }
+      input {
+        height: 18px !important;
+        padding: 0 !important;
+        margin-left: 8px;
+      }
+    }
+    &.is-query {
+      &.is-valid {
+        background: #f1ffee;
+      }
+
+      &.is-invalid {
+        background: #ffeeee;
+      }
+    }
+  }
+  .record-list {
+    .search {
+      height: 66px;
+    }
+    .search-bar {
+      margin: 16px;
+    }
+  }
+  .resource-selector {
+    cursor: pointer;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: $sidebar-resource-selector-height;
+    background-color: $sidebar-resource-selector-background;
+    color: $sidebar-resource-selector-color;
+    transition: all 0.15s;
+    .resource-title {
+      @include h5;
+    }
+    .v-icon {
+      color: $sidebar-resource-selector-color;
+    }
+    &.opened {
+      .v-icon {
+        transform: rotate(180deg);
+      }
+      background-color: $sidebar-resource-selector-background-opened;
     }
   }
 

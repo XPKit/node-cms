@@ -12,8 +12,5 @@ export default {
 .custom-switch {
   margin: 0 auto;
   padding: 0;
-  .v-input--selection-controls__input {
-    margin: 0 auto;
-  }
 }
 </style>

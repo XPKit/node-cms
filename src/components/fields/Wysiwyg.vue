@@ -9,7 +9,7 @@
         :extensions="extensions"
         :toolbar-attributes="{ color: getColorForToolbar(), dense: true, outlined: true, elevation: 1 }"
         :disabled="disabled"
-        placeholder="Write something …"
+        :placeholder="'TL_WYSIWYG_PLACEHOLDER' | translate"
         @init="onInit"
         @blur="onInit"
         @focus="onInit"

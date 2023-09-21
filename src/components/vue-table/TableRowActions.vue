@@ -1,7 +1,7 @@
 <template>
   <div class="vue-table-generator-field table-column-actions">
-    <v-btn small @click="edit(row)">{{ "TL_EDIT" |translate }}</v-btn>
-    <v-btn small class="delete-btn" color="node-cms-red" @click="remove(row)">{{ "TL_DELETE" |translate }}</v-btn>
+    <v-btn small icon @click="edit(row)"><v-icon>mdi-note-edit-outline</v-icon></v-btn>
+    <v-btn small class="delete-btn" icon @click="remove(row)"><v-icon>mdi-trash-can</v-icon></v-btn>
   </div>
 </template>
 
@@ -13,10 +13,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@a/scss/variables.scss';
 .table-column-actions {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
+  .v-icon {
+    color: $table-row-icon-color;
+  }
 }
 </style>

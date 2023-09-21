@@ -8,33 +8,9 @@
   flex-direction: column;
   align-items: stretch;
   overflow: hidden;
-  .top-bar {
+  .record-list-top-bar {
     flex: auto 0 0;
     position: sticky;
-  }
-
-  .resource-selector {
-    cursor: pointer;
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: $sidebar-resource-selector-height;
-    background-color: $sidebar-resource-selector-background;
-    color: $sidebar-resource-selector-color;
-    transition: all 0.15s;
-    .resource-title {
-      @include h5;
-    }
-    .v-icon {
-      color: $sidebar-resource-selector-color;
-    }
-    &.opened {
-      .v-icon {
-        transform: rotate(180deg);
-      }
-      background-color: $sidebar-resource-selector-background-opened;
-    }
   }
 
   .new-record {
@@ -48,43 +24,7 @@
     color: $btn-action-color !important;
   }
 
-  .search {
-    background-color: $layout-card-background;
-    display: flex;
-    height: 66px;
-    .v-input__slot, input {
-      height: 34px !important;
-    }
-    input {
-      width: calc(100% - 20px);
-      margin: 0;
-      padding: 10px;
-      height: 19px;
-      border: none;
-      outline: none;
-      line-height: 18px;
-      display: block;
-      // border-bottom: 1px solid #c7c7c7;
-      background: transparent;
-      cursor: pointer;
-      transition: all .3s;
-      // &:hover, &:focus {
-      //   box-shadow: 0px 0px 3px 0px #eee inset;
-      // }
-    }
-    .v-input__prepend-inner {
-      height: 34px !important;
-      align-items: center;
-    }
-    &.is-query {
-      &.is-valid {
-        background: #f1ffee;
-      }
-      &.is-invalid {
-        background: #ffeeee;
-      }
-    }
-  }
+
   .main {
     min-height: 24px
   }

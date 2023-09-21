@@ -191,8 +191,8 @@ export default {
     width: 100%;
 
     img {
-      max-width: 100px;
-      max-height: 100px;
+      max-width: 200px;
+      max-height: 113px;
     }
   }
 }

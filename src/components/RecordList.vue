@@ -1,6 +1,6 @@
 <template>
   <div v-if="maxCount != 1" class="record-list">
-    <div class="top-bar">
+    <div class="record-list-top-bar">
       <v-menu v-if="selectedResourceGroup && groupedList" v-model="menuOpened" auto content-class="resources-menu sidebar" offset-y :close-on-content-click="true">
         <template #activator="{ on, attrs }">
           <div class="resource-selector" v-bind="attrs" :class="{opened: menuOpened}" v-on="on">
@@ -14,7 +14,7 @@
             :key="r.name"
             dense
             :class="{selected: r === resource}"
-            @click="selectResourceCallback(r)"
+            @click="r !== resource ? selectResourceCallback(r) : ''"
           >
             <v-list-item-title>{{ getResourceTitle(r) }}</v-list-item-title>
           </v-list-item>
@@ -196,6 +196,9 @@ export default {
     }
   },
   watch: {
+    selectedResourceGroup () {
+      this.search = ''
+    },
     search () {
       this.query = this.flatten(qs.parse(this.search))
       this.sift.isQuery = false
@@ -416,33 +419,6 @@ export default {
 <style lang="scss">
 @import '@a/scss/variables.scss';
 .record-list {
-  .search-bar {
-    margin: 16px;
-    .v-input__slot {
-      padding: 8px;
-      @include cta-text;
-      display: flex;
-      align-items: center;
-      align-content: center;
-      justify-content: flex-start;
-      min-height: auto !important;
-    }
-    .v-input__prepend-inner, .v-input__icon, .v-icon{
-      width: 18px !important;
-      height: 18px !important;
-      min-width: 18px !important;
-      margin-top: 0 !important;
-      font-size: 18px;
-    }
-    .v-icon {
-      color: $sidebar-search-icon-color;
-    }
-    input {
-      height: 18px !important;
-      padding: 0 !important;
-      margin-left: 8px;
-    }
-  }
   .vue-recycle-scroller__item-wrapper {
     top: 8px;
   }

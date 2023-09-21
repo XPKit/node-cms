@@ -5,9 +5,11 @@
   >
     <div id="omnibar-backdrop" :class="{displayed: showOmnibar}" @click="showHideOmnibar(false)" />
     <v-card v-show="showOmnibar" elevation="24">
-      <v-card-title>
+      <v-card-title class="search">
         <v-text-field
-          ref="search" v-model="search" class="search-bar" flat outlined hide-details dense :placeholder="'TL_SEARCH' | translate" type="text" autocomplete="off"
+          ref="search" v-model="search" class="search-bar" flat filled rounded hide-details prepend-inner-icon="mdi-magnify" dense :placeholder="'TL_SEARCH' | translate"
+          type="text"
+          autocomplete="off"
           name="search"
           :prefix="searchMode === 'all' ? '' : `${searchMode}:`"
         />

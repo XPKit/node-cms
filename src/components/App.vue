@@ -46,7 +46,7 @@
           </template>
           <record-table
             v-if="selectedResource && selectedResource.view == 'table'"
-            :record-list="recordList" :resource="selectedResource" :record.sync="selectedRecord" :locale.sync="locale" :user-locale="TranslateService.locale"
+            :grouped-list="groupedList" :resource-group="selectedResourceGroup" :select-resource-callback="selectResource" :record-list="recordList" :resource="selectedResource" :record.sync="selectedRecord" :locale.sync="locale" :user-locale="TranslateService.locale"
             @unsetRecord="unsetSelectedRecord" @updateRecordList="updateRecordList"
           />
           <plugin-page v-if="selectedPlugin" :plugin="selectedPlugin" />
@@ -283,7 +283,6 @@ export default {
       this.selectedResourceGroup = resourceGroup
     },
     async selectResource (resource) {
-      // console.warn('selectResource', resource)
       try {
         if (_.get(this.$router, 'history.current.query.id', false) !== resource.title) {
           this.$router.push({query: {id: resource.title}}).catch(error => console.error('Router throw an error:', error))

@@ -1,30 +1,42 @@
 <template>
-  <div class="record-table">
-    <!-- table -->
-    <template v-if="!record">
-      <ul v-show="resource.locales" class="locales">
-        <li
-          v-for="item in resource.locales" :key="item"
-          :class="{ selected: item == locale }"
-          @click="selectLocale(item)"
+  <div class="record-table-wrapper">
+    <v-menu v-if="selectedResourceGroup && groupedList" v-model="menuOpened" auto content-class="resources-menu full-width" offset-y :close-on-content-click="true">
+      <template #activator="{ on, attrs }">
+        <div class="resource-selector" v-bind="attrs" :class="{opened: menuOpened}" v-on="on">
+          <div class="resource-title">{{ getResourceTitle(resource) }}</div>
+          <v-icon large>mdi-chevron-down</v-icon>
+        </div>
+      </template>
+      <v-list rounded>
+        <v-list-item
+          v-for="r in selectedResourceGroup.list" :key="r.name" dense
+          :class="{selected: r === resource}" @click="r !== resource ? selectResourceCallback(r) : ''"
         >
-          {{ 'TL_'+item.toUpperCase() | translate }}
-        </li>
-      </ul>
-      <div id="top-actions">
+          <v-list-item-title>{{ getResourceTitle(r) }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+    <v-card class="record-table" :class="{'has-back-button': record}" elevation="0">
+      <div v-if="!record" class="top-bar">
+        <top-bar-locale-list :locales="resource.locales" :locale="locale" :select-locale="selectLocale" :back="back" />
         <div class="search">
           <v-text-field
-            v-model="search" flat dense compact outlined solo hide-details clearable :placeholder="'TL_SEARCH' | translate" type="text"
+            v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat filled rounded hide-details dense :placeholder="'TL_SEARCH' | translate" type="text"
             name="search"
           />
         </div>
-        <div v-if="maxCount <= 0 || listCount < maxCount" class="new" @click="createRecord">+</div>
+        <div class="buttons">
+          <v-btn v-if="selectedRecords.length > 0" elevation="0" rounded class="delete-selected-records" @click="removeRecords">{{ 'TL_DELETE_SELECTED_RECORDS' | translate }}</v-btn>
+          <v-btn v-if="maxCount <= 0 || listCount < maxCount" elevation="0" rounded class="new" @click="createRecord">{{ 'TL_ADD_NEW_RECORD' | translate }}</v-btn>
+        </div>
       </div>
-      <vue-table-generator
-        v-if="isReady" :options="options"
-        :resource="resource" :schema="schema" :items="filteredList" :locale.sync="localLocale"
-        @remove="removeRecord" @remove-records="removeRecords" @edit="editRecord"
-      />
+      <template v-if="!record">
+        <vue-table-generator
+          v-if="isReady" :options="options"
+          :selected-records.sync="selectedRecords"
+          :resource="resource" :schema="schema" :items="filteredList" :locale.sync="localLocale"
+          @remove="removeRecord" @edit="editRecord"
+        />
       <!-- <paginate
         v-if="!search"
         v-model="page"
@@ -35,19 +47,19 @@
         :container-class="'pager'"
       /> -->
       <!-- <button class="update" @click="updateRecords">{{ "TL_UPDATE" | translate }}</button> -->
-    </template>
-    <!-- editing -->
-    <record-editor
-      v-if="record"
-      :key="record._id"
-      class="has-back-button"
-      :record.sync="localRecord"
-      :resource="resource"
-      :locale.sync="localLocale"
-      :user-locale="TranslateService.locale"
-      @updateRecordList="updateRecordList"
-      @back="back"
-    />
+      </template>
+      <!-- editing -->
+      <record-editor
+        v-if="record"
+        :key="record._id"
+        :record.sync="localRecord"
+        :resource="resource"
+        :locale.sync="localLocale"
+        :user-locale="TranslateService.locale"
+        @updateRecordList="updateRecordList"
+        @back="back"
+      />
+    </v-card>
   </div>
 </template>
 
@@ -73,6 +85,10 @@ export default {
   },
   mixins: [AbstractEditorView, Notification],
   props: {
+    groupedList: {
+      type: Array,
+      default: () => []
+    },
     recordList: {
       type: Array,
       default: () => []
@@ -80,6 +96,11 @@ export default {
     locale: {
       type: String,
       default: 'enUS'
+    },
+
+    selectedResourceCallback: {
+      type: Function,
+      default: () => {}
     },
     resource: {
       type: Object,
@@ -93,9 +114,11 @@ export default {
   data () {
     return {
       page: 1,
+      menuOpened: false,
       isReady: false,
       search: null,
       cachedMap: {},
+      selectedRecords: [],
       schema: { fields: [] },
       TranslateService,
       localLocale: false,
@@ -104,6 +127,9 @@ export default {
     }
   },
   computed: {
+    selectedResourceGroup () {
+      return _.find(this.groupedList, (resourceGroup) => this.groupSelected(resourceGroup))
+    },
     options () {
       return {
         paging: _.get(this.resource, 'options.paging', 10),
@@ -138,6 +164,7 @@ export default {
     }
   },
   watch: {
+
     async locale () {
       this.isReady = false
       this.localLocale = this.locale
@@ -162,6 +189,23 @@ export default {
     }
   },
   methods: {
+    getResourceTitle (resource) {
+      if (!resource) {
+        return ''
+      }
+      return resource.displayname ? TranslateService.get(resource.displayname) : resource.title
+    },
+    groupSelected (resourceGroup) {
+      if (!this.resource) {
+        return false
+      }
+      const selectedItemGroup = _.get(this.resource, 'group.enUS', _.get(this.resource, 'group', false))
+      const groupName = _.get(resourceGroup, 'name.enUS', resourceGroup.name)
+      if (groupName === 'TL_OTHERS' && !selectedItemGroup) {
+        return true
+      }
+      return groupName === selectedItemGroup
+    },
     onPaginationClick () {
       console.warn('onPaginationClick ---', arguments)
     },
@@ -182,19 +226,14 @@ export default {
         TranslateService.get('TL_NO')
       )
     },
-    async removeRecords (records) {
+    async removeRecords () {
       if (!this.askConfirmation(true)) {
         return
       }
-      console.warn('will delete selected records')
-      const promises = _.map(records, (record) => {
-        return this.removeRecord(record, true)
-      })
-      await Promise.all(promises)
-      console.warn('all selected records deleted !')
+      await Promise.all(_.map(this.selectedRecords, (record) => this.removeRecord({_id: record}, true)))
     },
     async removeRecord (record, skipConfirm = false) {
-      if (!skipConfirm && this.askConfirmation()) {
+      if (!skipConfirm && !this.askConfirmation()) {
         return
       }
       if (_.isUndefined(record._id)) {

@@ -1,18 +1,10 @@
 <template>
   <div ref="excel-container" class="vue-table-generator vue-form-generator table">
-    <div id="table-top">
-      <v-btn @click="toggleSelection()">{{ `TL_${showRecordsSelection ? 'HIDE' : 'SHOW'}_RECORD_SELECTION` | translate }}</v-btn>
-      <v-btn v-if="selectedRecords.length > 0" color="node-cms-red" @click="deleteSelectedRecords()">{{ `TL_DELETE_SELECTED_RECORDS` | translate }}</v-btn>
-    </div>
     <ve-table
-      ref="tableRef"
-      scroll-width="0"
-      :sort-option="sortOption"
-      :virtual-scroll-option="{enable: true}"
-      :column-width-resize-option="columnWidthResizeOption"
+      ref="tableRef" scroll-width="0" :sort-option="sortOption"
+      :virtual-scroll-option="{enable: true}" :column-width-resize-option="columnWidthResizeOption"
       :columns="columns" :table-data="tableData" :fixed-header="true" :border-around="true" :border-x="true" :border-y="true"
       :clipboard-option="clipboardOption"
-      :column-hidden-option="columnHiddenOption"
       max-height="100%"
       row-key-field-name="_id"
     />
@@ -25,11 +17,10 @@ import _ from 'lodash'
 import TranslateService from '@s/TranslateService'
 
 export default {
-  props: ['resource', 'schema', 'items', 'locale', 'options'],
+  props: ['resource', 'schema', 'items', 'locale', 'options', 'selectedRecords'],
   data () {
     return {
-      selectedRecords: [],
-      showRecordsSelection: false,
+      localSelectedRecords: [],
       columns: [],
       sourceData: [],
       tableData: [],
@@ -38,12 +29,9 @@ export default {
         multipleSort: true,
         sortAlways: true,
         sortChange: (params) => {
-          console.log('sortChange::', _.keys(params), _.values(params))
+          // console.log('sortChange::', _.keys(params), _.values(params))
           this.tableData = _.sortBy(this.tableData, _.keys(params), _.values(params))
         }
-      },
-      columnHiddenOption: {
-        defaultHiddenColumnKeys: ['__RECORD_SELECTION__']
       },
       clipboardOption: {
         copy: true,
@@ -66,17 +54,19 @@ export default {
     schemaFields () {
       let fields = this.schema.fields
       let newFields = []
-      _.forEach(fields, field => {
+      _.forEach(fields, (field) => {
         if (_.get(field, 'options.breakdown', false)) {
-          _.forEach(this.resource.locales, locale => {
+          _.forEach(this.resource.locales, (locale, localeIndex) => {
             if (field.model === `${locale}.${field.originalModel}`) {
               field.localised = false
+              field.options.localeIndex = localeIndex + 1
             } else {
-              let newField = _.clone(field)
+              let newField = _.cloneDeep(field)
               newField.localised = false
               const name = field.originalModel && TranslateService.get(field.originalModel)
               newField.label = `${name} (${TranslateService.get(`TL_${locale.toUpperCase()}`)})`
               newField.model = `${locale}.${field.originalModel}`
+              _.set(newField, 'options.localeIndex', localeIndex + 1)
               newFields.push(newField)
             }
           })
@@ -88,7 +78,7 @@ export default {
       if (_.isEmpty(list)) {
         return this.schema.fields
       }
-      return _.sortBy(list, (item) => item.options.index)
+      return _.sortBy(list, (i) => `${i.options.index}${_.get(i, 'options.localeIndex', 0)}`)
     }
   },
   watch: {
@@ -104,10 +94,6 @@ export default {
     getDataToCopy (indexes) {
       let startCol = indexes.startColIndex
       let endCol = indexes.endColIndex
-      if (!this.showRecordsSelection) {
-        startCol++
-        endCol++
-      }
       const fieldNames = this.columns
         .slice(startCol, endCol + 1)
         .map((x) => x.field)
@@ -132,13 +118,6 @@ export default {
     deleteSelectedRecords () {
       this.$emit('remove-records', _.filter(this.sourceData, (row) => _.includes(this.selectedRecords, row._id)))
     },
-    toggleSelection () {
-      this.showRecordsSelection = !this.showRecordsSelection
-      if (this.showRecordsSelection) {
-        return this.$refs['tableRef'].showColumnsByKeys(['__RECORD_SELECTION__'])
-      }
-      return this.$refs['tableRef'].hideColumnsByKeys(['__RECORD_SELECTION__'])
-    },
     resetRecordsFiltering () {
       this.sourceData = this.orderedItem
       this.tableData = this.sourceData.slice(0)
@@ -149,11 +128,11 @@ export default {
         {
           field: '__RECORD_SELECTION__',
           key: '__RECORD_SELECTION__',
-          title: TranslateService.get('TL_RECORD_SELECTION'),
+          // title: TranslateService.get('TL_RECORD_SELECTION'),
           fixed: 'left',
           align: 'center',
           disableResizing: true,
-          width: 50,
+          width: 40,
           renderBodyCell: ({ row, column, rowIndex }, h) => {
             return h('TableRecordSelection', {props: {row, selected: this.isRecordSelected(row), onChange: this.onSelectRecord}})
           }
@@ -233,17 +212,13 @@ export default {
         title: TranslateService.get('TL_ACTIONS'),
         fixed: 'right',
         disableResizing: true,
-        width: 180,
+        width: 75,
         renderBodyCell: ({ row, column, rowIndex }, h) => {
           return h('TableRowActions', {props: {row,
             column,
             rowIndex,
-            remove: (row) => {
-              this.$emit('remove', row)
-            },
-            edit: (row) => {
-              this.$emit('edit', row)
-            }
+            remove: (row) => this.$emit('remove', row),
+            edit: (row) => this.$emit('edit', row)
           }})
         }
       })
@@ -251,15 +226,15 @@ export default {
       // console.warn('cols = ', this.columns)
     },
     isRecordSelected (record) {
-      return _.includes(this.selectedRecords, _.get(record, '_id', false))
+      return _.includes(this.localSelectedRecords, _.get(record, '_id', false))
     },
     onSelectRecord (val, rowId) {
       if (val) {
-        this.selectedRecords.push(rowId)
+        this.localSelectedRecords.push(rowId)
       } else {
-        this.selectedRecords = _.filter(this.selectedRecords, (id) => id !== rowId)
+        this.localSelectedRecords = _.filter(this.localSelectedRecords, (id) => id !== rowId)
       }
-      console.warn('this.selectedRecords = ', this.selectedRecords)
+      this.$emit('update:selectedRecords', this.localSelectedRecords)
     },
     searchBy (items, fieldKey) {
       this.tableData = this.sourceData.filter(
@@ -277,6 +252,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@a/scss/variables.scss';
 .vue-table-generator {
   display: block;
   overflow: hidden;
@@ -288,8 +264,8 @@ export default {
   gap: 8px
 }
 .empty-data {
+  text-align: center;
   padding-top: 36px;
-  font-size: 18px;
-  font-style: italic;
+  @include h4;
 }
 </style>

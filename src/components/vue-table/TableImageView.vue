@@ -34,4 +34,8 @@ span {
   font-style: italic;
   font-size: 8px;
 }
+.image {
+  border-radius: 4px;
+  max-width: 100%;
+}
 </style>

@@ -9,7 +9,7 @@ $imag-blue: #71DBD4;
 $imag-purple: #8094DD;
 $imag-orange: #FF5C39;
 $imag-yellow: #E1E000;
-$imag-green: #8DE971 ;
+$imag-green: #8DE971;
 
 $layout-background: var(--layout-background);
 $layout-card-background: var(--layout-card-background);
@@ -36,7 +36,6 @@ $sidebar-resource-selector-height: var(--sidebar-resource-selector-height);
 $sidebar-resource-selector-background: var(--sidebar-resource-selector-background);
 $sidebar-resource-selector-background-opened: var(--sidebar-resource-selector-background-opened);
 $sidebar-resource-selector-color: var(--sidebar-resource-selector-color);
-$sidebar-search-icon-color: var(--sidebar-search-icon-color);
 $sidebar-records-list-background: var(--sidebar-records-list-background);
 $sidebar-records-list-checkbox-background: var(--sidebar-records-list-checkbox-background);
 $sidebar-records-list-checkbox-color: var(--sidebar-records-list-checkbox-color);
@@ -48,7 +47,6 @@ $sidebar-records-list-item-background-disabled: var(--sidebar-records-list-item-
 $plugin-title-background: var(--plugin-title-background);
 $plugin-title-color: var(--plugin-title-color);
 
-
 $cms-import-section-background: var(--cms-import-section-background);
 $cms-import-section-color: var(--cms-import-section-color);
 $cms-import-resource-background: var(--cms-import-resource-background);
@@ -56,6 +54,7 @@ $cms-import-resource-color: var(--cms-import-resource-color);
 $cms-import-btn-background: var(--cms-import-btn-background);
 $cms-import-btn-color: var(--cms-import-btn-color);
 
+$search-icon-color: var(--search-icon-color);
 
 $locales-color: var(--locales-color);
 $locales-selected-color: var(--locales-selected-color);
@@ -66,10 +65,17 @@ $record-editor-top-height: var(--record-editor-top-height);
 $record-editor-background: var(--record-editor-background);
 $field-background: var(--field-background);
 
-
 $btn-action-background: var(--btn-action-background);
 $btn-action-color: var(--btn-action-color);
 $btn-icon-color: var(--btn-icon-color);
+
+$table-header-background: var(--table-header-background);
+$table-header-color: var(--table-header-color);
+$table-row-odd-background: var(--table-row-odd-background);
+$table-row-odd-color: var(--table-row-odd-color);
+$table-row-even-background: var(--table-row-even-background);
+$table-row-even-color: var(--table-row-even-color);
+$table-row-icon-color: var(--table-row-icon-color);
 
 @function vw($px-vw, $base-vw: 1440px) {
   @return ($px-vw * 100vw) / $base-vw;
@@ -107,7 +113,7 @@ $btn-icon-color: var(--btn-icon-color);
 @mixin h4 {
   font-size: vw(25px);
   font-weight: 400;
-  @include normal-text;
+  @include italic-text;
 }
 @mixin h5 {
   font-size: vw(19px);
@@ -185,7 +191,7 @@ $btn-icon-color: var(--btn-icon-color);
   --sidebar-resource-selector-background: #{$imag-blue};
   --sidebar-resource-selector-background-opened: #{$imag-purple};
   --sidebar-resource-selector-color: #{$imag-white};
-  --sidebar-search-icon-color: #{$imag-black};
+  --search-icon-color: #{$imag-black};
   --sidebar-records-list-background: #{$imag-light-grey};
   --sidebar-records-list-checkbox-background: #{$imag-white};
   --sidebar-records-list-checkbox-color: #{$imag-purple};
@@ -217,6 +223,15 @@ $btn-icon-color: var(--btn-icon-color);
   --locales-selected-color: #{$imag-white};
   --locales-background: #{$imag-white};
   --locales-selected-background: #{$imag-purple};
+
+  --table-header-background: #{$imag-black};
+  --table-header-color: #{$imag-white};
+  --table-row-odd-background: #{$imag-light-grey};
+  --table-row-odd-color: #{$imag-black};
+  --table-row-even-background: #{$imag-light-grey-2};
+  --table-row-even-color: #{$imag-black};
+  --table-row-icon-color: #{$imag-black};
+
   &.theme--dark {
   }
 }

@@ -104,18 +104,19 @@ exports = (module.exports = {
       field: 'image',
       label: 'Image',
       input: 'image',
-      lcalised: true,
+      localised: true,
       options: {
         index: 7,
-        size: 60
+        size: 60,
+        maxCount: 3
       }
     }
   ],
   locales: [
-    'english',
-    'chinese',
-    'vietnamese',
-    'thailandese'
+    'enUS',
+    'zhCN',
+    'vi',
+    'th'
   ],
   type: 'normal'
 })
