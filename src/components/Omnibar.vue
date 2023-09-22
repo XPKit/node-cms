@@ -24,7 +24,7 @@
           >
             <v-list-item-content>
               <v-list-item-title>
-                <v-icon color="light-grey" small>{{ getIconForResult(result) }}</v-icon>
+                <v-icon small>{{ getIconForResult(result) }}</v-icon>
                 <span v-html="result.html" />
               </v-list-item-title>
             </v-list-item-content>
@@ -194,6 +194,8 @@ export default {
 }
 </script>
 <style lang="scss">
+@import '@a/scss/variables.scss';
+
 #omnibar, #omnibar-backdrop {
   position: fixed;
   top: 0;
@@ -204,14 +206,24 @@ export default {
   touch-action: none;
 }
 #omnibar {
+  .v-list {
+    padding: 0
+  }
   .v-list-item {
+    .v-list-item__title {
+      @include subtext;
+      font-style: normal;
+    }
     &.highlighted {
-      background-color: lightblue;
+      background-color: $imag-blue;
     }
   }
   .v-text-field__prefix {
     font-size: 12px;
     font-style: italic;
+  }
+  .v-icon {
+    color: $imag-grey;
   }
   span {
     b {
@@ -223,8 +235,8 @@ export default {
     left: 50vw;
     max-width: 30vw;
     transform: translateX(-50%);
-     pointer-events: auto;
-      touch-action: auto;
+    pointer-events: auto;
+    touch-action: auto;
   }
   #omnibar-backdrop {
     background-color: rgba(0,0,0, 0.5);

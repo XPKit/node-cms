@@ -69,6 +69,8 @@ $btn-action-background: var(--btn-action-background);
 $btn-action-color: var(--btn-action-color);
 $btn-icon-color: var(--btn-icon-color);
 
+$field-label-color: var(--field-label-color);
+
 $table-header-background: var(--table-header-background);
 $table-header-color: var(--table-header-color);
 $table-row-odd-background: var(--table-row-odd-background);
@@ -214,6 +216,7 @@ $table-row-icon-color: var(--table-row-icon-color);
   --btn-action-color: #{$imag-white};
   --btn-icon-color: #{$imag-black};
 
+  --field-label-color: #{$imag-black};
 
   --locales-border-color: #{$imag-light-grey};
   --field-background: #{$imag-light-grey};

@@ -8,25 +8,42 @@
   flex-direction: column;
   align-items: stretch;
   overflow: hidden;
+  .vue-recycle-scroller__item-wrapper {
+    top: 8px;
+  }
+  .delete-records,
+  .select-all {
+    padding: 0 !important;
+    @include cta-text;
+    text-transform: none;
+    letter-spacing: normal;
+    .v-icon,
+    .btn__content {
+      color: $sidebar-records-list-delete-icon-color;
+    }
+  }
   .record-list-top-bar {
     flex: auto 0 0;
     position: sticky;
+    .search {
+      padding: 16px;
+      gap: 16px;
+      .search-bar {
+        margin: 0;
+      }
+    }
   }
-
   .new-record {
-    line-height: 40px;
-    user-select: none;
-    position: absolute;
-    bottom: vw(32px);
-    left: 50%;
-    transform: translate(-50%, 0);
-    background-color: $btn-action-background !important;
-    color: $btn-action-color !important;
+    color: $btn-icon-color !important;
+    transition: background-color 0.15s, color 0.15s;
+    &.active {
+      background-color: $btn-action-background !important;
+      color: $btn-action-color !important;
+    }
   }
-
-
   .main {
-    min-height: 24px
+    min-height: 24px;
+    @include cta-text;
   }
   .meta {
     .id, .ts {
@@ -105,8 +122,8 @@
       .item-info {
         flex-grow: 1;
         margin-right: 16px;
-        min-height: 64px;
-        padding: 4px;
+        min-height: 49px;
+        padding: 8px 16px;
         border-radius: 8px;
         background-color: $sidebar-records-list-item-background;
         transition: background-color 0.15s;
@@ -125,6 +142,14 @@
           background-color: $sidebar-records-list-item-background-disabled;
         }
       }
+   }
+   .time-ago {
+     padding: 4px;
+    &:hover {
+      border-radius: 100px;
+      background-color: $imag-light-grey;
+      color: $imag-black;
+    }
    }
  }
   @keyframes blinkBackground {

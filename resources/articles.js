@@ -58,13 +58,20 @@ exports = (module.exports = {
       label: 'Body',
       field: 'wysiwyg',
       input: 'wysiwyg',
-      localised: true
+      localised: true,
+      disabled: true,
+      options: {
+        disabled: true
+      }
     },
     {
       field: 'relatedArticles',
       input: 'multiselect',
       source: 'articles',
-      localised: false
+      localised: false,
+      options: {
+        disabled: true
+      }
     },
     {
       field: 'comment',
@@ -101,7 +108,10 @@ exports = (module.exports = {
     },
     {
       field: 'image',
-      input: 'image'
+      input: 'image',
+      options: {
+        disabled: true
+      }
     }
   ],
   locales: [

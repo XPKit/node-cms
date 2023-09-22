@@ -12,11 +12,9 @@
         <custom-form
           v-if="isReady"
           :schema="schema"
-          :form-id="randomId"
-          :form-options="formOptions"
+          :form-id="randomId" :form-options="formOptions"
           :model.sync="editingRecord"
-          @error="onError"
-          @input="onModelUpdated"
+          @error="onError" @input="onModelUpdated"
         />
       </v-form>
     </div>

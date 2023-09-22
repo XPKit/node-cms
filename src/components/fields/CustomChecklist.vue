@@ -20,7 +20,7 @@
       <div v-else class="combobox form-control" :disabled="disabled">
         <div ref="input" class="mainRow" :class="{ expanded: comboExpanded }" @click="onExpandCombo">
           <div class="node-cms-info">{{ selectedCount }} {{ 'TL_SELECTED'|translate }}</div>
-          <div class="arrow" />
+          <v-icon class="arrow">mdi-chevron-down</v-icon>
         </div>
         <div v-if="comboExpanded" class="dropList">
           <div v-for="(item, y) in items" :key="y" class="list-row" :class="{'is-checked': isItemChecked(item)}">
@@ -167,12 +167,8 @@ export default {
           position: absolute;
           right: 0px;
           top: 3px;
-          width: 16px;
-          height: 16px;
           transform: rotate(0deg);
           transition: transform 0.5s;
-          background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAAAGdJREFUOI3tzjsOwjAURNGDUqSgTxU5K2AVrJtswjUsgHSR0qdxAZZFPrS+3ZvRzBsqf9MUtBtazJk+oMe0VTriiZCFX8nbpENMgfARjsn74vKj5IFruhfc8d6zIF9S/Hyk5HS4spMVeFcOjszaOwMAAAAASUVORK5CYII=');
-          background-repeat: no-repeat;
         }
         &.expanded {
           .arrow {

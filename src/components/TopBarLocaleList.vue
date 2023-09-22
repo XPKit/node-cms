@@ -1,5 +1,5 @@
 <template>
-  <div class="top-bar-locale-list">
+  <div class="top-bar-locale-list" :class="{hidden: !locales || locales.length === 0}">
     <template v-if="locales && locales.length === 2">
       <v-btn elevation="0" class="back" rounded text small @click="back"><v-icon>mdi-chevron-left</v-icon> {{ "TL_BACK" | translate }}</v-btn>
       <div v-show="locales" class="locales toggle-mode" @click="toggleLocale()">
@@ -91,6 +91,9 @@ export default {
         cursor: pointer;
       }
     }
+  }
+  &.hidden {
+    opacity: 0;
   }
 }
 </style>

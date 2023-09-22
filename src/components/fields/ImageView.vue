@@ -1,6 +1,6 @@
 <template>
   <div class="image-view" :class="{'full-width': !(schema.width && schema.height)}">
-    <form v-if="!disabled" enctype="multipart/form-data">
+    <form enctype="multipart/form-data">
       <div class="field-label"><span v-if="schema.required" class="red--text"><strong>* </strong></span>{{ schema.label }}</div>
       <v-card
         v-if="schema.disabled"

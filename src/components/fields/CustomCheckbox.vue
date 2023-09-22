@@ -3,8 +3,7 @@
     <div class="field-label">{{ schema.label }}</div>
     <div class="border-wrapper">
       <v-checkbox
-        ref="input"
-        class="switch"
+        ref="input" class="switch"
         :input-value="getValue()"
         :compact="schema.compact ? true : false"
         :disabled="schema.disabled ? true : false"
@@ -24,14 +23,6 @@ import AbstractField from '@m/AbstractField'
 
 export default {
   mixins: [AbstractField],
-  data () {
-    return {
-    }
-  },
-  computed: {
-  },
-  created () {
-  },
   methods: {
     getValue () {
       const value = _.get(this.model, this.schema.model, false)

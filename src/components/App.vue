@@ -4,12 +4,7 @@
       <v-snackbar v-if="notification.type" v-model="notification" multi-line top centered :timeout="notification.type === 'error' ? -1 : 1000" class="notification" :class="getNotificationClass()">
         <p>{{ notification.message }}</p>
         <template #action="{ attrs }">
-          <v-btn
-            v-if="notification.type === 'error'"
-            text
-            v-bind="attrs"
-            @click="notification = {}"
-          >
+          <v-btn v-if="notification.type === 'error'" text v-bind="attrs" @click="notification = {}">
             {{ 'TL_CLOSE' | translate }}
           </v-btn>
         </template>
@@ -29,11 +24,8 @@
             <record-list
               v-if="selectedResource" :list="recordList" :locale="locale" :selected-item="selectedRecord"
               :grouped-list="groupedList"
-              :resource-group="selectedResourceGroup"
-              :resource="selectedResource"
-              :select-resource-callback="selectResource"
-              :multiselect="multiselect"
-              :multiselect-items="multiselectItems"
+              :resource-group="selectedResourceGroup" :resource="selectedResource" :select-resource-callback="selectResource"
+              :multiselect="multiselect" :multiselect-items="multiselectItems"
               @selectItem="selectRecord"
               @changeMultiselectItems="onChangeMultiselectItems"
               @selectMultiselect="onSelectMultiselect"
@@ -51,7 +43,7 @@
           />
           <plugin-page v-if="selectedPlugin" :plugin="selectedPlugin" />
 
-          <multiselect-page
+          <!-- <multiselect-page
             v-if="selectedResource && multiselect"
             :multiselect-items="multiselectItems"
             :locale="locale"
@@ -60,7 +52,7 @@
             @cancel="onCancelMultiselectPage"
             @changeMultiselectItems="onChangeMultiselectItems"
             @updateRecordList="updateRecordList"
-          />
+          /> -->
         </div>
         <loading v-if="LoadingService.isShow" />
       </div>
@@ -473,6 +465,7 @@ export default {
   .field-label {
     @include subtext;
     padding-left: 16px;
+    color: $field-label-color;
   }
   .border-wrapper  {
     border: 1px solid rgba(0,0,0,.42);

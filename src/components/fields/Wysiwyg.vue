@@ -8,7 +8,7 @@
         :card-props="{ flat: true }"
         :extensions="extensions"
         :toolbar-attributes="{ color: getColorForToolbar(), dense: true, outlined: true, elevation: 1 }"
-        :disabled="disabled"
+        :disabled="schema.disabled"
         :placeholder="'TL_WYSIWYG_PLACEHOLDER' | translate"
         @init="onInit"
         @blur="onInit"
@@ -95,9 +95,11 @@ export default {
 
 .wysiwyg-wrapper {
   position: relative;
-  .tiptap-vuetify-editor {
-    // TODO: hugo - adapt style
-
+  .border-wrapper {
+    padding: 0;
+  }
+  // TODO: hugo - adapt style
+  // .tiptap-vuetify-editor {
     // .tiptap-vuetify-editor__content {
     //   background-color: $field-background;
     //   padding: 0;
@@ -113,6 +115,20 @@ export default {
     // .ProseMirror {
     //   margin: 0 !important;
     // }
-  }
+
+    // &.tiptap-vuetify-editor--disabled {
+    //   .tiptap-vuetify-editor__toolbar {
+    //     button, .v-icon {
+    //       color: $imag-black !important;
+    //     }
+    //   }
+    //   .tiptap-vuetify-editor__content--disabled {
+    //     background-color: $imag-grey;
+    //     &:after {
+    //       display: none;
+    //     }
+    //   }
+    // }
+  // }
 }
 </style>

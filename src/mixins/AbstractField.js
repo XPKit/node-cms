@@ -51,7 +51,8 @@ export default {
       }
       // console.warn('elem = ', elem, this.schema.model, this.schema)
       if (!isFunction(elem.focus)) {
-        return console.info('Cannot focus element', elem)
+        // console.info('Cannot focus element', elem)
+        return
       }
       if (this.focused) {
         elem.focus()

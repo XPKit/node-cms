@@ -109,6 +109,7 @@ export default {
   font-style: normal;
   background-color: $navbar-resource-group-background;
   color: $navbar-resource-group-title-color;
+  letter-spacing: 0;
   &.selected {
     font-weight: bold !important;
     background-color: $navbar-resource-group-background-selected;

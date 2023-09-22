@@ -15,7 +15,7 @@ import vuetify from './vuetify.js'
 // Global components
 import App from '@c/App.vue'
 import LoginApp from '@c/LoginApp.vue'
-import MultiselectPage from '@c/MultiselectPage.vue'
+// import MultiselectPage from '@c/MultiselectPage.vue'
 import CustomForm from '@c/CustomForm.vue'
 
 // Pages
@@ -79,7 +79,7 @@ Vue.component('Group', Group)
 Vue.component('CustomInputTag', CustomInputTag)
 Vue.component('CustomMultiSelect', CustomMultiSelect)
 Vue.component('PluginPage', PluginPage)
-Vue.component('MultiselectPage', MultiselectPage)
+// Vue.component('MultiselectPage', MultiselectPage)
 Vue.component('Syslog', Syslog)
 Vue.component('CmsImport', CmsImport)
 Vue.component('SyncResource', SyncResource)

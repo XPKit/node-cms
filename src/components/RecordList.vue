@@ -10,10 +10,7 @@
         </template>
         <v-list rounded>
           <v-list-item
-            v-for="r in selectedResourceGroup.list"
-            :key="r.name"
-            dense
-            :class="{selected: r === resource}"
+            v-for="r in selectedResourceGroup.list" :key="r.name" dense :class="{selected: r === resource}"
             @click="r !== resource ? selectResourceCallback(r) : ''"
           >
             <v-list-item-title>{{ getResourceTitle(r) }}</v-list-item-title>
@@ -25,11 +22,10 @@
         :class="{'is-query': sift.isQuery, 'is-valid': sift.isQuery && sift.isValid == true, 'is-invalid': sift.isQuery && sift.isValid == false}" @shortkey="interactiveSearch"
       >
         <v-text-field
-          ref="search" v-model="search"
-          prepend-inner-icon="mdi-magnify" class="search-bar" flat filled rounded hide-details dense :placeholder="'TL_SEARCH' | translate" type="text"
-          name="search"
+          ref="search" v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat filled rounded hide-details dense
+          :placeholder="'TL_SEARCH' | translate" type="text" name="search"
         />
-        <!-- <div class="multiselect" :class="{active: multiselect}" @click="onClickMultiselect"><v-icon color="black">mdi-list-box</v-icon></div> -->
+        <v-btn v-if="maxCount <= 0 || listCount < maxCount" elevation="0" icon class="new-record" :class="{active: isCreatingNewRecord()}" @click="onClickNew"><v-icon>mdi-note-edit-outline</v-icon></v-btn>
       </div>
     </div>
     <div v-if="hasEditableRecords()" class="records-top-bar">
@@ -40,11 +36,8 @@
       </v-btn>
     </div>
     <div v-shortkey="multiselect ? ['ctrl', 'a'] : false" class="records" @shortkey="selectAll()">
-      <RecycleScroller v-slot="{ item }" class="list" :items="filteredList" :item-size="72" key-field="_id">
-        <div
-          class="item"
-          :class="{selected: item === selectedItem, frozen:!item._local}"
-        >
+      <RecycleScroller v-slot="{ item }" class="list" :items="filteredList" :item-size="65" key-field="_id">
+        <div class="item" :class="{selected: item === selectedItem, frozen:!item._local}">
           <div class="checkbox" :class="{'blink-background': isItemSelected(item)}" @click.exact="select(item, true)" @click.shift="selectTo(item)" @click.ctrl="selectTo(item, true)">
             <template v-if="item._local">
               <v-icon :class="{displayed: isItemSelected(item)}">mdi-check-bold</v-icon>
@@ -53,16 +46,15 @@
           <div class="item-info" @click.exact="select(item)" @click.shift="selectTo(item)" @click.ctrl="selectTo(item, true)">
             <div v-if="item" class="main">{{ getName(item) }}</div>
             <div class="meta">
-              <div class="id">{{ item._id }}</div>
+              <!-- <div class="id">{{ item._id }}</div> -->
               <div class="ts">
-                <template v-if="item._updatedBy"> {{ item._updatedBy }} - </template><template v-else> {{ 'TL_UPDATED' | translate }}</template> <timeago :since="item._updatedAt" :locale="TranslateService.locale" />
+                <template v-if="item._updatedBy"> {{ item._updatedBy }} - </template><template v-else> {{ 'TL_UPDATED' | translate }}</template> <span class="time-ago" @click="copyIdToClipboard(item._id)"><timeago :since="item._updatedAt" :locale="TranslateService.locale" /></span>
               </div>
             </div>
           </div>
         </div>
       </RecycleScroller>
     </div>
-    <v-btn v-if="maxCount <= 0 || listCount < maxCount" elevation="0" rounded class="new-record" @click="onClickNew">{{ 'TL_ADD_NEW_RECORD' | translate }}</v-btn>
   </div>
 </template>
 
@@ -124,6 +116,7 @@ export default {
   data () {
     return {
       lastSelectedItem: false,
+
       menuOpened: false,
       search: null,
       TranslateService,
@@ -218,6 +211,12 @@ export default {
     }
   },
   methods: {
+    isCreatingNewRecord () {
+      return this.selectedItem && !_.get(this.selectedItem, '_id', false)
+    },
+    copyIdToClipboard (id) {
+      navigator.clipboard.writeText(id)
+    },
     hasEditableRecords () {
       return _.get(_.filter(this.filteredList, (item) => _.get(item, '_local', false)), 'length', 0) !== 0
     },
@@ -343,6 +342,9 @@ export default {
         this.localMultiselectItems = [item]
         this.$emit('selectItem', item)
       } else {
+        if (this.selectedItem._id === item._id) {
+          return
+        }
         if (this.isItemSelected(item)) {
           this.localMultiselectItems = _.filter(this.localMultiselectItems, (i) => i._id !== item._id)
         } else {
@@ -350,6 +352,12 @@ export default {
         }
       }
       this.$emit('changeMultiselectItems', this.localMultiselectItems)
+    },
+    checkIndex (index) {
+      if (index + 1 <= this.filteredList.length) {
+        return index + 1
+      }
+      return -1
     },
     selectTo (item, ctrlPressed = false) {
       if (ctrlPressed || item._id === this.lastSelectedItem) {
@@ -367,20 +375,7 @@ export default {
       const start = _.findIndex(this.filteredList, (i) => i._id === item._id)
       const end = _.findIndex(this.filteredList, (i) => i._id === this.lastSelectedItem)
       const firstIndex = start <= end ? start : end
-      let lastIndex = -1
-      if (start <= end) {
-        if (end + 1 <= this.filteredList.length) {
-          lastIndex = end + 1
-        } else {
-          lastIndex = -1
-        }
-      } else {
-        if (start + 1 <= this.filteredList.length) {
-          lastIndex = start + 1
-        } else {
-          lastIndex = -1
-        }
-      }
+      const lastIndex = this.checkIndex(start <= end ? end : start)
       const selectedItems = _.slice(this.filteredList, firstIndex, lastIndex)
       if (state === 'check') {
         _.each(selectedItems, (i) => {
@@ -390,9 +385,7 @@ export default {
         })
       } else {
         const ids = _.map(selectedItems, '_id')
-        this.localMultiselectItems = _.filter(this.localMultiselectItems, (i) => {
-          return !_.includes(ids, i._id)
-        })
+        this.localMultiselectItems = _.filter(this.localMultiselectItems, (i) => !_.includes(ids, i._id))
       }
       this.lastSelectedItem = item._id
       this.$emit('changeMultiselectItems', this.localMultiselectItems)
@@ -412,24 +405,3 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-
-</style>
-
-<style lang="scss">
-@import '@a/scss/variables.scss';
-.record-list {
-  .vue-recycle-scroller__item-wrapper {
-    top: 8px;
-  }
-  .delete-records, .select-all {
-    padding: 0 !important;
-    @include cta-text;
-    text-transform: none;
-    letter-spacing: normal;
-    .v-icon, .btn__content {
-      color: $sidebar-records-list-delete-icon-color;
-    }
-  }
-}
-</style>

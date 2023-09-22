@@ -12,7 +12,7 @@
       :placeholder="schema.placeholder"
       :multiple="selectOptions.multiple"
       :clearable="selectOptions.clearable"
-      filled dense rounded hide-details
+      filled dense rounded hide-details append-icon="mdi-chevron-down"
       @change="updateSelected"
       @search-change="onSearchChange"
       @tag="addTag"

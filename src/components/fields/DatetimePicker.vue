@@ -10,14 +10,14 @@
         <div :class="{noDisplay: hideDate}">
           <div class="year-month-wrapper">
             <div class="month-setter">
-              <span type="button" class="nav-l" @click="leftYear">&#x3C;</span>
+              <span type="button" class="nav-l" @click="leftYear"><v-icon>mdi-chevron-left</v-icon></span>
               <span class="year">{{ year }}</span>
-              <span type="button" class="nav-r" @click="rightYear">&#x3E;</span>
+              <span type="button" class="nav-r" @click="rightYear"><v-icon>mdi-chevron-right</v-icon></span>
             </div>
             <div class="month-setter">
-              <span type="button" class="nav-l" @click="leftMonth">&#x3C;</span>
+              <span type="button" class="nav-l" @click="leftMonth"><v-icon>mdi-chevron-left</v-icon></span>
               <span class="month">{{ 'TL_'+month.toUpperCase()|translate }}</span>
-              <span type="button" class="nav-r" @click="rightMonth" @mousedown.stop.prevent="">&#x3E;</span>
+              <span type="button" class="nav-r" @click="rightMonth" @mousedown.stop.prevent=""><v-icon>mdi-chevron-right</v-icon></span>
             </div>
           </div>
           <div class="headers">
@@ -351,157 +351,164 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import '@a/scss/variables.scss';
 
-  .year-month-wrapper{
-    background-color: #ed4d00;
-  }
-
-  input{
-    min-width: 226px;
-    width:100%;
-    height: 30px;
-    padding: 3px;
-    border: 1px solid #ddd;
-  }
-  .datetime-picker{
-    position: relative;
-  }
-  .calender-div{
-    width: 232px;
-    box-shadow: 1px 2px 5px #ccc;
-    position: absolute;
-    display: inline-block;
-    left: 0;
-    top: 40px;
-    color: #444;
-    font-size: 14px;
-    padding-bottom: 10px;
-  }
-  .port, .days{
-    display: inline-block;
-    width: 31px;
-    height: 20px;
-    padding: 3px;
-    margin: 1px;
-    text-align: center;
-    vertical-align: top;
-    cursor: pointer;
-  }
-  .days{
-    color: #ed4d00;
-    font-weight: bold;
-  }
-  .port:hover{
-    color: #ed4d00;
-    font-weight: bold;
-  }
-  .activePort, .activePort:hover {
-    background-color: #ed4d00;
+.year-month-wrapper{
+  background-color: $imag-purple;
+  display: flex;
+}
+input{
+  min-width: 226px;
+  width:100%;
+  height: 30px;
+  padding: 3px;
+  border: 1px solid #ddd;
+}
+.datetime-picker{
+  position: relative;
+}
+.calender-div{
+  width: 232px;
+  box-shadow: 1px 2px 5px #ccc;
+  position: absolute;
+  display: inline-block;
+  left: 0;
+  top: 40px;
+  color: #444;
+  font-size: 14px;
+  padding-bottom: 10px;
+  user-select: none;
+  .v-icon {
     color: white;
   }
-  .month-setter, .year-setter{
-    margin: 0 1px;
-    width: 48.2%;
-    color: white;
-    font-weight: 900;
-    display: inline-block;
-  }
-  .nav-l:hover, .nav-r:hover {
-    background-color: #dc3c00;
-  }
-  .nav-l, .nav-r {
-    display: inline-block;
-    width: 25px;
-    background-color: #ed4d00;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    border: 0;
-    padding: 7px;
-    margin:0;
-  }
-  .nav-l{
-    float: left;
-  }
-  .nav-r{
-    float: right;
-  }
-  .month, .year{
-    width: 40px;
-    text-align: right;
-    display: inline-block;
-    color: white;
-    padding: 7px 0;
-  }
-  .hour-selector, .minute-selector{
-    width: 30px;
-    display: inline-block;
-    text-align: center;
-    font-weight: bold;
-    position: relative;
-    cursor: pointer;
-  }
-  .time-separator{
-    display: inline-block;
-    font-weight: bold;
-  }
-  .time-picker{
-    margin: 10px
-  }
-  .nav-t, .nav-d{
-    font-weight: bold;
-    cursor: pointer;
-  }
-  .scroll-hider {
-    display: none;
-    vertical-align:top;
-    overflow:hidden;
-    border:0;
-    position: absolute;
-    top: -40px;
-    left: 0;
-    box-shadow: 0 0 3px #333;
-    background-color: white;
-  }
-  .scroll-hider ul {
-    padding:5px;
-    margin:-5px -13px -5px -5px;
-    list-style-type: none;
-    height: 100px;
-    overflow: auto;
-    width:55px;
-    color: #999;
-    overflow-x: hidden;
-  }
-  .showSelector{
-    display:inline-block;
-  }
-  li.active{
-    background-color: #ed4d00;
-    color: white;
-  }
-  li{
-    padding: 4px;
-    font-size: 16px;
-    width: 100%;
-    cursor: pointer;
-  }
-  .time-picker{
-    display: inline-block;
-  }
-  .noDisplay{
-    display: none;
-  }
-  .okButton{
-    color: #ed4d00;
-    font-size: 15px;
-    font-weight: bold;
-    padding: 0;
-    float: right;
-    border: 0;
-    margin-right: 10px;
-    margin-top: 10px;
-    cursor: pointer;
-    background: transparent;
-  }
+}
+.port, .days{
+  display: inline-block;
+  width: 31px;
+  height: 20px;
+  padding: 3px;
+  margin: 1px;
+  text-align: center;
+  vertical-align: top;
+  cursor: pointer;
+  @include subtext;
+}
+.days{
+  color: $imag-purple;
+  font-weight: bold;
+}
+.port:hover{
+  color: $imag-purple;
+  font-weight: bold;
+}
+.activePort, .activePort:hover {
+  background-color: $imag-purple;
+  color: white;
+}
+.month-setter, .year-setter{
+  color: white;
+  font-weight: 900;
+  display: flex;
+  width: 47.5%;
+  gap: 5%;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-l:hover, .nav-r:hover {
+  background-color: $imag-blue;
+}
+.nav-l, .nav-r {
+  display: inline-block;
+  width: 25px;
+  background-color: $imag-purple;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  border: 0;
+  margin:0;
+}
+.nav-l{
+  float: left;
+}
+.nav-r{
+  float: right;
+}
+.month, .year{
+  display: inline-block;
+  color: white;
+  // padding: 7px 0;
+  @include subtext;
+  text-align: center;
+}
+.hour-selector, .minute-selector{
+  width: 30px;
+  display: inline-block;
+  text-align: center;
+  font-weight: bold;
+  position: relative;
+  cursor: pointer;
+}
+.time-separator{
+  display: inline-block;
+  font-weight: bold;
+}
+.time-picker{
+  margin: 10px
+}
+.nav-t, .nav-d{
+  font-weight: bold;
+  cursor: pointer;
+}
+.scroll-hider {
+  display: none;
+  vertical-align:top;
+  overflow:hidden;
+  border:0;
+  position: absolute;
+  top: -40px;
+  left: 0;
+  box-shadow: 0 0 3px #333;
+  background-color: white;
+}
+.scroll-hider ul {
+  padding:5px;
+  margin:-5px -13px -5px -5px;
+  list-style-type: none;
+  height: 100px;
+  overflow: auto;
+  width:55px;
+  color: #999;
+  overflow-x: hidden;
+}
+.showSelector{
+  display:inline-block;
+}
+li.active{
+  background-color: $imag-purple;
+  color: white;
+}
+li{
+  padding: 4px;
+  font-size: 16px;
+  width: 100%;
+  cursor: pointer;
+}
+.time-picker{
+  display: inline-block;
+}
+.noDisplay{
+  display: none;
+}
+.okButton{
+  color: $imag-purple;
+  font-size: 15px;
+  font-weight: bold;
+  padding: 0;
+  float: right;
+  border: 0;
+  margin-right: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+  background: transparent;
+}
 </style>

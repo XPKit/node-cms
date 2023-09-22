@@ -26,7 +26,7 @@
             />
           </div>
           <div class="add-btn-wrapper">
-            <v-btn class="add-new-item" :disabled="disabled || schema.disabled" text rounded small @click="onClickRemoveItem(item)"><v-icon>mdi-minus-circle-outline</v-icon></v-btn>
+            <v-btn class="add-new-item" :disabled="disabled || schema.disabled" text icon rounded small @click="onClickRemoveItem(item)"><v-icon>mdi-minus-circle-outline</v-icon></v-btn>
           </div>
         </div>
       </v-card>
@@ -37,6 +37,7 @@
           :value="selectedType" :menu-props="{ bottom: true, offsetY: true }" :items="types" item-text="label" item-value="label"
           hide-details filled rounded dense persistent-placeholder
           :disabled="disabled || schema.disabled"
+          append-icon="mdi-chevron-down"
           @change="onChangeType"
         >
           <template #prepend>
@@ -315,6 +316,11 @@ export default {
   .v-btn__content {
     justify-content: flex-end;
   }
+  button {
+    &:before {
+      transform: translate(50%, 0);
+    }
+  }
   span {
     @include subtext;
     text-transform: none;
@@ -351,6 +357,9 @@ export default {
   .add-btn-wrapper {
     display: flex;
     justify-content: flex-end;
+    .add-new-item {
+      margin: 0;
+    }
   }
 }
 </style>

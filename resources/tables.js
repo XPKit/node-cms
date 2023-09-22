@@ -118,5 +118,20 @@ exports = (module.exports = {
     'vi',
     'th'
   ],
+  layout: {
+    lines: [
+      {
+        slots: 3,
+        fields: [
+          {
+            model: 'string', width: 1
+          },
+          {
+            model: 'gString', width: 2
+          }
+        ]
+      }
+    ]
+  },
   type: 'normal'
 })
