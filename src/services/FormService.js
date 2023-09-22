@@ -183,7 +183,7 @@ let typeMapper = {
   },
   checkbox: {
     type: 'switch',
-    overrideType: 'CustomSwitch'
+    overrideType: 'CustomCheckbox'
   },
   date: {
     type: 'CustomDatetimePicker',

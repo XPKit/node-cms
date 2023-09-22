@@ -52,6 +52,7 @@
   }
   .back {
     display: none;
+    @include cta-text;
   }
   .new {
     background-color: $btn-action-background !important;

@@ -345,7 +345,7 @@ export default {
       margin-bottom: 0;
     }
   }
-  .custom-switch {
+  .custom-checkbox {
     margin-top: 12px;
   }
   .add-btn-wrapper {

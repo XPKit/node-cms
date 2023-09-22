@@ -125,7 +125,18 @@ ul, li {
       min-width: 364px !important;
     }
   }
+  .v-input--is-disabled {
+    .v-input__slot {
+      background-color: $imag-pale-grey !important;
+      cursor: auto;
+    }
+  }
+  .v-messages__message {
+    color: $imag-orange !important;
+    @include error;
+  }
 }
+
 
 body {
   .v-input {
@@ -170,6 +181,11 @@ body {
       @include h6;
       font-style: normal;
       color: $imag-black !important;
+    }
+    &.v-input--is-disabled {
+      .v-file-input__text.v-file-input__text--placeholder {
+        cursor: default;
+      }
     }
   }
   .v-application {

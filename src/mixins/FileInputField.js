@@ -107,7 +107,7 @@ export default {
       if (this.isForMultipleImages()) {
         rules.push(files => {
           const maxCount = this.getMaxCount()
-          if (maxCount === -1 || _.get(this.getAttachments(), 'length', 0) + _.get(files, 'length', 0) <= maxCount) {
+          if (maxCount === -1 || _.get(this.getAttachments(), 'length', 0) + _.get(files, 'length', 0) <= maxCount + 1) {
             return true
           }
           return TranslateService.get(`TL_TOO_MANY_${this.getFieldType()}S`)

@@ -39,13 +39,13 @@ import CustomMultiSelect from '@c/fields/CustomMultiSelect.vue'
 import CustomChecklist from '@c/fields/CustomChecklist.vue'
 import CustomInput from '@c/fields/CustomInput.vue'
 import CustomTextarea from '@c/fields/CustomTextarea.vue'
-import CustomSwitch from '@c/fields/CustomSwitch.vue'
+import CustomCheckbox from '@c/fields/CustomCheckbox.vue'
 import CustomInputTag from '@c/fields/CustomInputTag.vue'
 import Group from '@c/fields/Group.vue'
 
 // Table fields
 import TableImageView from '@c/vue-table/TableImageView.vue'
-import TableCustomSwitch from '@c/vue-table/TableCustomSwitch.vue'
+import TableCustomCheckbox from '@c/vue-table/TableCustomCheckbox.vue'
 import TableRowActions from '@c/vue-table/TableRowActions.vue'
 
 import enUS from 'vue-timeago/locales/en-US.json'
@@ -65,7 +65,7 @@ Vue.component('AttachmentView', AttachmentView)
 Vue.component('ImageView', ImageView)
 Vue.component('CustomInput', CustomInput)
 Vue.component('CustomTextarea', CustomTextarea)
-Vue.component('CustomSwitch', CustomSwitch)
+Vue.component('CustomCheckbox', CustomCheckbox)
 Vue.component('ParagraphAttachmentView', ParagraphAttachmentView)
 Vue.component('ParagraphView', ParagraphView)
 Vue.component('CustomTreeView', CustomTreeView)
@@ -85,7 +85,7 @@ Vue.component('CmsImport', CmsImport)
 Vue.component('SyncResource', SyncResource)
 Vue.component('Draggable', draggable)
 Vue.component('TableImageView', TableImageView)
-Vue.component('TableCustomSwitch', TableCustomSwitch)
+Vue.component('TableCustomCheckbox', TableCustomCheckbox)
 Vue.component('TableRowActions', TableRowActions)
 Vue.mixin({
   filters: {

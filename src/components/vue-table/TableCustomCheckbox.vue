@@ -1,5 +1,5 @@
 <template>
-  <v-simple-checkbox class="vue-table-generator-field custom-switch" :ripple="false" :value="getValue()" />
+  <v-simple-checkbox class="vue-table-generator-field custom-checkbox" :ripple="false" :value="getValue()" />
 </template>
 
 <script lang="jsx">
@@ -16,7 +16,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.custom-switch {
+.custom-checkbox {
   .v-input--selection-controls__input {
     margin: 0 auto;
   }

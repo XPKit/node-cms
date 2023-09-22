@@ -1,8 +1,8 @@
 <template>
-  <div class="custom-switch">
+  <div class="custom-checkbox">
     <div class="field-label">{{ schema.label }}</div>
     <div class="border-wrapper">
-      <v-switch
+      <v-checkbox
         ref="input"
         class="switch"
         :input-value="getValue()"
@@ -10,9 +10,7 @@
         :disabled="schema.disabled ? true : false"
         :readonly="schema.readonly ? true : false"
         :filled="schema.filled ? true : false"
-        dense
-        hide-details
-        solo
+        dense hide-details solo
         :outlined="schema.outlined ? true : false"
         @change="onChange"
       />
@@ -47,7 +45,7 @@ export default {
 </script>
 
 <style lang="scss">
-  .custom-switch {
+  .custom-checkbox {
     .switch {
       padding-top: 8px;
       margin: 16px;

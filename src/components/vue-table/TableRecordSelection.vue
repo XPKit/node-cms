@@ -1,5 +1,5 @@
 <template>
-  <v-checkbox class="vue-table-generator-field custom-switch" hide-details :value="selected" @change="onChange($event, row._id)" />
+  <v-checkbox class="vue-table-generator-field custom-checkbox" hide-details :value="selected" @change="onChange($event, row._id)" />
 </template>
 
 <script lang="jsx">
@@ -9,7 +9,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.custom-switch {
+.custom-checkbox {
   margin: 0 auto;
   padding: 0;
 }

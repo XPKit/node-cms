@@ -104,7 +104,7 @@ export default {
   },
   methods: {
     onScroll ({ target: { scrollTop, clientHeight, scrollHeight } }) {
-      this.scrolledToBottom = scrollTop + clientHeight >= scrollHeight
+      this.scrolledToBottom = scrollTop + clientHeight >= scrollHeight - 50
     },
     toggleLocale () {
       this.selectLocale(_.find(this.resource.locales, (l) => l !== this.locale))

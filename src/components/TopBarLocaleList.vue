@@ -76,7 +76,8 @@ export default {
       color: $locales-color;
       background-color: $locales-background;
       transition: all 0.3s;
-
+      @include small-cta-text;
+      font-style: normal;
       &.selected {
         color: $locales-selected-color;
         background-color: $locales-selected-background;
