@@ -47,17 +47,16 @@
       }
     }
   }
-  .preview-multiple {
-    padding-left: 1px;
-  }
   .preview-multiple,
   .preview-single-attachment {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    justify-content: flex-start;
-    padding-bottom: 6px;
-    gap: 6px;
+    >div {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: flex-start;
+      // padding-bottom: 16px;
+      gap: 16px;
+    }
     .filename {
       display: block;
     }
@@ -78,15 +77,15 @@
     min-width: 200px;
     max-width: 200px;
     display: inline-block;
-    padding: 6px;
+    padding: 8px;
     user-select: none;
 
     img {
       max-height: 113px;
     }
-    &.odd {
-      background-color: rgba($color: #000000, $alpha: 0.2);
-    }
+    // &.odd {
+    //   background-color: rgba($color: #000000, $alpha: 0.2);
+    // }
   }
   .row-handle {
     cursor: -webkit-grab;
