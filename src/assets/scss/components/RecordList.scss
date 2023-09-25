@@ -35,10 +35,9 @@
   }
   .new-record {
     color: $btn-icon-color !important;
-    transition: background-color 0.15s, color 0.15s;
+    transition: color 0.15s;
     &.active {
-      background-color: $btn-action-background !important;
-      color: $btn-action-color !important;
+      color: $imag-purple !important;
     }
   }
   .main {

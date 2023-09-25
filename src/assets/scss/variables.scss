@@ -79,6 +79,10 @@ $table-row-even-background: var(--table-row-even-background);
 $table-row-even-color: var(--table-row-even-color);
 $table-row-icon-color: var(--table-row-icon-color);
 
+$notification-background: var(--notification-background);
+$notification-success-color: var(--notification-success-color);
+$notification-error-color: var(--notification-error-color);
+
 @function vw($px-vw, $base-vw: 1440px) {
   @return ($px-vw * 100vw) / $base-vw;
 }
@@ -234,6 +238,10 @@ $table-row-icon-color: var(--table-row-icon-color);
   --table-row-even-background: #{$imag-light-grey-2};
   --table-row-even-color: #{$imag-black};
   --table-row-icon-color: #{$imag-black};
+
+  --notification-background: #{$imag-white};
+  --notification-success-color: #{$imag-black};
+  --notification-error-color: #{$imag-orange};
 
   &.theme--dark {
   }

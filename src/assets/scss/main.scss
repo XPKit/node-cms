@@ -342,6 +342,33 @@ body {
       background-color: $sidebar-resource-selector-background-opened;
     }
   }
+  .v-snack.notification {
+    z-index: 200;
+    p {
+      margin: 0;
+      text-align: center;
+      @include h6;
+    }
+    .v-snack__wrapper {
+      @include blurred-background;
+      margin-top: $navbar-height;
+      padding: 0;
+      .v-btn {
+        background-color: $imag-white;
+        color: $imag-black;
+      }
+    }
+    &.notification-error {
+      p {
+        color: $notification-error-color;
+      }
+    }
+    &.notification-success {
+      p {
+        color: $notification-success-color;
+      }
+    }
+  }
   .theme--dark {
     background: #4e4e4e;
     color: rgba(255, 255, 255, 0.87);

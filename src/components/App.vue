@@ -1,11 +1,11 @@
 <template>
   <v-app>
     <v-scroll-y-transition>
-      <v-snackbar v-if="notification.type" v-model="notification" multi-line top centered :timeout="notification.type === 'error' ? -1 : 1000" class="notification" :class="getNotificationClass()">
+      <v-snackbar v-if="notification.type" v-model="notification" multi-line top centered elevation="10" :light="$vuetify && $vuetify.theme && !$vuetify.theme.isDark" :timeout="notification.type === 'error' ? -1 : 1000" class="notification" :class="getNotificationClass()">
         <p>{{ notification.message }}</p>
         <template #action="{ attrs }">
-          <v-btn v-if="notification.type === 'error'" text v-bind="attrs" @click="notification = {}">
-            {{ 'TL_CLOSE' | translate }}
+          <v-btn rounded icon v-bind="attrs" @click="notification = {}">
+            <v-icon>mdi-close-circle-outline</v-icon>
           </v-btn>
         </template>
       </v-snackbar>
@@ -261,7 +261,7 @@ export default {
     },
     onGetNotification (data) {
       this.notification = data
-      // console.warn('received notification !', data)
+      console.warn('received notification !', data)
     },
     getNotificationClass () {
       return `notification-${this.notification.type}`
@@ -473,23 +473,6 @@ export default {
     z-index: 1;
     overflow: hidden;
     padding-top: 6px;
-  }
-}
-.v-snack.notification {
-  z-index: 4200;
-  p {
-    margin: 0;
-    text-align: center;
-  }
-  &.notification-error {
-    p {
-      color: red;
-    }
-  }
-  &.notification-success {
-    p {
-      color: green;
-    }
   }
 }
 // NOTE: For ordered lists
