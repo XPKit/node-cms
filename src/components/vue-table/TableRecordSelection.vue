@@ -1,5 +1,11 @@
 <template>
-  <v-checkbox class="vue-table-generator-field custom-checkbox" hide-details :value="selected" @change="onChange($event, row._id)" />
+  <div class="checkbox" :class="{'blink-background': selected}" @click="onChange(row._id, !selected)">
+    <template v-if="row._local">
+      <v-icon :class="{displayed: selected}">mdi-check-bold</v-icon>
+    </template>
+  </div>
+
+  <!-- <v-checkbox class="vue-table-generator-field custom-checkbox" hide-details :value="selected" @change="onChange($event, row._id)" /> -->
 </template>
 
 <script lang="jsx">
@@ -9,8 +15,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.custom-checkbox {
-  margin: 0 auto;
-  padding: 0;
+.checkbox{
+  pointer-events: auto;
+  touch-action: auto;
 }
+
 </style>

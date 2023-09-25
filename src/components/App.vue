@@ -261,7 +261,7 @@ export default {
     },
     onGetNotification (data) {
       this.notification = data
-      console.warn('received notification !', data)
+      // console.warn('received notification !', data)
     },
     getNotificationClass () {
       return `notification-${this.notification.type}`

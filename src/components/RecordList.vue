@@ -342,7 +342,7 @@ export default {
         this.localMultiselectItems = [item]
         this.$emit('selectItem', item)
       } else {
-        if (this.selectedItem._id === item._id) {
+        if (this.selectedItem && this.selectedItem._id === item._id) {
           return
         }
         if (this.isItemSelected(item)) {

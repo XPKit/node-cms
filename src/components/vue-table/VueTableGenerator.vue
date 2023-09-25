@@ -4,7 +4,7 @@
       ref="tableRef" scroll-width="0" :sort-option="sortOption"
       :virtual-scroll-option="{enable: true}" :column-width-resize-option="columnWidthResizeOption"
       :columns="columns" :table-data="tableData" :fixed-header="true" :border-around="true" :border-x="true" :border-y="true"
-      :clipboard-option="clipboardOption"
+      :clipboard-option="clipboardOption" :row-style-option="rowStyleOption"
       max-height="100%"
       row-key-field-name="_id"
     />
@@ -24,6 +24,9 @@ export default {
       columns: [],
       sourceData: [],
       tableData: [],
+      rowStyleOption: {
+        stripe: true
+      },
       filteredColumns: [],
       sortOption: {
         multipleSort: true,
@@ -228,7 +231,7 @@ export default {
     isRecordSelected (record) {
       return _.includes(this.localSelectedRecords, _.get(record, '_id', false))
     },
-    onSelectRecord (val, rowId) {
+    onSelectRecord (rowId, val) {
       if (val) {
         this.localSelectedRecords.push(rowId)
       } else {

@@ -78,34 +78,6 @@
         }
       }
     }
-    .checkbox {
-      background-color: $sidebar-records-list-checkbox-background;
-      border-radius: 4px;
-      position: relative;
-      margin-left: 16px;
-      margin-right: 8px;
-      width: 24px;
-      height: 24px;
-      .v-icon {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        color: $sidebar-records-list-checkbox-color;
-        opacity: 0;
-        transition: opacity 0.15s;
-        &.displayed {
-          opacity: 1;
-        }
-      }
-      &:hover {
-        background-color: rgba(255,255,255, 0.25);
-      }
-      &.blink-background {
-        animation: blinkBackground 0.1s;
-      }
-    }
     .list {
       position: absolute;
       top: 0;
