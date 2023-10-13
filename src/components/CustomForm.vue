@@ -4,14 +4,14 @@
       <template v-if="schema.layout && schema.layout.lines">
         <div v-for="(line, i) in schema.layout.lines" :id="formId + '-' + i" :key="i" class="line-wrapper" :class="getLineClasses(line)">
           <div v-for="field in line.fields" :id="field.model + '-' + formId" :key="field.model" class="field-wrapper" :data-model="field.model" :class="getFieldClasses(field)">
-            <!-- <div class="red--text">{{ getFieldType(field.schema) }}</div> -->
+            <div class="red--text">{{ getFieldType(field.schema) }}</div>
             <component :is="getFieldType(field.schema)" v-if="field.schema" :key="field.model" :schema="field.schema" :model="model" :form-options="formOptions" :disabled="field.schema && field.schema.disabled" :focused="field.schema.focused" @input="onInput" />
           </div>
         </div>
       </template>
       <div v-for="field in schema.fields" v-else :id="field.model + '-' + formId" :key="field.model" class="field-wrapper" :data-model="field.model" :class="{focused: field.focused === -1}">
         <!-- <div class="red--text">{{ getFieldType(field) }}</div> -->
-        <component :is="getFieldType(field)" :key="field.model" :schema="field" :model="model" :form-options="formOptions" :disabled="field.schema && field.schema.disabled" :focused="field.focused" @input="onInput" />
+        <component :is="getFieldType(field)" :key="field.model" :paragraph-level="getFieldType(field) === 'ParagraphView' ? paragraphLevel : 1" :schema="field" :model="model" :form-options="formOptions" :disabled="field.schema && field.schema.disabled" :focused="field.focused" @input="onInput" />
       </div>
     </fieldset>
   </div>
@@ -22,7 +22,7 @@ import FieldSelectorService from '@s/FieldSelectorService'
 import TranslateService from '@s/TranslateService'
 
 export default {
-  props: ['formId', 'schema', 'model', 'formOptions', 'disabled', 'paragraphIndex'],
+  props: ['formId', 'schema', 'model', 'formOptions', 'disabled', 'paragraphIndex', 'paragraphLevel'],
   created () {
     _.each(this.schema.fields, (field) => {
       const fieldType = this.getFieldType(field)

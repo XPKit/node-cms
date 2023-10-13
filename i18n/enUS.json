@@ -139,6 +139,7 @@
     "TL_RECORD_SELECTION": "Record selection",
     "TL_ADD_NEW_RECORD": "Add new record",
     "TL_ADD_NEW_FIELD": "Add new field",
+    "TL_ADD": "Add",
     "TL_NB_SELECTED_ITEMS": "Selected <%=num%> items",
     "TL_WYSIWYG_PLACEHOLDER": "Write something..."
   }

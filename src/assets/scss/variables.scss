@@ -87,6 +87,18 @@ $notification-background: var(--notification-background);
 $notification-success-color: var(--notification-success-color);
 $notification-error-color: var(--notification-error-color);
 
+$paragraph-top-bar-background: var(--paragraph-top-bar-background);
+$paragraph-top-bar-color: var(--paragraph-top-bar-color);
+$paragraph-background: var(--paragraph-background);
+
+$paragraph-top-bar-background-level-2: var(--paragraph-top-bar-background-level-2);
+$paragraph-top-bar-color-level-2: var(--paragraph-top-bar-color-level-2);
+$paragraph-background-level-2: var(--paragraph-background-level-2);
+
+$paragraph-top-bar-color-level-3: var(--paragraph-top-bar-color-level-3);
+$paragraph-top-bar-background-level-3: var(--paragraph-top-bar-background-level-3);
+$paragraph-background-level-3: var(--paragraph-background-level-3);
+
 @function vw($px-vw, $base-vw: 1440px) {
   @return ($px-vw * 100vw) / $base-vw;
 }
@@ -250,6 +262,18 @@ $notification-error-color: var(--notification-error-color);
   --notification-background: #{$imag-white};
   --notification-success-color: #{$imag-black};
   --notification-error-color: #{$imag-orange};
+
+  --paragraph-top-bar-background: #{$imag-black};
+  --paragraph-top-bar-color: #{$imag-white};
+  --paragraph-background: #{$imag-white};
+
+  --paragraph-top-bar-background-level-2: #{$imag-light-grey};
+  --paragraph-top-bar-color-level-2: #{$imag-black};
+  --paragraph-background-level-2: #{$imag-white};
+
+  --paragraph-top-bar-background-level-3: #{$imag-light-grey-2};
+  --paragraph-top-bar-color-level-3: #{$imag-black};
+  --paragraph-background-level-3: #{$imag-white};
 
   &.theme--dark {
   }

@@ -54,7 +54,7 @@
               </template>
             </div>
             <div class="infos-wrapper">
-              <div v-if="item" class="main">{{ getName(item) }}</div>
+              <div v-if="item" class="main">{{ getName(item) | truncate(15) }}</div>
               <div class="meta">
                 <div class="ts">
                   <template v-if="item._updatedBy"> {{ item._updatedBy }} - </template><template v-else> {{ 'TL_UPDATED' | translate }}</template> <span class="time-ago" @click="copyIdToClipboard(item._id)"><timeago :since="item._updatedAt" :locale="TranslateService.locale" /></span>

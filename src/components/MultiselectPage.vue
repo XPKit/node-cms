@@ -13,7 +13,7 @@
             <v-avatar left>
               <v-icon small @click="deselectItem(item)">mdi-close-circle-outline</v-icon>
             </v-avatar>
-            {{ getName(item) }} ({{ item._id }})
+            {{ getName(item) | truncate(15) }} ({{ item._id }})
           </v-chip>
         </div>
       </div>

@@ -13,24 +13,27 @@
       @end="onEndDrag"
       @start="dragging = true"
     >
-      <v-card v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" class="item">
-        <span class="handle" />
+      <v-card v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" elevation="0" :class="`item nested-level-${paragraphLevel}`">
+        <v-card-title class="handle paragraph-header">
+          <div class="paragraph-title">{{ item.label }}</div>
+          <div class="add-btn-wrapper">
+            <v-btn class="remove-item" :disabled="disabled || schema.disabled" text icon rounded small @click="onClickRemoveItem(item)"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
+          </div>
+        </v-card-title>
         <div class="item-main-wrapper">
           <div class="item-main">
             <custom-form
               :schema="getSchema(item)"
               :model="item"
               :paragraph-index="idx"
+              :paragraph-level="paragraphLevel + 1"
               @error="onError"
               @input="onModelUpdated"
             />
           </div>
-          <div class="add-btn-wrapper">
-            <v-btn class="add-new-item" :disabled="disabled || schema.disabled" text icon rounded small @click="onClickRemoveItem(item)"><v-icon>mdi-minus-circle-outline</v-icon></v-btn>
-          </div>
         </div>
       </v-card>
-      <div slot="header" class="paragraph-header">
+      <div slot="footer" class="paragraph-footer">
         <v-select
           ref="input"
           transition="none"
@@ -46,7 +49,7 @@
           <template #label />
         </v-select>
         <div class="add-btn-wrapper">
-          <v-btn elevation="0" class="add-new-item" text rounded small :disabled="disabled || schema.disabled" @click="onClickAddNewItem"><v-icon small>mdi-plus-thick</v-icon><span>{{ 'TL_ADD_NEW_FIELD' | translate }}</span></v-btn>
+          <v-btn elevation="0" class="add-new-item" rounded :disabled="disabled || schema.disabled" @click="onClickAddNewItem"><span>{{ 'TL_ADD' | translate }}</span></v-btn>
         </div>
       </div>
     </draggable>
@@ -85,7 +88,7 @@ const defaultTypes = [
 
 export default {
   mixins: [DragList],
-  props: ['schema', 'vfg', 'model', 'disabled'],
+  props: ['schema', 'vfg', 'model', 'disabled', 'paragraphLevel'],
   data () {
     return {
       items: _.cloneDeep(_.get(this.model, this.schema.model, [])),
@@ -258,14 +261,21 @@ export default {
 }
 .item {
   display: flex;
-  margin-bottom: 5px;
+  flex-direction: column;
+  margin-bottom: 16px;
   align-items: stretch;
-  border: 1px grey solid;
+  border: 2px $paragraph-top-bar-background solid;
+  border-radius: 8px;
   .handle, .file-item-handle {
-    display: inline-block;
+    cursor: pointer;
+  }
+  .handle {
+    border-radius: 0px !important;
+    @include h5;
+  }
+  .file-item-handle {
     width: 20px;
     background-color: grey;
-    cursor: pointer;
   }
 
   textarea, input {
@@ -286,9 +296,7 @@ export default {
   }
   .item-main {
     width: 100%;
-    // padding: 10px;
-    padding-left: 10px;
-    padding-bottom: 10px;
+    padding: 16px;
   }
   .file-item {
     display: flex;
@@ -310,30 +318,76 @@ export default {
 .disabled {
   pointer-events: none;
 }
-.add-new-item {
-  margin: 6px 0;
-  text-align: right;
-  .v-btn__content {
-    justify-content: flex-end;
-  }
+.add-new-item, .remove-item {
+  color: $btn-action-color !important;
+  max-height: 34px;
   button {
     &:before {
       transform: translate(50%, 0);
     }
   }
   span {
-    @include subtext;
+    @include cta-text;
     text-transform: none;
+    text-transform: uppercase !important;
     letter-spacing: 0;
   }
 }
-.paragraph-header {
+.add-btn-wrapper {
+  .add-new-item {
+    background-color: $btn-action-background !important;
+  }
+}
+.paragraph-footer, .paragraph-header {
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
+  flex-direction: row;
+  align-items: flex-end;
   width: 100%;
-  align-content: stretch;
   justify-content: flex-start;
+  gap: 16px;
+}
+.paragraph-header {
+  background-color: $paragraph-top-bar-background;
+  color: $paragraph-top-bar-color !important;
+  display: flex;
+  justify-content: space-between;
+}
+
+$levelBackgrounds: $paragraph-top-bar-background $paragraph-top-bar-background-level-2 $paragraph-top-bar-background-level-3;
+$levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragraph-top-bar-color-level-3;
+
+@function get-level-index($index) {
+  $levelIndex: $index % 3;
+  @if $levelIndex == 0 {
+    @return 3;
+  }
+  @return $levelIndex;
+}
+
+@mixin nested-paragraph-levels-border($index) {
+  border-color: nth($levelBackgrounds, $index);
+}
+
+@mixin nested-paragraph-levels($index) {
+  color: nth($levelColors, $index) !important;
+  background-color: nth($levelBackgrounds, $index);
+}
+
+.item {
+  @for $i from 1 through 6 {
+    $valIndex: get-level-index($i);
+    &.nested-level-#{$i} {
+      @include nested-paragraph-levels-border($valIndex);
+      .paragraph-header {
+        @include nested-paragraph-levels($valIndex);
+      }
+      .add-btn-wrapper {
+        .remove-item {
+          color: nth($levelColors, $valIndex) !important;
+        }
+      }
+    }
+  }
 }
 
 </style>
