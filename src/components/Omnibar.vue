@@ -7,7 +7,7 @@
     <v-card v-show="showOmnibar" elevation="24">
       <v-card-title class="search">
         <v-text-field
-          ref="search" v-model="search" class="search-bar" flat filled rounded hide-details prepend-inner-icon="mdi-magnify" dense :placeholder="'TL_SEARCH' | translate"
+          ref="search" v-model="search" class="search-bar" flat filled rounded hide-details prepend-inner-icon="mdi-magnify" dense :placeholder="'TL_INSERT_KEYWORDS' | translate"
           type="text"
           autocomplete="off"
           name="search"
@@ -15,7 +15,7 @@
         />
       </v-card-title>
       <template v-if="results && results.length > 0">
-        <v-divider />
+        <!-- <v-divider /> -->
         <v-list dense>
           <v-list-item
             v-for="(result, i) in results"
@@ -210,12 +210,44 @@ export default {
     padding: 0
   }
   .v-list-item {
+    min-height: 26px;
+    padding-top: 8px;
+    padding-bottom: 8px;
     .v-list-item__title {
-      @include subtext;
+      @include cta-text;
+      font-weight: normal;
       font-style: normal;
     }
+    .v-list-item__content {
+      border-radius: 100px;
+      padding: 4px 8px;
+      .v-icon {
+        margin-right: 8px;
+        width: 18px;
+        height: 18px;
+      }
+    }
     &.highlighted {
-      background-color: $imag-blue;
+      .v-list-item__content {
+        color: $imag-white;
+        background-color: $imag-purple;
+        .v-icon {
+          color: $imag-black;
+        }
+      }
+    }
+    &:hover:not(.highlighted) {
+      .v-list-item__content {
+        color: $imag-white;
+        background-color: $imag-blue;
+        .v-icon {
+          color: $imag-black;
+        }
+      }
+      &:before {
+      background-color: transparent;
+
+      }
     }
   }
   .v-text-field__prefix {

@@ -134,5 +134,6 @@
     "TL_ADD_NEW_FIELD": "Add new field",
     "TL_ADD": "Add",
     "TL_NB_SELECTED_ITEMS": "Selected <%=num%> items",
-    "TL_WYSIWYG_PLACEHOLDER": "Write something..."
+    "TL_WYSIWYG_PLACEHOLDER": "Write something...",
+    "TL_INSERT_KEYWORDS": "Insert Keywords..."
   }
