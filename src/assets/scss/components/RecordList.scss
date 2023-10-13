@@ -41,13 +41,13 @@
     }
   }
   .main {
-    min-height: 24px;
     @include cta-text;
   }
   .meta {
     .id, .ts {
       @include subtext;
-    }
+      line-height: 1;
+   }
     .id {
       font-style: normal;
     }
@@ -90,12 +90,19 @@
       display: flex;
       align-items: center;
       justify-content: flex-start;
+      height: 50px;
+      margin-bottom: 8px;
       .item-info {
         flex-grow: 1;
-        margin-right: 16px;
-        min-height: 49px;
-        padding: 8px 16px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        justify-content: flex-start;
+        margin: 0 16px;
+        // padding: 8px 16px;
+        height: 50px;
         border-radius: 8px;
+        padding: 8px 16px;
         background-color: $sidebar-records-list-item-background;
         transition: background-color 0.15s;
         &:hover {
@@ -115,14 +122,49 @@
       }
    }
    .time-ago {
-     padding: 4px;
+     padding: 2px 4px;
     &:hover {
       border-radius: 100px;
       background-color: $imag-light-grey;
       color: $imag-black;
     }
    }
- }
+  }
+  .toggle-view-mode {
+   background-color: white;
+   border-radius: 100px;
+   display: flex;
+   gap: 8px;
+   align-items: center;
+   justify-content: space-between;
+   cursor: pointer;
+   .v-icon {
+      border-radius: 100px;
+      color: $sidebar-records-list-delete-icon-color;
+      padding: 4px;
+      min-width: 16px;
+      min-height: 16px;
+      &.selected {
+        color: $sidebar-records-list-delete-icon-selected-color;
+        background-color: $imag-purple;
+      }
+    }
+  }
+  .multiselect-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    span {
+      cursor: pointer;
+      @include cta-text;
+      &.disabled {
+        color: $imag-pale-grey;
+        pointer-events: none;
+        touch-action: none;
+      }
+    }
+  }
   @keyframes blinkBackground {
     0% {
       background-color: white;

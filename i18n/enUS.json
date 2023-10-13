@@ -27,7 +27,7 @@
     "TL_ARE_YOU_SURE_TO_DELETE_RECORDS": "Are you sure you want to delete <%=num%> records?",
     "TL_ARE_YOU_SURE_TO_DELETE_SELECTED_RECORDS": "Are you sure you want to delete the selected records?",
     "TL_ARE_YOU_SURE_TO_CLONE_RECORDS": "Are you sure you want to duplicate <%=num%> records?",
-    "TL_YOU_HAVE_SELECTED_NUM_ITEMS": "You have selected <%=num%> items:",
+    "TL_NUMBER_OF_SELECTED_RECORDS": "<%=num%> selected",
     "TL_SELECT_ALL_ITEMS": "Select all items",
     "TL_DESELECT_ALL_ITEMS": "Deselect all items",
     "TL_CANCEL": "Cancel",

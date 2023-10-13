@@ -25,30 +25,40 @@
           ref="search" v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat filled rounded hide-details dense
           :placeholder="'TL_SEARCH' | translate" type="text" name="search"
         />
-        <v-btn v-if="maxCount <= 0 || listCount < maxCount" elevation="0" icon class="new-record" :class="{active: isCreatingNewRecord()}" @click="onClickNew"><v-icon>mdi-note-edit-outline</v-icon></v-btn>
+        <v-btn v-if="maxCount <= 0 || listCount < maxCount" elevation="0" icon class="new-record" :class="{active: isCreatingNewRecord()}" @click="onClickNew">
+          <v-icon v-if="selectedItem && !multiselect">mdi-note-edit-outline</v-icon>
+          <v-icon v-else>mdi-note-plus-outline</v-icon>
+        </v-btn>
       </div>
     </div>
     <div v-if="hasEditableRecords()" class="records-top-bar">
-      <v-btn rounded dense text class="select-all" @click="selectAll">{{ (allRecordsSelected() ? 'TL_DESELECT_ALL' : 'TL_SELECT_ALL') | translate }}</v-btn>
-      <v-btn v-if="localMultiselectItems.length > 0" class="delete-records" dense rounded text @click="deleteSelectedRecords()">
-        <v-icon>mdi-trash-can</v-icon>
-        <span>{{ 'TL_DELETE' | translate }}</span>
-      </v-btn>
+      <div class="toggle-view-mode" @click="toggleViewMode()">
+        <v-icon small :class="{selected: !multiselect}">mdi-note-edit-outline</v-icon>
+        <v-icon small :class="{selected: multiselect}">mdi-format-list-checks</v-icon>
+      </div>
+      <div v-if="multiselect" class="multiselect-buttons">
+        <span :class="{disabled: allRecordsSelected()}" @click="onClickSelectAll">{{ 'TL_SELECT_ALL'|translate }}</span>
+        <span :class="{disabled: multiselectItems.length === 0}" @click="onClickDeselectAll">{{ 'TL_DESELECT_ALL'|translate }}</span>
+      </div>
     </div>
     <div v-shortkey="multiselect ? ['ctrl', 'a'] : false" class="records" @shortkey="selectAll()">
-      <RecycleScroller v-slot="{ item }" class="list" :items="filteredList" :item-size="65" key-field="_id">
-        <div class="item" :class="{selected: item === selectedItem, frozen:!item._local}">
-          <div class="checkbox" :class="{'blink-background': isItemSelected(item)}" @click.exact="select(item, true)" @click.shift="selectTo(item)" @click.ctrl="selectTo(item, true)">
-            <template v-if="item._local">
-              <v-icon :class="{displayed: isItemSelected(item)}">mdi-check-bold</v-icon>
-            </template>
-          </div>
-          <div class="item-info" @click.exact="select(item)" @click.shift="selectTo(item)" @click.ctrl="selectTo(item, true)">
-            <div v-if="item" class="main">{{ getName(item) }}</div>
-            <div class="meta">
-              <!-- <div class="id">{{ item._id }}</div> -->
-              <div class="ts">
-                <template v-if="item._updatedBy"> {{ item._updatedBy }} - </template><template v-else> {{ 'TL_UPDATED' | translate }}</template> <span class="time-ago" @click="copyIdToClipboard(item._id)"><timeago :since="item._updatedAt" :locale="TranslateService.locale" /></span>
+      <RecycleScroller v-slot="{ item }" class="list" :items="filteredList" :item-size="58" key-field="_id">
+        <div
+          class="item" :class="{selected: isItemSelected(item), frozen:!item._local}"
+          @click.exact="select(item)" @click.shift="selectTo(item)" @click.ctrl="selectTo(item, true)"
+        >
+          <div class="item-info">
+            <div v-if="multiselect" class="checkbox" :class="{'blink-background': isItemSelected(item)}" @click.exact="select(item, true)">
+              <template v-if="item._local">
+                <v-icon :class="{displayed: isItemSelected(item)}" small>mdi-check-bold</v-icon>
+              </template>
+            </div>
+            <div class="infos-wrapper">
+              <div v-if="item" class="main">{{ getName(item) }}</div>
+              <div class="meta">
+                <div class="ts">
+                  <template v-if="item._updatedBy"> {{ item._updatedBy }} - </template><template v-else> {{ 'TL_UPDATED' | translate }}</template> <span class="time-ago" @click="copyIdToClipboard(item._id)"><timeago :since="item._updatedAt" :locale="TranslateService.locale" /></span>
+                </div>
               </div>
             </div>
           </div>
@@ -59,8 +69,6 @@
 </template>
 
 <script>
-import pAll from 'p-all'
-import axios from 'axios'
 import _ from 'lodash'
 import TranslateService from '@s/TranslateService'
 import Notification from '@m/Notification'
@@ -116,7 +124,6 @@ export default {
   data () {
     return {
       lastSelectedItem: false,
-
       menuOpened: false,
       search: null,
       TranslateService,
@@ -211,6 +218,30 @@ export default {
     }
   },
   methods: {
+    getSelectedRecordIds () {
+      return _.map(this.localMultiselectItems, '_id')
+    },
+    allRecordsSelected () {
+      const ids = this.getSelectedRecordIds()
+      return _.get(_.filter(this.filteredList, (record) => !_.includes(ids, record._id)), 'length', 0) === 0
+    },
+    onClickSelectAll () {
+      const ids = this.getSelectedRecordIds()
+      _.each(this.filteredList, (record) => {
+        if (!_.includes(ids, record._id)) {
+          this.localMultiselectItems.push(record)
+        }
+      })
+      this.$emit('changeMultiselectItems', this.localMultiselectItems)
+    },
+    onClickDeselectAll () {
+      this.$emit('changeMultiselectItems', [])
+    },
+    toggleViewMode () {
+      this.localMultiselectItems = []
+      this.$emit('changeMultiselectItems', this.localMultiselectItems)
+      this.$emit('selectMultiselect', !this.multiselect)
+    },
     isCreatingNewRecord () {
       return this.selectedItem && !_.get(this.selectedItem, '_id', false)
     },
@@ -220,10 +251,10 @@ export default {
     hasEditableRecords () {
       return _.get(_.filter(this.filteredList, (item) => _.get(item, '_local', false)), 'length', 0) !== 0
     },
-    allRecordsSelected () {
-      return _.get(this.localMultiselectItems, 'length', 0) === _.get(this.list, 'length', 0)
-    },
     isItemSelected (item) {
+      if (this.multiselect) {
+        return _.includes(_.map(this.localMultiselectItems, '_id'), item._id)
+      }
       return item === this.selectedItem || _.includes(_.map(this.localMultiselectItems, '_id'), item._id)
     },
     getTypePrefix (type) {
@@ -250,34 +281,6 @@ export default {
       }
       console.error(errorMessage, record)
       this.notify(errorMessage, 'error')
-    },
-    async deleteSelectedRecords () {
-      if (!window.confirm(
-        TranslateService.get('TL_ARE_YOU_SURE_TO_DELETE_RECORDS', null, {num: _.size(this.localMultiselectItems)}),
-        TranslateService.get('TL_YES'),
-        TranslateService.get('TL_NO')
-      )) {
-        return
-      }
-      this.$loading.start('onDeleteMultiselectedItems')
-      try {
-        await pAll(_.map(this.localMultiselectItems, item => {
-          return async () => {
-            try {
-              await axios.delete(`../api/${this.resource.title}/${item._id}`)
-              this.notify(TranslateService.get('TL_RECORD_DELETED', null, { id: item._id }))
-            } catch (error) {
-              console.error(error)
-              this.manageError(error, 'delete', item)
-            }
-          }
-        }), {concurrency: 1})
-      } catch (error) {
-        console.error(error)
-      }
-      this.$loading.stop('onDeleteMultiselectedItems')
-      this.$emit('updateRecordList', null)
-      this.$emit('cancel')
     },
     groupSelected (resourceGroup) {
       if (!this.resource) {
@@ -360,6 +363,9 @@ export default {
       return -1
     },
     selectTo (item, ctrlPressed = false) {
+      if (!this.multiselect) {
+        return
+      }
       if (ctrlPressed || item._id === this.lastSelectedItem) {
         if (_.isUndefined(_.find(this.localMultiselectItems, {_id: item._id}))) {
           this.localMultiselectItems.push(item)

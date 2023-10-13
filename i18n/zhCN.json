@@ -20,7 +20,7 @@
     "TL_ARE_YOU_SURE_TO_DELETE_RECORDS": "您確定要刪除<%=num%>筆記錄嗎？",
     "TL_ARE_YOU_SURE_TO_DELETE_SELECTED_RECORDS": "Are you sure you want to delete the selected records?",
     "TL_ARE_YOU_SURE_TO_CLONE_RECORDS": "您確定要複製<%=num%>筆記錄嗎？",
-    "TL_YOU_HAVE_SELECTED_NUM_ITEMS": "你选擇了<%=num%>筆記綠:",
+    "TL_NUMBER_OF_SELECTED_RECORDS": "<%=num%>筆記綠",
     "TL_SELECT_ALL_ITEMS": "全选",
     "TL_DESELECT_ALL_ITEMS": "取消选择",
     "TL_CANCEL": "取消",

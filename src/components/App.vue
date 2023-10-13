@@ -32,7 +32,7 @@
               @updateRecordList="updateRecordList"
             />
             <record-editor
-              v-if="selectedRecord" :key="selectedRecord._id" :record.sync="selectedRecord" :resource="selectedResource" :locale.sync="locale"
+              v-if="selectedRecord && !multiselect" :key="selectedRecord._id" :record.sync="selectedRecord" :resource="selectedResource" :locale.sync="locale"
               :user-locale="TranslateService.locale" @updateRecordList="updateRecordList"
             />
           </template>
@@ -43,7 +43,7 @@
           />
           <plugin-page v-if="selectedPlugin" :plugin="selectedPlugin" />
 
-          <!-- <multiselect-page
+          <multiselect-page
             v-if="selectedResource && multiselect"
             :multiselect-items="multiselectItems"
             :locale="locale"
@@ -52,7 +52,7 @@
             @cancel="onCancelMultiselectPage"
             @changeMultiselectItems="onChangeMultiselectItems"
             @updateRecordList="updateRecordList"
-          /> -->
+          />
         </div>
         <loading v-if="LoadingService.isShow" />
       </div>

@@ -7,7 +7,6 @@ exports = (module.exports = {
     enUS: 'abc',
     zhCN: '甲乙丙'
   },
-  maxCount: 10,
   schema: [
     {
       label: {

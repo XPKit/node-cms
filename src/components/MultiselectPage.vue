@@ -1,23 +1,24 @@
 <template>
-  <div class="multiselect-page">
-    <h3>{{ 'TL_YOU_HAVE_SELECTED_NUM_ITEMS' | translate(null, { num: size(multiselectItems) }) }}</h3>
-    <ul>
-      <li v-for="item in multiselectItems" :key="item._id">
-        {{ getName(item) }}
-        ({{ item._id }})
-      </li>
-    </ul>
-    <br>
-    <div class="actions">
-      <v-btn @click="onClickSelectAll">{{ 'TL_SELECT_ALL_ITEMS'|translate }}</v-btn>
-      <v-btn :disabled="multiselectItems.length === 0" @click="onClickDeselectAll">{{ 'TL_DESELECT_ALL_ITEMS'|translate }}</v-btn>
+  <v-card elevation="0" class="multiselect-page">
+    <div class="top-bar">
+      <h3>{{ 'TL_NUMBER_OF_SELECTED_RECORDS' | translate(null, { num: size(multiselectItems) }) }}</h3>
+      <div class="buttons">
+        <v-btn elevation="0" class="delete" rounded :disabled="isEmpty(multiselectItems)" @click="onClickDelete">{{ 'TL_DELETE'|translate }}</v-btn>
+      </div>
     </div>
-    <div class="buttons">
-      <v-btn class="back" @click="onClickCancel">{{ 'TL_CANCEL'|translate }}</v-btn>
-      <v-btn class="delete right" :disabled="isEmpty(multiselectItems)" @click="onClickDelete">{{ 'TL_DELETE'|translate }}</v-btn>
+    <div class="scroll-wrapper" :class="{'scrolled-to-bottom': scrolledToBottom}" @scroll="onScroll">
+      <div class="selected-records-list">
+        <div v-for="item in multiselectItems" :key="item._id" class="selected-record">
+          <v-chip outlined c small :ripple="false">
+            <v-avatar left>
+              <v-icon small @click="deselectItem(item)">mdi-close-circle-outline</v-icon>
+            </v-avatar>
+            {{ getName(item) }} ({{ item._id }})
+          </v-chip>
+        </div>
+      </div>
     </div>
-    <!-- <button :disabled="isEmpty(multiselectItems)" @click="onClickClone">Clone</button> -->
-  </div>
+  </v-card>
 </template>
 
 <script>
@@ -51,19 +52,20 @@ export default {
   },
   data () {
     return {
+      scrolledToBottom: false,
       size: _.size,
       isEmpty: _.isEmpty
     }
   },
   methods: {
+    onScroll ({ target: { scrollTop, clientHeight, scrollHeight } }) {
+      this.scrolledToBottom = scrollTop + clientHeight >= scrollHeight - 50
+    },
+    deselectItem (item) {
+      this.$emit('changeMultiselectItems', _.filter(this.multiselectItems, (i) => i._id !== item._id))
+    },
     onClickCancel () {
       this.$emit('cancel')
-    },
-    onClickSelectAll () {
-      this.$emit('changeMultiselectItems', this.recordList)
-    },
-    onClickDeselectAll () {
-      this.$emit('changeMultiselectItems', [])
     },
     async onClickDelete () {
       if (!window.confirm(
@@ -73,7 +75,6 @@ export default {
       )) {
         return
       }
-
       this.$loading.start('onDeleteMultiselectedItems')
       try {
         await pAll(_.map(this.multiselectItems, item => {
@@ -92,7 +93,6 @@ export default {
       }
       this.multiselect = false
       this.$loading.stop('onDeleteMultiselectedItems')
-
       this.$emit('updateRecordList', null)
       this.$emit('cancel')
     }
@@ -131,58 +131,37 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-.multiselect-page {
-    margin: 0px;
-    display: block;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    flex: 1 1 0;
-}
+@import '@a/scss/variables.scss';
 h3 {
   margin-top: 0;
 }
-button {
-  cursor: pointer;
-  padding: 5px 12px;
-  margin: 5px;
-  line-height: 28px;
-  box-sizing: border-box;
-  background: #f0f0f0;
-  text-decoration: none;
-  color: #999;
-  border-width: 0px;
-  display: inline;
-  &:disabled {
-    opacity: 0.5;
+.selected-records-list {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 16px;
+  .selected-record {
+    flex-basis: 50%;
+    margin-bottom: 8px;
   }
-  i:before {
-    color: grey;
+  .v-chip {
+    padding-left: 0;
+    @include subtext;
+    .v-avatar {
+      button {
+        font-size: 20px !important;
+        margin-left: 8px;
+      }
+    }
   }
 }
 .buttons {
-  padding: 18px 15px 19px 15px;
-  position: absolute;
-  left: 0;
-  right: 0;
-  box-sizing: border-box;
-  width: 100%;
-  border-top: 1px solid #f0f0f0;
-  bottom: 0px;
-  background-color: white;
-  transition-duration: 0s;
-  z-index: 1000;
-  .right {
-    float: right;
-  }
-}
-ul {
-  list-style-type: circle;
-  li {
-    margin-left: 20px;
-    padding-left: 10px;
-    list-style: circle;
+  .delete {
+    color: $multiselect-delete-button-color !important;
+    background-color: $multiselect-delete-button-background !important;
+    @include cta-text;
   }
 }
 </style>
