@@ -4,7 +4,7 @@
       <template v-if="schema.layout && schema.layout.lines">
         <div v-for="(line, i) in schema.layout.lines" :id="formId + '-' + i" :key="i" class="line-wrapper" :class="getLineClasses(line)">
           <div v-for="field in line.fields" :id="field.model + '-' + formId" :key="field.model" class="field-wrapper" :data-model="field.model" :class="getFieldClasses(field)">
-            <div class="red--text">{{ getFieldType(field.schema) }}</div>
+            <!-- <div class="red--text">{{ getFieldType(field.schema) }}</div> -->
             <component :is="getFieldType(field.schema)" v-if="field.schema" :key="field.model" :schema="field.schema" :model="model" :form-options="formOptions" :disabled="field.schema && field.schema.disabled" :focused="field.schema.focused" @input="onInput" />
           </div>
         </div>

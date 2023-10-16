@@ -50,13 +50,23 @@
             <img :src="getImageSrc(a)">
             <v-icon>mdi-drag</v-icon>
           </div>
-          <v-chip class="filename" outlined close close-icon="mdi-close-circle-outline" :disabled="disabled || schema.disabled" @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
+          <v-tooltip right lazy>
+            <template #activator="{ on }">
+              <v-chip class="filename" outlined close close-icon="mdi-close-circle-outline" :disabled="disabled || schema.disabled" v-on="on" @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
+            </template>
+            <span>{{ a._filename }}</span>
+          </v-tooltip>
         </v-card>
       </draggable>
     </div>
     <template v-else-if="attachment() && isImage()">
       <div v-if="!(schema.width && schema.height)" class="preview-single-attachment">
-        <v-chip class="filename" close @click:close="removeImage(attachment())">{{ attachment()._filename | truncate(10) }} ({{ imageSize(attachment()) }})</v-chip>
+        <v-tooltip right lazy>
+          <template #activator="{ on }">
+            <v-chip class="filename" close v-on="on" @click:close="removeImage(attachment())">{{ attachment()._filename | truncate(10) }} ({{ imageSize(attachment()) }})</v-chip>
+          </template>
+          <span>{{ attachment()._filename }}</span>
+        </v-tooltip>
         <img class="preview" :src="getImageSrc()">
       </div>
       <template v-else>

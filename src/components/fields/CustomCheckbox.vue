@@ -1,19 +1,18 @@
 <template>
   <div class="custom-checkbox">
     <div class="field-label">{{ schema.label }}</div>
-    <div class="border-wrapper">
-      <v-checkbox
-        ref="input" class="switch"
-        :input-value="getValue()"
-        :compact="schema.compact ? true : false"
-        :disabled="schema.disabled ? true : false"
-        :readonly="schema.readonly ? true : false"
-        :filled="schema.filled ? true : false"
-        dense hide-details solo
-        :outlined="schema.outlined ? true : false"
-        @change="onChange"
-      />
-    </div>
+    <!-- TODO: hugo - change to custom icons like in design and add switch theme as well -->
+    <v-checkbox
+      ref="input" class="switch"
+      :input-value="getValue()"
+      :compact="schema.compact ? true : false"
+      :disabled="schema.disabled ? true : false"
+      :readonly="schema.readonly ? true : false"
+      :filled="schema.filled ? true : false"
+      dense hide-details solo
+      :outlined="schema.outlined ? true : false"
+      @change="onChange"
+    />
   </div>
 </template>
 

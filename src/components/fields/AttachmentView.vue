@@ -32,14 +32,24 @@
             <v-btn v-else small @click="viewFile(a)">{{ 'TL_VIEW' | translate }}</v-btn>
             <v-icon>mdi-drag</v-icon>
           </div>
-          <v-chip outlined class="filename" close close-icon="mdi-close-circle-outline" @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
+          <v-tooltip right lazy>
+            <template #activator="{ on }">
+              <v-chip outlined class="filename" close close-icon="mdi-close-circle-outline" v-on="on" @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
+            </template>
+            <span>{{ a._filename }}</span>
+          </v-tooltip>
         </v-card>
       </draggable>
     </div>
     <div v-else-if="attachment()" class="preview-single-attachment">
       <img v-if="isImage()" :src="getImageSrc()">
       <v-btn v-else small @click="viewFile()">{{ 'TL_VIEW' | translate }}</v-btn>
-      <v-chip class="filename" close @click:close="removeImage(attachment())">{{ attachment()._filename | truncate(10) }} ({{ imageSize(attachment()) }})</v-chip>
+      <v-tooltip right lazy>
+        <template #activator="{ on }">
+          <v-chip class="filename" close v-on="on" @click:close="removeImage(attachment())">{{ attachment()._filename | truncate(10) }} ({{ imageSize(attachment()) }})</v-chip>
+        </template>
+        <span>{{ attachment()._filename }}</span>
+      </v-tooltip>
     </div>
     <template v-if="model._local && !disabled">
       <template v-if="isForMultipleImages()">
