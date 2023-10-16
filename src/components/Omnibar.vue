@@ -15,21 +15,19 @@
         />
       </v-card-title>
       <template v-if="results && results.length > 0">
-        <!-- <v-divider /> -->
-        <v-list dense>
-          <v-list-item
-            v-for="(result, i) in results"
-            :key="i"
-            :class="{highlighted: highlightedItem === i}" @click="selectResult(i)"
-          >
-            <v-list-item-content>
-              <v-list-item-title>
-                <v-icon small>{{ getIconForResult(result) }}</v-icon>
-                <span v-html="result.html" />
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
+        <v-divider />
+        <div class="scroll-wrapper" :class="{'scrolled-to-bottom': scrolledToBottom}" @scroll="onScroll">
+          <v-list dense>
+            <v-list-item v-for="(item, i) in results" :key="i" class="list" :class="{highlighted: highlightedItem === item.index}" :ripple="false" @click="selectResult(item.index)">
+              <v-list-item-content>
+                <v-list-item-title>
+                  <v-icon small>{{ getIconForResult(item) }}</v-icon>
+                  <span v-html="item.html" />
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </div>
       </template>
     </v-card>
   </div>
@@ -59,6 +57,7 @@ export default {
     return {
       showOmnibar: false,
       search: null,
+      scrolledToBottom: false,
       resourcesList: [],
       results: [],
       highlightedItem: 0,
@@ -93,7 +92,7 @@ export default {
       this.highlightedItem = 0
       this.results = []
       const results = fuzzysort.go(this.search, this.getDataForSearch(), this.searchOptions)
-      this.results = _.compact(_.map(results, (result) => {
+      this.results = _.compact(_.map(results, (result, i) => {
         if (_.isNull(_.get(result, '[0]', null))) {
           return false
         }
@@ -120,6 +119,9 @@ export default {
     }))
   },
   methods: {
+    onScroll ({ target: { scrollTop, clientHeight, scrollHeight } }) {
+      this.scrolledToBottom = scrollTop + clientHeight >= scrollHeight - 50
+    },
     isResultInCurrentResource (result) {
       return _.startsWith(_.get(result[0], 'target', ''), _.get(this.selectedItem, 'displayname', ''))
     },
@@ -207,7 +209,8 @@ export default {
 }
 #omnibar {
   .v-list {
-    padding: 0
+    padding: 0;
+    max-height: 65vh;
   }
   .v-list-item {
     min-height: 26px;

@@ -242,7 +242,7 @@ body {
     width: 100%;
     overflow: hidden;
   }
-  .record-editor-form, .selected-records-list {
+  .record-editor-form, .selected-records-list, #omnibar .scroll-wrapper {
     &:after {
       content: '';
       pointer-events: none;
@@ -261,9 +261,17 @@ body {
   .scroll-wrapper {
     overflow: auto;
     height: 100%;
-
     &.scrolled-to-bottom {
       .record-editor-form, .selected-records-list {
+        &:after {
+          opacity: 0;
+        }
+      }
+    }
+  }
+  #omnibar {
+    .scroll-wrapper {
+      &.scrolled-to-bottom {
         &:after {
           opacity: 0;
         }
