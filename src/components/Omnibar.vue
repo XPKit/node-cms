@@ -16,9 +16,9 @@
       </v-card-title>
       <template v-if="results && results.length > 0">
         <v-divider />
-        <div class="scroll-wrapper" :class="{'scrolled-to-bottom': scrolledToBottom}" @scroll="onScroll">
+        <div ref="scrollWrapper" class="scroll-wrapper" :class="{'scrolled-to-bottom': scrolledToBottom}" @scroll="onScroll">
           <v-list dense>
-            <v-list-item v-for="(item, i) in results" :key="i" class="list" :class="{highlighted: highlightedItem === item.index}" :ripple="false" @click="selectResult(item.index)">
+            <v-list-item v-for="(item, i) in results" :id="'result-' + i" :key="i" class="list" :class="{highlighted: highlightedItem === i}" :ripple="false" @click="selectResult(i)">
               <v-list-item-content>
                 <v-list-item-title>
                   <v-icon small>{{ getIconForResult(item) }}</v-icon>
@@ -168,6 +168,20 @@ export default {
       this.searchMode = mode
       this.search = ''
     },
+    // elementIsVisibleInViewport (el) {
+    //   const clientHeight = this.$refs.scrollWrapper.clientHeight
+    //   const scrollTop = this.$refs.scrollWrapper.scrollTop
+    //   const rect = el.getBoundingClientRect()
+    //   return (
+    //     rect.top >= 0 && rect.top < scrollTop
+    //   )
+    // },
+    scrollToResult (result) {
+      const elem = document.getElementById(`result-${this.highlightedItem}`)
+      if (elem) {
+        elem.scrollIntoView()
+      }
+    },
     async interactiveSearch (event) {
       const action = _.get(event, 'srcKey', false)
       if (!action) {
@@ -182,9 +196,19 @@ export default {
       if (action === 'esc' || action === 'open') {
         this.showHideOmnibar(false)
       } else if (action === 'arrow-up') {
-        this.highlightedItem -= 1
+        if (this.highlightedItem - 1 >= 0) {
+          this.highlightedItem -= 1
+        } else {
+          this.highlightedItem = 0
+        }
+        this.scrollToResult()
       } else if (action === 'arrow-down') {
-        this.highlightedItem += 1
+        if (this.highlightedItem + 1 <= this.results.length - 1) {
+          this.highlightedItem += 1
+        } else {
+          this.highlightedItem = this.results.length - 1
+        }
+        this.scrollToResult()
       } else if (action === 'enter') {
         this.selectResult()
       } else if (_.includes(this.searchModes, action)) {
@@ -211,11 +235,12 @@ export default {
   .v-list {
     padding: 0;
     max-height: 65vh;
+    padding-top: 16px;
   }
   .v-list-item {
     min-height: 26px;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    // padding-top: 8px;
+    // padding-bottom: 8px;
     .v-list-item__title {
       @include cta-text;
       font-weight: normal;
