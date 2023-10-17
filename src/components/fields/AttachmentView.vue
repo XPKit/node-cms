@@ -8,7 +8,7 @@
       >
         <v-file-input
           ref="input" :rules="getRules()" prepend-icon=""
-          :placeholder="getPlaceholder() | translate" :clearable="false" :hide-details="isFieldValid()"
+          :placeholder="getPlaceholder() | translate" :clearable="false" hide-details="auto"
           dense filled rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
           @change="onUploadChanged"
         >
@@ -27,29 +27,34 @@
         v-bind="dragOptions" :class="{disabled}" @end="onEndDrag" @start="onStartDrag"
       >
         <v-card v-for="(a, i) in getAttachments()" :key="`${a._filename}-${i}`" elevation="0" class="preview-attachment" :class="{odd: i % 2 !== 0}">
-          <div class="row-handle">
-            <img v-if="isImage()" :src="getImageSrc(a)">
-            <v-btn v-else small @click="viewFile(a)">{{ 'TL_VIEW' | translate }}</v-btn>
-            <v-icon>mdi-drag</v-icon>
-          </div>
-          <v-tooltip right lazy>
+          <v-tooltip right>
             <template #activator="{ on }">
               <v-chip outlined class="filename" close close-icon="mdi-close-circle-outline" v-on="on" @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
             </template>
             <span>{{ a._filename }}</span>
           </v-tooltip>
+          <div class="row-handle">
+            <!-- TODO: hugo - check why svgs not rendered properly -->
+            <div v-if="isImage(a)" class="image-wrapper">
+              <!-- {{ getImageSrc(a) }} -->
+              <v-img cover :src="getImageSrc(a)" />
+            </div>
+            <v-btn v-else small rounded elevation="0" @click="viewFile(a)">{{ 'TL_VIEW' | translate }}</v-btn>
+          </div>
         </v-card>
       </draggable>
     </div>
     <div v-else-if="attachment()" class="preview-single-attachment">
-      <img v-if="isImage()" :src="getImageSrc()">
-      <v-btn v-else small @click="viewFile()">{{ 'TL_VIEW' | translate }}</v-btn>
-      <v-tooltip right lazy>
+      <v-tooltip right>
         <template #activator="{ on }">
           <v-chip class="filename" close v-on="on" @click:close="removeImage(attachment())">{{ attachment()._filename | truncate(10) }} ({{ imageSize(attachment()) }})</v-chip>
         </template>
         <span>{{ attachment()._filename }}</span>
       </v-tooltip>
+      <div v-if="isImage()" class="image-wrapper">
+        <v-img cover :src="getImageSrc(a)" />
+      </div>
+      <v-btn v-else small rounded elevation="0" @click="viewFile()">{{ 'TL_VIEW' | translate }}</v-btn>
     </div>
     <template v-if="model._local && !disabled">
       <template v-if="isForMultipleImages()">

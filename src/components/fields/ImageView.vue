@@ -8,7 +8,7 @@
         @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
       >
         <v-file-input
-          ref="input" :rules="getRules()" :hide-details="isFieldValid()" prepend-icon=""
+          ref="input" :rules="getRules()" hide-details="auto" prepend-icon=""
           :placeholder="getPlaceholder() | translate" :clearable="false"
           dense filled rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="true"
           @change="onUploadChanged"
@@ -26,7 +26,7 @@
         @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
       >
         <v-file-input
-          ref="input" :rules="getRules()" :hide-details="isFieldValid()" prepend-icon=""
+          ref="input" :rules="getRules()" hide-details="auto" prepend-icon=""
           :placeholder="getPlaceholder() | translate" :clearable="false"
           dense filled rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
           @change="onUploadChanged"
@@ -47,10 +47,9 @@
       >
         <v-card v-for="(a, i) in getAttachments()" :key="`${a._filename}-${i}`" elevation="0" class="preview-attachment">
           <div class="row-handle">
-            <img :src="getImageSrc(a)">
-            <v-icon>mdi-drag</v-icon>
+            <v-img cover :src="getImageSrc(a)" />
           </div>
-          <v-tooltip right lazy>
+          <v-tooltip right>
             <template #activator="{ on }">
               <v-chip class="filename" outlined close close-icon="mdi-close-circle-outline" :disabled="disabled || schema.disabled" v-on="on" @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
             </template>
@@ -61,13 +60,13 @@
     </div>
     <template v-else-if="attachment() && isImage()">
       <div v-if="!(schema.width && schema.height)" class="preview-single-attachment">
-        <v-tooltip right lazy>
+        <v-tooltip right>
           <template #activator="{ on }">
             <v-chip class="filename" close v-on="on" @click:close="removeImage(attachment())">{{ attachment()._filename | truncate(10) }} ({{ imageSize(attachment()) }})</v-chip>
           </template>
           <span>{{ attachment()._filename }}</span>
         </v-tooltip>
-        <img class="preview" :src="getImageSrc()">
+        <v-img class="preview" cover :src="getImageSrc()" />
       </div>
       <template v-else>
         <cropper
@@ -111,7 +110,6 @@
 import _ from 'lodash'
 import 'vue-advanced-cropper/dist/style.css'
 import { Cropper } from 'vue-advanced-cropper'
-import Notification from '@m/Notification'
 import AbstractField from '@m/AbstractField'
 import FileInputField from '@m/FileInputField'
 import DragList from '@m/DragList'
@@ -120,7 +118,7 @@ export default {
   components: {
     Cropper
   },
-  mixins: [Notification, AbstractField, FileInputField, DragList],
+  mixins: [AbstractField, FileInputField, DragList],
   data () {
     return {
       firstCropUpdate: true,

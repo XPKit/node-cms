@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import {v4 as uuid} from 'uuid'
 import TranslateService from '@s/TranslateService'
 
 export default {
@@ -36,7 +37,11 @@ export default {
       })
       orderedAttachments = _.orderBy(orderedAttachments, ['order'], ['asc'])
       this.attachments = _.filter(orderedAttachments, attachment => this.isSameAttachment(attachment))
-      this.$emit('input', orderedAttachments, this.schema.model)
+      if (this.isForParagraph) {
+        this.value = this.items
+      } else {
+        this.$emit('input', orderedAttachments, this.schema.model)
+      }
     },
     getImageSrc (attachment = false) {
       const a = attachment || this.attachment()
@@ -48,6 +53,9 @@ export default {
     },
     getPreviewUrl (attachment = false) {
       const a = attachment || this.attachment()
+      if (a._contentType.indexOf('svg') !== -1) {
+        return a.url
+      }
       return `${a.url}?resize=autox100`
     },
     isSameAttachment (attachment) {
@@ -95,9 +103,6 @@ export default {
     },
     getFieldType () {
       return _.toUpper(_.get(this.schema, 'type', 'ImageView') === 'ImageView' ? 'image' : 'file')
-    },
-    isFieldValid () {
-      return _.get(_.compact(this.getRules()), 'length', 0) === 0
     },
     getRules () {
       const rules = []
@@ -170,11 +175,46 @@ export default {
         console.info(`Reached max number of files for ${this.schema.model}`, totalNbFiles, maxCount)
         files = _.take(files, files.length - (totalNbFiles - maxCount))
       } else if (maxCount === 1 && totalNbFiles > 1) {
-        this.localModel._attachments = _.filter(this.localModel._attachments, (attachment) => !this.isSameAttachment(attachment))
+        if (!this.isForParagraph) {
+          this.localModel._attachments = _.filter(this.localModel._attachments, (attachment) => !this.isSameAttachment(attachment))
+        }
       }
-      this.attachments = _.filter(await this.readAllFiles(files), attachment => this.isSameAttachment(attachment))
-      this.$forceUpdate()
-      this.$emit('input', this.localModel._attachments, this.schema.model)
+      const results = await this.readAllFiles(files)
+      if (this.isForParagraph) {
+        this.value = this.items
+      } else {
+        this.attachments = _.filter(results, attachment => this.isSameAttachment(attachment))
+        this.$forceUpdate()
+        this.$emit('input', this.localModel._attachments, this.schema.model)
+      }
+    },
+    addAttachment (file, element) {
+      const { key, locale } = this.getKeyLocale()
+      const newAttachment = {
+        _filename: _.get(file, '[0].name', file.name),
+        _name: key,
+        _fields: {
+          locale
+        },
+        field: this.schema.model,
+        localised: this.schema.localised,
+        file: _.get(file, '[0]', file),
+        data: element.target.result
+      }
+      if (this.isForParagraph) {
+        const fileItemId = uuid()
+        const newItem = {
+          id: fileItemId
+        }
+        this.items.push(newItem)
+        this.items = _.clone(this.items)
+        newAttachment._fields.fileItemId = fileItemId
+      }
+      if (this.isForParagraph) {
+        this.schema.rootView.model._attachments.push(newAttachment)
+      } else {
+        this.localModel._attachments.push(newAttachment)
+      }
     },
     async readAllFiles (files) {
       let nbFilesToRead = _.get(files, 'length', 1)
@@ -183,19 +223,7 @@ export default {
           const reader = new FileReader()
           const vm = this
           reader.onload = (element) => {
-            const { key, locale } = vm.getKeyLocale()
-            const newAttachment = {
-              _filename: _.get(file, '[0].name', file.name),
-              _name: key,
-              _fields: {
-                locale
-              },
-              field: this.schema.model,
-              localised: this.schema.localised,
-              file: _.get(file, '[0]', file),
-              data: element.target.result
-            }
-            vm.localModel._attachments.push(newAttachment)
+            vm.addAttachment(file, element)
             vm.$forceUpdate()
             nbFilesToRead--
             if (nbFilesToRead === 0) {
@@ -205,7 +233,7 @@ export default {
                   a.orderUpdated = true
                 })
               }
-              resolve(vm.localModel._attachments)
+              resolve(this.isForParagraph ? vm.items : vm.localModel._attachments)
             }
           }
           try {
@@ -216,11 +244,5 @@ export default {
         })
       })
     }
-    // onFileSizeExceed () {
-    //   this.notify(TranslateService.get('TL_FILE_SIZE_EXCEED', null, { size: this.schema.limit / 1024 }), 'error')
-    // },
-    // onFileTypeMismatch () {
-    //   this.notify(TranslateService.get('TL_FILE_TYPE_MISMATCH'), 'error')
-    // }
   }
 }

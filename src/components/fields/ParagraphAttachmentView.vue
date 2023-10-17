@@ -5,10 +5,10 @@
       @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
     >
       <v-file-input
-        ref="input" :rules="getRules()"
+        ref="input" :rules="getRules()" prepend-icon=""
         :accept="model.input === 'image'? 'image/*': '*'" :clearable="false" :placeholder="getPlaceholder() | translate"
         dense filled rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :disabled="isForMultipleImages() && isFieldDisabled()"
-        @change="onChangeFile"
+        @change="onUploadChanged"
       >
         <template #selection="{index}">
           <div v-if="index === 0" class="v-file-input__text v-file-input__text--placeholder">
@@ -22,12 +22,18 @@
       draggable=".preview-attachment" handle=".row-handle" ghost-class="ghost"
       v-bind="dragOptions" :class="{disabled}" class="preview-multiple" @end="onEndDrag" @start="onStartDrag"
     >
-      <v-card v-for="(i, index) in items" :key="`${i._filename}-${index}`" class="preview-attachment" :class="{odd: index % 2 !== 0}">
-        <v-chip class="filename" close @click:close="onClickRemoveFileItem(i)">#{{ index + 1 }} - {{ getAttachment(i, '_filename') | truncate(10) }} ({{ imageSize(getAttachment(i)) }})</v-chip>
+      <v-card v-for="(i, index) in items" :key="`${i._filename}-${index}`" elevation="0" class="preview-attachment" :class="{odd: index % 2 !== 0}">
         <div class="row-handle">
-          <img v-if="isImage()" :src="getImageSrc(i)">
-          <v-btn v-else-if="getAttachment(i, 'url')" small @click="viewFile(getAttachment(i))">{{ 'TL_VIEW' | translate }}</v-btn>
-          <v-icon>mdi-drag</v-icon>
+          <v-tooltip right>
+            <template #activator="{ on }">
+              <v-chip class="filename" close v-on="on" @click:close="onClickRemoveFileItem(i)">#{{ index + 1 }} - {{ getAttachment(i, '_filename') | truncate(10) }} ({{ imageSize(getAttachment(i)) }})</v-chip>
+            </template>
+            <span>{{ getAttachment(i, '_filename') }}</span>
+          </v-tooltip>
+          <div v-if="isImage(getAttachment(i))" class="image-wrapper">
+            <v-img cover :src="getImageSrc(getAttachment(i))" />
+          </div>
+          <v-btn v-else-if="getAttachment(i, 'url')" small rounded elevation="0" @click="viewFile(getAttachment(i))">{{ 'TL_VIEW' | translate }}</v-btn>
         </div>
       </v-card>
     </draggable>
@@ -46,6 +52,7 @@ export default {
   data () {
     return {
       dragover: false,
+      isForParagraph: true,
       items: _.get(this.model, this.schema.model, []),
       key: uuid(),
       attachments: []
@@ -65,67 +72,6 @@ export default {
   methods: {
     formatItems () {
       return _.map(this.items, (i) => this.getAttachment(i))
-    },
-    onChange () {
-      _.set(this.model, this.schema.model, this.items)
-      this.$emit('input', this.model, this.schema.model)
-    },
-    onEndDrag () {
-      _.set(this.model, this.schema.model, this.items)
-      this.$emit('input', this.model, this.schema.model)
-    },
-    onDrop (event) {
-      this.dragover = false
-      if (this.schema.maxCount <= 1 && event.dataTransfer.files.length > 1) {
-        return console.error('Only one file can be uploaded at a time..')
-      }
-      event.dataTransfer.files.forEach(element => {
-        this.onChangeFile(element)
-      })
-    },
-    onChangeFile (files) {
-      this.$refs.input.validate()
-      if (!this.$refs.input.valid) {
-        return
-      }
-      if (!_.isArray(files)) {
-        files = [files]
-      }
-      const { key, locale } = this.getKeyLocale()
-      _.each(files, (file, i) => {
-        const fileItemId = uuid()
-        const newItem = {
-          id: fileItemId
-        }
-        this.items.push(newItem)
-        this.items = _.clone(this.items)
-        _.set(this.model, this.schema.model, this.items)
-        this.$emit('input', this.model, this.schema.model)
-        const attachments = this.schema.rootView.model._attachments = this.schema.rootView.model._attachments || []
-        const attachmentObj = {
-          _filename: file.name,
-          order: i + 1,
-          orderUpdated: true,
-          _name: key,
-          _fields: {
-            locale,
-            fileItemId
-          },
-          file
-        }
-        if (this.schema.fileType === 'image') {
-          try {
-            attachmentObj.url = URL.createObjectURL(file)
-          } catch (error) {
-            console.error(error)
-          }
-        }
-        attachments.push(attachmentObj)
-        console.warn('added attachment = ', attachmentObj)
-        event.target.value = null
-      })
-      _.set(this.model, this.schema.model, this.items)
-      this.$emit('input', this.model, this.schema.model)
     },
     getAttachment (fileItemId, field) {
       const attach = _.find(this.schema.rootView.model._attachments, {_fields: {fileItemId: fileItemId.id}})
@@ -198,5 +144,11 @@ export default {
 }
 .disabled {
   pointer-events: none;
+}
+.preview-multiple {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>

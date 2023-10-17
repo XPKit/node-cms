@@ -34,6 +34,7 @@ exports = (module.exports = {
           'wysiwyg',
           'text',
           'string',
+          'image',
           {
             input: 'select',
             source: 'comments',
@@ -48,10 +49,15 @@ exports = (module.exports = {
       label: 'Localized Paragraph',
       field: 'localizedParagraph',
       input: 'paragraph',
-      localised: true
-      // options: {
-      //   types: ['string']
-      // }
+      localised: true,
+      options: {
+        types: [
+          'wysiwyg',
+          'text',
+          'string',
+          'image'
+        ]
+      }
     },
     {
       label: 'Body',
