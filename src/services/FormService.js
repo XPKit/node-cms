@@ -233,7 +233,16 @@ let typeMapper = {
     validator: customValidators.select
   },
   multiselect: {
-    type: 'CustomChecklist',
+    type: 'CustomMultiSelect',
+    selectOptions: {
+      multiple: true,
+      listBox: true,
+      trackBy: '_id',
+      customLabel: (item, labelProp) => {
+        return _.get(labelProp, item, item)
+      },
+      searchable: true
+    },
     validator: validators.array
   },
   json: {

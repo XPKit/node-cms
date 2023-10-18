@@ -1,22 +1,19 @@
 <template>
   <div class="multiselect-wrapper">
-    <!-- TODO: hugo
-      change to v-select multiple
-      if listbox === true, we prepend a v-btn to select/deselect all
-
-     -->
     <v-autocomplete
       :id="selectOptions.id"
       ref="input"
       :chips="selectOptions.chips"
       :value="objectValue"
       :items="formattedOptions"
-      :deletable-chips="selectOptions.deletableChips"
+      :deletable-chips="selectOptions.deletableChips || selectOptions.multiple"
       :hide-selected="selectOptions.hideSelected"
       :disabled="disabled || schema.disabled"
       :placeholder="schema.placeholder"
       :multiple="selectOptions.multiple"
+      :ripple="false"
       :clearable="selectOptions.clearable"
+      :small-chips="selectOptions.multiple"
       filled dense rounded hide-details append-icon="mdi-chevron-down"
       @change="updateSelected"
       @search-change="onSearchChange"
@@ -24,11 +21,15 @@
     >
       <template #prepend>
         <span v-if="schema.required" class="red--text"><strong>* </strong></span>{{ getLabel() }}
+        <v-btn v-if="schema.listBox" small rounded elevation="0" @click="onChangeSelectAll">{{ (allOptionsSelected() ? 'TL_DESELECT_ALL' : 'TL_SELECT_ALL') | translate }}</v-btn>
       </template>
       <template #label />
-      <!-- <template #selection="{index}">
-        <span v-if="index === objectValue.length - 1">{{ 'TL_NB_SELECTED_ITEMS' | translate(null, { num: objectValue.length }) }}</span>
-      </template> -->
+      <template #item="{item, attrs}">
+        <div v-if="selectOptions.multiple" class="checkbox">
+          <v-icon :class="{displayed: attrs.inputValue}" small>mdi-check-bold</v-icon>
+        </div>
+        <div class="label" :class="{selected: attrs.inputValue}">{{ item.text ? item.text : item }}</div>
+      </template>
     </v-autocomplete>
   </div>
 </template>
@@ -44,6 +45,7 @@ export default {
     }
   },
   computed: {
+
     selectOptions () {
       return this.schema.selectOptions || {}
     },
@@ -90,6 +92,15 @@ export default {
     }
   },
   methods: {
+    allOptionsSelected () {
+      return _.get(this.formattedOptions, 'length', 0) === _.get(this.objectValue, 'length', 0)
+    },
+    onChangeSelectAll (checked) {
+      const allSelected = this.allOptionsSelected()
+      this.objectValue = allSelected ? [] : _.map(this.formattedOptions, 'value')
+      this.value = this.objectValue
+      this.$emit('input', this.value, this.schema.model)
+    },
     getLabel () {
       if (this.disabled) {
         return ''
@@ -128,3 +139,21 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.multiselect-wrapper {
+  .v-input__prepend-outer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .v-autocomplete.v-select--chips {
+    input {
+      padding: 0;
+      height: 100%;
+      max-height: 100% !important;
+    }
+  }
+}
+</style>

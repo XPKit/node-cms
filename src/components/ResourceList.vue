@@ -95,7 +95,6 @@ export default {
     }
   }
 }
-
 .resource, .menu-btn-wrapper {
   height: 100%;
   display: flex;

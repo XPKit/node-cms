@@ -112,10 +112,6 @@ class SchemaService {
           return _.get(item, key)
         }
       }
-    } else if (fields[id].type === 'CustomChecklist') {
-      fields[id].customChecklistOptions = fields[id].customChecklistOptions || {}
-      fields[id].customChecklistOptions.name = key
-      fields[id].customChecklistOptions.value = '_id'
     }
   }
 

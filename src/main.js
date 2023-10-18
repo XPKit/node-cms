@@ -36,7 +36,6 @@ import AttachmentView from '@c/fields/AttachmentView.vue'
 import ParagraphAttachmentView from '@c/fields/ParagraphAttachmentView.vue'
 import CustomDatetimePicker from '@c/fields/CustomDatetimePicker.vue'
 import CustomMultiSelect from '@c/fields/CustomMultiSelect.vue'
-import CustomChecklist from '@c/fields/CustomChecklist.vue'
 import CustomInput from '@c/fields/CustomInput.vue'
 import CustomTextarea from '@c/fields/CustomTextarea.vue'
 import CustomCheckbox from '@c/fields/CustomCheckbox.vue'
@@ -74,7 +73,6 @@ Vue.component('ColorPicker', ColorPicker)
 Vue.component('JsonEditor', JsonEditor)
 Vue.component('WysiwygField', WysiwygField)
 Vue.component('CustomDatetimePicker', CustomDatetimePicker)
-Vue.component('CustomChecklist', CustomChecklist)
 Vue.component('Group', Group)
 Vue.component('CustomInputTag', CustomInputTag)
 Vue.component('CustomMultiSelect', CustomMultiSelect)
