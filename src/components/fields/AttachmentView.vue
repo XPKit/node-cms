@@ -34,7 +34,6 @@
             <span>{{ a._filename }}</span>
           </v-tooltip>
           <div class="row-handle">
-            <!-- TODO: hugo - check why svgs not rendered properly -->
             <div v-if="isImage(a)" class="image-wrapper">
               <!-- {{ getImageSrc(a) }} -->
               <v-img cover :src="getImageSrc(a)" />
