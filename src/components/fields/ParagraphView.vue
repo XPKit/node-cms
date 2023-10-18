@@ -353,26 +353,6 @@ export default {
   justify-content: space-between;
 }
 
-$levelBackgrounds: $paragraph-top-bar-background $paragraph-top-bar-background-level-2 $paragraph-top-bar-background-level-3;
-$levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragraph-top-bar-color-level-3;
-
-@function get-level-index($index) {
-  $levelIndex: $index % 3;
-  @if $levelIndex == 0 {
-    @return 3;
-  }
-  @return $levelIndex;
-}
-
-@mixin nested-paragraph-levels-border($index) {
-  border-color: nth($levelBackgrounds, $index);
-}
-
-@mixin nested-paragraph-levels($index) {
-  color: nth($levelColors, $index) !important;
-  background-color: nth($levelBackgrounds, $index);
-}
-
 .item {
   @for $i from 1 through 6 {
     $valIndex: get-level-index($i);

@@ -309,7 +309,7 @@ export default {
       this.$loading.start('update-record')
       try {
         let data = this.editingRecord
-        console.warn('Will send', uploadObject)
+        console.info('Will send', uploadObject)
         if (!_.isEmpty(uploadObject)) {
           const response = await axios.put(`../api/${this.resource.title}/${this.editingRecord._id}`, uploadObject)
           data = response.data

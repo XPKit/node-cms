@@ -1,5 +1,10 @@
 <template>
   <div class="multiselect-wrapper">
+    <!-- TODO: hugo
+      change to v-select multiple
+      if listbox === true, we prepend a v-btn to select/deselect all
+
+     -->
     <v-autocomplete
       :id="selectOptions.id"
       ref="input"

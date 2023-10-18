@@ -1,10 +1,13 @@
 <template>
-  <div>
-    <div class="field-label">{{ schema.label }}</div>
-    <div class="group">
+  <div :class="`group nested-level-${paragraphLevel}`">
+    <div class="header">
+      <div class="field-label">{{ schema.label }}</div>
+    </div>
+    <div class="group-content">
       <custom-form
         ref="input"
         :schema="schema.groupOptions"
+        :paragraph-level="paragraphLevel + 1"
         :model.sync="model"
         @error="onError"
         @input="onModelUpdated"
@@ -19,7 +22,7 @@ import AbstractField from '@m/AbstractField'
 
 export default {
   mixins: [AbstractField],
-  props: ['groupOptions'],
+  props: ['groupOptions', 'paragraphLevel'],
   data () {
     return {
       errors: null
@@ -51,9 +54,37 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@a/scss/variables.scss';
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  width: 100%;
+  justify-content: flex-start;
+  gap: 16px;
+  background-color: $paragraph-top-bar-background;
+  color: $paragraph-top-bar-color !important;
+  display: flex;
+  justify-content: space-between;
+}
 .group {
-  border: 1px solid white;
-  border-radius: 16px;
-  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  align-items: stretch;
+  border: 2px $paragraph-top-bar-background solid;
+  border-radius: 8px;
+  .group-content {
+    padding: 8px 16px;
+  }
+  @for $i from 1 through 6 {
+    $valIndex: get-level-index($i);
+    &.nested-level-#{$i} {
+      @include nested-paragraph-levels-border($valIndex);
+      .header, .field-label {
+        @include nested-paragraph-levels($valIndex);
+      }
+    }
+  }
 }
 </style>
