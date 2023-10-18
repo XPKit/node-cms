@@ -14,6 +14,9 @@ export default {
       const logFunc = _.get(console, type, console.info)
       logFunc(message)
       NotificationsService.send(message, type)
+    },
+    sendOmnibarDisplayStatus (status) {
+      NotificationsService.sendOmnibarDisplayStatus(status)
     }
   }
 }

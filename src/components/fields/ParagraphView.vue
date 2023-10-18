@@ -350,7 +350,16 @@ export default {
   background-color: $paragraph-top-bar-background;
   color: $paragraph-top-bar-color !important;
   display: flex;
+  align-items: center;
+  align-content: center;
   justify-content: space-between;
+  height: 34px;
+  padding: 8px;
+  padding-left: 16px;
+  .paragraph-title {
+    height: 100%;
+    @include subtext;
+  }
 }
 
 .item {

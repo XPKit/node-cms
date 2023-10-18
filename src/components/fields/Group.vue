@@ -58,7 +58,7 @@ export default {
 .header {
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
+  align-items: center;
   width: 100%;
   justify-content: flex-start;
   gap: 16px;
@@ -66,6 +66,7 @@ export default {
   color: $paragraph-top-bar-color !important;
   display: flex;
   justify-content: space-between;
+  height: 34px;
 }
 .group {
   display: flex;

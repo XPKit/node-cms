@@ -10,6 +10,10 @@ class NotificationsService {
     // console.warn('sendNotification', {message, type})
     this.events.emit('notification', {message, type})
   }
+
+  sendOmnibarDisplayStatus (status) {
+    this.events.emit('omnibar-display-status', status)
+  }
 }
 
 export default new NotificationsService()

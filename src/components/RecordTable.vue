@@ -19,7 +19,7 @@
     <v-card class="record-table" :class="{'has-back-button': record}" elevation="0">
       <div v-if="!record" class="top-bar">
         <top-bar-locale-list :locales="resource.locales" :locale="locale" :select-locale="selectLocale" :back="back" />
-        <div v-shortkey="{esc: ['esc'], open: ['ctrl','/']}" class="search" @shortkey="interactiveSearch">
+        <div v-shortkey="getShortcuts()" class="search" @shortkey="interactiveSearch">
           <v-text-field
             ref="search" v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat filled rounded hide-details dense :placeholder="'TL_SEARCH' | translate"
             type="text"
@@ -71,6 +71,7 @@ import axios from 'axios/dist/axios.min'
 import pAll from 'p-all'
 
 import TranslateService from '@s/TranslateService'
+import NotificationsService from '@s/NotificationsService'
 import VueTableGenerator from '@c/vue-table/VueTableGenerator.vue'
 // import Paginate from 'vuejs-paginate'
 
@@ -117,6 +118,7 @@ export default {
       page: 1,
       menuOpened: false,
       isReady: false,
+      omnibarDisplayed: false,
       search: null,
       cachedMap: {},
       selectedRecords: [],
@@ -188,7 +190,19 @@ export default {
       this.isReady = true
     }
   },
+  mounted () {
+    NotificationsService.events.on('omnibar-display-status', this.onGetOmnibarDisplayStatus)
+  },
   methods: {
+    onGetOmnibarDisplayStatus (status) {
+      this.omnibarDisplayed = status
+    },
+    getShortcuts () {
+      if (this.omnibarDisplayed) {
+        return {}
+      }
+      return {esc: ['esc'], open: ['ctrl', '/']}
+    },
     async interactiveSearch (event) {
       const action = _.get(event, 'srcKey', false)
       const elem = _.get(this.$refs, '[\'search\']', false)

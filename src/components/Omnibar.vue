@@ -37,8 +37,10 @@
 import _ from 'lodash'
 import fuzzysort from 'fuzzysort'
 import FieldSelectorService from '@s/FieldSelectorService'
+import Notification from '@m/Notification'
 
 export default {
+  mixins: [Notification],
   props: {
     selectResourceCallback: {
       type: Function,
@@ -149,6 +151,7 @@ export default {
           elem.focus()
         })
       }
+      this.sendOmnibarDisplayStatus(display)
     },
     selectResult (i = -1) {
       const result = _.get(this.results, `[${i === -1 ? this.highlightedItem : i}]`, false)
@@ -307,6 +310,9 @@ export default {
       pointer-events: auto;
       touch-action: auto;
     }
+  }
+  .scroll-wrapper {
+    padding-bottom: 16px;
   }
 }
 </style>

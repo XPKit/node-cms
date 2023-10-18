@@ -18,7 +18,7 @@
         </v-list>
       </v-menu>
       <div
-        v-shortkey="{esc: ['esc'], open: ['ctrl','/']}" class="search"
+        v-shortkey="getShortcuts()" class="search"
         :class="{'is-query': sift.isQuery, 'is-valid': sift.isQuery && sift.isValid == true, 'is-invalid': sift.isQuery && sift.isValid == false}" @shortkey="interactiveSearch"
       >
         <v-text-field
@@ -79,6 +79,8 @@
 import _ from 'lodash'
 import TranslateService from '@s/TranslateService'
 import Notification from '@m/Notification'
+import NotificationsService from '@s/NotificationsService'
+
 import RecordNameHelper from './RecordNameHelper'
 import qs from 'qs'
 import sift from 'sift'
@@ -134,6 +136,7 @@ export default {
       menuOpened: false,
       search: null,
       TranslateService,
+      omnibarDisplayed: false,
       sift: {
         isQuery: false,
         isValid: false
@@ -224,7 +227,19 @@ export default {
       this.localMultiselectItems = _.cloneDeep(this.multiselectItems)
     }
   },
+  mounted () {
+    NotificationsService.events.on('omnibar-display-status', this.onGetOmnibarDisplayStatus)
+  },
   methods: {
+    onGetOmnibarDisplayStatus (status) {
+      this.omnibarDisplayed = status
+    },
+    getShortcuts () {
+      if (this.omnibarDisplayed) {
+        return {}
+      }
+      return {esc: ['esc'], open: ['ctrl', '/']}
+    },
     getSelectedRecordIds () {
       return _.map(this.localMultiselectItems, '_id')
     },
