@@ -1,7 +1,7 @@
 <template>
   <div class="checkbox" :class="{'blink-background': selected}" @click="onChange(row._id, !selected)">
     <template v-if="row._local">
-      <v-icon :class="{displayed: selected}">mdi-check-bold</v-icon>
+      <v-icon small :class="{displayed: selected}">mdi-check-bold</v-icon>
     </template>
   </div>
 
@@ -15,9 +15,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@a/scss/variables.scss';
 .checkbox{
   pointer-events: auto;
   touch-action: auto;
+  .v-icon {
+    color: $table-header-background;
+
+  }
 }
 
 </style>

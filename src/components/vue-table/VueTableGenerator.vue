@@ -135,7 +135,7 @@ export default {
           fixed: 'left',
           align: 'center',
           disableResizing: true,
-          width: 40,
+          width: 20,
           renderBodyCell: ({ row, column, rowIndex }, h) => {
             return h('TableRecordSelection', {props: {row, selected: this.isRecordSelected(row), onChange: this.onSelectRecord}})
           }

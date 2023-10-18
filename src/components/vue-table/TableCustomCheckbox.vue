@@ -1,5 +1,8 @@
 <template>
-  <v-simple-checkbox class="vue-table-generator-field custom-checkbox" :ripple="false" :value="getValue()" />
+  <div class="checkbox">
+    <v-icon small :class="{displayed: getValue()}">mdi-check-bold</v-icon>
+  </div>
+  <!-- <v-simple-checkbox class="vue-table-generator-field custom-checkbox" :ripple="false" :value="getValue()" /> -->
 </template>
 
 <script lang="jsx">
@@ -9,6 +12,7 @@ export default {
   props: ['row', 'column', 'rowIndex', 'field'],
   methods: {
     getValue () {
+      console.warn('tamer - ', _.get(this.row, this.column.field, false))
       return _.get(this.row, this.column.field, false)
     }
   }
@@ -16,9 +20,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.custom-checkbox {
-  .v-input--selection-controls__input {
-    margin: 0 auto;
+@import '@a/scss/variables.scss';
+.checkbox {
+  margin: 0 auto;
+  background-color: transparent;
+  border: none;
+  .v-icon {
+    color: $table-header-background;
   }
 }
 </style>
