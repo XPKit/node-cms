@@ -1,18 +1,13 @@
 <template>
   <div class="custom-checkbox">
     <div class="field-label">{{ schema.label }}</div>
-    <!-- TODO: hugo - change to custom icons like in design and add switch theme as well -->
-    <v-checkbox
-      ref="input" class="switch"
-      :input-value="getValue()"
-      :compact="schema.compact ? true : false"
-      :disabled="schema.disabled ? true : false"
-      :readonly="schema.readonly ? true : false"
-      :filled="schema.filled ? true : false"
-      dense hide-details solo
-      :outlined="schema.outlined ? true : false"
-      @change="onChange"
-    />
+    <div ref="input" class="switch" :class="{active: getValue()}" @click="onChange">
+      <div class="drag" />
+      <div class="labels">
+        <span class="label inactive">{{ 'TL_NO' | translate }}</span>
+        <span class="label active">{{ 'TL_YES' | translate }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -27,22 +22,71 @@ export default {
       const value = _.get(this.model, this.schema.model, false)
       return _.isNull(value) ? false : value
     },
-    onChange (event) {
-      this.$emit('input', event, this.schema.model)
+    onChange () {
+      this.value = !this.getValue()
+      this.$emit('input', this.value, this.schema.model)
     }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+@import '@a/scss/variables.scss';
   .custom-checkbox {
     .switch {
-      padding-top: 8px;
-      margin: 16px;
-      margin-bottom: 8px;
-    }
-    .v-input--selection-controls {
-      margin-top: 0;
+      position: relative;
+      width: 80px;
+      height: 32px;
+      border-radius: 100px;
+      border: 2px solid $switch-field-border-color;
+      background-color: $switch-field-background;
+      color: $switch-field-color;
+      .drag {
+        width: 24px;
+        height: 24px;
+        border-radius: 100px;
+        background-color: $switch-field-drag-background;
+        position: absolute;
+        top: 2px;
+        left: auto;
+        right: 2px;
+        transition: transform 0.3s;
+      }
+      .labels {
+        padding: 0px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 28px;
+        user-select: none;
+      }
+      .label {
+        @include subtext;
+        opacity: 1;
+        font-weight: 700;
+        transition: opacity 0.3s;
+        &.active {
+          opacity: 0;
+        }
+      }
+      &.active {
+        background-color: $switch-field-active-background;
+        color: $switch-field-active-color;
+        left: 4px;
+        right: auto;
+        .drag {
+          background-color: $switch-field-active-drag-background;
+          transform: translateX(-200%);
+        }
+        .label {
+          &.active {
+            opacity: 1;
+          }
+          &.inactive {
+            opacity: 0;
+          }
+        }
+      }
     }
   }
 </style>

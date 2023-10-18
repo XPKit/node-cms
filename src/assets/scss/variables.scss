@@ -99,6 +99,15 @@ $paragraph-top-bar-color-level-3: var(--paragraph-top-bar-color-level-3);
 $paragraph-top-bar-background-level-3: var(--paragraph-top-bar-background-level-3);
 $paragraph-background-level-3: var(--paragraph-background-level-3);
 
+$switch-field-background: var(--switch-field-background);
+$switch-field-active-background: var(--switch-field-active-background);
+$switch-field-color: var(--switch-field-color);
+$switch-field-active-color: var(--switch-field-active-color);
+$switch-field-active-color: var(--switch-field-active-color);
+$switch-field-border-color: var(--switch-field-border-color);
+$switch-field-active-drag-background: var(--switch-field-active-drag-background);
+$switch-field-drag-background: var(--switch-field-drag-background);
+
 @function vw($px-vw, $base-vw: 1440px) {
   @return ($px-vw * 100vw) / $base-vw;
 }
@@ -274,6 +283,14 @@ $paragraph-background-level-3: var(--paragraph-background-level-3);
   --paragraph-top-bar-background-level-3: #{$imag-light-grey-2};
   --paragraph-top-bar-color-level-3: #{$imag-black};
   --paragraph-background-level-3: #{$imag-white};
+
+  --switch-field-background:  #{$imag-white};
+  --switch-field-active-background:  #{$imag-purple};
+  --switch-field-color:  #{$imag-black};
+  --switch-field-active-color:  #{$imag-white};
+  --switch-field-border-color:  #{$imag-light-grey};
+  --switch-field-active-drag-background:  #{$imag-white};
+  --switch-field-drag-background:  #{$imag-light-grey};
 
   &.theme--dark {
   }
