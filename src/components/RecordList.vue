@@ -18,7 +18,7 @@
         </v-list>
       </v-menu>
       <div
-        v-shortkey="{esc: ['esc'], open: ['/']}" class="search"
+        v-shortkey="{esc: ['esc'], open: ['ctrl','/']}" class="search"
         :class="{'is-query': sift.isQuery, 'is-valid': sift.isQuery && sift.isValid == true, 'is-invalid': sift.isQuery && sift.isValid == false}" @shortkey="interactiveSearch"
       >
         <v-text-field

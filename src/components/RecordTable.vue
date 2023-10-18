@@ -19,9 +19,10 @@
     <v-card class="record-table" :class="{'has-back-button': record}" elevation="0">
       <div v-if="!record" class="top-bar">
         <top-bar-locale-list :locales="resource.locales" :locale="locale" :select-locale="selectLocale" :back="back" />
-        <div class="search">
+        <div v-shortkey="{esc: ['esc'], open: ['ctrl','/']}" class="search" @shortkey="interactiveSearch">
           <v-text-field
-            v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat filled rounded hide-details dense :placeholder="'TL_SEARCH' | translate" type="text"
+            ref="search" v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat filled rounded hide-details dense :placeholder="'TL_SEARCH' | translate"
+            type="text"
             name="search"
           />
         </div>
@@ -164,7 +165,6 @@ export default {
     }
   },
   watch: {
-
     async locale () {
       this.isReady = false
       this.localLocale = this.locale
@@ -189,6 +189,14 @@ export default {
     }
   },
   methods: {
+    async interactiveSearch (event) {
+      const action = _.get(event, 'srcKey', false)
+      const elem = _.get(this.$refs, '[\'search\']', false)
+      if (!action || !elem) {
+        return
+      }
+      return action === 'esc' ? elem.blur() : elem.focus()
+    },
     getResourceTitle (resource) {
       if (!resource) {
         return ''
