@@ -155,5 +155,12 @@ export default {
       max-height: 100% !important;
     }
   }
+  .v-select__selections {
+    .v-chip--select {
+      &:first-child {
+        margin-left: 0px;
+      }
+    }
+  }
 }
 </style>
