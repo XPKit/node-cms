@@ -48,6 +48,10 @@
           font-size: 16px;
         }
       }
+      .ve-table-content-wrapper table.ve-table-content tbody.ve-table-body tr.ve-table-body-tr td.ve-table-body-td {
+        @include subtext;
+        font-style: normal;
+      }
     }
   }
   tr.ve-table-body-tr {

@@ -12,7 +12,6 @@ export default {
   props: ['row', 'column', 'rowIndex', 'field'],
   methods: {
     getValue () {
-      console.warn('tamer - ', _.get(this.row, this.column.field, false))
       return _.get(this.row, this.column.field, false)
     }
   }

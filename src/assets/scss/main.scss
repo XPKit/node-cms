@@ -491,6 +491,11 @@ body {
       align-items: center;
     }
   }
+  .v-select--chips.v-select--is-multi.v-autocomplete {
+    input {
+      max-height: 100%;
+    }
+  }
   .theme--dark {
     background: #4e4e4e;
     color: rgba(255, 255, 255, 0.87);

@@ -132,6 +132,12 @@ const customValidators = {
   },
   select: (value, field, model) => {
     return _.get(field, 'required', false) && _.isEmpty(value) ? messages.fieldIsRequired : true
+  },
+  pillbox: (value, field, model) => {
+    if (_.get(field, 'required', false) && (!_.isArray(value) || _.isEmpty(value))) {
+      return messages.fieldIsRequired
+    }
+    return true
   }
 }
 
@@ -209,7 +215,6 @@ let typeMapper = {
   pillbox: {
     type: 'CustomInputTag',
     selectOptions: {
-      taggable: true,
       multiple: true,
       searchable: true,
       onNewTag (newTag, id, options, value) {
@@ -218,7 +223,7 @@ let typeMapper = {
       }
     },
     values: [],
-    validator: validators.array
+    validator: customValidators.pillbox
   },
   select: {
     type: 'CustomMultiSelect',

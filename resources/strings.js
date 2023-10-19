@@ -143,7 +143,8 @@ exports = (module.exports = {
     },
     {
       field: 'pillbox',
-      input: 'pillbox'
+      input: 'pillbox',
+      required: true
     },
     {
       field: 'gpillbox',

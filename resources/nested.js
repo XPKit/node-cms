@@ -19,7 +19,8 @@ exports = (module.exports = {
       field: 'address.street',
       input: 'pillbox',
       min: 1,
-      max: 4
+      max: 4,
+      required: true
     },
     {
       label: 'address street name',

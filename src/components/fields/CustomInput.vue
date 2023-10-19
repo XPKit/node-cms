@@ -23,7 +23,6 @@ export default {
   mixins: [AbstractField],
   data () {
     return {
-      rules: []
     }
   },
   methods: {

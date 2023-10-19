@@ -62,6 +62,10 @@ class SchemaService {
         schema.selectOptions.deselectGroupLabel = TranslateService.get('TL_MULTISELECT_DESELECT_GROUP_LABEL')
         schema.selectOptions.tagPlaceholder = TranslateService.get('TL_MULTISELECT_TAG_PLACEHOLDER')
       }
+      if (field.input === 'pillbox') {
+        schema.selectOptions.min = field.min
+        schema.selectOptions.max = field.max
+      }
 
       return schema
     })
