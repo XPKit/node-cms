@@ -45,7 +45,6 @@ export default {
     }
   },
   computed: {
-
     selectOptions () {
       return this.schema.selectOptions || {}
     },
@@ -97,7 +96,15 @@ export default {
     },
     onChangeSelectAll (checked) {
       const allSelected = this.allOptionsSelected()
-      this.objectValue = allSelected ? [] : _.map(this.formattedOptions, 'value')
+      if (allSelected) {
+        this.objectValue = []
+      } else {
+        let allValues = _.compact(_.map(this.formattedOptions, 'value'))
+        if (_.get(allValues, 'length', 0) === 0) {
+          allValues = this.formattedOptions
+        }
+        this.objectValue = allValues
+      }
       this.value = this.objectValue
       this.$emit('input', this.value, this.schema.model)
     },

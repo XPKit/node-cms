@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-checkbox">
+  <div class="custom-checkbox" :class="{disabled: schema.disabled}">
     <div class="field-label">{{ schema.label }}</div>
     <div ref="input" class="switch" :class="{active: getValue()}" @click="onChange">
       <div class="drag" />
@@ -23,6 +23,9 @@ export default {
       return _.isNull(value) ? false : value
     },
     onChange () {
+      if (this.disabled) {
+        return
+      }
       this.value = !this.getValue()
       this.$emit('input', this.value, this.schema.model)
     }
@@ -41,6 +44,7 @@ export default {
       border: 2px solid $switch-field-border-color;
       background-color: $switch-field-background;
       color: $switch-field-color;
+      cursor: pointer;
       .drag {
         width: 24px;
         height: 24px;
@@ -88,5 +92,10 @@ export default {
         }
       }
     }
+      &.disabled {
+        pointer-events: none;
+        touch-action: none;
+        opacity: 0.5;
+      }
   }
 </style>

@@ -121,6 +121,9 @@ ul, li {
 
   .v-menu__content.v-autocomplete__content {
     margin-left: 16px;
+    .v-ripple__container {
+      display: none;
+    }
     .v-list {
       border-radius: 0px 0px 8px 8px !important;
       @include blurred-background;
