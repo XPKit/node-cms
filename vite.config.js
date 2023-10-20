@@ -69,7 +69,6 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       port: devPort,
       proxy
     },
-    transpileDependencies: ['vuetify'],
     resolve: {
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
       alias: {
@@ -95,6 +94,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       manifest: true,
       outDir: '../dist',
       rollupOptions: {
+        external: ['vue', 'vuetify'],
         output: {
           manualChunks: (id) => {
             if (id.includes('node_modules')) {
