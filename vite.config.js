@@ -73,6 +73,8 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
       alias: {
         os: 'rollup-plugin-node-polyfills/polyfills/os',
+        // 'vue': path.resolve(__dirname, 'node_modules/vue'),
+        // 'vuetify': path.resolve(__dirname, 'node_modules/vuetify'),
         '@s': path.resolve(__dirname, 'src/services'),
         '@static': path.resolve(__dirname, 'src/static'),
         '@a': path.resolve(__dirname, 'src/assets'),
@@ -94,7 +96,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       manifest: true,
       outDir: '../dist',
       rollupOptions: {
-        external: ['vue', 'vuetify'],
+        // external: ['vue', 'vuetify'],
         output: {
           manualChunks: (id) => {
             if (id.includes('node_modules')) {
