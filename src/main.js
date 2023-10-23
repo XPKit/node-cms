@@ -148,3 +148,4 @@ window.addEventListener('load', async function () {
     }
   })
 })
+window.Vue = Vue

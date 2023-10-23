@@ -40,6 +40,7 @@ const vuetify = new Vuetify({
 })
 
 Vue.use(Vuetify)
+window.Vuetify = Vuetify
 
 Vue.use(TiptapVuetifyPlugin, {
   vuetify,

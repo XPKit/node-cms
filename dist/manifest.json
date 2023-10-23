@@ -19,7 +19,7 @@
     "file": "assets/iconfont-6a109f38.svg",
     "src": "../node_modules/vue-easytable/libs/font/iconfont.svg"
   },
-  "_vendor-acea04e8.js": {
+  "_vendor-fd0abd63.js": {
     "assets": [
       "assets/iconfont-6a109f38.svg",
       "assets/materialdesignicons-webfont-67d24abe.eot",
@@ -30,7 +30,7 @@
     "css": [
       "assets/vendor-a7c83794.css"
     ],
-    "file": "assets/vendor-acea04e8.js"
+    "file": "assets/vendor-fd0abd63.js"
   },
   "assets/fonts/SourceSans3-Regular.ttf": {
     "file": "assets/SourceSans3-Regular-5f76e3c0.ttf",
@@ -52,9 +52,9 @@
     "css": [
       "assets/index-53cb58da.css"
     ],
-    "file": "assets/main-af5669c8.js",
+    "file": "assets/main-35a3c966.js",
     "imports": [
-      "_vendor-acea04e8.js"
+      "_vendor-fd0abd63.js"
     ],
     "isEntry": true,
     "src": "index.html"
