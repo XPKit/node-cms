@@ -2,15 +2,15 @@
   <div v-if="maxCount != 1" class="record-list">
     <div class="record-list-top-bar">
       <v-menu v-if="selectedResourceGroup && groupedList" v-model="menuOpened" auto content-class="resources-menu sidebar" offset-y :close-on-content-click="true">
-        <template #activator="{ on, attrs }">
-          <div class="resource-selector" v-bind="attrs" :class="{opened: menuOpened}" v-on="on">
+        <template #activator="{ props }">
+          <div class="resource-selector" :class="{opened: menuOpened}" v-bind="props">
             <div class="resource-title">{{ getResourceTitle(resource) }}</div>
-            <v-icon large>mdi-chevron-down</v-icon>
+            <v-icon size="large">mdi-chevron-down</v-icon>
           </div>
         </template>
         <v-list rounded>
           <v-list-item
-            v-for="r in selectedResourceGroup.list" :key="r.name" dense :class="{selected: r === resource}"
+            v-for="r in selectedResourceGroup.list" :key="r.name" density="compact" :class="{selected: r === resource}"
             @click="r !== resource ? selectResourceCallback(r) : ''"
           >
             <v-list-item-title>{{ getResourceTitle(r) }}</v-list-item-title>
@@ -22,8 +22,8 @@
         :class="{'is-query': sift.isQuery, 'is-valid': sift.isQuery && sift.isValid == true, 'is-invalid': sift.isQuery && sift.isValid == false}" @shortkey="interactiveSearch"
       >
         <v-text-field
-          ref="search" v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat filled rounded hide-details dense
-          :placeholder="'TL_SEARCH' | translate" type="text" name="search"
+          ref="search" v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat variant="filled" rounded hide-details density="compact"
+          :placeholder="$filters.translate('TL_SEARCH')" type="text" name="search"
         />
         <v-btn v-if="maxCount <= 0 || listCount < maxCount" elevation="0" icon class="new-record" :class="{active: isCreatingNewRecord()}" @click="onClickNew">
           <v-icon v-if="selectedItem && !multiselect">mdi-note-edit-outline</v-icon>
@@ -33,16 +33,16 @@
     </div>
     <div v-if="hasEditableRecords()" class="records-top-bar">
       <div class="toggle-view-mode" @click="toggleViewMode()">
-        <v-icon small :class="{selected: !multiselect}">mdi-note-edit-outline</v-icon>
-        <v-icon small :class="{selected: multiselect}">mdi-format-list-checks</v-icon>
+        <v-icon size="small" :class="{selected: !multiselect}">mdi-note-edit-outline</v-icon>
+        <v-icon size="small" :class="{selected: multiselect}">mdi-format-list-checks</v-icon>
       </div>
       <div v-if="multiselect" class="multiselect-buttons">
-        <span :class="{disabled: allRecordsSelected()}" @click="onClickSelectAll">{{ 'TL_SELECT_ALL'|translate }}</span>
-        <span :class="{disabled: multiselectItems.length === 0}" @click="onClickDeselectAll">{{ 'TL_DESELECT_ALL'|translate }}</span>
+        <span :class="{disabled: allRecordsSelected()}" @click="onClickSelectAll">{{ $filters.translate('TL_SELECT_ALL') }}</span>
+        <span :class="{disabled: multiselectItems.length === 0}" @click="onClickDeselectAll">{{ $filters.translate('TL_DESELECT_ALL') }}</span>
       </div>
     </div>
     <div v-shortkey="multiselect ? ['ctrl', 'a'] : false" class="records" @shortkey="selectAll()">
-      <RecycleScroller v-slot="{ item }" class="list" :items="filteredList" :item-size="58" key-field="_id">
+      <RecycleScroller v-slot="{ item }" class="list" :items="filteredList || []" :item-size="58" key-field="_id">
         <div
           class="item" :class="{selected: isItemSelected(item), frozen:!item._local}"
           @click.exact="select(item)" @click.shift="selectTo(item)" @click.ctrl="selectTo(item, true)"
@@ -50,21 +50,21 @@
           <div class="item-info">
             <div v-if="multiselect" class="checkbox" :class="{'blink-background': isItemSelected(item)}" @click.exact="select(item, true)">
               <template v-if="item._local">
-                <v-icon :class="{displayed: isItemSelected(item)}" small>mdi-check-bold</v-icon>
+                <v-icon :class="{displayed: isItemSelected(item)}" size="small">mdi-check-bold</v-icon>
               </template>
             </div>
             <div class="infos-wrapper">
               <div v-if="item" class="main">
-                <v-tooltip right>
-                  <template #activator="{ on, attrs }">
-                    <span v-bind="attrs" v-on="on">{{ getName(item) | truncate(15) }}</span>
+                <v-tooltip location="right">
+                  <template #activator="{ props }">
+                    <span v-bind="props">{{ $filters.truncate(getName(item), 15) }}</span>
                   </template>
                   <span>{{ getName(item) }}</span>
                 </v-tooltip>
               </div>
               <div class="meta">
                 <div class="ts">
-                  <template v-if="item._updatedBy"> {{ item._updatedBy }} - </template><template v-else> {{ 'TL_UPDATED' | translate }}</template> <span class="time-ago" @click="copyIdToClipboard(item._id)"><timeago :since="item._updatedAt" :locale="TranslateService.locale" /></span>
+                  <template v-if="item._updatedBy"> {{ item._updatedBy }} - </template><template v-else> {{ $filters.translate('TL_UPDATED') }}</template> <span class="time-ago" @click="copyIdToClipboard(item._id)"><timeago :datetime="item._updatedAt" /></span>
                 </div>
               </div>
             </div>

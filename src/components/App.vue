@@ -1,49 +1,50 @@
 <template>
   <v-app>
-    <v-scroll-y-transition>
-      <v-snackbar v-if="notification.type" v-model="notification" multi-line top centered elevation="10" :light="$vuetify && $vuetify.theme && !$vuetify.theme.isDark" :timeout="notification.type === 'error' ? -1 : 1000" class="notification" :class="getNotificationClass()">
-        <p>{{ notification.message }}</p>
-        <template #action="{ attrs }">
-          <v-btn rounded icon v-bind="attrs" @click="notification = {}">
-            <v-icon>mdi-close-circle-outline</v-icon>
-          </v-btn>
-        </template>
-      </v-snackbar>
-    </v-scroll-y-transition>
-    <div v-if="user" class="cms-layout">
-      <div class="cms-inner-layout" :class="getThemeClass()">
-        <nav-bar
-          v-if="resourceList.length > 0" :config="config" :toolbar-title="toolbarTitle" :locale-class="{locale:localeList && localeList.length > 1}" :select-resource-group-callback="selectResourceGroup" :select-resource-callback="selectResource" :grouped-list="groupedList" :selected-resource-group="selectedResourceGroup"
-          :selected-item="selectedResource || selectedPlugin"
-        />
-        <div class="resources">
-          <locale-list v-if="localeList" :locale-list="localeList" />
-        </div>
-        <div class="records">
-          <template v-if="selectedResource && (!selectedResource.view || selectedResource.view == 'list')">
-            <record-list
-              v-if="selectedResource" :list="recordList" :locale="locale" :selected-item="selectedRecord"
-              :grouped-list="groupedList"
-              :resource-group="selectedResourceGroup" :resource="selectedResource" :select-resource-callback="selectResource"
-              :multiselect="multiselect" :multiselect-items="multiselectItems"
-              @selectItem="selectRecord"
-              @changeMultiselectItems="onChangeMultiselectItems"
-              @selectMultiselect="onSelectMultiselect"
-              @updateRecordList="updateRecordList"
-            />
-            <record-editor
-              v-if="selectedRecord && !multiselect" :key="selectedRecord._id" :record.sync="selectedRecord" :resource="selectedResource" :locale.sync="locale"
-              :user-locale="TranslateService.locale" @updateRecordList="updateRecordList"
-            />
+    <v-theme-provider :theme="$vuetify && $vuetify.theme && !$vuetify.theme.isDark ? 'light' : 'dark'">
+      <v-scroll-y-transition>
+        <v-snackbar v-if="notification.type" v-model="notification" multi-line location="centered" class="notification elevation-10" :timeout="notification.type === 'error' ? -1 : 1000" :class="getNotificationClass()">
+          <p>{{ notification.message }}</p>
+          <template #action="{ props }">
+            <v-btn rounded icon v-bind="props" @click="notification = {}">
+              <v-icon>mdi-close-circle-outline</v-icon>
+            </v-btn>
           </template>
-          <record-table
-            v-if="selectedResource && selectedResource.view == 'table'"
-            :grouped-list="groupedList" :resource-group="selectedResourceGroup" :select-resource-callback="selectResource" :record-list="recordList" :resource="selectedResource" :record.sync="selectedRecord" :locale.sync="locale" :user-locale="TranslateService.locale"
-            @unsetRecord="unsetSelectedRecord" @updateRecordList="updateRecordList"
+        </v-snackbar>
+      </v-scroll-y-transition>
+      <div v-if="user" class="cms-layout">
+        <div class="cms-inner-layout" :class="getThemeClass()">
+          <nav-bar
+            v-if="resourceList.length > 0" :config="config" :toolbar-title="toolbarTitle" :locale-class="{locale:localeList && localeList.length > 1}" :select-resource-group-callback="selectResourceGroup" :select-resource-callback="selectResource" :grouped-list="groupedList" :selected-resource-group="selectedResourceGroup"
+            :selected-item="selectedResource || selectedPlugin"
           />
-          <plugin-page v-if="selectedPlugin" :plugin="selectedPlugin" />
+          <div class="resources">
+            <locale-list v-if="localeList" :locale-list="localeList" />
+          </div>
+          <div class="records">
+            <template v-if="selectedResource && (!selectedResource.view || selectedResource.view == 'list')">
+              <record-list
+                v-if="selectedResource" :list="recordList" :locale="locale" :selected-item="selectedRecord"
+                :grouped-list="groupedList"
+                :resource-group="selectedResourceGroup" :resource="selectedResource" :select-resource-callback="selectResource"
+                :multiselect="multiselect" :multiselect-items="multiselectItems"
+                @selectItem="selectRecord"
+                @changeMultiselectItems="onChangeMultiselectItems"
+                @selectMultiselect="onSelectMultiselect"
+                @updateRecordList="updateRecordList"
+              />
+              <record-editor
+                v-if="selectedRecord && !multiselect" :key="selectedRecord._id" :record.sync="selectedRecord" :resource="selectedResource" :locale.sync="locale"
+                :user-locale="TranslateService.locale" @updateRecordList="updateRecordList"
+              />
+            </template>
+            <record-table
+              v-if="selectedResource && selectedResource.view == 'table'"
+              :grouped-list="groupedList" :resource-group="selectedResourceGroup" :select-resource-callback="selectResource" :record-list="recordList" :resource="selectedResource" :record.sync="selectedRecord" :locale.sync="locale" :user-locale="TranslateService.locale"
+              @unsetRecord="unsetSelectedRecord" @updateRecordList="updateRecordList"
+            />
+            <plugin-page v-if="selectedPlugin" :plugin="selectedPlugin" />
 
-          <multiselect-page
+          <!-- <multiselect-page
             v-if="selectedResource && multiselect"
             :multiselect-items="multiselectItems"
             :locale="locale"
@@ -52,11 +53,12 @@
             @cancel="onCancelMultiselectPage"
             @changeMultiselectItems="onChangeMultiselectItems"
             @updateRecordList="updateRecordList"
-          />
+          /> -->
+          </div>
+          <loading v-if="LoadingService.isShow" />
         </div>
-        <loading v-if="LoadingService.isShow" />
       </div>
-    </div>
+    </v-theme-provider>
   </v-app>
 </template>
 
@@ -198,11 +200,14 @@ export default {
   watch: {
     '$route': function () {
       if (this.$route.query.id != null) {
-        this.selectResource(_.find(_.union(this.pluginList, this.resourceList), {title: this.$route.query.id}))
+        const allResources = _.union(this.pluginList, this.resourceList)
+        if (allResources.length > 0) {
+          this.selectResource(_.find(allResources, {title: this.$route.query.id}))
+        }
       }
     }
   },
-  destroyed () {
+  unmounted () {
     NotificationsService.events.off('notification', this.onGetNotification)
   },
   mounted () {
@@ -275,6 +280,10 @@ export default {
       this.selectedResourceGroup = resourceGroup
     },
     async selectResource (resource) {
+      if (_.isUndefined(resource)) {
+        // TODO: hugo - check why it is called with undefined
+        return
+      }
       try {
         if (_.get(this.$router, 'history.current.query.id', false) !== resource.title) {
           this.$router.push({query: {id: resource.title}}).catch(error => console.error('Router throw an error:', error))

@@ -98,7 +98,7 @@ export default {
       this.formElem = document.getElementById(this.randomId)
     })
   },
-  beforeDestroy () {
+  beforeUnmount () {
     FieldSelectorService.events.off('select', this.onFieldSelected)
   },
   methods: {

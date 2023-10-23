@@ -7,7 +7,7 @@
       <v-file-input
         ref="input" :rules="getRules()" prepend-icon=""
         :accept="model.input === 'image'? 'image/*': '*'" :clearable="false" :placeholder="getPlaceholder() | translate"
-        dense filled rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :disabled="isForMultipleImages() && isFieldDisabled()"
+        density="compact" variant="filled" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :disabled="isForMultipleImages() && isFieldDisabled()"
         @change="onUploadChanged"
       >
         <template #selection="{index}">
@@ -24,16 +24,16 @@
     >
       <v-card v-for="(i, index) in items" :key="`${i._filename}-${index}`" elevation="0" class="preview-attachment" :class="{odd: index % 2 !== 0}">
         <div class="row-handle">
-          <v-tooltip right>
-            <template #activator="{ on }">
-              <v-chip class="filename" close v-on="on" @click:close="onClickRemoveFileItem(i)">#{{ index + 1 }} - {{ getAttachment(i, '_filename') | truncate(10) }} ({{ imageSize(getAttachment(i)) }})</v-chip>
+          <v-tooltip location="right">
+            <template #activator="{ props }">
+              <v-chip class="filename" closable v-bind="props" @click:close="onClickRemoveFileItem(i)">#{{ index + 1 }} - {{ getAttachment(i, '_filename') | truncate(10) }} ({{ imageSize(getAttachment(i)) }})</v-chip>
             </template>
             <span>{{ getAttachment(i, '_filename') }}</span>
           </v-tooltip>
           <div v-if="isImage(getAttachment(i))" class="image-wrapper">
             <v-img cover :src="getImageSrc(getAttachment(i))" />
           </div>
-          <v-btn v-else-if="getAttachment(i, 'url')" small rounded elevation="0" @click="viewFile(getAttachment(i))">{{ 'TL_VIEW' | translate }}</v-btn>
+          <v-btn v-else-if="getAttachment(i, 'url')" size="small" rounded elevation="0" @click="viewFile(getAttachment(i))">{{ 'TL_VIEW' | translate }}</v-btn>
         </div>
       </v-card>
     </draggable>

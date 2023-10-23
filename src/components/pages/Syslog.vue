@@ -15,7 +15,7 @@
         <span v-if="errorQty >= 0" class="flag-item flag-error" @click="filterLevel(2)"><v-icon>mdi-alert-box-outline</v-icon> {{ errorQty }}</span>
       </div>
     </div>
-    <div v-if="error" class="error">
+    <div v-if="error" class="bg-error">
       {{ 'TL_ERROR_RETRIEVE_SYSLOG'| translate }}
     </div>
     <div ref="log-viewer" class="log-viewer-wrapper">
@@ -104,7 +104,7 @@ export default {
       }
     })
   },
-  async destroyed () {
+  async unmounted () {
     this.destroyed = true
     if (this.$refs.scroller) {
       const element = this.$refs.scroller.$el

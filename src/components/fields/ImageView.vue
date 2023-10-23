@@ -1,7 +1,7 @@
 <template>
   <div class="image-view" :class="{'full-width': !(schema.width && schema.height)}">
     <form enctype="multipart/form-data">
-      <div class="field-label"><span v-if="schema.required" class="red--text"><strong>* </strong></span>{{ schema.label }}</div>
+      <div class="field-label"><span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ schema.label }}</div>
       <v-card
         v-if="schema.disabled"
         class="file-input-card" elevation="0" :class="{ 'drag-and-drop': dragover }"
@@ -10,7 +10,7 @@
         <v-file-input
           ref="input" :rules="getRules()" hide-details="auto" prepend-icon=""
           :placeholder="getPlaceholder() | translate" :clearable="false"
-          dense filled rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="true"
+          density="compact" variant="filled" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="true"
           @change="onUploadChanged"
         >
           <template #selection="{index}">
@@ -28,7 +28,7 @@
         <v-file-input
           ref="input" :rules="getRules()" hide-details="auto" prepend-icon=""
           :placeholder="getPlaceholder() | translate" :clearable="false"
-          dense filled rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
+          density="compact" variant="filled" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
           @change="onUploadChanged"
         >
           <template #selection="{index}">
@@ -49,9 +49,9 @@
           <div class="row-handle">
             <v-img cover :src="getImageSrc(a)" />
           </div>
-          <v-tooltip right>
-            <template #activator="{ on }">
-              <v-chip class="filename" outlined close close-icon="mdi-close-circle-outline" :disabled="disabled || schema.disabled" v-on="on" @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
+          <v-tooltip location="right">
+            <template #activator="{ props }">
+              <v-chip class="filename" variant="outlined" closable close-icon="mdi-close-circle-outline" :disabled="disabled || schema.disabled" v-bind="props" @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
             </template>
             <span>{{ a._filename }}</span>
           </v-tooltip>
@@ -60,9 +60,9 @@
     </div>
     <template v-else-if="attachment() && isImage()">
       <div v-if="!(schema.width && schema.height)" class="preview-single-attachment">
-        <v-tooltip right>
-          <template #activator="{ on }">
-            <v-chip class="filename" close v-on="on" @click:close="removeImage(attachment())">{{ attachment()._filename | truncate(10) }} ({{ imageSize(attachment()) }})</v-chip>
+        <v-tooltip location="right">
+          <template #activator="{ props }">
+            <v-chip class="filename" closable v-bind="props" @click:close="removeImage(attachment())">{{ attachment()._filename | truncate(10) }} ({{ imageSize(attachment()) }})</v-chip>
           </template>
           <span>{{ attachment()._filename }}</span>
         </v-tooltip>
@@ -85,21 +85,21 @@
     <template v-if="model._local && !disabled">
       <template v-if="isForMultipleImages()">
         <div class="help-block">
-          <v-icon small>mdi-information</v-icon>
+          <v-icon size="small">mdi-information</v-icon>
           <span v-if="getMaxCount() !== -1 ">{{ 'TL_MAX_NUMBER_OF_IMAGES' | translate(null, { num: getMaxCount() }) }}</span>
           <span v-else>{{ 'TL_UNLIMITED_NUMBER_OF_IMAGES' | translate }}</span>
         </div>
       </template>
       <div v-if="(schema.width && schema.height)" class="help-block">
-        <v-icon small>mdi-information</v-icon>
+        <v-icon size="small">mdi-information</v-icon>
         <span>{{ 'TL_THIS_FIELD_REQUIRES_THE_FOLLOWING_SIZE'|translate }}:{{ schema.width }}x{{ schema.height }}</span>
       </div>
       <div v-if="(schema.limit)" class="help-block">
-        <v-icon small>mdi-information</v-icon>
+        <v-icon size="small">mdi-information</v-icon>
         <span>{{ 'TL_THIS_FIELD_REQUIRES_A_FILE_SIZE'|translate }}: {{ getFileSizeLimit(schema.limit) }}</span>
       </div>
       <div v-if="(schema.accept)" class="help-block">
-        <v-icon small>mdi-information</v-icon>
+        <v-icon size="small">mdi-information</v-icon>
         <span>{{ 'TL_THIS_FIELD_REQUIRES'|translate }}: {{ schema.accept }}</span>
       </div>
     </template>

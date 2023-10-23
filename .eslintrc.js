@@ -8,7 +8,8 @@ module.exports = {
   extends: [
     'standard',
     'eslint:recommended',
-    'plugin:vue/recommended'
+    'plugin:vue/recommended',
+    'plugin:vuetify/base'
   ],
   parserOptions: {
     ecmaVersion: 2018,

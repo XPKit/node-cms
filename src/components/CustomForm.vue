@@ -33,7 +33,7 @@ export default {
     })
     FieldSelectorService.events.on('select', this.onFieldSelected)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     FieldSelectorService.events.off('select', this.onFieldSelected)
   },
   methods: {

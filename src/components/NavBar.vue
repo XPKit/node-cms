@@ -1,6 +1,6 @@
 <template>
   <div class="nav-bar-wrapper">
-    <v-toolbar min-width="100%" width="100%" class="nav-bar" height="58" :class="localeClass">
+    <v-toolbar class="nav-bar" height="58" :class="localeClass">
       <v-toolbar-title>
         <template v-if="settingsData && hasLogoOrTitle()">
           <img v-if="getLogo()" :src="getLogo()" class="logo">

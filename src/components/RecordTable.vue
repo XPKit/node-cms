@@ -1,8 +1,8 @@
 <template>
   <div class="record-table-wrapper">
     <v-menu v-if="selectedResourceGroup && groupedList" v-model="menuOpened" auto content-class="resources-menu full-width" offset-y :close-on-content-click="true">
-      <template #activator="{ on, attrs }">
-        <div class="resource-selector" v-bind="attrs" :class="{opened: menuOpened}" v-on="on">
+      <template #activator="{ props }">
+        <div class="resource-selector" v-bind="props" :class="{opened: menuOpened}">
           <div class="resource-title">{{ getResourceTitle(resource) }}</div>
           <v-icon large>mdi-chevron-down</v-icon>
         </div>

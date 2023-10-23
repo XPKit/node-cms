@@ -4,17 +4,17 @@
       <div class="login-canvas">
         <form @submit.prevent="login">
           <div class="node-cms-title">
-            {{ 'TL_LOGIN' | translate }}
+            {{ $filters.translate('TL_LOGIN') }}
           </div>
           <input
             ref="username" v-model="username" autofocus type="test" name="nodeCmsUsername" autocomplete="on"
-            :placeholder="'TL_USERNAME' | translate"
+            :placeholder="$filters.translate('TL_USERNAME')"
           >
-          <input ref="password" v-model="password" type="password" name="nodeCmsPassword" autocomplete="on" :placeholder="'TL_PASSWORD' | translate">
-          <span v-if="loginFailed" class="error-message">{{ 'TL_LOGIN_FAIL' | translate }}</span>
+          <input ref="password" v-model="password" type="password" name="nodeCmsPassword" autocomplete="on" :placeholder="$filters.translate('TL_PASSWORD')">
+          <span v-if="loginFailed" class="error-message">{{ $filters.translate('TL_LOGIN_FAIL') }}</span>
           <div class="login-btn-wrapper" :class="{disabled: !username || !password || loggingIn}">
             <button :disabled="loggingIn">
-              {{ 'TL_CONFIRM' | translate }}
+              {{ $filters.translate('TL_CONFIRM') }}
             </button>
           </div>
         </form>

@@ -1,14 +1,9 @@
 import LoadingService from '@s/LoadingService'
 
 const Loading = {
-  install (Vue, params = {}) {
-    if (this.installed) {
-      return
-    }
-    this.installed = true
-    this.params = params
-
-    Vue.prototype.$loading = LoadingService
+  install (app, options) {
+    this.params = options
+    app.config.globalProperties.$loading = LoadingService
   }
 }
 

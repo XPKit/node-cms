@@ -1,36 +1,31 @@
 {
   "../node_modules/@mdi/font/fonts/materialdesignicons-webfont.eot": {
-    "file": "assets/materialdesignicons-webfont-67d24abe.eot",
+    "file": "assets/materialdesignicons-webfont-5159a347.eot",
     "src": "../node_modules/@mdi/font/fonts/materialdesignicons-webfont.eot"
   },
   "../node_modules/@mdi/font/fonts/materialdesignicons-webfont.ttf": {
-    "file": "assets/materialdesignicons-webfont-a58ecb54.ttf",
+    "file": "assets/materialdesignicons-webfont-be825c12.ttf",
     "src": "../node_modules/@mdi/font/fonts/materialdesignicons-webfont.ttf"
   },
   "../node_modules/@mdi/font/fonts/materialdesignicons-webfont.woff": {
-    "file": "assets/materialdesignicons-webfont-80bb28b3.woff",
+    "file": "assets/materialdesignicons-webfont-28c8f97f.woff",
     "src": "../node_modules/@mdi/font/fonts/materialdesignicons-webfont.woff"
   },
   "../node_modules/@mdi/font/fonts/materialdesignicons-webfont.woff2": {
-    "file": "assets/materialdesignicons-webfont-c1c004a9.woff2",
+    "file": "assets/materialdesignicons-webfont-31010194.woff2",
     "src": "../node_modules/@mdi/font/fonts/materialdesignicons-webfont.woff2"
   },
-  "../node_modules/vue-easytable/libs/font/iconfont.svg": {
-    "file": "assets/iconfont-6a109f38.svg",
-    "src": "../node_modules/vue-easytable/libs/font/iconfont.svg"
-  },
-  "_vendor-fd0abd63.js": {
+  "_vendor-69432236.js": {
     "assets": [
-      "assets/iconfont-6a109f38.svg",
-      "assets/materialdesignicons-webfont-67d24abe.eot",
-      "assets/materialdesignicons-webfont-c1c004a9.woff2",
-      "assets/materialdesignicons-webfont-80bb28b3.woff",
-      "assets/materialdesignicons-webfont-a58ecb54.ttf"
+      "assets/materialdesignicons-webfont-5159a347.eot",
+      "assets/materialdesignicons-webfont-31010194.woff2",
+      "assets/materialdesignicons-webfont-28c8f97f.woff",
+      "assets/materialdesignicons-webfont-be825c12.ttf"
     ],
     "css": [
-      "assets/vendor-a7c83794.css"
+      "assets/vendor-f5a2f410.css"
     ],
-    "file": "assets/vendor-fd0abd63.js"
+    "file": "assets/vendor-69432236.js"
   },
   "assets/fonts/SourceSans3-Regular.ttf": {
     "file": "assets/SourceSans3-Regular-5f76e3c0.ttf",
@@ -41,7 +36,7 @@
     "src": "assets/logo.svg"
   },
   "index.css": {
-    "file": "assets/index-53cb58da.css",
+    "file": "assets/index-74adf876.css",
     "src": "index.css"
   },
   "index.html": {
@@ -50,17 +45,17 @@
       "assets/SourceSans3-Regular-5f76e3c0.ttf"
     ],
     "css": [
-      "assets/index-53cb58da.css"
+      "assets/index-74adf876.css"
     ],
-    "file": "assets/main-35a3c966.js",
+    "file": "assets/main-b7db0f55.js",
     "imports": [
-      "_vendor-fd0abd63.js"
+      "_vendor-69432236.js"
     ],
     "isEntry": true,
     "src": "index.html"
   },
   "vendor.css": {
-    "file": "assets/vendor-a7c83794.css",
+    "file": "assets/vendor-f5a2f410.css",
     "src": "vendor.css"
   }
 }

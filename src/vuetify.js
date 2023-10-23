@@ -1,11 +1,12 @@
-import Vue from 'vue'
-import Vuetify from 'vuetify/lib/framework'
-import { TiptapVuetifyPlugin } from 'tiptap-vuetify'
-import 'tiptap-vuetify/dist/main.css'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
 import '@mdi/font/scss/materialdesignicons.scss'
 import 'vuetify/dist/vuetify.min.css'
 
-const vuetify = new Vuetify({
+const vuetify = createVuetify({
+  components,
+  directives,
   theme: {
     themes: {
       light: {
@@ -37,15 +38,6 @@ const vuetify = new Vuetify({
   icons: {
     iconfont: 'mdi'
   }
-})
-
-Vue.use(Vuetify)
-window.Vuetify = Vuetify
-
-Vue.use(TiptapVuetifyPlugin, {
-  vuetify,
-  // optional, default to 'md' (default vuetify icons before v2.0.0)
-  iconsGroup: 'mdi'
 })
 
 export default vuetify
