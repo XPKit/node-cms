@@ -15,7 +15,7 @@
     "file": "assets/materialdesignicons-webfont-31010194.woff2",
     "src": "../node_modules/@mdi/font/fonts/materialdesignicons-webfont.woff2"
   },
-  "_vendor-69432236.js": {
+  "_vendor-ce81a00b.js": {
     "assets": [
       "assets/materialdesignicons-webfont-5159a347.eot",
       "assets/materialdesignicons-webfont-31010194.woff2",
@@ -23,9 +23,9 @@
       "assets/materialdesignicons-webfont-be825c12.ttf"
     ],
     "css": [
-      "assets/vendor-f5a2f410.css"
+      "assets/vendor-18be591d.css"
     ],
-    "file": "assets/vendor-69432236.js"
+    "file": "assets/vendor-ce81a00b.js"
   },
   "assets/fonts/SourceSans3-Regular.ttf": {
     "file": "assets/SourceSans3-Regular-5f76e3c0.ttf",
@@ -36,7 +36,7 @@
     "src": "assets/logo.svg"
   },
   "index.css": {
-    "file": "assets/index-cc2476e8.css",
+    "file": "assets/index-7389455e.css",
     "src": "index.css"
   },
   "index.html": {
@@ -45,17 +45,17 @@
       "assets/SourceSans3-Regular-5f76e3c0.ttf"
     ],
     "css": [
-      "assets/index-cc2476e8.css"
+      "assets/index-7389455e.css"
     ],
-    "file": "assets/main-73267a58.js",
+    "file": "assets/main-379b5288.js",
     "imports": [
-      "_vendor-69432236.js"
+      "_vendor-ce81a00b.js"
     ],
     "isEntry": true,
     "src": "index.html"
   },
   "vendor.css": {
-    "file": "assets/vendor-f5a2f410.css",
+    "file": "assets/vendor-18be591d.css",
     "src": "vendor.css"
   }
 }
