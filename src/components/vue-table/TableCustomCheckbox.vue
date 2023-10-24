@@ -1,6 +1,6 @@
 <template>
   <div class="checkbox">
-    <v-icon small :class="{displayed: getValue()}">mdi-check-bold</v-icon>
+    <v-icon size="small" :class="{displayed: getValue()}">mdi-check-bold</v-icon>
   </div>
   <!-- <v-simple-checkbox class="vue-table-generator-field custom-checkbox" :ripple="false" :value="getValue()" /> -->
 </template>

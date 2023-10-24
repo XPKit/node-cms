@@ -306,7 +306,7 @@ let typeMapper = {
 }
 
 _.each(typeMapper, (type) => {
-  type.dense = true
+  type.density = 'compact'
   type.rounded = true
   type.filled = true
 })

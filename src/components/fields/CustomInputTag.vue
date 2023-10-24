@@ -2,13 +2,13 @@
   <v-combobox
     ref="input"
     v-model="tags"
-    clearable hide-details deletable-chips small-chips dense filled rounded
+    clearable hide-details closable-chips small-chips density="compact" variant="filled" rounded
     validate-on-submit :rules="[validateField]"
     :hide-selected="!options['allowDuplicates']" :readonly="options['readOnly']" :placeholder="options['tagPlaceholder']" :multiple="options['multiple']"
-    @change="onChangeData"
+    @update:model-value="onChangeData"
   >
     <template #prepend>
-      <span v-if="schema.required" class="red--text"><strong>* </strong></span>{{ schema.label }}
+      <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ schema.label }}
     </template>
     <template #label />
   </v-combobox>

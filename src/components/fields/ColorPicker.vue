@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper-color">
-    <div class="field-label"><span v-if="schema.required" class="red--text"><strong>* </strong></span>{{ schema.label }}</div>
+    <div class="field-label"><span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ schema.label }}</div>
     <v-color-picker
       v-if="options.model"
       ref="input"

@@ -27,7 +27,7 @@
           <div class="theme-switch" @click="onChangeTheme()">
             <v-icon :class="{selected: !getTheme()}">mdi-weather-sunny</v-icon>
             <v-icon :class="{selected: getTheme()}">mdi-weather-night</v-icon>
-            <!-- <v-switch :input-value="getTheme()" inset compact dense hide-details solo @change="onChangeTheme" /> -->
+            <!-- <v-switch :input-value="getTheme()" inset compact density="compact" hide-details solo @change="onChangeTheme" /> -->
           </div>
         </div>
         <div class="stats cpu">

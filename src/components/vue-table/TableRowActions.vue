@@ -1,7 +1,7 @@
 <template>
   <div class="vue-table-generator-field table-column-actions">
-    <v-btn small icon @click="edit(row)"><v-icon>mdi-note-edit-outline</v-icon></v-btn>
-    <v-btn small class="delete-btn" icon @click="remove(row)"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
+    <v-btn size="small" icon @click="edit(row)"><v-icon>mdi-note-edit-outline</v-icon></v-btn>
+    <v-btn size="small" class="delete-btn" icon @click="remove(row)"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
   </div>
 </template>
 

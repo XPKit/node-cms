@@ -4,12 +4,12 @@
       <template #activator="{ props }">
         <div class="resource-selector" v-bind="props" :class="{opened: menuOpened}">
           <div class="resource-title">{{ getResourceTitle(resource) }}</div>
-          <v-icon large>mdi-chevron-down</v-icon>
+          <v-icon size="large">mdi-chevron-down</v-icon>
         </div>
       </template>
       <v-list rounded>
         <v-list-item
-          v-for="r in selectedResourceGroup.list" :key="r.name" dense
+          v-for="r in selectedResourceGroup.list" :key="r.name" density="compact"
           :class="{selected: r === resource}" @click="r !== resource ? selectResourceCallback(r) : ''"
         >
           <v-list-item-title>{{ getResourceTitle(r) }}</v-list-item-title>
@@ -21,7 +21,7 @@
         <top-bar-locale-list :locales="resource.locales" :locale="locale" :select-locale="selectLocale" :back="back" />
         <div v-shortkey="getShortcuts()" class="search" @shortkey="interactiveSearch">
           <v-text-field
-            ref="search" v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat filled rounded hide-details dense :placeholder="'TL_SEARCH' | translate"
+            ref="search" v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat variant="filled" rounded hide-details density="compact" :placeholder="'TL_SEARCH' | translate"
             type="text"
             name="search"
           />

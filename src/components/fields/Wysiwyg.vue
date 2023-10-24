@@ -8,7 +8,7 @@
         v-model="value"
         :card-props="{ flat: true }"
         :extensions="extensions"
-        :toolbar-attributes="{ color: getColorForToolbar(), dense: true, outlined: true, elevation: 1 }"
+        :toolbar-attributes="{ color: getColorForToolbar(), density="compact": true, outlined: true, elevation: 1 }"
         :disabled="schema.disabled"
         :placeholder="'TL_WYSIWYG_PLACEHOLDER' | translate"
         @init="onInit"

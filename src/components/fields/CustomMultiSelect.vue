@@ -4,9 +4,9 @@
       :id="selectOptions.id"
       ref="input"
       :chips="selectOptions.chips"
-      :value="objectValue"
+      :model-value="objectValue"
       :items="formattedOptions"
-      :deletable-chips="selectOptions.deletableChips || selectOptions.multiple"
+      :closable-chips="selectOptions.deletableChips || selectOptions.multiple"
       :hide-selected="selectOptions.hideSelected"
       :disabled="disabled || schema.disabled"
       :placeholder="schema.placeholder"
@@ -14,19 +14,19 @@
       :ripple="false"
       :clearable="selectOptions.clearable"
       :small-chips="selectOptions.multiple"
-      filled dense rounded hide-details append-icon="mdi-chevron-down"
-      @change="updateSelected"
+      variant="filled" density="compact" rounded hide-details append-icon="mdi-chevron-down"
+      @update:model-value="updateSelected"
       @search-change="onSearchChange"
       @tag="addTag"
     >
       <template #prepend>
-        <span v-if="schema.required" class="red--text"><strong>* </strong></span>{{ getLabel() }}
-        <v-btn v-if="schema.listBox" small rounded elevation="0" @click="onChangeSelectAll">{{ (allOptionsSelected() ? 'TL_DESELECT_ALL' : 'TL_SELECT_ALL') | translate }}</v-btn>
+        <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ getLabel() }}
+        <v-btn v-if="schema.listBox" size="small" rounded elevation="0" @click="onChangeSelectAll">{{ (allOptionsSelected() ? 'TL_DESELECT_ALL' : 'TL_SELECT_ALL') | translate }}</v-btn>
       </template>
       <template #label />
       <template #item="{item, attrs}">
         <div v-if="selectOptions.multiple" class="checkbox">
-          <v-icon :class="{displayed: attrs.inputValue}" small>mdi-check-bold</v-icon>
+          <v-icon :class="{displayed: attrs.inputValue}" size="small">mdi-check-bold</v-icon>
         </div>
         <div class="label" :class="{selected: attrs.inputValue}">{{ item.text ? item.text : item }}</div>
       </template>

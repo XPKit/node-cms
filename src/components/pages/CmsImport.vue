@@ -22,10 +22,10 @@
         <div class="divider dashed" />
         <h5>Actions</h5>
         <div>
-          <v-btn rounded dense @click="openFile()">Edit Google Sheet</v-btn>
+          <v-btn rounded density="compact" @click="openFile()">Edit Google Sheet</v-btn>
           <div class="other-actions">
-            <v-btn rounded dense :disabled="loading" @click="checkStatus()">Check Difference</v-btn>
-            <v-btn rounded dense :disabled="loading" @click="execute()">Import from Remote</v-btn>
+            <v-btn rounded density="compact" :disabled="loading" @click="checkStatus()">Check Difference</v-btn>
+            <v-btn rounded density="compact" :disabled="loading" @click="execute()">Import from Remote</v-btn>
           </div>
         </div>
         <div class="divider dashed" />
@@ -38,12 +38,12 @@
           <template v-if="!uploadedXlsx">Click or drag & drop to import an .xlsx file</template><template v-else>{{ uploadedXlsx.name }}</template>
           <v-file-input
             ref="xlsxFile" accept=".xlsx, .xls, .csv"
-            :rules="getRules()" class="hidden-field" flat dense hide-details type="file" @change="onChangeXlsxFile"
+            :rules="getRules()" class="hidden-field" flat density="compact" hide-details type="file" @change="onChangeXlsxFile"
           />
         </v-card>
         <div class="other-actions margin-top">
-          <v-btn rounded dense :disabled="loading || !uploadedXlsx" @click="checkXlsxStatus()">Check Difference</v-btn>
-          <v-btn rounded dense :disabled="loading || !uploadedXlsx" @click="executeXlsx()">Import from Remote</v-btn>
+          <v-btn rounded density="compact" :disabled="loading || !uploadedXlsx" @click="checkXlsxStatus()">Check Difference</v-btn>
+          <v-btn rounded density="compact" :disabled="loading || !uploadedXlsx" @click="executeXlsx()">Import from Remote</v-btn>
         </div>
         <div v-if="status || error">
           <h6 v-if="type == 0">Difference:</h6>

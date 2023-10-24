@@ -17,7 +17,7 @@
         <v-card-title class="handle paragraph-header">
           <div class="paragraph-title">{{ item.label }}</div>
           <div class="add-btn-wrapper">
-            <v-btn class="remove-item" :disabled="disabled || schema.disabled" text icon rounded small @click="onClickRemoveItem(item)"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
+            <v-btn class="remove-item" :disabled="disabled || schema.disabled" variant="text" icon rounded size="small" @click="onClickRemoveItem(item)"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
           </div>
         </v-card-title>
         <div class="item-main-wrapper">
@@ -37,14 +37,14 @@
         <v-select
           ref="input"
           transition="none"
-          :value="selectedType" :menu-props="{ bottom: true, offsetY: true }" :items="types" item-text="label" item-value="label"
-          hide-details filled rounded dense persistent-placeholder
+          :model-value="selectedType" :menu-props="{ bottom: true, offsetY: true }" :items="types" item-title="label" item-value="label"
+          hide-details variant="filled" rounded density="compact" persistent-placeholder
           :disabled="disabled || schema.disabled"
           append-icon="mdi-chevron-down"
-          @change="onChangeType"
+          @update:model-value="onChangeType"
         >
           <template #prepend>
-            <span v-if="schema.required" class="red--text"><strong>* </strong></span>{{ schema.label }}
+            <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ schema.label }}
           </template>
           <template #label />
         </v-select>
