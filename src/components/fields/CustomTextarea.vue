@@ -8,14 +8,12 @@
       :model-value="value"
       :max-length="schema.max"
       :min-length="schema.min"
-      :density="schema.density="compact" ? true : false && 'compact'"
+      density="compact"
       :compact="schema.compact ? true : false"
       :disabled="schema.disabled ? true : false"
       :readonly="schema.readonly ? true : false"
-      :variant="schema.filled ? true : false && 'filled'"
       hide-details
-      :variant="schema.outlined ? true : false && 'outlined'"
-      :variant="schema.solo ? true : false && 'solo'"
+      :variant="getVariant()"
       @update:model-value="onChangeData"
     >
       <template #prepend>
@@ -42,6 +40,15 @@ export default {
     },
     getType () {
       return _.get(this.schema, 'inputFieldType', 'text')
+    },
+    getVariant () {
+      if (_.get(this.schema, 'filled', false)) {
+        return 'filled'
+      }
+      if (_.get(this.schema, 'outlined', false)) {
+        return 'outlined'
+      }
+      return ''
     }
   }
 }

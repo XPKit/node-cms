@@ -36,7 +36,7 @@
     "src": "assets/logo.svg"
   },
   "index.css": {
-    "file": "assets/index-74adf876.css",
+    "file": "assets/index-cc2476e8.css",
     "src": "index.css"
   },
   "index.html": {
@@ -45,9 +45,9 @@
       "assets/SourceSans3-Regular-5f76e3c0.ttf"
     ],
     "css": [
-      "assets/index-74adf876.css"
+      "assets/index-cc2476e8.css"
     ],
-    "file": "assets/main-b7db0f55.js",
+    "file": "assets/main-73267a58.js",
     "imports": [
       "_vendor-69432236.js"
     ],
