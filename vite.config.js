@@ -87,7 +87,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       proxy
     },
     build: {
-      minify: false,
+      // minify: false,
       manifest: true,
       outDir: '../dist',
       rollupOptions: {
