@@ -116,9 +116,9 @@ function addPlugin (title, displayName, group = 'System', allowed = ['admins', '
   })
 }
 
-let recaptchaScript = document.createElement('script')
-recaptchaScript.setAttribute('src', './plugins/scripts/bundle.js')
-document.head.appendChild(recaptchaScript)
+// let recaptchaScript = document.createElement('script')
+// recaptchaScript.setAttribute('src', './plugins/scripts/bundle.js')
+// document.head.appendChild(recaptchaScript)
 
 window.addEventListener('load', async function () {
   _.each(window.plugins, item => {
