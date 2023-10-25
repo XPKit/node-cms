@@ -49,7 +49,7 @@ _.each(proxy, (route) => {
 
 export default defineConfig(({ command, mode, ssrBuild }) => {
   return {
-    root: mode === 'development' ? './' : './src',
+    root: mode === 'development' ? __dirname : path.resolve(__dirname, 'src'),
     base: './',
     publicDir: `${mode === 'development' ? '.' : '..'}/public`,
     plugins: [
