@@ -47,7 +47,7 @@
         </div>
       </div>
     </div>
-    <div v-if="error" class="bg-error">
+    <div v-if="error" class="error">
       Error: {{ error }}
     </div>
   </div>
@@ -76,7 +76,7 @@ export default {
       includes: _.includes
     }
   },
-  unmounted () {
+  destroyed () {
     if (this.statusInterval) {
       clearInterval(this.statusInterval)
     }

@@ -4,10 +4,10 @@
     <div class="resource-list">
       <div v-for="(resourceGroup, index) in groupedList" :key="`resource-group-${index}`" class="resource">
         <v-menu auto open-on-hover offset-y :close-on-content-click="false" content-class="resources-menu">
-          <template #activator="{ props }">
-            <div class="menu-btn-wrapper" v-bind="props">
-              <v-btn :variant="groupSelected(resourceGroup) ? 'text' : 'outlined'" rounded size="small" :class="{selected: groupSelected(resourceGroup)}">
-                {{ $filters.translate(resourceGroup.name) }}
+          <template #activator="{ on, attrs }">
+            <div class="menu-btn-wrapper" v-bind="attrs" v-on="on">
+              <v-btn :outlined="groupSelected(resourceGroup)" text rounded small :class="{selected: groupSelected(resourceGroup)}">
+                {{ resourceGroup.name | translate }}
               </v-btn>
             </div>
           </template>
@@ -15,7 +15,7 @@
             <v-list-item
               v-for="resource in resourceGroup.list"
               :key="resource.name"
-              density="compact"
+              dense
               :class="{selected: selectedItem === resource}"
               @click="selectResourceCallback(resource)"
             >
@@ -49,12 +49,13 @@ export default {
       default: () => {}
     }
   },
-  async mounted () {
-    await this.$nextTick()
-    if (_.isEmpty(this.selectedItem)) {
-      // NOTE: Selects first resource in first group
-      this.selectResourceCallback(_.first(_.get(_.first(this.groupedList), 'list', [])))
-    }
+  mounted () {
+    this.$nextTick(() => {
+      if (_.isEmpty(this.selectedItem)) {
+        // NOTE: Selects first resource in first group
+        this.selectResourceCallback(_.first(_.get(_.first(this.groupedList), 'list', [])))
+      }
+    })
   },
   methods: {
     getResourceTitle (resource) {

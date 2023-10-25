@@ -7,7 +7,7 @@
     <v-card v-show="showOmnibar" elevation="24">
       <v-card-title class="search">
         <v-text-field
-          ref="search" v-model="search" class="search-bar" flat variant="filled" rounded hide-details prepend-inner-icon="mdi-magnify" density="compact" :placeholder="$filters.translate('TL_INSERT_KEYWORDS')"
+          ref="search" v-model="search" class="search-bar" flat filled rounded hide-details prepend-inner-icon="mdi-magnify" dense :placeholder="'TL_INSERT_KEYWORDS' | translate"
           type="text"
           autocomplete="off"
           name="search"
@@ -17,12 +17,14 @@
       <template v-if="results && results.length > 0">
         <v-divider />
         <div ref="scrollWrapper" class="scroll-wrapper" :class="{'scrolled-to-bottom': scrolledToBottom || results.length < 20}" @scroll="onScroll">
-          <v-list density="compact">
+          <v-list dense>
             <v-list-item v-for="(item, i) in results" :id="'result-' + i" :key="i" class="list" :class="{highlighted: highlightedItem === i}" :ripple="false" @click="selectResult(i)">
-              <v-list-item-title>
-                <v-icon size="small">{{ getIconForResult(item) }}</v-icon>
-                <span v-html="item.html" />
-              </v-list-item-title>
+              <v-list-item-content>
+                <v-list-item-title>
+                  <v-icon small>{{ getIconForResult(item) }}</v-icon>
+                  <span v-html="item.html" />
+                </v-list-item-title>
+              </v-list-item-content>
             </v-list-item>
           </v-list>
         </div>

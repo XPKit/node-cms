@@ -1,24 +1,23 @@
 <template>
   <div class="code-wrapper">
     <div class="label">{{ schema.label }}</div>
-    <!-- TODO: hugo - make it work again -->
-    <!-- <codemirror v-if="isReady" ref="input" v-model="value" :style="getStyle()" :options="cmOption" @input="onChangeData" /> -->
+    <codemirror v-if="isReady" ref="input" v-model="value" :style="getStyle()" :options="cmOption" @input="onChangeData" />
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
-// import 'codemirror/keymap/sublime'
-// import { codemirror } from 'codemirror-editor-vue3'
-// import 'codemirror/mode/javascript/javascript.js'
-// import 'codemirror/mode/htmlmixed/htmlmixed.js'
-// import 'codemirror/mode/css/css.js'
-// import 'codemirror/lib/codemirror.css'
-// import 'codemirror/theme/dracula.css'
+import 'codemirror/keymap/sublime'
+import { codemirror } from 'vue-codemirror'
+import 'codemirror/mode/javascript/javascript.js'
+import 'codemirror/mode/htmlmixed/htmlmixed.js'
+import 'codemirror/mode/css/css.js'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/theme/dracula.css'
 import AbstractField from '@m/AbstractField'
 
 export default {
-  // components: {codemirror},
+  components: {codemirror},
   mixins: [AbstractField],
   data () {
     return {

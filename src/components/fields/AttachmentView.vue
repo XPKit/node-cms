@@ -1,7 +1,7 @@
 <template>
   <div class="attachment-view">
     <form v-if="!disabled" enctype="multipart/form-data">
-      <div class="field-label"><span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ schema.label }}</div>
+      <div class="field-label"><span v-if="schema.required" class="red--text"><strong>* </strong></span>{{ schema.label }}</div>
       <v-card
         class="file-input-card" elevation="0" :class="{ 'drag-and-drop': dragover }"
         @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
@@ -9,7 +9,7 @@
         <v-file-input
           ref="input" :rules="getRules()" prepend-icon=""
           :placeholder="getPlaceholder() | translate" :clearable="false" hide-details="auto"
-          density="compact" variant="filled" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
+          dense filled rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
           @change="onUploadChanged"
         >
           <template #selection="{index}">
@@ -27,9 +27,9 @@
         v-bind="dragOptions" :class="{disabled}" @end="onEndDrag" @start="onStartDrag"
       >
         <v-card v-for="(a, i) in getAttachments()" :key="`${a._filename}-${i}`" elevation="0" class="preview-attachment" :class="{odd: i % 2 !== 0}">
-          <v-tooltip location="right">
-            <template #activator="{ props }">
-              <v-chip variant="outlined" class="filename" closable close-icon="mdi-close-circle-outline" v-bind="props" @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
+          <v-tooltip right>
+            <template #activator="{ on }">
+              <v-chip outlined class="filename" close close-icon="mdi-close-circle-outline" v-on="on" @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
             </template>
             <span>{{ a._filename }}</span>
           </v-tooltip>
@@ -38,41 +38,41 @@
               <!-- {{ getImageSrc(a) }} -->
               <v-img cover :src="getImageSrc(a)" />
             </div>
-            <v-btn v-else size="small" rounded elevation="0" @click="viewFile(a)">{{ 'TL_VIEW' | translate }}</v-btn>
+            <v-btn v-else small rounded elevation="0" @click="viewFile(a)">{{ 'TL_VIEW' | translate }}</v-btn>
           </div>
         </v-card>
       </draggable>
     </div>
     <div v-else-if="attachment()" class="preview-single-attachment">
-      <v-tooltip location="right">
-        <template #activator="{ props }">
-          <v-chip class="filename" closable v-bind="props" @click:close="removeImage(attachment())">{{ attachment()._filename | truncate(10) }} ({{ imageSize(attachment()) }})</v-chip>
+      <v-tooltip right>
+        <template #activator="{ on }">
+          <v-chip class="filename" close v-on="on" @click:close="removeImage(attachment())">{{ attachment()._filename | truncate(10) }} ({{ imageSize(attachment()) }})</v-chip>
         </template>
         <span>{{ attachment()._filename }}</span>
       </v-tooltip>
       <div v-if="isImage()" class="image-wrapper">
         <v-img cover :src="getImageSrc(a)" />
       </div>
-      <v-btn v-else size="small" rounded elevation="0" @click="viewFile()">{{ 'TL_VIEW' | translate }}</v-btn>
+      <v-btn v-else small rounded elevation="0" @click="viewFile()">{{ 'TL_VIEW' | translate }}</v-btn>
     </div>
     <template v-if="model._local && !disabled">
       <template v-if="isForMultipleImages()">
         <div class="help-block">
-          <v-icon size="small">mdi-information</v-icon>
+          <v-icon small>mdi-information</v-icon>
           <span v-if="getMaxCount() !== -1 ">{{ 'TL_MAX_NUMBER_OF_FILES' | translate(null, { num: getMaxCount() }) }}</span>
           <span v-else>{{ 'TL_UNLIMITED_NUMBER_OF_FILES' | translate }}</span>
         </div>
       </template>
       <div v-if="(schema.width && schema.height)" class="help-block">
-        <v-icon size="small">mdi-information</v-icon>
+        <v-icon small>mdi-information</v-icon>
         <span>{{ 'TL_THIS_FIELD_REQUIRES_THE_FOLLOWING_SIZE'|translate }}:{{ schema.width }}x{{ schema.height }}</span>
       </div>
       <div v-if="(schema.limit)" class="help-block">
-        <v-icon size="small">mdi-information</v-icon>
+        <v-icon small>mdi-information</v-icon>
         <span>{{ 'TL_THIS_FIELD_REQUIRES_A_FILE_SIZE'|translate }}: {{ getFileSizeLimit(schema.limit) }}</span>
       </div>
       <div v-if="(schema.accept)" class="help-block">
-        <v-icon size="small">mdi-information</v-icon>
+        <v-icon small>mdi-information</v-icon>
         <span>{{ 'TL_THIS_FIELD_REQUIRES'|translate }}: {{ schema.accept }}</span>
       </div>
     </template>

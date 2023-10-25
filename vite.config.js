@@ -2,10 +2,11 @@
 
 import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import path from 'path'
-import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
+import vue from '@vitejs/plugin-vue2'
+import vueJsx from '@vitejs/plugin-vue2-jsx'
 import _ from 'lodash'
-import vuetify from 'vite-plugin-vuetify'
+import Components from 'unplugin-vue-components/vite'
+import { VuetifyResolver } from 'unplugin-vue-components/resolvers'
 import pkg from './package.json'
 const serverPort = _.get(pkg, 'config.port', 9990)
 const devPort = 10000 + serverPort
@@ -56,7 +57,9 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       splitVendorChunkPlugin(),
       vueJsx({}),
       vue({exclude: 'os'}),
-      vuetify({ autoImport: true })
+      Components({
+        resolvers: [VuetifyResolver()]
+      })
     ],
     optimizeDeps: {
       // include: []
@@ -70,6 +73,8 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
       alias: {
         os: 'rollup-plugin-node-polyfills/polyfills/os',
+        // 'vue': path.resolve(__dirname, 'node_modules/vue'),
+        // 'vuetify': path.resolve(__dirname, 'node_modules/vuetify'),
         '@s': path.resolve(__dirname, 'src/services'),
         '@static': path.resolve(__dirname, 'src/static'),
         '@a': path.resolve(__dirname, 'src/assets'),
@@ -91,6 +96,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       manifest: true,
       outDir: '../dist',
       rollupOptions: {
+        // external: ['vue', 'vuetify'],
         output: {
           manualChunks: (id) => {
             if (id.includes('node_modules')) {

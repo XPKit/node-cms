@@ -1,13 +1,12 @@
 import '@a/scss/main.scss'
 import _ from 'lodash'
-import { createApp, h } from 'vue'
-
-import { createRouter, createWebHashHistory } from 'vue-router'
-// import 'vue-easytable/libs/theme-default/index.css'
-// import VueEasytable from 'vue-easytable'
-import VueShortkey from 'vue3-shortkey'
-import VueTimeago from 'vue-timeago3'
-import { JsonTreeView } from 'json-tree-view-vue3'
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import 'vue-easytable/libs/theme-default/index.css'
+import VueEasytable from 'vue-easytable'
+import VueShortkey from 'vue-shortkey'
+import VueTimeago from 'vue-timeago'
+import TreeView from 'vue-json-tree-view'
 import VueVirtualScroller from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import axios from 'axios'
@@ -16,7 +15,7 @@ import vuetify from './vuetify.js'
 // Global components
 import App from '@c/App.vue'
 import LoginApp from '@c/LoginApp.vue'
-import MultiselectPage from '@c/MultiselectPage.vue'
+// import MultiselectPage from '@c/MultiselectPage.vue'
 import CustomForm from '@c/CustomForm.vue'
 
 // Pages
@@ -48,8 +47,8 @@ import TableImageView from '@c/vue-table/TableImageView.vue'
 import TableCustomCheckbox from '@c/vue-table/TableCustomCheckbox.vue'
 import TableRowActions from '@c/vue-table/TableRowActions.vue'
 
-// import enUS from 'vue-timeago3/locales/en-US.json'
-// import zhCN from 'vue-timeago3/locales/zh-CN.json'
+import enUS from 'vue-timeago/locales/en-US.json'
+import zhCN from 'vue-timeago/locales/zh-CN.json'
 
 import Loading from './modules/Loading'
 
@@ -57,66 +56,53 @@ import TranslateFilter from '@f/Translate'
 import TruncateFilter from '@f/Truncate'
 import TranslateService from '@s/TranslateService'
 
-const router = createRouter({
-  // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
-  history: createWebHashHistory(),
-  // routes: []
-  routes: [ { path: '/', component: App } ]
-})
-
-const app = createApp({
-  render: () => {
-    const mountEl = document.querySelector('#app')
-    if (!mountEl) {
-      return h(App)
-    }
-    return h(mountEl.getAttribute('type') === 'login' ? LoginApp : App)
+window.Vue = Vue
+// Debug purpose
+// Vue.config.devtools = false
+Vue.component('CustomForm', CustomForm)
+Vue.component('AttachmentView', AttachmentView)
+Vue.component('ImageView', ImageView)
+Vue.component('CustomInput', CustomInput)
+Vue.component('CustomTextarea', CustomTextarea)
+Vue.component('CustomCheckbox', CustomCheckbox)
+Vue.component('ParagraphAttachmentView', ParagraphAttachmentView)
+Vue.component('ParagraphView', ParagraphView)
+Vue.component('CustomTreeView', CustomTreeView)
+Vue.component('CustomCode', CustomCode)
+Vue.component('ColorPicker', ColorPicker)
+Vue.component('JsonEditor', JsonEditor)
+Vue.component('WysiwygField', WysiwygField)
+Vue.component('CustomDatetimePicker', CustomDatetimePicker)
+Vue.component('Group', Group)
+Vue.component('CustomInputTag', CustomInputTag)
+Vue.component('CustomMultiSelect', CustomMultiSelect)
+Vue.component('PluginPage', PluginPage)
+// Vue.component('MultiselectPage', MultiselectPage)
+Vue.component('Syslog', Syslog)
+Vue.component('CmsImport', CmsImport)
+Vue.component('SyncResource', SyncResource)
+Vue.component('Draggable', draggable)
+Vue.component('TableImageView', TableImageView)
+Vue.component('TableCustomCheckbox', TableCustomCheckbox)
+Vue.component('TableRowActions', TableRowActions)
+Vue.mixin({
+  filters: {
+    translate: TranslateFilter,
+    truncate: TruncateFilter
   }
 })
-app.config.globalProperties.$filters = {
-  translate: TranslateFilter,
-  truncate: TruncateFilter
-}
-app.use(router)
-  .use(vuetify)
 
-// // Vue.config.devtools = false
-// app.component('CustomForm', CustomForm)
-//   .component('AttachmentView', AttachmentView)
-//   .component('ImageView', ImageView)
-//   .component('CustomInput', CustomInput)
-//   .component('CustomTextarea', CustomTextarea)
-//   .component('CustomCheckbox', CustomCheckbox)
-//   .component('ParagraphAttachmentView', ParagraphAttachmentView)
-//   .component('ParagraphView', ParagraphView)
-//   .component('CustomTreeView', CustomTreeView)
-//   .component('CustomCode', CustomCode)
-//   .component('ColorPicker', ColorPicker)
-//   .component('JsonEditor', JsonEditor)
-//   .component('WysiwygField', WysiwygField)
-//   .component('CustomDatetimePicker', CustomDatetimePicker)
-//   .component('Group', Group)
-//   .component('CustomInputTag', CustomInputTag)
-//   .component('CustomMultiSelect', CustomMultiSelect)
-  .component('PluginPage', PluginPage)
-  .component('MultiselectPage', MultiselectPage)
-  .component('Syslog', Syslog)
-  .component('CmsImport', CmsImport)
-  .component('SyncResource', SyncResource)
-//   .component('Draggable', draggable)
-//   .component('TableImageView', TableImageView)
-//   .component('TableCustomCheckbox', TableCustomCheckbox)
-//   .component('TableRowActions', TableRowActions)
-
-  .use(Loading)
-//   // .use(VueEasytable)
-//   // .use(JsonTreeView)
-  .use(VueVirtualScroller)
-  .use(VueShortkey)
-  .use(VueTimeago, {
-    name: 'timeago'
-    // TODO: hugo - later - add locales via import { en, zh } from "date-fns/locale";
-  })
+Vue.use(Loading)
+Vue.use(VueEasytable)
+Vue.use(TreeView)
+Vue.use(VueVirtualScroller)
+Vue.use(VueRouter)
+Vue.use(VueShortkey)
+Vue.use(VueTimeago, {
+  name: 'timeago',
+  locale: 'enUS',
+  locales: { enUS, zhCN }
+})
 
 function addPlugin (title, displayName, group = 'System', allowed = ['admins', 'imagination']) {
   window.plugins = window.plugins || []
@@ -150,7 +136,16 @@ window.addEventListener('load', async function () {
   }
   window.disableJwtLogin = _.get(config, 'disableJwtLogin', false)
   window.noLogin = window.disableJwtLogin && _.get(config, 'disableAuthentication', false)
+  const router = new VueRouter({})
   // eslint-disable-next-line no-new
-  window.nodeCms = app
-  app.mount('#app')
+  window.nodeCms = new Vue({
+    el: '#app',
+    vuetify,
+    router,
+    render: function (createElement) {
+      // console.warn('will render component: ', this.$el.getAttribute('type'))
+      return createElement(this.$el.getAttribute('type') === 'login' ? LoginApp : App)
+    }
+  })
 })
+window.Vue = Vue

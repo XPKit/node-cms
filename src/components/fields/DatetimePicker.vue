@@ -21,13 +21,13 @@
             </div>
           </div>
           <div class="headers">
-            <template v-for="(d, index) in days" :key="index">
-              <span class="days">{{ 'TL_' + d.toUpperCase() | translate }}</span>
+            <template v-for="(d, index) in days">
+              <span :key="index" class="days">{{ 'TL_' + d.toUpperCase() | translate }}</span>
             </template>
           </div>
           <div>
-            <template v-for="(port, index) in ports" :key="index">
-              <span class="port" :class="{activePort: index === activePort}" @click="setDay(index, port)">{{ port }}</span>
+            <template v-for="(port, index) in ports">
+              <span :key="index" class="port" :class="{activePort: index === activePort}" @click="setDay(index, port)">{{ port }}</span>
             </template>
           </div>
         </div>
@@ -36,8 +36,8 @@
             <div id="j-hour" @click="showHourSelector">{{ padZero(hour) }}</div>
             <div ref="hourScrollerWrapper" class="scroll-hider" :class="{showSelector: hourSelectorVisible}">
               <ul ref="hourScroller">
-                <template v-for="(h, index) in hours" :key="index">
-                  <li :class="{active: index == hourIndex}" @click="setHour(index, true)">{{ h }}</li>
+                <template v-for="(h, index) in hours">
+                  <li :key="index" :class="{active: index == hourIndex}" @click="setHour(index, true)">{{ h }}</li>
                 </template>
               </ul>
             </div>
@@ -49,8 +49,8 @@
             <div id="j-minute" @click="showMinuteSelector">{{ padZero(minute) }}</div>
             <div ref="minuteScrollerWrapper" class="scroll-hider" :class="{showSelector: minuteSelectorVisible}">
               <ul ref="minuteScroller">
-                <template v-for="(m, index) in minutes" :key="index">
-                  <li :class="{active: index == minuteIndex}" @click="setMinute(index, true)">{{ m }}</li>
+                <template v-for="(m, index) in minutes">
+                  <li :key="index" :class="{active: index == minuteIndex}" @click="setMinute(index, true)">{{ m }}</li>
                 </template>
               </ul>
             </div>
@@ -172,7 +172,7 @@ export default {
     document.addEventListener('click', this.documentClicked)
     this.setDate()
   },
-  unmounted () {
+  destroyed () {
     document.removeEventListener('keydown', this.keyIsDown)
     document.removeEventListener('click', this.documentClicked)
   },

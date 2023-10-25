@@ -1,8 +1,8 @@
 <template>
   <div class="system-info">
     <v-menu v-if="settingsData && settingsData.linksGroups && settingsData.linksGroups.length > 0" content-class="links-menu" offset-y :close-on-content-click="false" nudge-bottom="5px" transition="slide-y-transition">
-      <template #activator="{ props }">
-        <v-btn icon v-bind="props">
+      <template #activator="{ on, attrs }">
+        <v-btn icon v-bind="attrs" v-on="on">
           <v-icon>mdi-dots-vertical</v-icon>
         </v-btn>
       </template>
@@ -16,14 +16,14 @@
     </v-menu>
 
     <v-menu content-class="system-info-menu" offset-y :close-on-content-click="false" nudge-bottom="5px" transition="slide-y-transition">
-      <template #activator="{ props }">
-        <v-btn icon v-bind="props">
+      <template #activator="{ on, attrs }">
+        <v-btn icon v-bind="attrs" v-on="on">
           <v-icon>mdi-cog-outline</v-icon>
         </v-btn>
       </template>
       <div class="system-info-wrapper">
         <div class="node-cms-title flex">
-          <span>{{ $filters.translate('TL_SYSTEM') }}</span>
+          <span>{{ 'TL_SYSTEM' | translate }}</span>
           <div class="theme-switch" @click="onChangeTheme()">
             <v-icon :class="{selected: !getTheme()}">mdi-weather-sunny</v-icon>
             <v-icon :class="{selected: getTheme()}">mdi-weather-night</v-icon>
@@ -32,17 +32,17 @@
         </div>
         <div class="stats cpu">
           <div class="node-cms-title"><small><b>CPU Usage</b></small></div>
-          <v-progress-linear rounded :model-value="system.cpu.usage" />
+          <v-progress-linear rounded :value="system.cpu.usage" />
           <small class="text">{{ system.cpu.count }} cores ({{ system.cpu.model }})</small>
         </div>
         <div class="stats ram">
           <div class="node-cms-title"><small><b>Memory Usage</b></small></div>
-          <v-progress-linear rounded :model-value="100 - system.memory.freeMemPercentage" />
+          <v-progress-linear rounded :value="100 - system.memory.freeMemPercentage" />
           <small class="text">{{ convertBytes(system.memory.usedMemMb) }} / {{ convertBytes(system.memory.totalMemMb) }}</small>
         </div>
         <div v-if="system.drive != 'not supported'" class="stats drive">
           <div class="node-cms-title"><small><b>Disk Usage</b></small></div>
-          <v-progress-linear rounded :model-value="100 - system.drive.usedPercentage" />
+          <v-progress-linear rounded :value="100 - system.drive.usedPercentage" />
           <small class="text">{{ convertBytes(system.drive.usedGb * 1024) }} / {{ convertBytes(system.drive.totalGb * 1024) }}</small>
         </div>
         <div class="stats two-by-two">
@@ -119,7 +119,7 @@ export default {
     await WebsocketService.init(this.config)
     this.getSystemData()
   },
-  unmounted () {
+  destroyed () {
     this.destroyed = true
     clearTimeout(this.timer)
   },

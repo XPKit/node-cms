@@ -2,8 +2,7 @@
   <div ref="wysiwygWrapper" class="wysiwyg-wrapper">
     <div class="field-label">{{ schema.label }}</div>
     <div class="border-wrapper">
-      <!-- TODO: hugo - find replacement -->
-      <!-- <tiptap-vuetify
+      <tiptap-vuetify
         ref="input"
         v-model="value"
         :card-props="{ flat: true }"
@@ -14,44 +13,44 @@
         @init="onInit"
         @blur="onInit"
         @focus="onInit"
-      /> -->
+      />
     </div>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
-// import { TiptapVuetify, Heading, Bold, Italic, Strike, Underline, Code, Paragraph, BulletList, OrderedList, ListItem, Link, Blockquote, HardBreak, HorizontalRule, History } from 'tiptap-vuetify'
+import { TiptapVuetify, Heading, Bold, Italic, Strike, Underline, Code, Paragraph, BulletList, OrderedList, ListItem, Link, Blockquote, HardBreak, HorizontalRule, History } from 'tiptap-vuetify'
 import AbstractField from '@m/AbstractField'
 
 export default {
-  // components: { TiptapVuetify },
+  components: { TiptapVuetify },
   mixins: [AbstractField],
   data () {
     return {
       loaded: false,
-      key: null
-      // extensions: [
-      //   History,
-      //   Blockquote,
-      //   Link,
-      //   Underline,
-      //   Strike,
-      //   Italic,
-      //   ListItem,
-      //   BulletList,
-      //   OrderedList,
-      //   [Heading, {
-      //     options: {
-      //       levels: [1, 2, 3]
-      //     }
-      //   }],
-      //   Bold,
-      //   Code,
-      //   HorizontalRule,
-      //   Paragraph,
-      //   HardBreak
-      // ]
+      key: null,
+      extensions: [
+        History,
+        Blockquote,
+        Link,
+        Underline,
+        Strike,
+        Italic,
+        ListItem,
+        BulletList,
+        OrderedList,
+        [Heading, {
+          options: {
+            levels: [1, 2, 3]
+          }
+        }],
+        Bold,
+        Code,
+        HorizontalRule,
+        Paragraph,
+        HardBreak
+      ]
     }
   },
   watch: {
