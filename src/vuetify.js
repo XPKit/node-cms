@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuetify from 'vuetify/lib/framework'
 import { TiptapVuetifyPlugin } from 'tiptap-vuetify'
 import 'tiptap-vuetify/dist/main.css'
-import '@mdi/font/scss/materialdesignicons.scss'
+import '@mdi/font/css/materialdesignicons.min.css'
 import 'vuetify/dist/vuetify.min.css'
 
 const vuetify = new Vuetify({

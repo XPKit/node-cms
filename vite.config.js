@@ -48,7 +48,6 @@ _.each(proxy, (route) => {
 })
 
 export default defineConfig(({ command, mode, ssrBuild }) => {
-  // console.warn(`vite mode = ${mode} - command = ${command}`)
   return {
     root: mode === 'development' ? './' : './src',
     base: './',
@@ -93,6 +92,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
     },
     build: {
       // minify: false,
+      cssCodeSplit: false,
       manifest: true,
       outDir: '../dist',
       rollupOptions: {

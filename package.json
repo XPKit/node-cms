@@ -1,6 +1,6 @@
 {
   "name": "node-cms",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "description": "Content management system, written in node.js, uses leveldb as an asset and content store.",
   "main": "index.js",
   "scripts": {
@@ -37,6 +37,7 @@
   },
   "bin": {
     "cms": "./server.js",
+    "node-cms-rebuild": "npm run postinstall",
     "cms-import": "./import.js"
   },
   "author": "Kong Yim <kong.yim@imagination.com>",
