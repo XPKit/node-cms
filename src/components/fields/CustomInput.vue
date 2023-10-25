@@ -4,7 +4,7 @@
     :class="[schema.labelClasses]" :type="getType()" :model-value="value"
     :max-length="schema.max" :min-length="schema.min" autocomplete="off"
     validate-on-submit :rules="[validateField]"
-    :variant="get('filled') && 'filled' ? 'filled' : 'outlined'" :rounded="get('rounded')" density="compact" :compact="get('compact')" :disabled="disabled" :readonly="get('readonly')"
+    :variant="get('filled') && 'filled'" :rounded="get('rounded')" :density="get('density="compact"') && 'compact'" :compact="get('compact')" :disabled="disabled" :readonly="get('readonly')" :variant="get('outlined') && 'outlined'"
     persistent-placeholder hide-details
     @update:model-value="onChangeData"
   >
