@@ -1,7 +1,7 @@
 <template>
   <div class="checkbox" :class="{'blink-background': selected}" @click="onChange(row._id, !selected)">
     <template v-if="row._local">
-      <v-icon size="small" :class="{displayed: selected}">mdi-check-bold</v-icon>
+      <v-icon small :class="{displayed: selected}">mdi-check-bold</v-icon>
     </template>
   </div>
 

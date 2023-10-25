@@ -58,7 +58,9 @@ import TruncateFilter from '@f/Truncate'
 import TranslateService from '@s/TranslateService'
 
 const router = createRouter({
+  // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
   history: createWebHashHistory(),
+  // routes: []
   routes: [ { path: '/', component: App } ]
 })
 
@@ -71,8 +73,6 @@ const app = createApp({
     return h(mountEl.getAttribute('type') === 'login' ? LoginApp : App)
   }
 })
-window.nodeCms = app
-
 app.config.globalProperties.$filters = {
   translate: TranslateFilter,
   truncate: TruncateFilter
@@ -151,5 +151,6 @@ window.addEventListener('load', async function () {
   window.disableJwtLogin = _.get(config, 'disableJwtLogin', false)
   window.noLogin = window.disableJwtLogin && _.get(config, 'disableAuthentication', false)
   // eslint-disable-next-line no-new
+  window.nodeCms = app
   app.mount('#app')
 })

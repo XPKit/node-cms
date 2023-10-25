@@ -9,9 +9,9 @@
     <div class="scroll-wrapper" :class="{'scrolled-to-bottom': scrolledToBottom}" @scroll="onScroll">
       <div class="selected-records-list">
         <div v-for="item in multiselectItems" :key="item._id" class="selected-record">
-          <v-chip variant="outlined" c small :ripple="false">
-            <v-avatar start>
-              <v-icon size="small" @click="deselectItem(item)">mdi-close-circle-outline</v-icon>
+          <v-chip outlined c small :ripple="false">
+            <v-avatar left>
+              <v-icon small @click="deselectItem(item)">mdi-close-circle-outline</v-icon>
             </v-avatar>
             {{ getName(item) | truncate(15) }} ({{ item._id }})
           </v-chip>

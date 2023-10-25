@@ -1,15 +1,15 @@
 <template>
   <v-text-field
     ref="input"
-    :class="[schema.labelClasses]" :type="getType()" :model-value="value"
+    :class="[schema.labelClasses]" :type="getType()" :value="value" :input-value="value"
     :max-length="schema.max" :min-length="schema.min" autocomplete="off"
     validate-on-submit :rules="[validateField]"
-    :variant="get('filled') && 'filled'" :rounded="get('rounded')" :density="get('density="compact"') && 'compact'" :compact="get('compact')" :disabled="disabled" :readonly="get('readonly')" :variant="get('outlined') && 'outlined'"
+    :filled="get('filled')" :rounded="get('rounded')" :dense="get('dense')" :compact="get('compact')" :disabled="disabled" :readonly="get('readonly')" :outlined="get('outlined')"
     persistent-placeholder hide-details
-    @update:model-value="onChangeData"
+    @input="onChangeData"
   >
     <template #prepend>
-      <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ schema.label }}
+      <span v-if="schema.required" class="red--text"><strong>* </strong></span>{{ schema.label }}
     </template>
     <template #label />
   </v-text-field>
