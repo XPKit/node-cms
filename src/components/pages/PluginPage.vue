@@ -1,6 +1,6 @@
 <template>
   <div class="plugin-page">
-    <component :is="plugin.component" />
+    <component :is="plugin.component" :component="plugin.component" />
   </div>
 </template>
 
