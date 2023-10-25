@@ -4,7 +4,7 @@
       <top-bar-locale-list :locales="resource.locales" :locale="locale" :select-locale="selectLocale" :back="back" />
       <div class="buttons">
         <v-btn v-if="editingRecord._id" elevation="0" class="delete" icon rounded @click="deleteRecord"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
-        <v-btn elevation="0" class="update" rounded @click="createUpdateClicked">{{ $filters.translate(editingRecord._id? "TL_UPDATE": "TL_CREATE") }}</v-btn>
+        <v-btn elevation="0" class="update" rounded @click="createUpdateClicked">{{ (editingRecord._id? "TL_UPDATE": "TL_CREATE") | translate }}</v-btn>
       </div>
     </div>
     <div class="scroll-wrapper" :class="{'scrolled-to-bottom': scrolledToBottom}" @scroll="onScroll">
@@ -13,7 +13,7 @@
           v-if="isReady"
           :schema="schema"
           :form-id="randomId" :form-options="formOptions"
-          model.sync="editingRecord"
+          :model.sync="editingRecord"
           :paragraph-level="1"
           @error="onError" @input="onModelUpdated"
         />

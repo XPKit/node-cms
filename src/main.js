@@ -1,7 +1,6 @@
 import '@a/scss/main.scss'
 import _ from 'lodash'
 import { createApp, h } from 'vue'
-import * as Vue from 'vue'
 
 import { createRouter, createWebHashHistory } from 'vue-router'
 // import 'vue-easytable/libs/theme-default/index.css'
@@ -82,7 +81,7 @@ app.use(router)
   .use(vuetify)
 
 // // Vue.config.devtools = false
-  .component('CustomForm', CustomForm)
+// app.component('CustomForm', CustomForm)
 //   .component('AttachmentView', AttachmentView)
 //   .component('ImageView', ImageView)
 //   .component('CustomInput', CustomInput)
@@ -127,24 +126,17 @@ function addPlugin (title, displayName, group = 'System', allowed = ['admins', '
     component: title,
     group,
     allowed,
-    type: 'plugin',
-    internal: true
+    type: 'plugin'
   })
 }
 
 let recaptchaScript = document.createElement('script')
 recaptchaScript.setAttribute('src', './plugins/scripts/bundle.js')
 document.head.appendChild(recaptchaScript)
-window.Vue = Vue
 
 window.addEventListener('load', async function () {
   _.each(window.plugins, item => {
     item.type = 'plugin'
-  })
-  const externalPlugins = _.filter(window.plugins, (plugin) => plugin.internal !== false)
-  _.each(externalPlugins, (externalPlugin) => {
-    app.component(externalPlugin.name, externalPlugin.component)
-    // app.component(externalPlugin.name, externalPlugin.component)
   })
   window.TranslateService = TranslateService
   const response = await axios.get(`${window.location.pathname}config`)
@@ -158,5 +150,6 @@ window.addEventListener('load', async function () {
   }
   window.disableJwtLogin = _.get(config, 'disableJwtLogin', false)
   window.noLogin = window.disableJwtLogin && _.get(config, 'disableAuthentication', false)
+  // eslint-disable-next-line no-new
   app.mount('#app')
 })
