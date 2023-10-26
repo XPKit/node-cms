@@ -13,7 +13,7 @@ const serverPort = _.get(pkg, 'config.port', 9990)
 const devPort = 10000 + serverPort
 
 let pluginsFolderToBuild = path.resolve(__dirname, 'src', 'plugins')
-let pluginsFolderSource = path.resolve(process.cwd(), 'node-cms', 'plugins')
+let pluginsFolderSource = path.resolve(__dirname, '..', '..', 'node-cms', 'plugins')
 let pluginsFolderFallback = path.resolve(__dirname, 'src', '.plugins')
 if (fs.existsSync(pluginsFolderFallback) === false) {
   throw new Error(`No .plugins folder found @ ${pluginsFolderFallback}`)
