@@ -1,4 +1,5 @@
 import '@a/scss/main.scss'
+import '@p/scss/main.scss'
 import _ from 'lodash'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
@@ -15,6 +16,8 @@ import vuetify from './vuetify.js'
 // Global components
 import App from '@c/App.vue'
 import LoginApp from '@c/LoginApp.vue'
+
+import '@p/js/main.js'
 // import MultiselectPage from '@c/MultiselectPage.vue'
 import CustomForm from '@c/CustomForm.vue'
 
@@ -115,10 +118,6 @@ function addPlugin (title, displayName, group = 'System', allowed = ['admins', '
     type: 'plugin'
   })
 }
-
-// let recaptchaScript = document.createElement('script')
-// recaptchaScript.setAttribute('src', './plugins/scripts/bundle.js')
-// document.head.appendChild(recaptchaScript)
 
 window.addEventListener('load', async function () {
   _.each(window.plugins, item => {

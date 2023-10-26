@@ -74,6 +74,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
         // 'vue': path.resolve(__dirname, 'node_modules/vue'),
         // 'vuetify': path.resolve(__dirname, 'node_modules/vuetify'),
         '@s': path.resolve(__dirname, 'src/services'),
+        '@p': path.resolve(__dirname, 'src/.plugins'),
         '@static': path.resolve(__dirname, 'src/static'),
         '@a': path.resolve(__dirname, 'src/assets'),
         '@c': path.resolve(__dirname, 'src/components'),
