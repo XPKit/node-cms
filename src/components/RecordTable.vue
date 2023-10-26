@@ -31,13 +31,12 @@
           <v-btn v-if="maxCount <= 0 || listCount < maxCount" elevation="0" rounded class="new" @click="createRecord">{{ 'TL_ADD_NEW_RECORD' | translate }}</v-btn>
         </div>
       </div>
-      <template v-if="!record">
-        <vue-table-generator
-          v-if="isReady" :options="options"
-          :selected-records.sync="selectedRecords"
-          :resource="resource" :schema="schema" :items="filteredList" :locale.sync="localLocale"
-          @remove="removeRecord" @edit="editRecord"
-        />
+      <vue-table-generator
+        v-if="isReady && !record" :options="options"
+        :selected-records.sync="selectedRecords"
+        :resource="resource" :schema="schema" :items="filteredList" :locale.sync="localLocale"
+        @remove="removeRecord" @edit="editRecord"
+      />
       <!-- <paginate
         v-if="!search"
         v-model="page"
@@ -47,8 +46,6 @@
         :next-text="'Next'"
         :container-class="'pager'"
       /> -->
-      <!-- <button class="update" @click="updateRecords">{{ "TL_UPDATE" | translate }}</button> -->
-      </template>
       <!-- editing -->
       <record-editor
         v-if="record"
@@ -154,9 +151,10 @@ export default {
       if (fields.length === 0) {
         fields = [_.first(this.resource.schema)]
       }
-      return _.filter(this.clonedRecordList, (item, index) => {
+      const test = _.filter(this.clonedRecordList, (item, index) => {
         if (_.isEmpty(this.search)) {
-          return (index >= (this.options.paging * (this.page - 1)) && index < this.options.paging * this.page)
+          return true
+          // return (index >= (this.options.paging * (this.page - 1)) && index < this.options.paging * this.page)
         }
         const values = []
         _.forEach(fields, (field) => {
@@ -164,6 +162,7 @@ export default {
         })
         return this.doesMatch(this.search, values) || new RegExp(this.search, 'i').test(item._id)
       })
+      return test
     }
   },
   watch: {

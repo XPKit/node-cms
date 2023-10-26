@@ -1,7 +1,7 @@
 exports = (module.exports = {
   view: 'table',
   options: {
-    paging: 6,
+    // paging: 6,
     displayId: false,
     displayUpdatedAt: true
   },

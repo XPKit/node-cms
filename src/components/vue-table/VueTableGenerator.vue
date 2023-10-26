@@ -2,10 +2,10 @@
   <div ref="excel-container" class="vue-table-generator vue-form-generator table">
     <ve-table
       ref="tableRef" scroll-width="0" :sort-option="sortOption"
-      :virtual-scroll-option="{enable: true}" :column-width-resize-option="columnWidthResizeOption"
+      :virtual-scroll-option="{enable: false}" :column-width-resize-option="columnWidthResizeOption"
       :columns="columns" :table-data="tableData" :fixed-header="true" :border-around="true" :border-x="true" :border-y="true"
       :clipboard-option="clipboardOption" :row-style-option="rowStyleOption"
-      max-height="100%"
+      max-height="73vh"
       row-key-field-name="_id"
     />
     <div v-show="tableData.length === 0" class="empty-data">{{ 'TL_NO_DATA_FOUND' | translate }}</div>

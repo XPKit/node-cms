@@ -53,16 +53,15 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
     base: './',
     publicDir: `${mode === 'development' ? '.' : '..'}/public`,
     plugins: [
-      splitVendorChunkPlugin(),
-      vueJsx({}),
       vue({exclude: 'os'}),
       Components({
-        resolvers: [VuetifyResolver()]
-      })
+        dirs: [path.resolve(__dirname, 'src')],
+        resolvers: [VuetifyResolver()],
+        exclude: [/[\\/]node_modules[\\/](?!.*node-cms[\\/])/, /[\\/]\.git[\\/]/, /[\\/]\.nuxt[\\/]/]
+      }),
+      vueJsx({}),
+      splitVendorChunkPlugin()
     ],
-    optimizeDeps: {
-      // include: []
-    },
     server: {
       origin: `${baseUrl}:${devPort}`,
       port: devPort,
@@ -91,18 +90,17 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       proxy
     },
     build: {
-      // minify: false,
+      minify: true,
       cssCodeSplit: false,
-      manifest: true,
+      manifest: false,
       outDir: '../dist',
       rollupOptions: {
-        // external: ['vue', 'vuetify'],
         output: {
           manualChunks: (id) => {
             if (id.includes('node_modules') && !id.includes('node-cms/src')) {
               return 'vendor'
             }
-            return 'main'
+            return null
           }
         },
         input: {
