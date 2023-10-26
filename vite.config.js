@@ -2,6 +2,7 @@
 
 import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import path from 'path'
+import fs from 'fs-extra'
 import vue from '@vitejs/plugin-vue2'
 import vueJsx from '@vitejs/plugin-vue2-jsx'
 import _ from 'lodash'
@@ -10,6 +11,22 @@ import { VuetifyResolver } from 'unplugin-vue-components/resolvers'
 import pkg from './package.json'
 const serverPort = _.get(pkg, 'config.port', 9990)
 const devPort = 10000 + serverPort
+
+let pluginsFolderToBuild = path.resolve(__dirname, 'src', 'plugins')
+let pluginsFolderSource = path.resolve(process.cwd(), 'node-cms', 'plugins')
+let pluginsFolderFallback = path.resolve(__dirname, 'src', '.plugins')
+if (fs.existsSync(pluginsFolderFallback) === false) {
+  throw new Error(`No .plugins folder found @ ${pluginsFolderFallback}`)
+}
+if (fs.existsSync(pluginsFolderToBuild)) {
+  console.warn(`found plugins folder ${pluginsFolderToBuild}`)
+  fs.unlinkSync(pluginsFolderToBuild)
+}
+if (fs.existsSync(pluginsFolderSource) === false) {
+  pluginsFolderSource = pluginsFolderFallback
+}
+fs.symlinkSync(pluginsFolderSource, pluginsFolderToBuild)
+console.warn(`Symlink created @ ${pluginsFolderToBuild} -> ${pluginsFolderSource}`)
 
 const configure = (proxyRoute, proxyPort, proxy, _options) => {
   proxy.on('error', (err, _req, _res) => {
