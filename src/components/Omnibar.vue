@@ -37,7 +37,7 @@
 import _ from 'lodash'
 import fuzzysort from 'fuzzysort'
 import FieldSelectorService from '@s/FieldSelectorService'
-import Notification from '@m/Notification'
+import Notification from '@m/Notification.vue'
 
 export default {
   mixins: [Notification],

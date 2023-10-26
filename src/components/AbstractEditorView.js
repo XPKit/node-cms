@@ -2,7 +2,7 @@ import _ from 'lodash'
 import axios from 'axios/dist/axios.min'
 import TranslateServiceLib from '@s/TranslateService'
 import SchemaService from '@s/SchemaService'
-import Notification from '@m/Notification'
+import Notification from '@m/Notification.vue'
 
 const TranslateService = window.TranslateService || TranslateServiceLib
 

@@ -99,9 +99,10 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
         // external: ['vue', 'vuetify'],
         output: {
           manualChunks: (id) => {
-            if (id.includes('node_modules')) {
+            if (id.includes('node_modules') && !id.includes('node-cms/src')) {
               return 'vendor'
             }
+            return 'main'
           }
         },
         input: {

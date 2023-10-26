@@ -29,7 +29,7 @@ import _ from 'lodash'
 import TranslateService from '@s/TranslateService'
 import FieldSelectorService from '@s/FieldSelectorService'
 import AbstractEditorView from './AbstractEditorView'
-import Notification from '@m/Notification'
+import Notification from '@m/Notification.vue'
 
 export default {
   mixins: [AbstractEditorView, Notification],

@@ -77,7 +77,7 @@ import VueTableGenerator from '@c/vue-table/VueTableGenerator.vue'
 
 import RecordEditor from '@c/RecordEditor.vue'
 import AbstractEditorView from '@c/AbstractEditorView'
-import Notification from '@m/Notification'
+import Notification from '@m/Notification.vue'
 
 export default {
   components: {

@@ -33,7 +33,7 @@ import LoadingService from '@s/LoadingService'
 import ConfigService from '@s/ConfigService'
 import TranslateService from '@s/TranslateService'
 import LoginService from '@s/LoginService'
-import Notification from '@m/Notification'
+import Notification from '@m/Notification.vue'
 
 export default {
   components: {
