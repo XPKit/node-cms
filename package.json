@@ -145,9 +145,9 @@
     "vuedraggable": "^2.24.3"
   },
   "devDependencies": {
-
   },
   "config": {
+    "mountPath": "/",
     "port": 9990
   }
 }

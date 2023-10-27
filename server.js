@@ -3,7 +3,7 @@
 'use strict'
 
 const express = require('express')
-
+const _ = require('lodash')
 const CMS = require('./')
 const pkg = require('./package.json')
 
@@ -52,7 +52,7 @@ let options = {
 const cms = new CMS(options)
 
 const app = express()
-app.use(cms.express())
+app.use(_.get(pkg, 'config.mountPath', '/'), cms.express())
 const server = app.listen(pkg.config.port, async () => {
   await cms.bootstrap(server)
   logger.info('########### server started #################')

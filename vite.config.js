@@ -2,117 +2,49 @@
 
 import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import path from 'path'
-import fs from 'fs-extra'
 import vue from '@vitejs/plugin-vue2'
 import vueJsx from '@vitejs/plugin-vue2-jsx'
-import _ from 'lodash'
 import Components from 'unplugin-vue-components/vite'
 import { VuetifyResolver } from 'unplugin-vue-components/resolvers'
-import pkg from './package.json'
-const serverPort = _.get(pkg, 'config.port', 9990)
-const devPort = 10000 + serverPort
+import ViteUtils from './vite.utils.js'
 
-let pluginsFolderToBuild = path.resolve(__dirname, 'src', 'plugins')
-const isInNodeModules = __dirname.includes('/node_modules/node-cms') || __dirname.includes('\\node_modules\\node-cms')
-if (isInNodeModules) {
-  console.warn('Node-cms loaded as a dependency')
-} else {
-  console.warn('Node-cms is loaded directly')
-}
-let pluginsFolderSource = path.resolve(__dirname, '..', '..', 'node-cms', 'plugins')
-let pluginsFolderFallback = path.resolve(__dirname, 'src', '.plugins')
-if (fs.existsSync(pluginsFolderFallback) === false) {
-  throw new Error(`No .plugins folder found @ ${pluginsFolderFallback}`)
-}
-if (fs.existsSync(pluginsFolderToBuild)) {
-  console.warn(`found plugins folder ${pluginsFolderToBuild}`)
-  fs.unlinkSync(pluginsFolderToBuild)
-}
-if (!(isInNodeModules && fs.existsSync(pluginsFolderSource))) {
-  pluginsFolderSource = pluginsFolderFallback
-}
-fs.symlinkSync(pluginsFolderSource, pluginsFolderToBuild)
-console.warn(`Symlink created @ ${pluginsFolderToBuild} -> ${pluginsFolderSource}`)
-
-const configure = (proxyRoute, proxyPort, proxy, _options) => {
-  proxy.on('error', (err, _req, _res) => {
-    console.error(`${proxyRoute} - Proxy error`, err)
-  })
-  // proxy.on('proxyReq', (proxyReq, req, _res) => {
-  //   console.log(`${proxyRoute} - Sending Request to the Target:`, req.method, req.url)
-  // })
-  // proxy.on('proxyRes', (proxyRes, req, _res) => {
-  //   console.log(`${proxyRoute} - Received Response from the Target:`, proxyRes.statusCode, req.url)
-  // })
-}
-
-const baseUrl = 'http://localhost'
-
-const proxy = {
-  '^/(cms|i18n|config|login|logout|resources)': {
-    target: `${baseUrl}:${serverPort}/admin`
-  },
-  '^/admin/(fonts)': {
-    target: `${baseUrl}:${devPort}`,
-    configure: (proxy, _options) => configure('^/admin/(fonts)', devPort, proxy, _options)
-  },
-  '^/(admin)': {
-    target: `${baseUrl}:${serverPort}/admin`,
-    rewrite: (path) => path.replace(/^\/admin/, ''),
-    configure: (proxy, _options) => configure('^/(admin)$', serverPort, proxy, _options)
-  },
-  '^/(api)': {
-    target: `${baseUrl}:${serverPort}`
-  }
-}
-_.each(proxy, (route) => {
-  route.ws = true
-  route.changeOrigin = true
-})
+const viteUtils = ViteUtils.getInstance()
 
 export default defineConfig(({ command, mode, ssrBuild }) => {
   return {
-    root: mode === 'development' ? __dirname : path.resolve(__dirname, 'src'),
+    // root: mode === 'development' ? __dirname : viteUtils.nodeCmsSrcPath,
+    root: viteUtils.nodeCmsSrcPath,
     base: './',
     publicDir: `${mode === 'development' ? '.' : '..'}/public`,
     plugins: [
       vue({exclude: 'os'}),
       Components({
-        dirs: [path.resolve(__dirname, 'src')],
+        dirs: [viteUtils.nodeCmsSrcPath],
         resolvers: [VuetifyResolver()],
         exclude: [/[\\/]node_modules[\\/](?!.*node-cms[\\/])/, /[\\/]\.git[\\/]/, /[\\/]\.nuxt[\\/]/]
       }),
       vueJsx({}),
       splitVendorChunkPlugin()
     ],
-    server: {
-      origin: `${baseUrl}:${devPort}`,
-      port: devPort,
-      proxy
-    },
+    server: viteUtils.serverConfig,
     resolve: {
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
-      alias: {
+      alias: viteUtils.resolveAliases({
         os: 'rollup-plugin-node-polyfills/polyfills/os',
-        // 'vue': path.resolve(__dirname, 'node_modules/vue'),
-        // 'vuetify': path.resolve(__dirname, 'node_modules/vuetify'),
-        '@s': path.resolve(__dirname, 'src/services'),
-        '@p': path.resolve(__dirname, 'src/.plugins'),
-        '@static': path.resolve(__dirname, 'src/static'),
-        '@a': path.resolve(__dirname, 'src/assets'),
-        '@c': path.resolve(__dirname, 'src/components'),
-        '@v': path.resolve(__dirname, 'src/views'),
-        '@f': path.resolve(__dirname, 'src/filters'),
-        '@u': path.resolve(__dirname, 'src/utils'),
-        '@l': path.resolve(__dirname, 'src/lib'),
-        '@r': path.resolve(__dirname, 'src/router'),
-        '@m': path.resolve(__dirname, 'src/mixins')
-      }
+        '@s': 'services',
+        '@p': '.plugins',
+        '@static': 'static',
+        '@a': 'assets',
+        '@c': 'components',
+        '@v': 'views',
+        '@f': 'filters',
+        '@u': 'utils',
+        '@l': 'lib',
+        '@r': 'router',
+        '@m': 'mixins'
+      })
     },
-    preview: {
-      port: devPort,
-      proxy
-    },
+    preview: viteUtils.serverConfig,
     build: {
       minify: true,
       cssCodeSplit: false,
@@ -128,7 +60,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
           }
         },
         input: {
-          main: path.resolve(__dirname, 'src/index.html')
+          main: path.resolve(viteUtils.nodeCmsSrcPath, 'index.html')
         }
       }
     }
