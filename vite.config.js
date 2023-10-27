@@ -13,7 +13,7 @@ const serverPort = _.get(pkg, 'config.port', 9990)
 const devPort = 10000 + serverPort
 
 let pluginsFolderToBuild = path.resolve(__dirname, 'src', 'plugins')
-const isInNodeModules = __dirname.includes('/node_modules/node-cms/') || __dirname.includes('\\node_modules\\node-cms\\')
+const isInNodeModules = __dirname.includes('/node_modules/node-cms') || __dirname.includes('\\node_modules\\node-cms')
 if (isInNodeModules) {
   console.warn('Node-cms loaded as a dependency')
 } else {
