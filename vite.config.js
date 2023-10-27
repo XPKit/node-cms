@@ -13,6 +13,12 @@ const serverPort = _.get(pkg, 'config.port', 9990)
 const devPort = 10000 + serverPort
 
 let pluginsFolderToBuild = path.resolve(__dirname, 'src', 'plugins')
+const isInNodeModules = __dirname.includes('/node_modules/node-cms/') || __dirname.includes('\\node_modules\\node-cms\\')
+if (isInNodeModules) {
+  console.warn('Node-cms loaded as a dependency')
+} else {
+  console.warn('Node-cms is loaded directly')
+}
 let pluginsFolderSource = path.resolve(__dirname, '..', '..', 'node-cms', 'plugins')
 let pluginsFolderFallback = path.resolve(__dirname, 'src', '.plugins')
 if (fs.existsSync(pluginsFolderFallback) === false) {
@@ -22,7 +28,7 @@ if (fs.existsSync(pluginsFolderToBuild)) {
   console.warn(`found plugins folder ${pluginsFolderToBuild}`)
   fs.unlinkSync(pluginsFolderToBuild)
 }
-if (fs.existsSync(pluginsFolderSource) === false) {
+if (!(isInNodeModules && fs.existsSync(pluginsFolderSource))) {
   pluginsFolderSource = pluginsFolderFallback
 }
 fs.symlinkSync(pluginsFolderSource, pluginsFolderToBuild)
