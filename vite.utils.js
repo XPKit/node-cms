@@ -62,7 +62,7 @@ class ViteUtils {
     console.log(`Symlink created @ ${this.plugins.toBuild} -> ${this.plugins.source}`)
   }
 
-  handleProxyCall (proxyRoute, proxyPort, proxy, _options) {
+  handleProxyCall (proxyRoute, proxy) {
     proxy.on('error', (err, _req, _res) => {
       console.error(`${proxyRoute} - Proxy error`, err)
     })
@@ -76,17 +76,19 @@ class ViteUtils {
 
   getProxy () {
     this.proxy = {}
+    const regex = new RegExp(`^${this.nodeCmsMountPath}admin`, 'g')
+    const target = `${this.baseUrl}:${this.serverPort}${this.nodeCmsMountPath}admin`
     _.set(this.proxy, `^${this.nodeCmsMountPath}(cms|i18n|config|login|logout|resources)`, {
-      target: `${this.baseUrl}:${this.serverPort}/admin`
+      target
     })
     _.set(this.proxy, `^${this.nodeCmsMountPath}admin/(fonts)`, {
-      target: `${this.baseUrl}:${this.serverPort}/admin`,
-      configure: (proxy, _options) => this.handleProxyCall(`^${this.nodeCmsMountPath}admin/(fonts)`, this.devPort, proxy, _options)
+      target,
+      configure: (proxy, _options) => this.handleProxyCall(`^${this.nodeCmsMountPath}admin/(fonts)`, proxy)
     })
     _.set(this.proxy, `^${this.nodeCmsMountPath}(admin)`, {
-      target: `${this.baseUrl}:${this.serverPort}/admin`,
-      rewrite: (path) => path.replace(/^\/admin/, ''),
-      configure: (proxy, _options) => this.handleProxyCall(`^${this.nodeCmsMountPath}(admin)`, this.devPort, proxy, _options)
+      target,
+      rewrite: (path) => path.replace(regex, ''),
+      configure: (proxy, _options) => this.handleProxyCall(`^${this.nodeCmsMountPath}(admin)`, proxy)
     })
     _.set(this.proxy, `^${this.nodeCmsMountPath}(api)`, {
       target: `${this.baseUrl}:${this.serverPort}`
@@ -95,6 +97,7 @@ class ViteUtils {
       route.ws = true
       route.changeOrigin = true
     })
+    // console.warn('Proxy is', this.proxy)
     return this.proxy
   }
 }

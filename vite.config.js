@@ -12,8 +12,7 @@ const viteUtils = ViteUtils.getInstance()
 
 export default defineConfig(({ command, mode, ssrBuild }) => {
   return {
-    // root: mode === 'development' ? __dirname : viteUtils.nodeCmsSrcPath,
-    root: viteUtils.nodeCmsSrcPath,
+    root: mode === 'development' ? __dirname : viteUtils.nodeCmsSrcPath,
     base: './',
     publicDir: `${mode === 'development' ? '.' : '..'}/public`,
     plugins: [
@@ -32,7 +31,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       alias: viteUtils.resolveAliases({
         os: 'rollup-plugin-node-polyfills/polyfills/os',
         '@s': 'services',
-        '@p': '.plugins',
+        '@p': 'plugins',
         '@static': 'static',
         '@a': 'assets',
         '@c': 'components',

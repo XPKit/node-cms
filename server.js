@@ -52,11 +52,12 @@ let options = {
 const cms = new CMS(options)
 
 const app = express()
-app.use(_.get(pkg, 'config.mountPath', '/'), cms.express())
+const mountPath = _.get(pkg, 'config.mountPath', '/')
+app.use(mountPath, cms.express())
 const server = app.listen(pkg.config.port, async () => {
   await cms.bootstrap(server)
   logger.info('########### server started #################')
-  return logger.info(`${pkg.name} started at http://localhost:${server.address().port}/admin`)
+  return logger.info(`${pkg.name} started at http://localhost:${server.address().port}${mountPath}admin`)
 })
 
 process.on('uncaughtException', (error) => {
