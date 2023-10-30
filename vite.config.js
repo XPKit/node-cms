@@ -31,7 +31,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       alias: viteUtils.resolveAliases({
         os: 'rollup-plugin-node-polyfills/polyfills/os',
         '@s': 'services',
-        '@p': 'plugins',
+        '@p': viteUtils.isInNodeModules ? path.resolve('../../node-cms/plugins') : 'plugins',
         '@static': 'static',
         '@a': 'assets',
         '@c': 'components',
