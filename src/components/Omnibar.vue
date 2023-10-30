@@ -106,7 +106,7 @@ export default {
     }
   },
   mounted () {
-    this.resourcesList = _.map(_.flatten(_.map(this.groupedList, 'list')), (resource) => {
+    this.resourcesList = _.map(_.flatten(_.map(_.cloneDeep(this.groupedList), 'list')), (resource) => {
       resource.type = 'resource'
       resource.displayname = _.get(resource, 'displayname.enUS', _.get(resource, 'displayname', resource.title))
       return resource

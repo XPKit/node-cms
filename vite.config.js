@@ -44,6 +44,9 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       })
     },
     preview: viteUtils.serverConfig,
+    optimizeDeps: {
+      include: ['dayjs/plugin/relativeTime', 'fuzzysort']
+    },
     build: {
       minify: true,
       cssCodeSplit: false,
