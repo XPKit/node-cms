@@ -92,10 +92,10 @@ export default {
         }
       }
     }
-      &.disabled {
-        pointer-events: none;
-        touch-action: none;
-        opacity: 0.5;
-      }
+    &.disabled {
+      pointer-events: none;
+      touch-action: none;
+      opacity: 0.5;
+    }
   }
 </style>

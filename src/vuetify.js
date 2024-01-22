@@ -1,7 +1,5 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify/lib/framework'
-import { TiptapVuetifyPlugin } from 'tiptap-vuetify'
-import 'tiptap-vuetify/dist/main.css'
 import '@mdi/font/css/materialdesignicons.min.css'
 import 'vuetify/dist/vuetify.min.css'
 
@@ -41,11 +39,5 @@ const vuetify = new Vuetify({
 
 Vue.use(Vuetify)
 window.Vuetify = Vuetify
-
-Vue.use(TiptapVuetifyPlugin, {
-  vuetify,
-  // optional, default to 'md' (default vuetify icons before v2.0.0)
-  iconsGroup: 'mdi'
-})
 
 export default vuetify
