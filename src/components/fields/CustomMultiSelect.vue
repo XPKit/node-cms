@@ -169,5 +169,9 @@ export default {
       }
     }
   }
+  span.v-chip--select.v-chip.v-chip--clickable.v-chip--no-color.v-chip--removable.theme--light.v-size--small {
+    margin-top: 3px;
+    margin-bottom: 3px;
+  }
 }
 </style>
