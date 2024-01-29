@@ -19,7 +19,7 @@ const vuetify = new Vuetify({
         'node-cms-red': '#C90000'
       },
       dark: {
-        primary: '#00142E',
+        primary: '#FFFFFF',
         'node-cms-black': '#00142E',
         'node-cms-blue': '00142E',
         'node-cms-grabber': '00142E',

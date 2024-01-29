@@ -47,7 +47,7 @@ ul, li {
     max-height: 40vh !important;
     .v-list {
       border-radius: 0px 0px 8px 8px !important;
-      @include blurred-background;
+      @include blurred-background($dark-theme);
       transform: translate3d(0, 0, 0);
       display: flex;
       padding-left: 24px;
@@ -126,7 +126,7 @@ ul, li {
     }
     .v-list {
       border-radius: 0px 0px 8px 8px !important;
-      @include blurred-background;
+      @include blurred-background($dark-theme);
       transform: translate3d(0, 0, 0);
       display: flex;
       padding-left: 24px;
@@ -241,7 +241,7 @@ body {
     }
     .v-file-input__text {
       justify-content: center;
-      cursor: pointer;
+    cursor: pointer;
       @include h6;
       font-style: normal;
       color: $imag-black !important;
@@ -384,7 +384,7 @@ body {
         font-size: 18px;
       }
       .v-icon {
-        color: $search-icon-color;
+        color: $search-icon-color !important;
       }
       input {
         height: 18px !important;
@@ -467,7 +467,7 @@ body {
       @include h6;
     }
     .v-snack__wrapper {
-      @include blurred-background;
+      @include blurred-background($dark-theme);
       margin-top: $navbar-height;
       padding: 0;
       .v-btn {
@@ -500,10 +500,44 @@ body {
     }
   }
   .theme--dark {
-    background: #4e4e4e;
+    // background: #4e4e4e;
     color: rgba(255, 255, 255, 0.87);
     .node-cms-title {
       color: white;
+    }
+    .v-text-field {
+      caret-color: white !important;
+    }
+    .v-input {
+      .v-input__prepend-outer {
+        color: $imag-white;
+      }
+      &.v-input--is-disabled {
+        .v-input__prepend-outer {
+          color: $imag-grey;
+        }
+      }
+
+    }
+    .record-editor-form, .selected-records-list, #omnibar .scroll-wrapper {
+      &:after {
+        content: '';
+        pointer-events: none;
+        user-select: none;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 120px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, black 100%);
+        opacity: 1;
+        transition: all 0.3s;
+      }
+    }
+    &.v-file-input {
+      .v-file-input__text--placeholder {
+        color: rgba(255, 255, 255, 0.7) !important;
+      }
     }
     &.v-tabs> {
       .v-tabs-bar {

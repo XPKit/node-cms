@@ -180,8 +180,11 @@ export default {
   box-sizing: border-box;
   font-size: 11.2px;
   font-weight: 400;
-  >button:last-child {
+  >button {
     margin-left: vw(16px);
+    &:first-child {
+      margin-left: 0;
+    }
   }
   .stats {
     font-size: 0;
@@ -212,7 +215,7 @@ export default {
   min-width: 400px;
   display: flex;
   flex-direction: column;
-  @include blurred-background;
+  @include blurred-background($dark-theme);
   .node-cms-title {
     @include h6;
   }
@@ -255,8 +258,10 @@ export default {
       transition: all 0.3s;
       border-radius: 50%;
       padding: 2px;
+      color: $system-info-theme-icon-color;
       &.selected {
         color: white;
+        color: $system-info-theme-icon-selected-color;
         background-color: $imag-purple;
       }
     }
@@ -317,7 +322,6 @@ export default {
     &.active {
       font-weight: bold;
       background-color: $imag-purple;
-
     }
   }
   .v-divider {

@@ -45,7 +45,9 @@ export default {
         Link
       ],
       onUpdate: () => {
-        this.$emit('change', this.editor.getHTML())
+        const val = this.editor.getHTML()
+        this.$emit('change', val)
+        this.value = val
       }
     })
     this.loaded = true
@@ -89,14 +91,15 @@ export default {
     padding: 0;
   }
   .editor {
-    background-color: $imag-light-grey;
+    background-color: $wysiwyg-editor-background;
     border-radius: 0 !important;
   }
   .editor__header {
-    background-color: white;
-    border: 2px solid $imag-light-grey;
+    flex-wrap: wrap;
+    background-color: $wysiwyg-toolbar-background;
+    border: 2px solid $wysiwyg-toolbar-border;
   }
-   .editor-content {
+  .editor-content {
     padding: 16px;
     font-size: 14px;
     font-style: normal;
@@ -121,6 +124,15 @@ export default {
   }
   .ProseMirror:focus {
     outline: none;
+  }
+}
+.theme--dark {
+  .wysiwyg-wrapper {
+    .editor-content {
+      blockquote {
+        border-color: rgba(white, 0.1);
+      }
+    }
   }
 }
 </style>

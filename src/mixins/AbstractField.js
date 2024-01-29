@@ -46,8 +46,8 @@ export default {
         return
       }
       let elem = objGet(this.$refs, 'input', false)
-      if (!elem) {
-        return console.error('no input ref for ', this.schema)
+      if (!elem && objGet(this.schema, 'type', false) !== 'Wysiwyg') {
+        return console.error('no input ref for', this.schema)
       }
       // console.warn('elem = ', elem, this.schema.model, this.schema)
       if (!isFunction(elem.focus)) {
