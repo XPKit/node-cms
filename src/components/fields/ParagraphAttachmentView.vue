@@ -12,30 +12,32 @@
       >
         <template #selection="{index}">
           <div v-if="index === 0" class="v-file-input__text v-file-input__text--placeholder">
-            {{ translate(getPlaceholder()) }}
+            {{ $filters.translate(getPlaceholder()) }}
           </div>
         </template>
       </v-file-input>
     </v-card>
     <draggable
-      v-if="schema" :key="`${schema.model}-${key}`" v-model="items" :group="`${schema.model}-${key}`"
+      v-if="schema" :key="`${schema.model}-${key}`" v-model="items" :group="`${schema.model}-${key}`" :item-key="getKey"
       draggable=".preview-attachment" handle=".row-handle" ghost-class="ghost"
       v-bind="dragOptions" :class="{disabled}" class="preview-multiple" @end="onEndDrag" @start="onStartDrag"
     >
-      <v-card v-for="(i, index) in items" :key="`${i._filename}-${index}`" elevation="0" class="preview-attachment" :class="{odd: index % 2 !== 0}">
-        <div class="row-handle">
-          <v-tooltip location="right">
-            <template #activator="{ props }">
-              <v-chip class="filename" closable v-bind="props" @click:close="onClickRemoveFileItem(i)">#{{ index + 1 }} - {{ translate(getAttachment(i, '_filename')) }} ({{ imageSize(getAttachment(i)) }})</v-chip>
-            </template>
-            <span>{{ getAttachment(i, '_filename') }}</span>
-          </v-tooltip>
-          <div v-if="isImage(getAttachment(i))" class="image-wrapper">
-            <v-img cover :src="getImageSrc(getAttachment(i))" />
+      <template #item="{i}">
+        <v-card elevation="0" class="preview-attachment" :class="{odd: index % 2 !== 0}">
+          <div class="row-handle">
+            <v-tooltip location="right">
+              <template #activator="{ props }">
+                <v-chip class="filename" closable v-bind="props" @click:close="onClickRemoveFileItem(i)">#{{ index + 1 }} - {{ $filters.translate(getAttachment(i, '_filename')) }} ({{ imageSize(getAttachment(i)) }})</v-chip>
+              </template>
+              <span>{{ getAttachment(i, '_filename') }}</span>
+            </v-tooltip>
+            <div v-if="isImage(getAttachment(i))" class="image-wrapper">
+              <v-img cover :src="getImageSrc(getAttachment(i))" />
+            </div>
+            <v-btn v-else-if="getAttachment(i, 'url')" size="small" rounded elevation="0" @click="viewFile(getAttachment(i))">{{ $filters.translate('TL_VIEW') }}</v-btn>
           </div>
-          <v-btn v-else-if="getAttachment(i, 'url')" size="small" rounded elevation="0" @click="viewFile(getAttachment(i))">{{ translate('TL_VIEW') }}</v-btn>
-        </div>
-      </v-card>
+        </v-card>
+      </template>
     </draggable>
   </div>
 </template>
@@ -85,6 +87,9 @@ export default {
       _.set(this.schema.rootView.model, '_attachments', attachments)
       _.set(this.model, this.schema.model, this.items)
       this.$emit('input', this.model, this.schema.model)
+    },
+    getKey (elem) {
+      return `${elem._filename}-${Math.random()}`
     }
   }
 

@@ -17,6 +17,7 @@
   </div>
 </template>
 <script>
+import { getCurrentInstance } from 'vue'
 import _ from 'lodash'
 import FieldSelectorService from '@s/FieldSelectorService'
 import TranslateService from '@s/TranslateService'
@@ -26,7 +27,7 @@ export default {
   created () {
     _.each(this.schema.fields, (field) => {
       const fieldType = this.getFieldType(field)
-      if (!(fieldType in Vue.options.components)) {
+      if (!(fieldType in getCurrentInstance().appContext.components)) {
         console.error(`${fieldType} isn't defined as a custom field type, will not render it`)
       }
       field.focused = false

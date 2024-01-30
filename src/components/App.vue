@@ -33,13 +33,13 @@
                 @updateRecordList="updateRecordList"
               />
               <record-editor
-                v-if="selectedRecord && !multiselect" :key="selectedRecord._id" :record.sync="selectedRecord" :resource="selectedResource" :locale.sync="locale"
+                v-if="selectedRecord && !multiselect" :key="selectedRecord._id" v-model:record="selectedRecord" v-model:locale="locale" :resource="selectedResource"
                 :user-locale="TranslateService.locale" @updateRecordList="updateRecordList"
               />
             </template>
             <record-table
               v-if="selectedResource && selectedResource.view == 'table'"
-              :grouped-list="groupedList" :resource-group="selectedResourceGroup" :select-resource-callback="selectResource" :record-list="recordList" :resource="selectedResource" :record.sync="selectedRecord" :locale.sync="locale" :user-locale="TranslateService.locale"
+              v-model:record="selectedRecord" v-model:locale="locale" :grouped-list="groupedList" :resource-group="selectedResourceGroup" :select-resource-callback="selectResource" :record-list="recordList" :resource="selectedResource" :user-locale="TranslateService.locale"
               @unsetRecord="unsetSelectedRecord" @updateRecordList="updateRecordList"
             />
             <plugin-page v-if="selectedPlugin" :plugin="selectedPlugin" />

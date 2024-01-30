@@ -16,7 +16,7 @@
       </div>
     </div>
     <div v-if="error" class="bg-error">
-      {{ translate('TL_ERROR_RETRIEVE_SYSLOG') }}
+      {{ $filters.translate('TL_ERROR_RETRIEVE_SYSLOG') }}
     </div>
     <div ref="log-viewer" class="log-viewer-wrapper">
       <DynamicScroller

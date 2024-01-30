@@ -1,6 +1,6 @@
 <template>
   <div class="system-info">
-    <v-menu v-if="settingsData && settingsData.linksGroups && settingsData.linksGroups.length > 0" content-class="links-menu" offset-y :close-on-content-click="false" nudge-bottom="5px" transition="slide-y-transition">
+    <v-menu v-if="settingsData && settingsData.linksGroups && settingsData.linksGroups.length > 0" content-class="links-menu" location="bottom" :close-on-content-click="false" transition="slide-y-transition">
       <template #activator="{ props }">
         <v-btn icon v-bind="props">
           <v-icon>mdi-dots-vertical</v-icon>
@@ -15,7 +15,7 @@
       </div>
     </v-menu>
 
-    <v-menu content-class="system-info-menu" offset-y :close-on-content-click="false" nudge-bottom="5px" transition="slide-y-transition">
+    <v-menu content-class="system-info-menu" location="bottom" :close-on-content-click="false" transition="slide-y-transition">
       <template #activator="{ props }">
         <v-btn icon v-bind="props">
           <v-icon>mdi-cog-outline</v-icon>

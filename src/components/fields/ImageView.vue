@@ -9,13 +9,13 @@
       >
         <v-file-input
           ref="input" :rules="getRules()" hide-details="auto" prepend-icon=""
-          :placeholder="translate(getPlaceholder())" :clearable="false"
+          :placeholder="$filters.translate(getPlaceholder())" :clearable="false"
           density="compact" variant="filled" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="true"
           @change="onUploadChanged"
         >
           <template #selection="{index}">
             <div v-if="index === 0" class="v-file-input__text v-file-input__text--placeholder">
-              {{ translate(getPlaceholder()) }}
+              {{ $filters.translate(getPlaceholder()) }}
             </div>
           </template>
         </v-file-input>
@@ -27,13 +27,13 @@
       >
         <v-file-input
           ref="input" :rules="getRules()" hide-details="auto" prepend-icon=""
-          :placeholder="translate(getPlaceholder())" :clearable="false"
+          :placeholder="$filters.translate(getPlaceholder())" :clearable="false"
           density="compact" variant="filled" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
           @change="onUploadChanged"
         >
           <template #selection="{index}">
             <div v-if="index === 0" class="v-file-input__text v-file-input__text--placeholder">
-              {{ translate(getPlaceholder()) }}
+              {{ $filters.translate(getPlaceholder()) }}
             </div>
           </template>
         </v-file-input>
@@ -41,21 +41,23 @@
     </form>
     <div v-if="isForMultipleImages()" class="preview-multiple">
       <draggable
-        v-if="schema" :key="`${schema.model}`" :list="getAttachments()"
+        v-if="schema" :key="`${schema.model}`" :list="getAttachments()" :item-key="getKey"
         draggable=".preview-attachment" handle=".row-handle" ghost-class="ghost"
         v-bind="dragOptions" :class="{disabled}" @end="onEndDrag" @start="onStartDrag"
       >
-        <v-card v-for="(a, i) in getAttachments()" :key="`${a._filename}-${i}`" elevation="0" class="preview-attachment">
-          <div class="row-handle">
-            <v-img cover :src="getImageSrc(a)" />
-          </div>
-          <v-tooltip location="right">
-            <template #activator="{ props }">
-              <v-chip class="filename" variant="outlined" closable close-icon="mdi-close-circle-outline" :disabled="disabled || schema.disabled" v-bind="props" @click:close="removeImage(a)">#{{ i + 1 }} - {{ truncate(a._filename,10) }} ({{ imageSize(a) }})</v-chip>
-            </template>
-            <span>{{ a._filename }}</span>
-          </v-tooltip>
-        </v-card>
+        <template #item="{a}">
+          <v-card elevation="0" class="preview-attachment">
+            <div class="row-handle">
+              <v-img cover :src="getImageSrc(a)" />
+            </div>
+            <v-tooltip location="right">
+              <template #activator="{ props }">
+                <v-chip class="filename" variant="outlined" closable close-icon="mdi-close-circle-outline" :disabled="disabled || schema.disabled" v-bind="props" @click:close="removeImage(a)">#{{ i + 1 }} - {{ truncate(a._filename,10) }} ({{ imageSize(a) }})</v-chip>
+              </template>
+              <span>{{ a._filename }}</span>
+            </v-tooltip>
+          </v-card>
+        </template>
       </draggable>
     </div>
     <template v-else-if="attachment() && isImage()">
@@ -86,21 +88,21 @@
       <template v-if="isForMultipleImages()">
         <div class="help-block">
           <v-icon size="small">mdi-information</v-icon>
-          <span v-if="getMaxCount() !== -1 ">{{ translate('TL_MAX_NUMBER_OF_IMAGES', { num: getMaxCount() }) }}</span>
-          <span v-else>{{ translate('TL_UNLIMITED_NUMBER_OF_IMAGES') }}</span>
+          <span v-if="getMaxCount() !== -1 ">{{ $filters.translate('TL_MAX_NUMBER_OF_IMAGES', { num: getMaxCount() }) }}</span>
+          <span v-else>{{ $filters.translate('TL_UNLIMITED_NUMBER_OF_IMAGES') }}</span>
         </div>
       </template>
       <div v-if="(schema.width && schema.height)" class="help-block">
         <v-icon size="small">mdi-information</v-icon>
-        <span>{{ translate('TL_THIS_FIELD_REQUIRES_THE_FOLLOWING_SIZE') }}:{{ schema.width }}x{{ schema.height }}</span>
+        <span>{{ $filters.translate('TL_THIS_FIELD_REQUIRES_THE_FOLLOWING_SIZE') }}:{{ schema.width }}x{{ schema.height }}</span>
       </div>
       <div v-if="(schema.limit)" class="help-block">
         <v-icon size="small">mdi-information</v-icon>
-        <span>{{ translate('TL_THIS_FIELD_REQUIRES_A_FILE_SIZE') }}: {{ getFileSizeLimit(schema.limit) }}</span>
+        <span>{{ $filters.translate('TL_THIS_FIELD_REQUIRES_A_FILE_SIZE') }}: {{ getFileSizeLimit(schema.limit) }}</span>
       </div>
       <div v-if="(schema.accept)" class="help-block">
         <v-icon size="small">mdi-information</v-icon>
-        <span>{{ translate('TL_THIS_FIELD_REQUIRES') }}: {{ schema.accept }}</span>
+        <span>{{ $filters.translate('TL_THIS_FIELD_REQUIRES') }}: {{ schema.accept }}</span>
       </div>
     </template>
   </div>
@@ -176,6 +178,9 @@ export default {
     imageUrl () {
       const attachment = this.attachment()
       return attachment && (attachment.url || attachment.data)
+    },
+    getKey (elem) {
+      return `${elem._filename}-${Math.random()}`
     }
   }
 }

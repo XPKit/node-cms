@@ -3,7 +3,7 @@
     <omnibar :select-resource-callback="selectResourceCallback" :grouped-list="groupedList" :selected-item="selectedItem" />
     <div class="resource-list">
       <div v-for="(resourceGroup, index) in groupedList" :key="`resource-group-${index}`" class="resource">
-        <v-menu auto open-on-hover offset-y :close-on-content-click="false" content-class="resources-menu">
+        <v-menu open-on-hover location="bottom" :close-on-content-click="false" content-class="resources-menu">
           <template #activator="{ props }">
             <div class="menu-btn-wrapper" v-bind="props">
               <v-btn :variant="groupSelected(resourceGroup) ? 'text' : 'outlined'" rounded size="small" :class="{selected: groupSelected(resourceGroup)}">

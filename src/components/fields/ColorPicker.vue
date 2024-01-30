@@ -10,7 +10,6 @@
       :hide-canvas="options.hideCanvas"
       :hide-sliders="options.hideSliders"
       :hide-inputs="options.hideInputs"
-      :hide-mode-switch="options.hideModeSwitch"
       :model="options.outputModel"
       :class="{disabled: disabled}"
     />
@@ -28,7 +27,7 @@ export default {
     return {
       acceptedModes: ['hexa', 'rgba', 'hsla', 'hex', 'rgb'],
       color: '',
-      options: { outputModel: 'hexa', hideInputs: false, hideCanvas: false, hideSliders: false, hideModeSwitch: false }
+      options: { outputModel: 'hexa', hideInputs: false, hideCanvas: false, hideSliders: false }
     }
   },
   watch: {

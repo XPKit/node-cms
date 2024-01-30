@@ -8,7 +8,7 @@
       max-height="100%"
       row-key-field-name="_id"
     />
-    <div v-show="tableData.length === 0" class="empty-data">{{ translate('TL_NO_DATA_FOUND') }}</div>
+    <div v-show="tableData.length === 0" class="empty-data">{{ $filters.translate('TL_NO_DATA_FOUND') }}</div>
   </div>
 </template>
 

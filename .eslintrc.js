@@ -31,6 +31,7 @@ module.exports = {
     'vue/require-v-for-key': 'off',
     'vue/no-v-html': 'off',
     'vue/require-prop-types': 'off',
+    'vue/no-v-model-argument': 'off',
     'vue/require-default-prop': 'off',
     'no-return-assign': 'off',
     'vue/max-attributes-per-line': [

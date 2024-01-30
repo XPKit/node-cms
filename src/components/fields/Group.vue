@@ -6,9 +6,9 @@
     <div class="group-content">
       <custom-form
         ref="input"
+        v-model:model="model"
         :schema="schema.groupOptions"
         :paragraph-level="paragraphLevel + 1"
-        :model.sync="model"
         @error="onError"
         @input="onModelUpdated"
       />

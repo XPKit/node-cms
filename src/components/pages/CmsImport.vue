@@ -38,7 +38,7 @@
           <template v-if="!uploadedXlsx">Click or drag & drop to import an .xlsx file</template><template v-else>{{ uploadedXlsx.name }}</template>
           <v-file-input
             ref="xlsxFile" accept=".xlsx, .xls, .csv"
-            :rules="getRules()" class="hidden-field" flat density="compact" hide-details type="file" @change="onChangeXlsxFile"
+            :rules="getRules()" class="hidden-field" flat density="compact" hide-details @change="onChangeXlsxFile"
           />
         </v-card>
         <div class="other-actions margin-top">

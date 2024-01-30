@@ -1,7 +1,7 @@
 <template>
   <div v-if="maxCount != 1" class="record-list">
     <div class="record-list-top-bar">
-      <v-menu v-if="selectedResourceGroup && groupedList" v-model="menuOpened" auto content-class="resources-menu sidebar" offset-y :close-on-content-click="true">
+      <v-menu v-if="selectedResourceGroup && groupedList" v-model="menuOpened" content-class="resources-menu sidebar" location="bottom" :close-on-content-click="true">
         <template #activator="{ props }">
           <div class="resource-selector" :class="{opened: menuOpened}" v-bind="props">
             <div class="resource-title">{{ getResourceTitle(resource) }}</div>

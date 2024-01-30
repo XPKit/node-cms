@@ -11,9 +11,9 @@
       <v-form :id="randomId" ref="vfg" v-model="formValid" class="record-editor-form" lazy-validation>
         <custom-form
           v-if="isReady"
-          :schema="schema"
-          :form-id="randomId" :form-options="formOptions"
-          model.sync="editingRecord"
+          v-model:model="editingRecord"
+          :schema="schema" :form-id="randomId"
+          :form-options="formOptions"
           :paragraph-level="1"
           @error="onError" @input="onModelUpdated"
         />

@@ -1,6 +1,6 @@
 <template>
   <div class="record-table-wrapper">
-    <v-menu v-if="selectedResourceGroup && groupedList" v-model="menuOpened" auto content-class="resources-menu full-width" offset-y :close-on-content-click="true">
+    <v-menu v-if="selectedResourceGroup && groupedList" v-model="menuOpened" content-class="resources-menu full-width" location="bottom" :close-on-content-click="true">
       <template #activator="{ props }">
         <div class="resource-selector" v-bind="props" :class="{opened: menuOpened}">
           <div class="resource-title">{{ getResourceTitle(resource) }}</div>
@@ -27,15 +27,15 @@
           />
         </div>
         <div class="buttons">
-          <v-btn v-if="selectedRecords.length > 0" elevation="0" rounded class="delete-selected-records" @click="removeRecords">{{ translate('TL_DELETE_SELECTED_RECORDS') }}</v-btn>
-          <v-btn v-if="maxCount <= 0 || listCount < maxCount" elevation="0" rounded class="new" @click="createRecord">{{ translate('TL_ADD_NEW_RECORD') }}</v-btn>
+          <v-btn v-if="selectedRecords.length > 0" elevation="0" rounded class="delete-selected-records" @click="removeRecords">{{ $filters.translate('TL_DELETE_SELECTED_RECORDS') }}</v-btn>
+          <v-btn v-if="maxCount <= 0 || listCount < maxCount" elevation="0" rounded class="new" @click="createRecord">{{ $filters.translate('TL_ADD_NEW_RECORD') }}</v-btn>
         </div>
       </div>
       <template v-if="!record">
         <vue-table-generator
-          v-if="isReady" :options="options"
-          :selected-records.sync="selectedRecords"
-          :resource="resource" :schema="schema" :items="filteredList" :locale.sync="localLocale"
+          v-if="isReady" v-model:selected-records="selectedRecords"
+          v-model:locale="localLocale"
+          :options="options" :resource="resource" :schema="schema" :items="filteredList"
           @remove="removeRecord" @edit="editRecord"
         />
       <!-- <paginate
@@ -47,15 +47,15 @@
         :next-text="'Next'"
         :container-class="'pager'"
       /> -->
-      <!-- <button class="update" @click="updateRecords">{{ translate("TL_UPDATE") }}</button> -->
+      <!-- <button class="update" @click="updateRecords">{{ $filters.translate("TL_UPDATE") }}</button> -->
       </template>
       <!-- editing -->
       <record-editor
         v-if="record"
         :key="record._id"
-        :record.sync="localRecord"
+        v-model:record="localRecord"
+        v-model:locale="localLocale"
         :resource="resource"
-        :locale.sync="localLocale"
         :user-locale="TranslateService.locale"
         @updateRecordList="updateRecordList"
         @back="back"

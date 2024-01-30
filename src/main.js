@@ -4,8 +4,8 @@ import { createApp, h } from 'vue'
 import * as Vue from 'vue'
 
 import { createRouter, createWebHashHistory } from 'vue-router'
-// import 'vue-easytable/libs/theme-default/index.css'
-// import VueEasytable from 'vue-easytable'
+import 'vue3-easy-data-table/dist/style.css'
+import Vue3EasyDataTable from 'vue3-easy-data-table'
 import VueShortkey from 'vue3-shortkey'
 import VueTimeago from 'vue-timeago3'
 import { JsonTreeView } from 'json-tree-view-vue3'
@@ -19,6 +19,7 @@ import App from '@c/App.vue'
 import LoginApp from '@c/LoginApp.vue'
 import MultiselectPage from '@c/MultiselectPage.vue'
 import CustomForm from '@c/CustomForm.vue'
+import TopBarLocaleList from '@c/TopBarLocaleList.vue'
 
 // Pages
 import PluginPage from '@c/pages/PluginPage.vue'
@@ -83,35 +84,36 @@ app.use(router)
 
 // // Vue.config.devtools = false
   .component('CustomForm', CustomForm)
-//   .component('AttachmentView', AttachmentView)
-//   .component('ImageView', ImageView)
-//   .component('CustomInput', CustomInput)
-//   .component('CustomTextarea', CustomTextarea)
-//   .component('CustomCheckbox', CustomCheckbox)
-//   .component('ParagraphAttachmentView', ParagraphAttachmentView)
-//   .component('ParagraphView', ParagraphView)
-//   .component('CustomTreeView', CustomTreeView)
-//   .component('CustomCode', CustomCode)
-//   .component('ColorPicker', ColorPicker)
-//   .component('JsonEditor', JsonEditor)
-//   .component('WysiwygField', WysiwygField)
-//   .component('CustomDatetimePicker', CustomDatetimePicker)
-//   .component('Group', Group)
-//   .component('CustomInputTag', CustomInputTag)
-//   .component('CustomMultiSelect', CustomMultiSelect)
+  .component('AttachmentView', AttachmentView)
+  .component('ImageView', ImageView)
+  .component('CustomInput', CustomInput)
+  .component('CustomTextarea', CustomTextarea)
+  .component('CustomCheckbox', CustomCheckbox)
+  .component('ParagraphAttachmentView', ParagraphAttachmentView)
+  .component('ParagraphView', ParagraphView)
+  .component('CustomTreeView', CustomTreeView)
+  .component('CustomCode', CustomCode)
+  .component('ColorPicker', ColorPicker)
+  .component('JsonEditor', JsonEditor)
+  .component('WysiwygField', WysiwygField)
+  .component('CustomDatetimePicker', CustomDatetimePicker)
+  .component('Group', Group)
+  .component('TopBarLocaleList', TopBarLocaleList)
+  .component('CustomInputTag', CustomInputTag)
+  .component('CustomMultiSelect', CustomMultiSelect)
   .component('PluginPage', PluginPage)
   .component('MultiselectPage', MultiselectPage)
   .component('Syslog', Syslog)
   .component('CmsImport', CmsImport)
   .component('SyncResource', SyncResource)
-//   .component('Draggable', draggable)
-//   .component('TableImageView', TableImageView)
-//   .component('TableCustomCheckbox', TableCustomCheckbox)
-//   .component('TableRowActions', TableRowActions)
+  .component('Draggable', draggable)
+  .component('TableImageView', TableImageView)
+  .component('TableCustomCheckbox', TableCustomCheckbox)
+  .component('TableRowActions', TableRowActions)
+  .component('EasyDataTable', Vue3EasyDataTable)
+  .component('JsonTreeView', JsonTreeView)
 
   .use(Loading)
-//   // .use(VueEasytable)
-//   // .use(JsonTreeView)
   .use(VueVirtualScroller)
   .use(VueShortkey)
   .use(VueTimeago, {

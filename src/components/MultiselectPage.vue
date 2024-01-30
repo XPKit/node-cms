@@ -1,9 +1,9 @@
 <template>
   <v-card elevation="0" class="multiselect-page">
     <div class="top-bar">
-      <h3>{{ translate('TL_NUMBER_OF_SELECTED_RECORDS', { num: size(multiselectItems) }) }}</h3>
+      <h3>{{ $filters.translate('TL_NUMBER_OF_SELECTED_RECORDS', { num: size(multiselectItems) }) }}</h3>
       <div class="buttons">
-        <v-btn elevation="0" class="delete" rounded :disabled="isEmpty(multiselectItems)" @click="onClickDelete">{{ translate('TL_DELETE') }}</v-btn>
+        <v-btn elevation="0" class="delete" rounded :disabled="isEmpty(multiselectItems)" @click="onClickDelete">{{ $filters.translate('TL_DELETE') }}</v-btn>
       </div>
     </div>
     <div class="scroll-wrapper" :class="{'scrolled-to-bottom': scrolledToBottom}" @scroll="onScroll">
@@ -13,7 +13,7 @@
             <v-avatar start>
               <v-icon size="small" @click="deselectItem(item)">mdi-close-circle-outline</v-icon>
             </v-avatar>
-            {{ translate(getName(item),15) }} ({{ item._id }})
+            {{ $filters.translate(getName(item),15) }} ({{ item._id }})
           </v-chip>
         </div>
       </div>

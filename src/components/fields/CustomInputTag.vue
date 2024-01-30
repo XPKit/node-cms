@@ -2,7 +2,7 @@
   <v-combobox
     ref="input"
     v-model="tags"
-    clearable hide-details closable-chips small-chips density="compact" variant="filled" rounded
+    clearable hide-details closable-chips size="small" density="compact" variant="filled" rounded
     validate-on-submit :rules="[validateField]"
     :hide-selected="!options['allowDuplicates']" :readonly="options['readOnly']" :placeholder="options['tagPlaceholder']" :multiple="options['multiple']"
     @update:model-value="onChangeData"

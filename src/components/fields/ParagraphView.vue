@@ -8,50 +8,55 @@
       v-bind="dragOptions"
       handle=".handle"
       :group="`${schema.model}-${key}`"
+      :item-key="getKey"
       ghost-class="ghost"
       :class="{disabled}"
       @end="onEndDrag"
       @start="dragging = true"
     >
-      <v-card v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" elevation="0" :class="`item nested-level-${paragraphLevel}`">
-        <v-card-title class="handle paragraph-header">
-          <div class="paragraph-title">{{ item.label }}</div>
+      <template #item="{item}">
+        <v-card elevation="0" :class="`item nested-level-${paragraphLevel}`">
+          <v-card-title class="handle paragraph-header">
+            <div class="paragraph-title">{{ item.label }}</div>
+            <div class="add-btn-wrapper">
+              <v-btn class="remove-item" :disabled="disabled || schema.disabled" variant="text" icon rounded size="small" @click="onClickRemoveItem(item)"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
+            </div>
+          </v-card-title>
+          <div class="item-main-wrapper">
+            <div class="item-main">
+              <custom-form
+                :schema="getSchema(item)"
+                :model="item"
+                :paragraph-index="idx"
+                :paragraph-level="paragraphLevel + 1"
+                @error="onError"
+                @input="onModelUpdated"
+              />
+            </div>
+          </div>
+        </v-card>
+      </template>
+      <template #footer>
+        <div class="paragraph-footer">
+          <v-select
+            ref="input"
+            transition="none"
+            :model-value="selectedType" :menu-props="{ bottom: true, offsetY: true }" :items="types" item-title="label" item-value="label"
+            hide-details variant="filled" rounded density="compact" persistent-placeholder
+            :disabled="disabled || schema.disabled"
+            append-icon="mdi-chevron-down"
+            @update:model-value="onChangeType"
+          >
+            <template #prepend>
+              <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ schema.label }}
+            </template>
+            <template #label />
+          </v-select>
           <div class="add-btn-wrapper">
-            <v-btn class="remove-item" :disabled="disabled || schema.disabled" variant="text" icon rounded size="small" @click="onClickRemoveItem(item)"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
-          </div>
-        </v-card-title>
-        <div class="item-main-wrapper">
-          <div class="item-main">
-            <custom-form
-              :schema="getSchema(item)"
-              :model="item"
-              :paragraph-index="idx"
-              :paragraph-level="paragraphLevel + 1"
-              @error="onError"
-              @input="onModelUpdated"
-            />
+            <v-btn elevation="0" class="add-new-item" rounded :disabled="disabled || schema.disabled" @click="onClickAddNewItem"><span>{{ $filters.translate('TL_ADD') }}</span></v-btn>
           </div>
         </div>
-      </v-card>
-      <div slot="footer" class="paragraph-footer">
-        <v-select
-          ref="input"
-          transition="none"
-          :model-value="selectedType" :menu-props="{ bottom: true, offsetY: true }" :items="types" item-title="label" item-value="label"
-          hide-details variant="filled" rounded density="compact" persistent-placeholder
-          :disabled="disabled || schema.disabled"
-          append-icon="mdi-chevron-down"
-          @update:model-value="onChangeType"
-        >
-          <template #prepend>
-            <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ schema.label }}
-          </template>
-          <template #label />
-        </v-select>
-        <div class="add-btn-wrapper">
-          <v-btn elevation="0" class="add-new-item" rounded :disabled="disabled || schema.disabled" @click="onClickAddNewItem"><span>{{ translate('TL_ADD') }}</span></v-btn>
-        </div>
-      </div>
+      </template>
     </draggable>
   </div>
 </template>
@@ -147,6 +152,9 @@ export default {
       _.each(this.$refs.vfg, vfg => {
         vfg.clearValidationErrors()
       })
+    },
+    getKey (item) {
+      return `paragraph-item-${Math.random()}`
     },
     getSchema (item) {
       let schemaItems = []

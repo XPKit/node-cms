@@ -16,19 +16,15 @@
             </div>
             <div class="month-setter">
               <span type="button" class="nav-l" @click="leftMonth"><v-icon>mdi-chevron-left</v-icon></span>
-              <span class="month">{{ translate('TL_'+month.toUpperCase()) }}</span>
+              <span class="month">{{ $filters.translate('TL_'+month.toUpperCase()) }}</span>
               <span type="button" class="nav-r" @click="rightMonth" @mousedown.stop.prevent=""><v-icon>mdi-chevron-right</v-icon></span>
             </div>
           </div>
           <div class="headers">
-            <template v-for="(d, index) in days" :key="index">
-              <span class="days">{{ translate('TL_' + d.toUpperCase()) }}</span>
-            </template>
+            <span v-for="(d, index) in days" :key="index" class="days">{{ $filters.translate('TL_' + d.toUpperCase()) }}</span>
           </div>
           <div>
-            <template v-for="(port, index) in ports" :key="index">
-              <span class="port" :class="{activePort: index === activePort}" @click="setDay(index, port)">{{ port }}</span>
-            </template>
+            <span v-for="(port, index) in ports" :key="index" class="port" :class="{activePort: index === activePort}" @click="setDay(index, port)">{{ port }}</span>
           </div>
         </div>
         <div class="time-picker" :class="{noDisplay: hideTime}">
@@ -36,9 +32,7 @@
             <div id="j-hour" @click="showHourSelector">{{ padZero(hour) }}</div>
             <div ref="hourScrollerWrapper" class="scroll-hider" :class="{showSelector: hourSelectorVisible}">
               <ul ref="hourScroller">
-                <template v-for="(h, index) in hours" :key="index">
-                  <li :class="{active: index == hourIndex}" @click="setHour(index, true)">{{ h }}</li>
-                </template>
+                <li v-for="(h, index) in hours" :key="index" :class="{active: index == hourIndex}" @click="setHour(index, true)">{{ h }}</li>
               </ul>
             </div>
           </div>
@@ -49,9 +43,7 @@
             <div id="j-minute" @click="showMinuteSelector">{{ padZero(minute) }}</div>
             <div ref="minuteScrollerWrapper" class="scroll-hider" :class="{showSelector: minuteSelectorVisible}">
               <ul ref="minuteScroller">
-                <template v-for="(m, index) in minutes" :key="index">
-                  <li :class="{active: index == minuteIndex}" @click="setMinute(index, true)">{{ m }}</li>
-                </template>
+                <li v-for="(m, index) in minutes" :key="index" :class="{active: index == minuteIndex}" @click="setMinute(index, true)">{{ m }}</li>
               </ul>
             </div>
           </div>
@@ -59,11 +51,11 @@
             <span>:</span>
           </div>
           <div class="minute-selector">
-            <div @click="changePeriod">{{ translate('TL_'+period.toUpperCase()) }}</div>
+            <div @click="changePeriod">{{ $filters.translate('TL_'+period.toUpperCase()) }}</div>
           </div>
         </div>
-        <span type="button" class="okButton" @click="setDate(true)">{{ translate('TL_OK') }}</span>
-        <span type="button" class="okButton" @click="clearDate()">{{ translate('TL_CLEAR') }}</span>
+        <span type="button" class="okButton" @click="setDate(true)">{{ $filters.translate('TL_OK') }}</span>
+        <span type="button" class="okButton" @click="clearDate()">{{ $filters.translate('TL_CLEAR') }}</span>
       </div>
     </div>
   </div>

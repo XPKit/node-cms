@@ -13,7 +13,7 @@
       :multiple="selectOptions.multiple"
       :ripple="false"
       :clearable="selectOptions.clearable"
-      :small-chips="selectOptions.multiple"
+      :size="selectOptions.multiple ? 'small' : 'default'"
       variant="filled" density="compact" rounded hide-details append-icon="mdi-chevron-down"
       @update:model-value="updateSelected"
       @search-change="onSearchChange"
@@ -21,7 +21,7 @@
     >
       <template #prepend>
         <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ getLabel() }}
-        <v-btn v-if="schema.listBox" size="small" rounded elevation="0" @click="onChangeSelectAll">{{ translate(allOptionsSelected() ? 'TL_DESELECT_ALL' : 'TL_SELECT_ALL') }}</v-btn>
+        <v-btn v-if="schema.listBox" size="small" rounded elevation="0" @click="onChangeSelectAll">{{ $filters.translate(allOptionsSelected() ? 'TL_DESELECT_ALL' : 'TL_SELECT_ALL') }}</v-btn>
       </template>
       <template #label />
       <template #item="{item, attrs}">

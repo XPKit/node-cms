@@ -4,8 +4,8 @@
     <div ref="input" class="switch" :class="{active: getValue()}" @click="onChange">
       <div class="drag" />
       <div class="labels">
-        <span class="label inactive">{{ translate('TL_NO') }}</span>
-        <span class="label active">{{ translate('TL_YES') }}</span>
+        <span class="label inactive">{{ $filters.translate('TL_NO') }}</span>
+        <span class="label active">{{ $filters.translate('TL_YES') }}</span>
       </div>
     </div>
   </div>
