@@ -21,7 +21,7 @@
     >
       <template #prepend>
         <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ getLabel() }}
-        <v-btn v-if="schema.listBox" size="small" rounded elevation="0" @click="onChangeSelectAll">{{ (allOptionsSelected() ? 'TL_DESELECT_ALL' : 'TL_SELECT_ALL') | translate }}</v-btn>
+        <v-btn v-if="schema.listBox" size="small" rounded elevation="0" @click="onChangeSelectAll">{{ translate(allOptionsSelected() ? 'TL_DESELECT_ALL' : 'TL_SELECT_ALL') }}</v-btn>
       </template>
       <template #label />
       <template #item="{item, attrs}">

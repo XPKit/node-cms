@@ -10,7 +10,7 @@
         :extensions="extensions"
         :toolbar-attributes="{ color: getColorForToolbar(), density="compact": true, outlined: true, elevation: 1 }"
         :disabled="schema.disabled"
-        :placeholder="'TL_WYSIWYG_PLACEHOLDER' | translate"
+        :placeholder="translate('TL_WYSIWYG_PLACEHOLDER')"
         @init="onInit"
         @blur="onInit"
         @focus="onInit"

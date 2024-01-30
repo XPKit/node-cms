@@ -7,7 +7,7 @@
       </button>
       <button class="item clear" @click="onClickClear"><v-icon>mdi-trash-can-outline</v-icon></button>
       <button class="item refresh" @click="onClickRefresh"><v-icon>mdi-refresh</v-icon></button>
-      <input v-model="searchKey" :class="{'is-sift': searchKey && searchKey.search('sift:') === 0}" class="item search" :placeholder="'TL_SEARCH' | translate" @input="onInputSearch">
+      <input v-model="searchKey" :class="{'is-sift': searchKey && searchKey.search('sift:') === 0}" class="item search" :placeholder="translate('TL_SEARCH')" @input="onInputSearch">
       <button v-if="searchKey && searchKey.length > 0" class="item clear-search" @click="onClickClearSearch"><v-icon>mdi-close</v-icon></button>
       <div v-if="filterOutLines > 0" class="item filter-out"><v-icon>mdi-target</v-icon>{{ filterOutLines }} lines are filter out</div>
       <div class="item logs-raised-flags">
@@ -16,7 +16,7 @@
       </div>
     </div>
     <div v-if="error" class="bg-error">
-      {{ 'TL_ERROR_RETRIEVE_SYSLOG'| translate }}
+      {{ translate('TL_ERROR_RETRIEVE_SYSLOG') }}
     </div>
     <div ref="log-viewer" class="log-viewer-wrapper">
       <DynamicScroller

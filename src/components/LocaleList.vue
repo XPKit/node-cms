@@ -1,7 +1,7 @@
 <template>
   <div v-if="localeList && localeList.length > 1" class="locale-list">
     <div v-for="(locale, index) in localeList" :key="index" class="locale" :class="{active: TranslateService.locale == locale }" @click="select(locale)">
-      {{ 'TL_' + locale.toUpperCase() | translate }}
+      {{ translate('TL_' + locale.toUpperCase()) }}
     </div>
   </div>
 </template>

@@ -6,13 +6,13 @@
     >
       <v-file-input
         ref="input" :rules="getRules()" prepend-icon=""
-        :accept="model.input === 'image'? 'image/*': '*'" :clearable="false" :placeholder="getPlaceholder() | translate"
+        :accept="model.input === 'image'? 'image/*': '*'" :clearable="false" :placeholder="translate(getPlaceholder())"
         density="compact" variant="filled" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :disabled="isForMultipleImages() && isFieldDisabled()"
         @change="onUploadChanged"
       >
         <template #selection="{index}">
           <div v-if="index === 0" class="v-file-input__text v-file-input__text--placeholder">
-            {{ getPlaceholder() | translate }}
+            {{ translate(getPlaceholder()) }}
           </div>
         </template>
       </v-file-input>
@@ -26,14 +26,14 @@
         <div class="row-handle">
           <v-tooltip location="right">
             <template #activator="{ props }">
-              <v-chip class="filename" closable v-bind="props" @click:close="onClickRemoveFileItem(i)">#{{ index + 1 }} - {{ getAttachment(i, '_filename') | truncate(10) }} ({{ imageSize(getAttachment(i)) }})</v-chip>
+              <v-chip class="filename" closable v-bind="props" @click:close="onClickRemoveFileItem(i)">#{{ index + 1 }} - {{ translate(getAttachment(i, '_filename')) }} ({{ imageSize(getAttachment(i)) }})</v-chip>
             </template>
             <span>{{ getAttachment(i, '_filename') }}</span>
           </v-tooltip>
           <div v-if="isImage(getAttachment(i))" class="image-wrapper">
             <v-img cover :src="getImageSrc(getAttachment(i))" />
           </div>
-          <v-btn v-else-if="getAttachment(i, 'url')" size="small" rounded elevation="0" @click="viewFile(getAttachment(i))">{{ 'TL_VIEW' | translate }}</v-btn>
+          <v-btn v-else-if="getAttachment(i, 'url')" size="small" rounded elevation="0" @click="viewFile(getAttachment(i))">{{ translate('TL_VIEW') }}</v-btn>
         </div>
       </v-card>
     </draggable>

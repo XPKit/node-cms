@@ -49,7 +49,7 @@
           <template #label />
         </v-select>
         <div class="add-btn-wrapper">
-          <v-btn elevation="0" class="add-new-item" rounded :disabled="disabled || schema.disabled" @click="onClickAddNewItem"><span>{{ 'TL_ADD' | translate }}</span></v-btn>
+          <v-btn elevation="0" class="add-new-item" rounded :disabled="disabled || schema.disabled" @click="onClickAddNewItem"><span>{{ translate('TL_ADD') }}</span></v-btn>
         </div>
       </div>
     </draggable>

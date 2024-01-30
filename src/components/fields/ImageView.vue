@@ -9,13 +9,13 @@
       >
         <v-file-input
           ref="input" :rules="getRules()" hide-details="auto" prepend-icon=""
-          :placeholder="getPlaceholder() | translate" :clearable="false"
+          :placeholder="translate(getPlaceholder())" :clearable="false"
           density="compact" variant="filled" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="true"
           @change="onUploadChanged"
         >
           <template #selection="{index}">
             <div v-if="index === 0" class="v-file-input__text v-file-input__text--placeholder">
-              {{ getPlaceholder() | translate }}
+              {{ translate(getPlaceholder()) }}
             </div>
           </template>
         </v-file-input>
@@ -27,13 +27,13 @@
       >
         <v-file-input
           ref="input" :rules="getRules()" hide-details="auto" prepend-icon=""
-          :placeholder="getPlaceholder() | translate" :clearable="false"
+          :placeholder="translate(getPlaceholder())" :clearable="false"
           density="compact" variant="filled" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
           @change="onUploadChanged"
         >
           <template #selection="{index}">
             <div v-if="index === 0" class="v-file-input__text v-file-input__text--placeholder">
-              {{ getPlaceholder() | translate }}
+              {{ translate(getPlaceholder()) }}
             </div>
           </template>
         </v-file-input>
@@ -51,7 +51,7 @@
           </div>
           <v-tooltip location="right">
             <template #activator="{ props }">
-              <v-chip class="filename" variant="outlined" closable close-icon="mdi-close-circle-outline" :disabled="disabled || schema.disabled" v-bind="props" @click:close="removeImage(a)">#{{ i + 1 }} - {{ a._filename | truncate(10) }} ({{ imageSize(a) }})</v-chip>
+              <v-chip class="filename" variant="outlined" closable close-icon="mdi-close-circle-outline" :disabled="disabled || schema.disabled" v-bind="props" @click:close="removeImage(a)">#{{ i + 1 }} - {{ truncate(a._filename,10) }} ({{ imageSize(a) }})</v-chip>
             </template>
             <span>{{ a._filename }}</span>
           </v-tooltip>
@@ -62,7 +62,7 @@
       <div v-if="!(schema.width && schema.height)" class="preview-single-attachment">
         <v-tooltip location="right">
           <template #activator="{ props }">
-            <v-chip class="filename" closable v-bind="props" @click:close="removeImage(attachment())">{{ attachment()._filename | truncate(10) }} ({{ imageSize(attachment()) }})</v-chip>
+            <v-chip class="filename" closable v-bind="props" @click:close="removeImage(attachment())">{{ truncate(attachment()._filename) }} ({{ imageSize(attachment()) }})</v-chip>
           </template>
           <span>{{ attachment()._filename }}</span>
         </v-tooltip>
@@ -86,21 +86,21 @@
       <template v-if="isForMultipleImages()">
         <div class="help-block">
           <v-icon size="small">mdi-information</v-icon>
-          <span v-if="getMaxCount() !== -1 ">{{ 'TL_MAX_NUMBER_OF_IMAGES' | translate(null, { num: getMaxCount() }) }}</span>
-          <span v-else>{{ 'TL_UNLIMITED_NUMBER_OF_IMAGES' | translate }}</span>
+          <span v-if="getMaxCount() !== -1 ">{{ translate('TL_MAX_NUMBER_OF_IMAGES', { num: getMaxCount() }) }}</span>
+          <span v-else>{{ translate('TL_UNLIMITED_NUMBER_OF_IMAGES') }}</span>
         </div>
       </template>
       <div v-if="(schema.width && schema.height)" class="help-block">
         <v-icon size="small">mdi-information</v-icon>
-        <span>{{ 'TL_THIS_FIELD_REQUIRES_THE_FOLLOWING_SIZE'|translate }}:{{ schema.width }}x{{ schema.height }}</span>
+        <span>{{ translate('TL_THIS_FIELD_REQUIRES_THE_FOLLOWING_SIZE') }}:{{ schema.width }}x{{ schema.height }}</span>
       </div>
       <div v-if="(schema.limit)" class="help-block">
         <v-icon size="small">mdi-information</v-icon>
-        <span>{{ 'TL_THIS_FIELD_REQUIRES_A_FILE_SIZE'|translate }}: {{ getFileSizeLimit(schema.limit) }}</span>
+        <span>{{ translate('TL_THIS_FIELD_REQUIRES_A_FILE_SIZE') }}: {{ getFileSizeLimit(schema.limit) }}</span>
       </div>
       <div v-if="(schema.accept)" class="help-block">
         <v-icon size="small">mdi-information</v-icon>
-        <span>{{ 'TL_THIS_FIELD_REQUIRES'|translate }}: {{ schema.accept }}</span>
+        <span>{{ translate('TL_THIS_FIELD_REQUIRES') }}: {{ schema.accept }}</span>
       </div>
     </template>
   </div>

@@ -21,14 +21,14 @@
         <top-bar-locale-list :locales="resource.locales" :locale="locale" :select-locale="selectLocale" :back="back" />
         <div v-shortkey="getShortcuts()" class="search" @shortkey="interactiveSearch">
           <v-text-field
-            ref="search" v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat variant="filled" rounded hide-details density="compact" :placeholder="'TL_SEARCH' | translate"
+            ref="search" v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat variant="filled" rounded hide-details density="compact" :placeholder="translate('TL_SEARCH')"
             type="text"
             name="search"
           />
         </div>
         <div class="buttons">
-          <v-btn v-if="selectedRecords.length > 0" elevation="0" rounded class="delete-selected-records" @click="removeRecords">{{ 'TL_DELETE_SELECTED_RECORDS' | translate }}</v-btn>
-          <v-btn v-if="maxCount <= 0 || listCount < maxCount" elevation="0" rounded class="new" @click="createRecord">{{ 'TL_ADD_NEW_RECORD' | translate }}</v-btn>
+          <v-btn v-if="selectedRecords.length > 0" elevation="0" rounded class="delete-selected-records" @click="removeRecords">{{ translate('TL_DELETE_SELECTED_RECORDS') }}</v-btn>
+          <v-btn v-if="maxCount <= 0 || listCount < maxCount" elevation="0" rounded class="new" @click="createRecord">{{ translate('TL_ADD_NEW_RECORD') }}</v-btn>
         </div>
       </div>
       <template v-if="!record">
@@ -47,7 +47,7 @@
         :next-text="'Next'"
         :container-class="'pager'"
       /> -->
-      <!-- <button class="update" @click="updateRecords">{{ "TL_UPDATE" | translate }}</button> -->
+      <!-- <button class="update" @click="updateRecords">{{ translate("TL_UPDATE") }}</button> -->
       </template>
       <!-- editing -->
       <record-editor

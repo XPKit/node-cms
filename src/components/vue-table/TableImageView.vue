@@ -1,6 +1,6 @@
 <template>
   <img v-if="getSrc()" class="vue-table-generator-field image" :src="getSrc()">
-  <span v-else>{{ 'TL_NO_IMAGE' | translate }}</span>
+  <span v-else>{{ translate('TL_NO_IMAGE') }}</span>
 </template>
 
 <script>

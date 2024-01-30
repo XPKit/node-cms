@@ -16,13 +16,13 @@
             </div>
             <div class="month-setter">
               <span type="button" class="nav-l" @click="leftMonth"><v-icon>mdi-chevron-left</v-icon></span>
-              <span class="month">{{ 'TL_'+month.toUpperCase()|translate }}</span>
+              <span class="month">{{ translate('TL_'+month.toUpperCase()) }}</span>
               <span type="button" class="nav-r" @click="rightMonth" @mousedown.stop.prevent=""><v-icon>mdi-chevron-right</v-icon></span>
             </div>
           </div>
           <div class="headers">
             <template v-for="(d, index) in days" :key="index">
-              <span class="days">{{ 'TL_' + d.toUpperCase() | translate }}</span>
+              <span class="days">{{ translate('TL_' + d.toUpperCase()) }}</span>
             </template>
           </div>
           <div>
@@ -59,11 +59,11 @@
             <span>:</span>
           </div>
           <div class="minute-selector">
-            <div @click="changePeriod">{{ 'TL_'+period.toUpperCase() | translate }}</div>
+            <div @click="changePeriod">{{ translate('TL_'+period.toUpperCase()) }}</div>
           </div>
         </div>
-        <span type="button" class="okButton" @click="setDate(true)">{{ 'TL_OK'|translate }}</span>
-        <span type="button" class="okButton" @click="clearDate()">{{ 'TL_CLEAR'|translate }}</span>
+        <span type="button" class="okButton" @click="setDate(true)">{{ translate('TL_OK') }}</span>
+        <span type="button" class="okButton" @click="clearDate()">{{ translate('TL_CLEAR') }}</span>
       </div>
     </div>
   </div>
