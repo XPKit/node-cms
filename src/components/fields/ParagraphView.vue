@@ -201,24 +201,22 @@ export default {
         this.$emit('input', this.items, this.schema.model)
       }
     },
+    findIds (obj) {
+      const ids = []
+      _.each(obj, (value, key) => {
+        if (key === 'id') {
+          return ids.push(value)
+        }
+        if (_.isPlainObject(value) || _.isArray(value)) {
+          ids.push(...this.findIds(value))
+        }
+      })
+      return ids
+    },
     onClickRemoveItem (item) {
       let attachments = _.get(this.model, '_attachments', [])
       if (_.includes(['image', 'file', 'group'], item.input)) {
-        const findIds = obj => {
-          const ids = []
-          _.each(obj, (value, key) => {
-            if (key === 'id') {
-              return ids.push(value)
-            }
-            if (_.isPlainObject(value) || _.isArray(value)) {
-              ids.push(...findIds(value))
-            }
-          })
-          return ids
-        }
-        const ids = findIds(item)
-        console.warn('IDS = ', ids)
-        _.each(ids, fileItemId => {
+        _.each(this.findIds(item), fileItemId => {
           attachments = _.reject(attachments, {_fields: {fileItemId}})
         })
       }

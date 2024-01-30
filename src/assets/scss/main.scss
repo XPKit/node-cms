@@ -5,7 +5,6 @@
 @import "./components/RecordTable";
 @import "./components/ImageView";
 @import "./components/ImageViewCropper";
-@import "./components/DatetimePicker";
 @import "./components/Loading";
 @import "./components/JsonEditor";
 @import "./components/PluginPage.scss";
@@ -533,6 +532,48 @@ body {
         opacity: 1;
         transition: all 0.3s;
       }
+    }
+    .json-editor {
+      div,tr {
+        &[data-schematype=object] {
+          background-color: $imag-black;
+        }
+      }
+      button {
+        color: white;
+      }
+      .json-editor-input-label, .je-header, .je-object__controls {
+        color: $imag-white;
+      }
+      input[type=text],
+        input[type=email],
+        input[type=number],
+        input[type=url],
+        input[type=password],
+        select,
+        textarea {
+          color: white;
+          background-color: $imag-field-background;
+          border: 1px solid $imag-grey;
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+      }
+      select option {
+        background-color: black;
+      }
+    }
+    .v-snack.notification {
+      .v-snack__wrapper {
+        .v-btn {
+          background-color: $imag-black;
+          color: $imag-white;
+        }
+      }
+    }
+    .datetime-picker input[type='text'] {
+      border: 1px solid white;
+      border-radius: 4px;
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+      color: white;
     }
     &.v-file-input {
       .v-file-input__text--placeholder {

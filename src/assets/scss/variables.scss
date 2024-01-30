@@ -387,13 +387,27 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
     --sidebar-records-list-item-background-disabled: #{$imag-grey};
     --sidebar-toggle-view-mode-background: #{$imag-grey};
 
-    --btn-action-color: #{$imag-black};
+    --btn-action-color: #{$imag-white};
     --btn-icon-color: #{$imag-white};
     --field-label-color: #{$imag-white};
 
     --wysiwyg-toolbar-background: #{$imag-black};
     --wysiwyg-editor-background: #{$imag-field-background};
     --wysiwyg-toolbar-border: #{$imag-black};
+
+    --table-header-background: #{$imag-black};
+    --table-header-color: #{$imag-white};
+    --table-row-odd-background: #{$imag-black};
+    --table-row-odd-color: #{$imag-white};
+    --table-row-even-background: #{$imag-grey};
+    --table-row-even-color: #{$imag-black};
+    --table-row-icon-color: #{$imag-black};
+
+    --notification-background: #{$imag-grey};
+    --notification-success-color: #{$imag-white};
+    --notification-error-color: #{$imag-orange};
+
+    --switch-field-drag-background: #{$imag-grey};
 
   }
 }
