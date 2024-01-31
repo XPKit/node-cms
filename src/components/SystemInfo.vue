@@ -24,11 +24,7 @@
       <div class="system-info-wrapper">
         <div class="node-cms-title flex">
           <span>{{ $filters.translate('TL_SYSTEM') }}</span>
-          <div class="theme-switch" @click="onChangeTheme()">
-            <v-icon :class="{selected: !getTheme()}">mdi-weather-sunny</v-icon>
-            <v-icon :class="{selected: getTheme()}">mdi-weather-night</v-icon>
-            <!-- <v-switch :input-value="getTheme()" inset compact density="compact" hide-details solo @change="onChangeTheme" /> -->
-          </div>
+          <theme-switch />
         </div>
         <div class="stats cpu">
           <div class="node-cms-title"><small><b>CPU Usage</b></small></div>
@@ -69,9 +65,12 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import TranslateService from '@s/TranslateService'
 import WebsocketService from '@s/WebsocketService'
 import LoginService from '@s/LoginService'
+import ThemeSwitch from '@c/ThemeSwitch'
+
 Dayjs.extend(relativeTime)
 
 export default {
+  components: {ThemeSwitch},
   props: {
     config: {
       type: [Object, Boolean],
@@ -128,13 +127,6 @@ export default {
       const urlA = new URL(window.location)
       const urlB = new URL(url)
       return urlA.host === urlB.host
-    },
-    getTheme () {
-      return _.get(LoginService, 'user.theme', 'light') === 'dark'
-    },
-    async onChangeTheme () {
-      const value = _.get(LoginService, 'user.theme', 'light') === 'light' ? 'dark' : 'light'
-      this.$vuetify.theme.dark = await LoginService.changeTheme(value) === 'dark'
     },
     async logout () {
       await LoginService.logout()
@@ -212,7 +204,7 @@ export default {
   min-width: 400px;
   display: flex;
   flex-direction: column;
-  @include blurred-background;
+  @include blurred-background($dark-theme);
   .node-cms-title {
     @include h6;
   }
@@ -237,28 +229,6 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
-    }
-  }
-  .theme-switch {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 4px;
-    border: 2px solid $imag-pale-grey;
-    border-radius: 100px;
-    .v-icon {
-      // padding: 6px;
-      color: black;
-      background-color: transparent;
-      transition: all 0.3s;
-      border-radius: 50%;
-      padding: 2px;
-      &.selected {
-        color: white;
-        background-color: $imag-purple;
-      }
     }
   }
   small {

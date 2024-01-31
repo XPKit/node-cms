@@ -1,16 +1,17 @@
 <template>
   <v-app>
     <v-theme-provider :theme="$vuetify && $vuetify.theme && !$vuetify.theme.isDark ? 'light' : 'dark'">
-      <v-scroll-y-transition>
-        <v-snackbar v-if="notification.type" v-model="notification" multi-line location="centered" class="notification elevation-10" :timeout="notification.type === 'error' ? -1 : 1000" :class="getNotificationClass()">
-          <p>{{ notification.message }}</p>
-          <template #action="{ props }">
-            <v-btn rounded icon v-bind="props" @click="notification = {}">
-              <v-icon>mdi-close-circle-outline</v-icon>
-            </v-btn>
-          </template>
-        </v-snackbar>
-      </v-scroll-y-transition>
+      <v-snackbar
+        v-model="showSnackBar" transition="scroll-y-reverse-transition" multi-line
+        location="centered" class="notification elevation-10" :timeout="notification.type === 'error' ? -1 : 1000" :class="getNotificationClass()" @update:modelValue="resetNotification()"
+      >
+        <p>{{ notification.message }}</p>
+        <template #actions>
+          <v-btn rounded icon @click="notification = {}">
+            <v-icon>mdi-close-circle-outline</v-icon>
+          </v-btn>
+        </template>
+      </v-snackbar>
       <div v-if="user" class="cms-layout">
         <div class="cms-inner-layout" :class="getThemeClass()">
           <nav-bar
@@ -102,6 +103,7 @@ export default {
       localeList: [],
       recordList: [],
       notification: {},
+      showSnackBar: false,
       toolbarTitle: false,
       selectedResourceGroup: null,
       selectedRecord: null,
@@ -261,11 +263,19 @@ export default {
     })
   },
   methods: {
+    resetNotification () {
+      this.showSnackBar = false
+      setTimeout(() => {
+        this.notification = {}
+        this.$forceUpdate()
+      }, 1000)
+    },
     setToolbarTitle () {
       this.toolbarTitle = _.get(ConfigService.config, `toolbarTitle.${TranslateService.locale}`, _.get(ConfigService.config, 'toolbarTitle', false))
     },
     onGetNotification (data) {
       this.notification = data
+      this.showSnackBar = true
       // console.warn('received notification !', data)
     },
     getNotificationClass () {
@@ -273,7 +283,7 @@ export default {
     },
     getThemeClass () {
       const classes = {}
-      _.set(classes, `theme--${_.get(this.user, 'theme', 'light')}`, true)
+      _.set(classes, `v-theme--${_.get(this.user, 'theme', 'light')}`, true)
       return classes
     },
     async selectResourceGroup (resourceGroup) {

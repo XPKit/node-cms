@@ -308,7 +308,8 @@ let typeMapper = {
 _.each(typeMapper, (type) => {
   type.density = 'compact'
   type.rounded = true
-  type.filled = true
+  type.flat = true
+  _.set(type, 'solo-filled', true)
 })
 
 class FormService {

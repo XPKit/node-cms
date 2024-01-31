@@ -15,7 +15,7 @@
       @start="dragging = true"
     >
       <template #item="{item}">
-        <v-card elevation="0" :class="`item nested-level-${paragraphLevel}`">
+        <v-card v-if="paragraphLevel" elevation="0" :class="`item nested-level-${paragraphLevel}`">
           <v-card-title class="handle paragraph-header">
             <div class="paragraph-title">{{ item.label }}</div>
             <div class="add-btn-wrapper">
@@ -42,7 +42,7 @@
             ref="input"
             transition="none"
             :model-value="selectedType" :menu-props="{ bottom: true, offsetY: true }" :items="types" item-title="label" item-value="label"
-            hide-details variant="filled" rounded density="compact" persistent-placeholder
+            hide-details variant="solo-filled" flat rounded density="compact" persistent-placeholder
             :disabled="disabled || schema.disabled"
             append-icon="mdi-chevron-down"
             @update:model-value="onChangeType"

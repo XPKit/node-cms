@@ -9,7 +9,7 @@
         <v-file-input
           ref="input" :rules="getRules()" prepend-icon=""
           :placeholder="$filters.translate(getPlaceholder())" :clearable="false" hide-details="auto"
-          density="compact" variant="filled" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
+          density="compact" variant="solo" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
           @change="onUploadChanged"
         >
           <template #selection="{index}">

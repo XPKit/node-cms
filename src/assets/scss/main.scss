@@ -5,7 +5,6 @@
 @import "./components/RecordTable";
 @import "./components/ImageView";
 @import "./components/ImageViewCropper";
-@import "./components/DatetimePicker";
 @import "./components/Loading";
 @import "./components/JsonEditor";
 @import "./components/PluginPage.scss";
@@ -43,79 +42,105 @@ ul, li {
   .v-btn {
     letter-spacing: 0px;
   }
-  .resources-menu {
-    max-height: 40vh !important;
-    .v-list {
-      border-radius: 0px 0px 8px 8px !important;
-      @include blurred-background;
-      transform: translate3d(0, 0, 0);
-      display: flex;
-      padding-left: 24px;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 16px;
-      gap: 0;
-      .v-list-item {
-        display: inline-block;
-        @include cta-text;
-        font-weight: normal;
-        font-style: normal;
-        background-color: $navbar-resource-group-background;
-        border-radius: 50px;
-        min-height: 18px;
-        height: 18px;
-        padding: 4px 16px;
-        .v-list-item__title {
-          @include cta-text;
-          font-style: normal;
-          color: $navbar-resource-title-color;
-          line-height: 18px;
-        }
-        .v-list-item__content {
-          padding: 0;
-        }
-        &:before {
-          border-radius: 50px;
-          opacity: 1;
-          background-color: $imag-blue !important;
-          opacity: 0;
-          z-index: -1;
-        }
-        &:hover {
-          .v-list-item__title {
-            color: $navbar-resource-title-color-selected;
-          }
-          &::before {
-            opacity: 1;
-          }
-        }
-        &.v-list-item--highlighted {
-          font-weight: bold !important;
-          background-color: $navbar-resource-group-background-selected;
-          font-size: vw(14px) !important;
-          .v-list-item__title {
-            color: $navbar-resource-title-color-selected;
-          }
-          &:before {
-            opacity: 0;
-          }
-        }
-        &.selected {
-          background-color: $navbar-resource-group-background-selected;
-          .v-list-item__title {
-            color: $navbar-resource-title-color-selected;
-          }
-        }
-      }
+  .v-input--is-disabled {
+    .v-input__prepend-outer {
+      color: $imag-black;
     }
-    &.sidebar, &.full-width {
+  }
+  .v-messages__message {
+    color: $imag-orange !important;
+    @include error;
+  }
+}
+.v-overlay-container {
+  >.v-menu {
+    >.v-overlay__content.resources-menu {
+      max-height: 40vh !important;
       .v-list {
-        align-items: stretch;
+        // TODO: hugo - fix css
+        border-radius: 0px 0px 8px 8px !important;
+        @include blurred-background($dark-theme);
+        transform: translate3d(0, 0, 0);
+        display: flex;
+        padding-left: 24px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        gap: 0;
+
+        .v-list-item {
+          display: inline-block;
+          @include cta-text;
+          font-weight: normal;
+          font-style: normal;
+          background-color: $navbar-resource-group-background;
+          border-radius: 50px;
+          min-height: 18px;
+          height: 18px;
+          padding: 4px 16px;
+
+          .v-list-item__title {
+            @include cta-text;
+            font-style: normal;
+            color: $navbar-resource-title-color;
+            line-height: 18px;
+          }
+
+          .v-list-item__content {
+            padding: 0;
+          }
+
+          &:before {
+            border-radius: 50px;
+            opacity: 1;
+            background-color: $imag-blue !important;
+            opacity: 0;
+            z-index: -1;
+          }
+
+          &:hover {
+            .v-list-item__title {
+              color: $navbar-resource-title-color-selected;
+            }
+
+            &::before {
+              opacity: 1;
+            }
+          }
+
+          &.v-list-item--highlighted {
+            font-weight: bold !important;
+            background-color: $navbar-resource-group-background-selected;
+            font-size: vw(14px) !important;
+
+            .v-list-item__title {
+              color: $navbar-resource-title-color-selected;
+            }
+
+            &:before {
+              opacity: 0;
+            }
+          }
+
+          &.selected {
+            background-color: $navbar-resource-group-background-selected;
+
+            .v-list-item__title {
+              color: $navbar-resource-title-color-selected;
+            }
+          }
+        }
       }
-    }
-    &.sidebar {
-      left: 0 !important;
-      min-width: 364px !important;
+      &.sidebar,
+      &.full-width {
+        .v-list {
+          align-items: stretch;
+        }
+      }
+      &.sidebar {
+        left: 0 !important;
+        min-width: 364px !important;
+      }
     }
   }
 
@@ -126,7 +151,7 @@ ul, li {
     }
     .v-list {
       border-radius: 0px 0px 8px 8px !important;
-      @include blurred-background;
+      @include blurred-background($dark-theme);
       transform: translate3d(0, 0, 0);
       display: flex;
       padding-left: 24px;
@@ -189,16 +214,6 @@ ul, li {
       }
     }
   }
-
-  .v-input--is-disabled {
-    .v-input__prepend-outer {
-      color: $imag-black;
-    }
-  }
-  .v-messages__message {
-    color: $imag-orange !important;
-    @include error;
-  }
 }
 
 
@@ -241,7 +256,7 @@ body {
     }
     .v-file-input__text {
       justify-content: center;
-      cursor: pointer;
+    cursor: pointer;
       @include h6;
       font-style: normal;
       color: $imag-black !important;
@@ -384,7 +399,7 @@ body {
         font-size: 18px;
       }
       .v-icon {
-        color: $search-icon-color;
+        color: $search-icon-color !important;
       }
       input {
         height: 18px !important;
@@ -467,7 +482,7 @@ body {
       @include h6;
     }
     .v-snack__wrapper {
-      @include blurred-background;
+      @include blurred-background($dark-theme);
       margin-top: $navbar-height;
       padding: 0;
       .v-btn {
@@ -499,11 +514,87 @@ body {
       max-height: 100%;
     }
   }
-  .theme--dark {
-    background: #4e4e4e;
+  .v-theme--dark {
+    // background: #4e4e4e;
     color: rgba(255, 255, 255, 0.87);
     .node-cms-title {
       color: white;
+    }
+    .v-text-field {
+      caret-color: white !important;
+    }
+    .v-input {
+      .v-input__prepend-outer {
+        color: $imag-white;
+      }
+      &.v-input--is-disabled {
+        .v-input__prepend-outer {
+          color: $imag-grey;
+        }
+      }
+
+    }
+    .record-editor-form, .selected-records-list, #omnibar .scroll-wrapper {
+      &:after {
+        content: '';
+        pointer-events: none;
+        user-select: none;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 120px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, black 100%);
+        opacity: 1;
+        transition: all 0.3s;
+      }
+    }
+    .json-editor {
+      div,tr {
+        &[data-schematype=object] {
+          background-color: $imag-black;
+        }
+      }
+      button {
+        color: white;
+      }
+      .json-editor-input-label, .je-header, .je-object__controls {
+        color: $imag-white;
+      }
+      input[type=text],
+        input[type=email],
+        input[type=number],
+        input[type=url],
+        input[type=password],
+        select,
+        textarea {
+          color: white;
+          background-color: $imag-field-background;
+          border: 1px solid $imag-grey;
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+      }
+      select option {
+        background-color: black;
+      }
+    }
+    .v-snack.notification {
+      .v-snack__wrapper {
+        .v-btn {
+          background-color: $imag-black;
+          color: $imag-white;
+        }
+      }
+    }
+    .datetime-picker input[type='text'] {
+      border: 1px solid white;
+      border-radius: 4px;
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+      color: white;
+    }
+    &.v-file-input {
+      .v-file-input__text--placeholder {
+        color: rgba(255, 255, 255, 0.7) !important;
+      }
     }
     &.v-tabs> {
       .v-tabs-bar {

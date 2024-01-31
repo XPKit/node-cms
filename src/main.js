@@ -1,4 +1,3 @@
-import '@a/scss/main.scss'
 import _ from 'lodash'
 import { createApp, h } from 'vue'
 import * as Vue from 'vue'
@@ -14,6 +13,8 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import axios from 'axios'
 import draggable from 'vuedraggable'
 import vuetify from './vuetify.js'
+import '@a/scss/main.scss'
+
 // Global components
 import App from '@c/App.vue'
 import LoginApp from '@c/LoginApp.vue'

@@ -11,6 +11,10 @@ $imag-orange: #FF5C39;
 $imag-yellow: #E1E000;
 $imag-green: #8DE971;
 
+$imag-field-background: rgba(255, 255, 255, 0.08);
+
+$dark-theme: var(--dark-theme);
+
 $layout-background: var(--layout-background);
 $layout-card-background: var(--layout-card-background);
 $layout-color: var(--layout-color);
@@ -31,6 +35,8 @@ $system-info-background: var(--system-info-background);
 $system-info-color: var(--system-info-color);
 $system-info-progress-bar: var(--system-info-progress-bar);
 $system-info-progress-bar-background: var(--system-info-progress-bar-background);
+$system-info-theme-icon-color: var(--system-info-theme-icon-color);
+$system-info-theme-icon-selected-color: var(--system-info-theme-icon-selected-color);
 
 $sidebar-resource-selector-height: var(--sidebar-resource-selector-height);
 $sidebar-resource-selector-background: var(--sidebar-resource-selector-background);
@@ -44,6 +50,7 @@ $sidebar-records-list-delete-icon-selected-color: var(--sidebar-records-list-del
 $sidebar-records-list-item-background: var(--sidebar-records-list-item-background);
 $sidebar-records-list-item-background-selected: var(--sidebar-records-list-item-background-selected);
 $sidebar-records-list-item-background-disabled: var(--sidebar-records-list-item-background-disabled);
+$sidebar-toggle-view-mode-background: var(--sidebar-toggle-view-mode-background);
 
 $multiselect-delete-button-color: var(--multiselect-delete-button-color);
 $multiselect-delete-button-background: var(--multiselect-delete-button-background);
@@ -59,6 +66,7 @@ $cms-import-btn-background: var(--cms-import-btn-background);
 $cms-import-btn-color: var(--cms-import-btn-color);
 
 $search-icon-color: var(--search-icon-color);
+
 
 $locales-color: var(--locales-color);
 $locales-selected-color: var(--locales-selected-color);
@@ -107,6 +115,10 @@ $switch-field-active-color: var(--switch-field-active-color);
 $switch-field-border-color: var(--switch-field-border-color);
 $switch-field-active-drag-background: var(--switch-field-active-drag-background);
 $switch-field-drag-background: var(--switch-field-drag-background);
+
+$wysiwyg-toolbar-background: var(--wysiwyg-toolbar-background);
+$wysiwyg-editor-background: var(--wysiwyg-editor-background);
+$wysiwyg-toolbar-border: var(--wysiwyg-toolbar-border);
 
 @function vw($px-vw, $base-vw: 1440px) {
   @return ($px-vw * 100vw) / $base-vw;
@@ -174,21 +186,39 @@ $switch-field-drag-background: var(--switch-field-drag-background);
   @include italic-text;
 }
 
-@mixin blurred-background {
-  box-shadow: 0px 10px 30px 0px rgba(0, 0, 0, 0.25);
-  padding: vw(16px) vw(16px) vw(32px) vw(24px);
-  background: rgba(255, 255, 255, 0.55);
-  &:before {
-    content: '';
-    z-index: -1;
-    background: rgba(255, 255, 255, 1);
-    inset: 10%;
-    filter: blur(40px);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+@mixin blurred-background($darkTheme: 0) {
+  @if $darkTheme == 0 {
+    box-shadow: 0px 10px 30px 0px rgba(0, 0, 0, 0.25);
+    padding: vw(16px) vw(16px) vw(32px) vw(24px);
+    background: rgba(255, 255, 255, 0.55);
+    &:before {
+      content: '';
+      z-index: -1;
+      background: rgba(255, 255, 255, 1);
+      inset: 10%;
+      filter: blur(40px);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  } @else {
+    box-shadow: 0px 10px 30px 0px rgba(255, 255, 255, 0.25);
+    padding: vw(16px) vw(16px) vw(32px) vw(24px);
+    background: rgba(0, 0, 0, 0.55);
+    &:before {
+      content: '';
+      z-index: -1;
+      background: rgba(0, 0, 0, 1);
+      inset: 10%;
+      filter: blur(40px);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 
@@ -215,6 +245,7 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
 }
 
 .v-application {
+  --dark-theme: 0;
   font-family: Source Sans Pro !important;
 
   --layout-background: #{$imag-light-grey};
@@ -225,13 +256,11 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
   --navbar-height: 58px;
   --navbar-background: #{$imag-black};
   --navbar-color: #{$imag-white};
-  --navbar-resource-title-color: #{$imag-white};
-  --navbar-resource-title-color-selected: #{$imag-black};
   --navbar-resource-group-background: transparent;
   --navbar-resource-group-background-selected: #{$imag-purple};
   --navbar-resource-group-title-color: #{$imag-white};
   --navbar-resource-group-title-color-selected: #{$imag-white};
-  --navbar-resource-title-color: #{$imag-black};
+  --navbar-resource-title-color: #{$imag-white};
   --navbar-resource-title-color-selected: #{$imag-white};
   --navbar-system-info-icon-color: #{$imag-white};
 
@@ -239,6 +268,8 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
   --system-info-color: #{$imag-black};
   --system-info-progress-bar: #{$imag-purple};
   --system-info-progress-bar-background: #{$imag-black};
+  --system-info-theme-icon-color: #{$system-info-theme-icon-color};
+  --system-info-theme-icon-selected-color: #{$system-info-theme-icon-selected-color};
 
   --sidebar-resource-selector-height: 56px;
   --sidebar-resource-selector-background: #{$imag-blue};
@@ -253,6 +284,7 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
   --sidebar-records-list-item-background: #{$imag-white};
   --sidebar-records-list-item-background-selected: #{$imag-purple};
   --sidebar-records-list-item-background-disabled: #{$imag-grey};
+  --sidebar-toggle-view-mode-background: #{$imag-white};
 
   --multiselect-delete-button-color: #{$imag-white};
   --multiselect-delete-button-background: #{$imag-orange};
@@ -306,15 +338,77 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
   --paragraph-top-bar-color-level-3: #{$imag-black};
   --paragraph-background-level-3: #{$imag-white};
 
-  --switch-field-background:  #{$imag-white};
-  --switch-field-active-background:  #{$imag-purple};
-  --switch-field-color:  #{$imag-black};
-  --switch-field-active-color:  #{$imag-white};
-  --switch-field-border-color:  #{$imag-light-grey};
-  --switch-field-active-drag-background:  #{$imag-white};
-  --switch-field-drag-background:  #{$imag-light-grey};
+  --switch-field-background: #{$imag-white};
+  --switch-field-active-background: #{$imag-purple};
+  --switch-field-color: #{$imag-black};
+  --switch-field-active-color: #{$imag-white};
+  --switch-field-border-color: #{$imag-light-grey};
+  --switch-field-active-drag-background: #{$imag-white};
+  --switch-field-drag-background: #{$imag-light-grey};
 
-  &.theme--dark {
+  --wysiwyg-toolbar-background: #{$imag-white};
+  --wysiwyg-editor-background: #{$imag-light-grey};
+  --wysiwyg-toolbar-border: #{$imag-light-grey};
+
+  &.v-theme--dark {
+    --dark-theme: 1;
+    --layout-background: #{$imag-black};
+    --layout-card-background: #{$imag-black};
+    --layout-color: #{$imag-black};
+
+    --record-editor-background: #{$imag-black};
+
+
+    --navbar-resource-group-background-selected: #{$imag-purple};
+    --navbar-resource-group-title-color: #{$imag-white};
+    --navbar-resource-group-title-color-selected: #{$imag-white};
+    --navbar-resource-title-color: #{$imag-white};
+    --navbar-resource-title-color-selected: #{$imag-white};
+    --navbar-system-info-icon-color: #{$imag-white};
+
+    --system-info-background: #{$imag-black};
+    --system-info-color: #{$imag-white};
+    --system-info-progress-bar: #{$imag-purple};
+    --system-info-progress-bar-background: #{$imag-white};
+    --system-info-theme-icon-color: #{$system-info-theme-icon-color};
+    --system-info-theme-icon-selected-color: #{$system-info-theme-icon-selected-color};
+
+    --sidebar-resource-selector-background: #{$imag-blue};
+    --sidebar-resource-selector-background-opened: #{$imag-purple};
+    --sidebar-resource-selector-color: #{$imag-white};
+    --search-icon-color: #{$imag-white};
+    --sidebar-records-list-background: #{$imag-black};
+    --sidebar-records-list-checkbox-background: #{$imag-white};
+    --sidebar-records-list-checkbox-color: #{$imag-purple};
+    --sidebar-records-list-delete-icon-color: #{$imag-white};
+    --sidebar-records-list-delete-icon-selected-color: #{$imag-white};
+    --sidebar-records-list-item-background: #{$imag-grey};
+    --sidebar-records-list-item-background-selected: #{$imag-purple};
+    --sidebar-records-list-item-background-disabled: #{$imag-grey};
+    --sidebar-toggle-view-mode-background: #{$imag-grey};
+
+    --btn-action-color: #{$imag-white};
+    --btn-icon-color: #{$imag-white};
+    --field-label-color: #{$imag-white};
+
+    --wysiwyg-toolbar-background: #{$imag-black};
+    --wysiwyg-editor-background: #{$imag-field-background};
+    --wysiwyg-toolbar-border: #{$imag-black};
+
+    --table-header-background: #{$imag-black};
+    --table-header-color: #{$imag-white};
+    --table-row-odd-background: #{$imag-black};
+    --table-row-odd-color: #{$imag-white};
+    --table-row-even-background: #{$imag-grey};
+    --table-row-even-color: #{$imag-black};
+    --table-row-icon-color: #{$imag-black};
+
+    --notification-background: #{$imag-grey};
+    --notification-success-color: #{$imag-white};
+    --notification-error-color: #{$imag-orange};
+
+    --switch-field-drag-background: #{$imag-grey};
+
   }
 }
 

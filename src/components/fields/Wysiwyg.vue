@@ -2,56 +2,32 @@
   <div ref="wysiwygWrapper" class="wysiwyg-wrapper">
     <div class="field-label">{{ schema.label }}</div>
     <div class="border-wrapper">
-      <!-- TODO: hugo - find replacement -->
-      <!-- <tiptap-vuetify
-        ref="input"
-        v-model="value"
-        :card-props="{ flat: true }"
-        :extensions="extensions"
-        :toolbar-attributes="{ color: getColorForToolbar(), density="compact": true, outlined: true, elevation: 1 }"
-        :disabled="schema.disabled"
-        :placeholder="translate('TL_WYSIWYG_PLACEHOLDER')"
-        @init="onInit"
-        @blur="onInit"
-        @focus="onInit"
-      /> -->
+      <v-card v-if="editor" class="editor" rounded elevation="0">
+        <tiptap-menu-bar class="editor__header" :editor="editor" />
+        <editor-content class="editor-content" :editor="editor" />
+      </v-card>
     </div>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
-// import { TiptapVuetify, Heading, Bold, Italic, Strike, Underline, Code, Paragraph, BulletList, OrderedList, ListItem, Link, Blockquote, HardBreak, HorizontalRule, History } from 'tiptap-vuetify'
+import { Editor, EditorContent } from '@tiptap/vue-3'
+import StarterKit from '@tiptap/starter-kit'
+import Superscript from '@tiptap/extension-superscript'
+import Link from '@tiptap/extension-link'
+import Underline from '@tiptap/extension-underline'
+import TiptapMenuBar from './TiptapMenuBar.vue'
 import AbstractField from '@m/AbstractField'
 
 export default {
-  // components: { TiptapVuetify },
+  components: { EditorContent, TiptapMenuBar },
   mixins: [AbstractField],
   data () {
     return {
       loaded: false,
-      key: null
-      // extensions: [
-      //   History,
-      //   Blockquote,
-      //   Link,
-      //   Underline,
-      //   Strike,
-      //   Italic,
-      //   ListItem,
-      //   BulletList,
-      //   OrderedList,
-      //   [Heading, {
-      //     options: {
-      //       levels: [1, 2, 3]
-      //     }
-      //   }],
-      //   Bold,
-      //   Code,
-      //   HorizontalRule,
-      //   Paragraph,
-      //   HardBreak
-      // ]
+      key: null,
+      editor: null
     }
   },
   watch: {
@@ -60,6 +36,21 @@ export default {
     }
   },
   mounted () {
+    this.editor = new Editor({
+      content: this.value,
+      extensions: [
+        StarterKit.configure({history: true, code: true, blockquote: true}),
+        Superscript,
+        Underline,
+        Link
+      ],
+      onUpdate: () => {
+        const val = this.editor.getHTML()
+        this.$emit('change', val)
+        this.value = val
+      }
+    })
+    this.loaded = true
     this.updateObj()
   },
   created () {
@@ -99,37 +90,49 @@ export default {
   .border-wrapper {
     padding: 0;
   }
-  // TODO: hugo - adapt style
-  // .tiptap-vuetify-editor {
-    // .tiptap-vuetify-editor__content {
-    //   background-color: $field-background;
-    //   padding: 0;
-    //   min-height: 100px;
-    //   p {
-    //     margin: 8px 0 !important;
-    //   margin-left: 16px !important;
-    //   }
-    // }
-    // .tiptap-vuetify-editor__paragraph--is-empty {
-    //   height: 100%;
-    // }
-    // .ProseMirror {
-    //   margin: 0 !important;
-    // }
-
-    // &.tiptap-vuetify-editor--disabled {
-    //   .tiptap-vuetify-editor__toolbar {
-    //     button, .v-icon {
-    //       color: $imag-black !important;
-    //     }
-    //   }
-    //   .tiptap-vuetify-editor__content--disabled {
-    //     background-color: $imag-grey;
-    //     &:after {
-    //       display: none;
-    //     }
-    //   }
-    // }
-  // }
+  .editor {
+    background-color: $wysiwyg-editor-background;
+    border-radius: 0 !important;
+  }
+  .editor__header {
+    flex-wrap: wrap;
+    background-color: $wysiwyg-toolbar-background;
+    border: 2px solid $wysiwyg-toolbar-border;
+  }
+  .editor-content {
+    padding: 16px;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    strong {
+      font-weight: 700;
+    }
+    a {
+      color: $imag-blue;
+    }
+    ul li {
+      list-style: disc;
+    }
+    ol li {
+      list-style: decimal;
+    }
+    blockquote {
+      padding-left: 1rem;
+      border-left: 3px solid rgba(#0D0D0D, 0.1);
+    }
+  }
+  .ProseMirror:focus {
+    outline: none;
+  }
+}
+.v-theme--dark {
+  .wysiwyg-wrapper {
+    .editor-content {
+      blockquote {
+        border-color: rgba(white, 0.1);
+      }
+    }
+  }
 }
 </style>

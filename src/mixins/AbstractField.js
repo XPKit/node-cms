@@ -1,4 +1,4 @@
-import { get as objGet, forEach, isFunction, isString, isArray, debounce, uniqueId, uniq as arrayUniq } from 'lodash'
+import { get as objGet, set as objSet, join, forEach, isFunction, isString, isArray, debounce, uniqueId, uniq as arrayUniq } from 'lodash'
 import validators from '@u/validators'
 import { slugifyFormID } from '@u/schema'
 
@@ -82,8 +82,20 @@ export default {
     }
   },
   methods: {
+    get (key) {
+      return objGet(this.schema, key, false)
+    },
     getOpt (opt, defaultVal) {
       return objGet(this.schema, `options.${opt}`, defaultVal)
+    },
+    getVariant () {
+      let variant = []
+      forEach(['underlined', 'outlined', 'filled', 'solo', 'solo-inverted', 'solo-filled', 'plain'], (key) => {
+        if (this.get(key)) {
+          variant.push(key)
+        }
+      })
+      return join(variant, ' ')
     },
     validate (calledParent) {
       this.clearValidationErrors()
@@ -194,12 +206,16 @@ export default {
             o = o[k]
           } else {
           // Create missing property (new level)
-            this.$root.$set(o, k, {})
+            // TODO: hugo - check if it works properly with nested props
+            objSet(this.model, k, {})
+            // this.$root.$set(o, k, {})
             o = o[k]
           }
         } else {
           // Set final property value
-          this.$root.$set(o, k, value)
+          // TODO: hugo - check if it works properly with nested props
+          objSet(this.model, k, value)
+          // this.$root.$set(o, k, value)
           return
         }
         ++i

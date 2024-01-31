@@ -10,7 +10,7 @@
         <v-file-input
           ref="input" :rules="getRules()" hide-details="auto" prepend-icon=""
           :placeholder="$filters.translate(getPlaceholder())" :clearable="false"
-          density="compact" variant="filled" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="true"
+          density="compact" variant="solo" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="true"
           @change="onUploadChanged"
         >
           <template #selection="{index}">
@@ -28,7 +28,7 @@
         <v-file-input
           ref="input" :rules="getRules()" hide-details="auto" prepend-icon=""
           :placeholder="$filters.translate(getPlaceholder())" :clearable="false"
-          density="compact" variant="filled" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
+          density="compact" variant="solo" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
           @change="onUploadChanged"
         >
           <template #selection="{index}">

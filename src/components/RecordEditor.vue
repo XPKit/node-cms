@@ -206,10 +206,10 @@ export default {
         this.$loading.stop('delete-record')
       }
     },
-    checkFormValid () {
+    async checkFormValid () {
       let formValid = false
       try {
-        formValid = this.$refs.vfg.validate()
+        formValid = _.get(await this.$refs.vfg.validate(), 'valid', false)
       } catch (error) {
         console.error('Not valid: ', error)
         formValid = false
@@ -245,8 +245,8 @@ export default {
           this.selectLocale(locale)
           this.formValid = false
           this.$forceUpdate()
-          this.$nextTick(() => {
-            this.checkFormValid()
+          this.$nextTick(async () => {
+            await this.checkFormValid()
           })
           console.warn('required field empty', field, this.formValid)
           return
@@ -260,7 +260,7 @@ export default {
       console.info('form not valid')
     },
     async createUpdateClicked () {
-      this.checkFormValid()
+      await this.checkFormValid()
       if (!this.formValid) {
         return this.handleFormNotValid()
       }
@@ -355,8 +355,6 @@ export default {
     },
     onModelUpdated (value, model) {
       this.updateFields(value, model)
-      // console.info('editingRecord =', this.editingRecord)
-      // this.$refs.vfg.validate()
       this.checkDirty()
     },
     isAttachmentField (model) {

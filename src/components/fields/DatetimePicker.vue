@@ -359,7 +359,8 @@ input{
 .datetime-picker{
   position: relative;
 }
-.calender-div{
+
+.calendar-div{
   width: 232px;
   box-shadow: 1px 2px 5px #ccc;
   position: absolute;
@@ -370,6 +371,8 @@ input{
   font-size: 14px;
   padding-bottom: 10px;
   user-select: none;
+  z-index: 100;
+  background-color: white;
   .v-icon {
     color: white;
   }

@@ -7,7 +7,7 @@
       <v-file-input
         ref="input" :rules="getRules()" prepend-icon=""
         :accept="model.input === 'image'? 'image/*': '*'" :clearable="false" :placeholder="translate(getPlaceholder())"
-        density="compact" variant="filled" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :disabled="isForMultipleImages() && isFieldDisabled()"
+        density="compact" variant="solo" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :disabled="isForMultipleImages() && isFieldDisabled()"
         @change="onUploadChanged"
       >
         <template #selection="{index}">

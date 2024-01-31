@@ -131,7 +131,7 @@
    }
   }
   .toggle-view-mode {
-   background-color: white;
+   background-color: $sidebar-toggle-view-mode-background;
    border-radius: 100px;
    display: flex;
    gap: 8px;

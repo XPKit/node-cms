@@ -7,7 +7,7 @@
     <v-card v-show="showOmnibar" elevation="24">
       <v-card-title class="search">
         <v-text-field
-          ref="search" v-model="search" class="search-bar" flat variant="filled" rounded hide-details prepend-inner-icon="mdi-magnify" density="compact" :placeholder="$filters.translate('TL_INSERT_KEYWORDS')"
+          ref="search" v-model="search" class="search-bar" flat variant="solo" rounded hide-details prepend-inner-icon="mdi-magnify" density="compact" :placeholder="$filters.translate('TL_INSERT_KEYWORDS')"
           type="text"
           autocomplete="off"
           name="search"

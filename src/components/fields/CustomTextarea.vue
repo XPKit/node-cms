@@ -8,8 +8,7 @@
       :model-value="value"
       :max-length="schema.max"
       :min-length="schema.min"
-      density="compact"
-      :compact="schema.compact ? true : false"
+      :density="get('density')"
       :disabled="schema.disabled ? true : false"
       :readonly="schema.readonly ? true : false"
       hide-details
@@ -40,15 +39,6 @@ export default {
     },
     getType () {
       return _.get(this.schema, 'inputFieldType', 'text')
-    },
-    getVariant () {
-      if (_.get(this.schema, 'filled', false)) {
-        return 'filled'
-      }
-      if (_.get(this.schema, 'outlined', false)) {
-        return 'outlined'
-      }
-      return ''
     }
   }
 }

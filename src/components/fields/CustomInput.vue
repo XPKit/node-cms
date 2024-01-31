@@ -4,7 +4,8 @@
     :class="[schema.labelClasses]" :type="getType()" :model-value="value"
     :max-length="schema.max" :min-length="schema.min" autocomplete="off"
     validate-on-submit :rules="[validateField]"
-    :variant="get('filled') && 'filled' ? 'filled' : 'outlined'" :rounded="get('rounded')" density="compact" :compact="get('compact')" :disabled="disabled" :readonly="get('readonly')"
+    :flat="get('flat')"
+    :variant="getVariant()" elevation="0" :rounded="get('rounded')" :density="get('density')" :disabled="disabled" :readonly="get('readonly')"
     persistent-placeholder hide-details
     @update:model-value="onChangeData"
   >
@@ -28,9 +29,6 @@ export default {
   methods: {
     onChangeData (data) {
       this.value = data
-    },
-    get (key) {
-      return _.get(this.schema, key, false)
     },
     getType () {
       return _.get(this.schema, 'inputFieldType', 'text')

@@ -3,18 +3,20 @@
     <v-autocomplete
       :id="selectOptions.id"
       ref="input"
-      :chips="selectOptions.chips"
-      :model-value="objectValue"
+      :chips="getSelectOpt('chips')"
+      :model-value="objectValue || value"
       :items="formattedOptions"
-      :closable-chips="selectOptions.deletableChips || selectOptions.multiple"
-      :hide-selected="selectOptions.hideSelected"
+      :closable-chips="getSelectOpt('deletableChips') || getSelectOpt('multiple')"
+      :hide-selected="getSelectOpt('hideSelected')"
       :disabled="disabled || schema.disabled"
       :placeholder="schema.placeholder"
-      :multiple="selectOptions.multiple"
+      :multiple="getSelectOpt('multiple')"
       :ripple="false"
-      :clearable="selectOptions.clearable"
-      :size="selectOptions.multiple ? 'small' : 'default'"
-      variant="filled" density="compact" rounded hide-details append-icon="mdi-chevron-down"
+      :flat="get('flat')"
+      item-title="text"
+      item-value="_id"
+      :clearable="getSelectOpt('clearable')"
+      :variant="getVariant()" :density="get('density')" rounded hide-details
       @update:model-value="updateSelected"
       @search-change="onSearchChange"
       @tag="addTag"
@@ -24,12 +26,17 @@
         <v-btn v-if="schema.listBox" size="small" rounded elevation="0" @click="onChangeSelectAll">{{ $filters.translate(allOptionsSelected() ? 'TL_DESELECT_ALL' : 'TL_SELECT_ALL') }}</v-btn>
       </template>
       <template #label />
-      <template #item="{item, attrs}">
-        <div v-if="selectOptions.multiple" class="checkbox">
-          <v-icon :class="{displayed: attrs.inputValue}" size="small">mdi-check-bold</v-icon>
-        </div>
-        <div class="label" :class="{selected: attrs.inputValue}">{{ item.text ? item.text : item }}</div>
+      <template #item="{item, props}">
+        <v-list-item v-bind="props" :title="item.title" :value="item.value">
+          <template #prepend>
+            <div v-if="getSelectOpt('multiple')" class="checkbox">
+              <v-icon :class="{displayed: props.inputValue}" size="small">mdi-check-bold</v-icon>
+            </div>
+          </template>
+          <!-- <div class="label" :class="{selected: props.inputValue}">{{ item.title }}</div> -->
+        </v-list-item>
       </template>
+      <template #append />
     </v-autocomplete>
   </div>
 </template>
@@ -84,13 +91,15 @@ export default {
         return this.options
       }
       if (!this.hasCustomLabel) {
-        // this will let the multiselect library use the default behavior if customLabel is not specified
         return 'text'
       }
       return this.schema.selectOptions.customLabel
     }
   },
   methods: {
+    getSelectOpt (key) {
+      return _.get(this.selectOptions, key, false)
+    },
     allOptionsSelected () {
       return _.get(this.formattedOptions, 'length', 0) === _.get(this.objectValue, 'length', 0)
     },

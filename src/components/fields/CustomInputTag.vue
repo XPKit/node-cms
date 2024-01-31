@@ -1,17 +1,19 @@
 <template>
-  <v-combobox
+  <v-text-field
     ref="input"
-    v-model="tags"
-    clearable hide-details closable-chips size="small" density="compact" variant="filled" rounded
+    :class="[schema.labelClasses]" :type="getType()" :model-value="value" :input-value="value"
+    :max-length="schema.max" :min-length="schema.min" autocomplete="off"
     validate-on-submit :rules="[validateField]"
-    :hide-selected="!options['allowDuplicates']" :readonly="options['readOnly']" :placeholder="options['tagPlaceholder']" :multiple="options['multiple']"
+    :flat="get('flat')"
+    :variant="getVariant()" :density="get('density')" :disabled="disabled" :readonly="get('readonly')"
+    persistent-placeholder hide-details
     @update:model-value="onChangeData"
   >
     <template #prepend>
       <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ schema.label }}
     </template>
     <template #label />
-  </v-combobox>
+  </v-text-field>
 </template>
 
 <script>
@@ -20,55 +22,25 @@ import AbstractField from '@m/AbstractField'
 
 export default {
   mixins: [AbstractField],
-  props: ['locale'],
   data () {
     return {
-      tags: [],
-      options: {
-        allowDuplicates: this.getOpt('allowDuplicates', true),
-        readOnly: this.getOpt('disabled', false),
-        placeholder: this.getOpt('placeholder', ''),
-        multiple: this.getOpt('multiple', false)
-      }
     }
-  },
-  watch: {
-    tags () {
-      _.set(this.model, this.schema.model, this.tags)
-    },
-    'schema.model': function () {
-      this.tags = _.get(this.model, this.schema.model)
-    }
-  },
-  created () {
-    this.options = _.extend(this.options, this.schema.selectOptions)
-  },
-  mounted () {
-    this.tags = _.get(this.model, this.schema.model)
   },
   methods: {
-    get (key) {
-      return _.get(this.schema, key, false)
+    onChangeData (data) {
+      this.value = data
+    },
+    getType () {
+      return _.get(this.schema, 'inputFieldType', 'text')
     },
     validateField (val) {
-      if (this.schema.required && (_.isNull(val) || _.isUndefined(val) || _.isEmpty(val))) {
-        return false
-      }
-      if ((this.schema.selectOptions.min && _.get(val, 'length', 0) < this.schema.selectOptions.min) ||
-      (this.schema.selectOptions.max && _.get(val, 'length', 0) > this.schema.selectOptions.max)) {
+      if (this.schema.required && (_.isNull(val) || _.isUndefined(val) || val === '')) {
         return false
       }
       if (this.schema.validator && _.isFunction(this.schema.validator)) {
         return !!this.schema.validator(val, this.schema.model, this.model)
       }
       return true
-    },
-    onChangeData (value) {
-      if (_.get(this.options, 'limit', -1) !== -1) {
-        this.value = _.take(value, this.options.limit)
-      } else {
-        this.value = value
-      }
     }
   }
 }
