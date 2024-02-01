@@ -30,8 +30,10 @@ import TranslateService from '@s/TranslateService'
 import FieldSelectorService from '@s/FieldSelectorService'
 import AbstractEditorView from './AbstractEditorView'
 import Notification from '@m/Notification'
+import TopBarLocaleList from '@c/TopBarLocaleList.vue'
 
 export default {
+  components: {TopBarLocaleList},
   mixins: [AbstractEditorView, Notification],
   props: {
     resource: {

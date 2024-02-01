@@ -1,4 +1,3 @@
-
 $imag-black: #000;
 $imag-white: #FFF;
 $imag-pale-grey: #B8BABC;
@@ -13,12 +12,16 @@ $imag-green: #8DE971;
 
 $imag-field-background: rgba(255, 255, 255, 0.08);
 
-$dark-theme: var(--dark-theme);
-
 $layout-background: var(--layout-background);
 $layout-card-background: var(--layout-card-background);
 $layout-color: var(--layout-color);
 $layout-width: var(--layout-width);
+
+$test2: rgba(0, 0, 0, 0.55);
+
+$blurred-background-box-shadow-color: var(--blurred-background-box-shadow-color);
+$blurred-background-background-color: var(--blurred-background-background-color);
+$blurred-background-before-background-color: var(--blurred-background-before-background-color);
 
 $navbar-height: var(--navbar-height);
 $navbar-background: var(--navbar-background);
@@ -28,6 +31,7 @@ $navbar-resource-group-background-selected: var(--navbar-resource-group-backgrou
 $navbar-resource-group-title-color: var(--navbar-resource-group-title-color);
 $navbar-resource-group-title-color-selected: var(--navbar-resource-group-title-color-selected);
 $navbar-resource-title-color: var(--navbar-resource-title-color);
+$navbar-resource-title-color-hover: var(--navbar-resource-title-color-hover);
 $navbar-resource-title-color-selected: var(--navbar-resource-title-color-selected);
 $navbar-system-info-icon-color: var(--navbar-system-info-icon-color);
 
@@ -120,138 +124,27 @@ $wysiwyg-toolbar-background: var(--wysiwyg-toolbar-background);
 $wysiwyg-editor-background: var(--wysiwyg-editor-background);
 $wysiwyg-toolbar-border: var(--wysiwyg-toolbar-border);
 
-@function vw($px-vw, $base-vw: 1440px) {
-  @return ($px-vw * 100vw) / $base-vw;
-}
+$levelBackgrounds: $paragraph-top-bar-background $paragraph-top-bar-background-level-2 $paragraph-top-bar-background-level-3;
+$levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragraph-top-bar-color-level-3;
+
+@import "./mixins.scss";
 
 @font-face {
   font-family: Source Sans Pro;
   src: url('../fonts/SourceSans3-Regular.ttf');
 }
 
-@mixin normal-text {
-  font-style: normal;
-  line-height: normal;
-}
-@mixin italic-text {
-  font-style: italic;
-  line-height: normal;
-}
-
-@mixin h1 {
-  font-size: vw(59px);
-  font-weight: 700;
-  @include normal-text;
-}
-@mixin h2 {
-  font-size: vw(44px);
-  font-weight: 400;
-  @include normal-text;
-}
-@mixin h3 {
-  font-size: vw(33px);
-  font-weight: 400;
-  @include normal-text;
-}
-@mixin h4 {
-  font-size: vw(25px);
-  font-weight: 400;
-  @include italic-text;
-}
-@mixin h5 {
-  font-size: vw(19px);
-  font-weight: 700;
-  @include normal-text;
-}
-@mixin h6 {
-  font-size: vw(16px);
-  font-weight: 400;
-  @include italic-text;
-}
-@mixin subtext {
-  font-size: vw(12px);
-  font-weight: 400;
-  @include italic-text;
-}
-@mixin error {
-  @include subtext;
-}
-@mixin cta-text {
-  @include h5;
-  font-size: vw(14px);
-}
-@mixin small-cta-text {
-  font-size: vw(12px);
-  font-weight: 700;
-  @include italic-text;
-}
-
-@mixin blurred-background($darkTheme: 0) {
-  @if $darkTheme == 0 {
-    box-shadow: 0px 10px 30px 0px rgba(0, 0, 0, 0.25);
-    padding: vw(16px) vw(16px) vw(32px) vw(24px);
-    background: rgba(255, 255, 255, 0.55);
-    &:before {
-      content: '';
-      z-index: -1;
-      background: rgba(255, 255, 255, 1);
-      inset: 10%;
-      filter: blur(40px);
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-  } @else {
-    box-shadow: 0px 10px 30px 0px rgba(255, 255, 255, 0.25);
-    padding: vw(16px) vw(16px) vw(32px) vw(24px);
-    background: rgba(0, 0, 0, 0.55);
-    &:before {
-      content: '';
-      z-index: -1;
-      background: rgba(0, 0, 0, 1);
-      inset: 10%;
-      filter: blur(40px);
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-  }
-}
-
-$levelBackgrounds: $paragraph-top-bar-background $paragraph-top-bar-background-level-2 $paragraph-top-bar-background-level-3;
-$levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragraph-top-bar-color-level-3;
-
-@function get-level-index($index) {
-  $levelIndex: $index % 3;
-
-  @if $levelIndex ==0 {
-    @return 3;
-  }
-
-  @return $levelIndex;
-}
-
-@mixin nested-paragraph-levels-border($index) {
-  border-color: nth($levelBackgrounds, $index);
-}
-
-@mixin nested-paragraph-levels($index) {
-  color: nth($levelColors, $index) !important;
-  background-color: nth($levelBackgrounds, $index);
-}
-
 .v-application {
-  --dark-theme: 0;
   font-family: Source Sans Pro !important;
 
   --layout-background: #{$imag-light-grey};
   --layout-card-background: #{$imag-white};
   --layout-color: #{$imag-black};
   --layout-width: 1440px;
+
+  --blurred-background-box-shadow-color: rgba(0, 0, 0, 0.25);
+  --blurred-background-background-color: rgba(255, 255, 255, 0.55);
+  --blurred-background-before-background-color: #{white};
 
   --navbar-height: 58px;
   --navbar-background: #{$imag-black};
@@ -260,7 +153,8 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
   --navbar-resource-group-background-selected: #{$imag-purple};
   --navbar-resource-group-title-color: #{$imag-white};
   --navbar-resource-group-title-color-selected: #{$imag-white};
-  --navbar-resource-title-color: #{$imag-white};
+  --navbar-resource-title-color: #{$imag-black};
+  --navbar-resource-title-color-hover: #{$imag-black};
   --navbar-resource-title-color-selected: #{$imag-white};
   --navbar-system-info-icon-color: #{$imag-white};
 
@@ -351,20 +245,17 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
   --wysiwyg-toolbar-border: #{$imag-light-grey};
 
   &.v-theme--dark {
-    --dark-theme: 1;
     --layout-background: #{$imag-black};
     --layout-card-background: #{$imag-black};
     --layout-color: #{$imag-black};
 
-    --record-editor-background: #{$imag-black};
+    --blurred-background-box-shadow-color: #{rgba(255, 255, 255, 0.25)};
+    --blurred-background-background-color: #{rgba(0, 0, 0, 0.55)};
+    --blurred-background-before-background-color: #{black};
 
-
-    --navbar-resource-group-background-selected: #{$imag-purple};
-    --navbar-resource-group-title-color: #{$imag-white};
-    --navbar-resource-group-title-color-selected: #{$imag-white};
     --navbar-resource-title-color: #{$imag-white};
-    --navbar-resource-title-color-selected: #{$imag-white};
-    --navbar-system-info-icon-color: #{$imag-white};
+    --navbar-resource-title-color-hover: #{$imag-white};
+    --record-editor-background: #{$imag-black};
 
     --system-info-background: #{$imag-black};
     --system-info-color: #{$imag-white};

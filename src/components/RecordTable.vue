@@ -1,6 +1,6 @@
 <template>
   <div class="record-table-wrapper">
-    <v-menu v-if="selectedResourceGroup && groupedList" v-model="menuOpened" content-class="resources-menu full-width" location="bottom" :close-on-content-click="true">
+    <v-menu v-if="selectedResourceGroup && groupedList" v-model="menuOpened" content-class="resources-menu full-width" location="bottom" :close-on-content-click="true" attach=".v-application">
       <template #activator="{ props }">
         <div class="resource-selector" v-bind="props" :class="{opened: menuOpened}">
           <div class="resource-title">{{ getResourceTitle(resource) }}</div>
@@ -74,6 +74,7 @@ import TranslateService from '@s/TranslateService'
 import NotificationsService from '@s/NotificationsService'
 import VueTableGenerator from '@c/vue-table/VueTableGenerator.vue'
 // import Paginate from 'vuejs-paginate'
+import TopBarLocaleList from '@c/TopBarLocaleList.vue'
 
 import RecordEditor from '@c/RecordEditor.vue'
 import AbstractEditorView from '@c/AbstractEditorView'
@@ -82,7 +83,8 @@ import Notification from '@m/Notification'
 export default {
   components: {
     VueTableGenerator,
-    RecordEditor
+    RecordEditor,
+    TopBarLocaleList
     // Paginate
   },
   mixins: [AbstractEditorView, Notification],

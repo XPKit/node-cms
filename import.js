@@ -13,7 +13,7 @@ const prompt = require('prompt')
 const Q = require('q')
 const pAll = require('p-all')
 const got = require('got')
-const delay = require('delay')
+const {setTimeout} = require('node:timers/promises')
 const { JWT } = require('google-auth-library')
 
 const h = require('./lib-import/helper')
@@ -416,7 +416,7 @@ class ImportManager {
                     await fs.ensureDir(path.dirname(filePath))
                     await fs.writeFile(filePath, response.rawBody, 'binary')
                     endSubProcess('done')
-                    await delay(200)
+                    await setTimeout(200)
                   }
                 } catch (error) {
                   logger.error(_.get(error, 'response.body', error))

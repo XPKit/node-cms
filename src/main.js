@@ -6,7 +6,6 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import 'vue3-easy-data-table/dist/style.css'
 import Vue3EasyDataTable from 'vue3-easy-data-table'
 import VueShortkey from 'vue3-shortkey'
-import VueTimeago from 'vue-timeago3'
 import { JsonTreeView } from 'json-tree-view-vue3'
 import VueVirtualScroller from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
@@ -14,13 +13,12 @@ import axios from 'axios'
 import draggable from 'vuedraggable'
 import vuetify from './vuetify.js'
 import '@a/scss/main.scss'
+import '@p/scss/main.scss'
 
 // Global components
 import App from '@c/App.vue'
 import LoginApp from '@c/LoginApp.vue'
-import MultiselectPage from '@c/MultiselectPage.vue'
 import CustomForm from '@c/CustomForm.vue'
-import TopBarLocaleList from '@c/TopBarLocaleList.vue'
 
 // Pages
 import PluginPage from '@c/pages/PluginPage.vue'
@@ -50,9 +48,6 @@ import Group from '@c/fields/Group.vue'
 import TableImageView from '@c/vue-table/TableImageView.vue'
 import TableCustomCheckbox from '@c/vue-table/TableCustomCheckbox.vue'
 import TableRowActions from '@c/vue-table/TableRowActions.vue'
-
-// import enUS from 'vue-timeago3/locales/en-US.json'
-// import zhCN from 'vue-timeago3/locales/zh-CN.json'
 
 import Loading from './modules/Loading'
 
@@ -99,11 +94,9 @@ app.use(router)
   .component('WysiwygField', WysiwygField)
   .component('CustomDatetimePicker', CustomDatetimePicker)
   .component('Group', Group)
-  .component('TopBarLocaleList', TopBarLocaleList)
   .component('CustomInputTag', CustomInputTag)
   .component('CustomMultiSelect', CustomMultiSelect)
   .component('PluginPage', PluginPage)
-  .component('MultiselectPage', MultiselectPage)
   .component('Syslog', Syslog)
   .component('CmsImport', CmsImport)
   .component('SyncResource', SyncResource)
@@ -113,14 +106,9 @@ app.use(router)
   .component('TableRowActions', TableRowActions)
   .component('EasyDataTable', Vue3EasyDataTable)
   .component('JsonTreeView', JsonTreeView)
-
   .use(Loading)
   .use(VueVirtualScroller)
   .use(VueShortkey)
-  .use(VueTimeago, {
-    name: 'timeago'
-    // TODO: hugo - later - add locales via import { en, zh } from "date-fns/locale";
-  })
 
 function addPlugin (title, displayName, group = 'System', allowed = ['admins', 'imagination']) {
   window.plugins = window.plugins || []
@@ -130,24 +118,13 @@ function addPlugin (title, displayName, group = 'System', allowed = ['admins', '
     component: title,
     group,
     allowed,
-    type: 'plugin',
-    internal: true
+    type: 'plugin'
   })
 }
-
-let recaptchaScript = document.createElement('script')
-recaptchaScript.setAttribute('src', './plugins/scripts/bundle.js')
-document.head.appendChild(recaptchaScript)
-window.Vue = Vue
 
 window.addEventListener('load', async function () {
   _.each(window.plugins, item => {
     item.type = 'plugin'
-  })
-  const externalPlugins = _.filter(window.plugins, (plugin) => plugin.internal !== false)
-  _.each(externalPlugins, (externalPlugin) => {
-    app.component(externalPlugin.name, externalPlugin.component)
-    // app.component(externalPlugin.name, externalPlugin.component)
   })
   window.TranslateService = TranslateService
   const response = await axios.get(`${window.location.pathname}config`)
@@ -162,4 +139,6 @@ window.addEventListener('load', async function () {
   window.disableJwtLogin = _.get(config, 'disableJwtLogin', false)
   window.noLogin = window.disableJwtLogin && _.get(config, 'disableAuthentication', false)
   app.mount('#app')
+  window.nodeCms = app
 })
+window.Vue = Vue

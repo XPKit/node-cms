@@ -80,29 +80,29 @@
   &--west-north {
     border-left: solid 2px white;
     border-top: solid 2px white;
-    top: 16px / 2 - 1px;
-    left: 16px / 2 - 1px;
+    top: calc(16px / 2 - 1px);
+    left: calc(16px / 2 - 1px);
   }
 
   &--east-south {
     border-right: solid 2px white;
     border-bottom: solid 2px white;
-    top: -16px / 2 + 1px;
-    left: -16px / 2 + 1px;
+    top: calc(-16px / 2 + 1px);
+    left: calc(-16px / 2 + 1px);
   }
 
   &--west-south {
     border-left: solid 2px white;
     border-bottom: solid 2px white;
-    top: -16px / 2 + 1px;
-    left: 16px / 2 - 1px;
+    top: calc(-16px / 2 + 1px);
+    left: calc(16px / 2 - 1px);
   }
 
   &--east-north {
     border-right: solid 2px white;
     border-top: solid 2px white;
-    top: 16px / 2 - 1px;
-    left: -16px / 2 + 1px;
+    top: calc(16px / 2 - 1px);
+    left: calc(-16px / 2 + 1px);
   }
 
   &--hover {

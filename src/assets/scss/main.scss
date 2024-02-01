@@ -57,16 +57,14 @@ ul, li {
     >.v-overlay__content.resources-menu {
       max-height: 40vh !important;
       .v-list {
-        // TODO: hugo - fix css
         border-radius: 0px 0px 8px 8px !important;
-        @include blurred-background($dark-theme);
+        @include blurred-background;
         transform: translate3d(0, 0, 0);
         display: flex;
         padding-left: 24px;
         flex-direction: column;
         align-items: flex-start;
-        gap: 16px;
-        gap: 0;
+        gap: 8px;
 
         .v-list-item {
           display: inline-block;
@@ -77,15 +75,14 @@ ul, li {
           border-radius: 50px;
           min-height: 18px;
           height: 18px;
-          padding: 4px 16px;
+          padding: 0px 16px;
 
-          .v-list-item__title {
+          .v-list-item-title {
             @include cta-text;
             font-style: normal;
             color: $navbar-resource-title-color;
             line-height: 18px;
           }
-
           .v-list-item__content {
             padding: 0;
           }
@@ -99,8 +96,8 @@ ul, li {
           }
 
           &:hover {
-            .v-list-item__title {
-              color: $navbar-resource-title-color-selected;
+            .v-list-item-title {
+              color: $navbar-resource-title-color-hover;
             }
 
             &::before {
@@ -113,7 +110,7 @@ ul, li {
             background-color: $navbar-resource-group-background-selected;
             font-size: vw(14px) !important;
 
-            .v-list-item__title {
+            .v-list-item-title {
               color: $navbar-resource-title-color-selected;
             }
 
@@ -125,7 +122,7 @@ ul, li {
           &.selected {
             background-color: $navbar-resource-group-background-selected;
 
-            .v-list-item__title {
+            .v-list-item-title {
               color: $navbar-resource-title-color-selected;
             }
           }
@@ -151,7 +148,7 @@ ul, li {
     }
     .v-list {
       border-radius: 0px 0px 8px 8px !important;
-      @include blurred-background($dark-theme);
+      @include blurred-background;
       transform: translate3d(0, 0, 0);
       display: flex;
       padding-left: 24px;
@@ -207,7 +204,7 @@ ul, li {
         }
         &.selected {
           background-color: $navbar-resource-group-background-selected;
-          .v-list-item__title {
+          .v-list-item-title {
             color: $navbar-resource-title-color-selected;
           }
         }
@@ -482,7 +479,7 @@ body {
       @include h6;
     }
     .v-snack__wrapper {
-      @include blurred-background($dark-theme);
+      @include blurred-background;
       margin-top: $navbar-height;
       padding: 0;
       .v-btn {

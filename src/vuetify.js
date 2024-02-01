@@ -1,16 +1,13 @@
 import { createVuetify } from 'vuetify'
-import * as components from 'vuetify/components'
-import * as directives from 'vuetify/directives'
 import '@mdi/font/scss/materialdesignicons.scss'
-import 'vuetify/dist/vuetify.min.css'
-
+// import 'vuetify/dist/vuetify.min.css'
+import 'vuetify/styles'
 const vuetify = createVuetify({
-  components,
-  directives,
   theme: {
     defaultTheme: 'light',
     themes: {
       light: {
+        dark: false,
         primary: '#00095B',
         'node-cms-black': '#00142E',
         'node-cms-blue': '#00095B',
@@ -23,6 +20,7 @@ const vuetify = createVuetify({
         'node-cms-red': '#C90000'
       },
       dark: {
+        dark: true,
         primary: '#FFFFFF',
         'node-cms-black': '#00142E',
         'node-cms-blue': '00142E',

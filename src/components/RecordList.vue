@@ -1,7 +1,7 @@
 <template>
   <div v-if="maxCount != 1" class="record-list">
     <div class="record-list-top-bar">
-      <v-menu v-if="selectedResourceGroup && groupedList" v-model="menuOpened" content-class="resources-menu sidebar" location="bottom" :close-on-content-click="true">
+      <v-menu v-if="selectedResourceGroup && groupedList" v-model="menuOpened" content-class="resources-menu sidebar" location="bottom" :close-on-content-click="true" attach=".v-application">
         <template #activator="{ props }">
           <div class="resource-selector" :class="{opened: menuOpened}" v-bind="props">
             <div class="resource-title">{{ getResourceTitle(resource) }}</div>
@@ -64,7 +64,7 @@
               </div>
               <div class="meta">
                 <div class="ts">
-                  <template v-if="item._updatedBy"> {{ item._updatedBy }} - </template><template v-else> {{ $filters.translate('TL_UPDATED') }}</template> <span class="time-ago" @click="copyIdToClipboard(item._id)"><timeago :datetime="item._updatedAt" /></span>
+                  <template v-if="item._updatedBy"> {{ item._updatedBy }} - </template><template v-else> {{ $filters.translate('TL_UPDATED') }}</template> <span class="time-ago" @click="copyIdToClipboard(item._id)">{{ getTimeAgo(item) }}</span>
                 </div>
               </div>
             </div>
@@ -85,6 +85,9 @@ import RecordNameHelper from './RecordNameHelper'
 import qs from 'qs'
 import sift from 'sift'
 import JSON5 from 'json5'
+import Dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+Dayjs.extend(relativeTime)
 
 export default {
   mixins: [Notification, RecordNameHelper],
@@ -231,6 +234,9 @@ export default {
     NotificationsService.events.on('omnibar-display-status', this.onGetOmnibarDisplayStatus)
   },
   methods: {
+    getTimeAgo (item) {
+      return Dayjs().to(Dayjs(_.get(item, '_updatedAt', 0)))
+    },
     onGetOmnibarDisplayStatus (status) {
       this.omnibarDisplayed = status
     },

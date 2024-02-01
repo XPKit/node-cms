@@ -5,6 +5,7 @@ import path from 'path'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import ViteUtils from './vite.utils.js'
+import vuetify from 'vite-plugin-vuetify'
 
 const viteUtils = ViteUtils.getInstance()
 
@@ -16,6 +17,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
     plugins: [
       vue({exclude: 'os'}),
       vueJsx({}),
+      vuetify({ autoImport: true }),
       splitVendorChunkPlugin()
     ],
     server: viteUtils.serverConfig,

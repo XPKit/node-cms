@@ -242,7 +242,7 @@ export default {
     min-height: 26px;
     // padding-top: 8px;
     // padding-bottom: 8px;
-    .v-list-item__title {
+    .v-list-item-title {
       @include cta-text;
       font-weight: normal;
       font-style: normal;
