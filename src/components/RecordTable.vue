@@ -21,7 +21,7 @@
         <top-bar-locale-list :locales="resource.locales" :locale="locale" :select-locale="selectLocale" :back="back" />
         <div v-shortkey="getShortcuts()" class="search" @shortkey="interactiveSearch">
           <v-text-field
-            ref="search" v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat variant="solo" rounded hide-details density="compact" :placeholder="translate('TL_SEARCH')"
+            ref="search" v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat variant="solo-filled" rounded hide-details density="compact" :placeholder="translate('TL_SEARCH')"
             type="text"
             name="search"
           />

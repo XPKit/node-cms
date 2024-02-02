@@ -14,8 +14,8 @@
       @end="onEndDrag"
       @start="dragging = true"
     >
-      <template #item="{item}">
-        <v-card v-if="paragraphLevel" elevation="0" :class="`item nested-level-${paragraphLevel}`">
+      <template v-if="paragraphLevel">
+        <v-card v-for="item in items" :key="getKey(item)" elevation="0" :class="`item nested-level-${paragraphLevel}`">
           <v-card-title class="handle paragraph-header">
             <div class="paragraph-title">{{ item.label }}</div>
             <div class="add-btn-wrapper">
@@ -36,6 +36,7 @@
           </div>
         </v-card>
       </template>
+      <!-- TODO: hugo - may need to adapt -->
       <template #footer>
         <div class="paragraph-footer">
           <v-select

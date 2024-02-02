@@ -13,7 +13,7 @@
           >
             <v-chip
               v-for="(item, index) in config.resources"
-              :key="index" small :ripple="false"
+              :key="index" size="small" :ripple="false"
             >
               {{ item }}
             </v-chip>

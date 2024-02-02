@@ -239,7 +239,10 @@ export default {
             }
           }
           try {
-            reader.readAsDataURL(_.get(file, '[0]', file))
+            const blob = _.get(file, '[0]', file)
+            if (blob instanceof Blob) {
+              reader.readAsDataURL(blob)
+            }
           } catch (error) {
             console.error('Error while reading file:', error)
           }

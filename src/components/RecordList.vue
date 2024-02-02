@@ -22,7 +22,7 @@
         :class="{'is-query': sift.isQuery, 'is-valid': sift.isQuery && sift.isValid == true, 'is-invalid': sift.isQuery && sift.isValid == false}" @shortkey="interactiveSearch"
       >
         <v-text-field
-          ref="search" v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat variant="solo" rounded hide-details density="compact"
+          ref="search" v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat variant="solo-filled" rounded hide-details density="compact"
           :placeholder="$filters.translate('TL_SEARCH')" type="text" name="search"
         />
         <v-btn v-if="maxCount <= 0 || listCount < maxCount" elevation="0" icon class="new-record" :class="{active: isCreatingNewRecord()}" @click="onClickNew">

@@ -6,6 +6,8 @@
       ref="input"
       :key="schema.model + 'custom'"
       v-model="color"
+      variant="outlined"
+      elevation="1"
       :dot-size="options.dotSize"
       :hide-canvas="options.hideCanvas"
       :hide-sliders="options.hideSliders"

@@ -7,16 +7,12 @@
         @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
       >
         <v-file-input
-          ref="input" :rules="getRules()" prepend-icon=""
-          :placeholder="getPlaceholder()" :clearable="false" hide-details="auto"
-          density="compact" variant="solo" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
+          ref="input"
+          flat :rules="getRules()" prepend-icon="" :label="getPlaceholder()" :placeholder="getPlaceholder()" :clearable="false" hide-details="auto"
+          density="compact" variant="solo-filled" rounded persistent-placeholder single-line :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
           @change="onUploadChanged"
         >
-          <template #selection="{index}">
-            <div v-if="index === 0" class="v-file-input__text v-file-input__text--placeholder">
-              {{ getPlaceholder() }}
-            </div>
-          </template>
+          <template #selection />
         </v-file-input>
       </v-card>
     </form>

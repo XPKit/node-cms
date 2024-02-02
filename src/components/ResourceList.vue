@@ -85,6 +85,7 @@ export default {
     justify-content: space-between;
     width: 100%;
     height: $navbar-height;
+    gap: 8px;
     &:after {
       display: block;
       content: '';

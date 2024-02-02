@@ -8,16 +8,12 @@
         @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
       >
         <v-file-input
-          ref="input" :rules="getRules()" hide-details="auto" prepend-icon=""
-          :placeholder="getPlaceholder()" :clearable="false"
-          density="compact" variant="solo" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="true"
+          ref="input" :rules="getRules()" hide-details="auto" prepend-icon="" flat single-line
+          :placeholder="getPlaceholder()" :clearable="false" :label="getPlaceholder()"
+          density="compact" variant="solo-filled" rounded persistent-placeholder :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="true"
           @change="onUploadChanged"
         >
-          <template #selection="{index}">
-            <div v-if="index === 0" class="v-file-input__text v-file-input__text--placeholder">
-              {{ getPlaceholder() }}
-            </div>
-          </template>
+          <template #selection />
         </v-file-input>
       </v-card>
       <v-card
@@ -26,44 +22,33 @@
         @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
       >
         <v-file-input
-          ref="input" :rules="getRules()" hide-details="auto" prepend-icon=""
-          :placeholder="getPlaceholder()" :clearable="false"
-          density="compact" variant="solo" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
+          ref="input"
+          variant="solo-filled" :rules="getRules()" hide-details="auto" prepend-icon="" flat single-line
+          :placeholder="getPlaceholder()" :clearable="false" :label="getPlaceholder()"
+          density="compact" rounded persistent-placeholder :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
           @change="onUploadChanged"
         >
-          <template #selection="{index}">
-            <div v-if="index === 0" class="v-file-input__text v-file-input__text--placeholder">
-              {{ getPlaceholder() }}
-            </div>
-          </template>
+          <template #selection />
         </v-file-input>
       </v-card>
     </form>
     <div v-if="isForMultipleImages()" class="preview-multiple">
       <draggable :list="getAttachments()">
-        <div v-for="element in getAttachments()" :key="element.name" class="list-group-item">
-          {{ element.name }}
-        </div>
-      </draggable>
-      <!-- <draggable
-        v-if="schema" :key="`${schema.model}`" :list="getAttachments()" :item-key="getKey"
-        draggable=".preview-attachment" handle=".row-handle" ghost-class="ghost"
-        v-bind="dragOptions" :class="{disabled}" @end="onEndDrag" @start="onStartDrag"
-      >
-        <template #item="{a}">
-          <v-card elevation="0" class="preview-attachment">
-            <div class="row-handle">
+        <v-card v-for="(a, i) in getAttachments()" :key="getKey(a)" elevation="0" class="preview-attachment" :class="{odd: i % 2 !== 0}">
+          <v-tooltip location="bottom">
+            <template #activator="{ props }">
+              <v-chip variant="outlined" class="filename" closable close-icon="mdi-close-circle-outline" v-bind="props" @click:close="removeImage(a)">#{{ i + 1 }} - {{ $filters.truncate(a._filename,10) }} ({{ imageSize(a) }})</v-chip>
+            </template>
+            <span>{{ a._filename }}</span>
+          </v-tooltip>
+          <div class="row-handle">
+            <div v-if="isImage(a)" class="image-wrapper">
               <v-img cover :src="getImageSrc(a)" />
             </div>
-            <v-tooltip location="right">
-              <template #activator="{ props }">
-                <v-chip class="filename" variant="outlined" closable close-icon="mdi-close-circle-outline" :disabled="disabled || schema.disabled" v-bind="props" @click:close="removeImage(a)">#{{ i + 1 }} - {{ truncate(a._filename,10) }} ({{ imageSize(a) }})</v-chip>
-              </template>
-              <span>{{ a._filename }}</span>
-            </v-tooltip>
-          </v-card>
-        </template>
-      </draggable> -->
+            <v-btn v-else-if="a._id" size="small" rounded elevation="0" @click="viewFile(a)">{{ $filters.translate('TL_VIEW') }}</v-btn>
+          </div>
+        </v-card>
+      </draggable>
     </div>
     <template v-else-if="attachment() && isImage()">
       <div v-if="!(schema.width && schema.height)" class="preview-single-attachment">

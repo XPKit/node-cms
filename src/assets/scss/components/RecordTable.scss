@@ -6,6 +6,7 @@
   align-items: stretch;
   justify-content: space-between;
 }
+
 .record-table {
   flex: 1 1 0;
   overflow: auto;
@@ -14,15 +15,19 @@
   flex-direction: column;
   align-items: stretch;
   width: calc(100% - 32px) !important;
+
   .top-bar {
     gap: 16px;
   }
+
   .search {
     width: 100%;
   }
+
   .pager {
     position: sticky;
   }
+
   .table {
     display: flex;
     overflow: auto;
@@ -33,6 +38,7 @@
     position: relative;
     min-width: 850px;
   }
+
   .ve-table {
     .ve-table-container {
       table.ve-table-content thead.ve-table-header tr.ve-table-header-tr th.ve-table-header-th {
@@ -41,73 +47,93 @@
         @include small-cta-text;
         font-style: normal;
         font-weight: 700 !important;
-        .v-icon, .ve-table-sort {
+
+        .v-icon,
+        .ve-table-sort {
           color: $table-header-color !important;
         }
+
         .v-icon {
           font-size: 16px;
         }
       }
+
       .ve-table-content-wrapper table.ve-table-content tbody.ve-table-body tr.ve-table-body-tr td.ve-table-body-td {
         @include subtext;
         font-style: normal;
       }
     }
   }
+
   tr.ve-table-body-tr {
     td {
       color: $table-row-odd-color;
       background-color: $table-row-odd-background !important;
+
       span {
         color: $table-row-odd-color;
       }
     }
-    &:nth-child(2n + 1){
+
+    &:nth-child(2n + 1) {
       td {
         color: $table-row-even-color;
+
         span {
           color: $table-row-even-color;
         }
+
         background-color: $table-row-even-background !important;
       }
     }
   }
+
   .back {
     display: none;
     @include cta-text;
   }
+
   .new {
     background-color: $btn-action-background !important;
     color: $btn-action-color !important;
   }
+
   .delete-selected-records {
     background-color: $imag-orange !important;
     color: $btn-action-color !important;
   }
+
   .record-editor {
     margin: 0;
   }
+
   &.has-back-button {
-    .back, .delete {
+
+    .back,
+    .delete {
       display: inline-block;
     }
   }
+
   .ve-table-container {
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
   }
 }
+
 .v-theme--dark {
   .record-table {
     .table {
       .row {
         .cell {
           color: white;
+
           input,
           textarea {
             color: white;
           }
         }
+
         &.header {
           .cell {
             color: #4f5f4f;
