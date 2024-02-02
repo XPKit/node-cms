@@ -10,7 +10,7 @@ import { JsonTreeView } from 'json-tree-view-vue3'
 import VueVirtualScroller from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import axios from 'axios'
-import draggable from 'vuedraggable'
+import { VueDraggableNext } from 'vue-draggable-next'
 import vuetify from './vuetify.js'
 import '@a/scss/main.scss'
 import '@p/scss/main.scss'
@@ -100,7 +100,7 @@ app.use(router)
   .component('Syslog', Syslog)
   .component('CmsImport', CmsImport)
   .component('SyncResource', SyncResource)
-  .component('Draggable', draggable)
+  .component('Draggable', VueDraggableNext)
   .component('TableImageView', TableImageView)
   .component('TableCustomCheckbox', TableCustomCheckbox)
   .component('TableRowActions', TableRowActions)

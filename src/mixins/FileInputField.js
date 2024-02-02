@@ -128,7 +128,7 @@ export default {
       return rules
     },
     getPlaceholder () {
-      return `TL_CLICK_OR_DRAG_AND_DROP_TO_ADD_${this.getFieldType()}${this.isForMultipleImages() ? 'S' : ''}`
+      return TranslateService.get(`TL_CLICK_OR_DRAG_AND_DROP_TO_ADD_${this.getFieldType()}${this.isForMultipleImages() ? 'S' : ''}`)
     },
     getMaxCount () {
       return _.get(this.schema, 'options.maxCount', -1)
@@ -158,11 +158,13 @@ export default {
       this.onUploadChanged(event.dataTransfer.files)
     },
     async onUploadChanged (files) {
-      this.$refs.input.validate()
-      if (!this.$refs.input.valid) {
+      if (_.get(await this.$refs.input.validate(), 'length', 0) !== 0) {
         return
       }
       files = _.isNull(files) ? [] : files
+      if (_.get(files, 'target.files', false)) {
+        files = files.target.files
+      }
       if (!_.isArray(files)) {
         files = [files]
       }

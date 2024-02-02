@@ -134,13 +134,13 @@ export default {
     updateLocalData () {
       this.localModel = _.cloneDeep(this.model)
     },
-    validate () {
-      _.each(this.$refs.vfg, vfg => {
-        if (!vfg.validate()) {
+    async validate () {
+      for (const vfg of this.$refs.vfg) {
+        if (_.get(await vfg.validate(), 'length', 0) !== 0) {
           this.errors = vfg.errors
           throw new Error('group validation error')
         }
-      })
+      }
       return true
     },
     debouncedValidate () {

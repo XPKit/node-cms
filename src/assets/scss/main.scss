@@ -39,6 +39,9 @@ ul, li {
 }
 
 .v-application {
+  .v-icon {
+    min-width: auto;
+  }
   .v-btn {
     letter-spacing: 0px;
   }
@@ -50,6 +53,10 @@ ul, li {
   .v-messages__message {
     color: $imag-orange !important;
     @include error;
+  }
+  .v-chip {
+    display: flex;
+    align-items: center;
   }
 }
 .v-overlay-container {

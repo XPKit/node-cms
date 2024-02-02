@@ -49,9 +49,7 @@
         >
           <div class="item-info">
             <div v-if="multiselect" class="checkbox" :class="{'blink-background': isItemSelected(item)}" @click.exact="select(item, true)">
-              <template v-if="item._local">
-                <v-icon :class="{displayed: isItemSelected(item)}" size="small">mdi-check-bold</v-icon>
-              </template>
+              <v-icon v-if="item._local" :class="{displayed: isItemSelected(item)}" size="small">mdi-check-bold</v-icon>
             </div>
             <div class="infos-wrapper">
               <div v-if="item" class="main">

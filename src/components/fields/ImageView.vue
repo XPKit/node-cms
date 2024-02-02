@@ -9,13 +9,13 @@
       >
         <v-file-input
           ref="input" :rules="getRules()" hide-details="auto" prepend-icon=""
-          :placeholder="$filters.translate(getPlaceholder())" :clearable="false"
+          :placeholder="getPlaceholder()" :clearable="false"
           density="compact" variant="solo" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="true"
           @change="onUploadChanged"
         >
           <template #selection="{index}">
             <div v-if="index === 0" class="v-file-input__text v-file-input__text--placeholder">
-              {{ $filters.translate(getPlaceholder()) }}
+              {{ getPlaceholder() }}
             </div>
           </template>
         </v-file-input>
@@ -27,20 +27,25 @@
       >
         <v-file-input
           ref="input" :rules="getRules()" hide-details="auto" prepend-icon=""
-          :placeholder="$filters.translate(getPlaceholder())" :clearable="false"
+          :placeholder="getPlaceholder()" :clearable="false"
           density="compact" variant="solo" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
           @change="onUploadChanged"
         >
           <template #selection="{index}">
             <div v-if="index === 0" class="v-file-input__text v-file-input__text--placeholder">
-              {{ $filters.translate(getPlaceholder()) }}
+              {{ getPlaceholder() }}
             </div>
           </template>
         </v-file-input>
       </v-card>
     </form>
     <div v-if="isForMultipleImages()" class="preview-multiple">
-      <draggable
+      <draggable :list="getAttachments()">
+        <div v-for="element in getAttachments()" :key="element.name" class="list-group-item">
+          {{ element.name }}
+        </div>
+      </draggable>
+      <!-- <draggable
         v-if="schema" :key="`${schema.model}`" :list="getAttachments()" :item-key="getKey"
         draggable=".preview-attachment" handle=".row-handle" ghost-class="ghost"
         v-bind="dragOptions" :class="{disabled}" @end="onEndDrag" @start="onStartDrag"
@@ -58,7 +63,7 @@
             </v-tooltip>
           </v-card>
         </template>
-      </draggable>
+      </draggable> -->
     </div>
     <template v-else-if="attachment() && isImage()">
       <div v-if="!(schema.width && schema.height)" class="preview-single-attachment">

@@ -46,7 +46,7 @@ export default {
         return
       }
       let elem = objGet(this.$refs, 'input', false)
-      if (!elem) {
+      if (!elem && objGet(this.schema, 'type', false) !== 'Wysiwyg') {
         return console.error('no input ref for ', this.schema)
       }
       // console.warn('elem = ', elem, this.schema.model, this.schema)
@@ -97,7 +97,7 @@ export default {
       })
       return join(variant, ' ')
     },
-    validate (calledParent) {
+    async validate (calledParent) {
       this.clearValidationErrors()
       let validateAsync = objGet(this.formOptions, 'validateAsync', false)
       let results = []
@@ -162,7 +162,7 @@ export default {
       }
       this.debouncedValidateFunc()
     },
-    updateModelValue (newValue, oldValue) {
+    async updateModelValue (newValue, oldValue) {
       let changed = false
       if (isFunction(this.schema.set)) {
         this.schema.set(this.model, newValue)
@@ -180,7 +180,7 @@ export default {
           if (objGet(this.schema, 'validateDebounceTime', objGet(this.formOptions, 'validateDebounceTime', 0)) > 0) {
             this.debouncedValidate()
           } else {
-            this.validate()
+            await this.validate()
           }
         }
         this.$emit('input', newValue, this.schema.model)

@@ -3,7 +3,7 @@
     <div class="top-bar">
       <top-bar-locale-list :locales="resource.locales" :locale="locale" :select-locale="selectLocale" :back="back" />
       <div class="buttons">
-        <v-btn v-if="editingRecord._id" elevation="0" class="delete" icon rounded @click="deleteRecord"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
+        <v-btn v-if="editingRecord._id" elevation="0" class="delete" icon @click="deleteRecord"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
         <v-btn elevation="0" class="update" rounded @click="createUpdateClicked">{{ $filters.translate(editingRecord._id? "TL_UPDATE": "TL_CREATE") }}</v-btn>
       </div>
     </div>

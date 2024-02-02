@@ -17,7 +17,7 @@
 </template>
 
 <script>
-// import _ from 'lodash'
+import _ from 'lodash'
 import AbstractField from '@m/AbstractField'
 
 export default {
@@ -30,10 +30,10 @@ export default {
   },
   methods: {
     onError (error) {
-      console.log(999, 'error', error)
+      console.error('Group - onError:', error)
     },
-    validate () {
-      const isValid = this.$refs.input.validate()
+    async validate () {
+      const isValid = _.get(await this.$refs.input.validate(), 'length', 0) === 0
       if (!isValid) {
         this.errors = this.$refs.input.errors
         throw new Error('group validation error')

@@ -6,13 +6,13 @@
     >
       <v-file-input
         ref="input" :rules="getRules()" prepend-icon=""
-        :accept="model.input === 'image'? 'image/*': '*'" :clearable="false" :placeholder="translate(getPlaceholder())"
+        :accept="model.input === 'image'? 'image/*': '*'" :clearable="false" :placeholder="getPlaceholder()"
         density="compact" variant="solo" rounded persistent-placeholder persistent-hint :multiple="isForMultipleImages()" :disabled="isForMultipleImages() && isFieldDisabled()"
         @change="onUploadChanged"
       >
         <template #selection="{index}">
           <div v-if="index === 0" class="v-file-input__text v-file-input__text--placeholder">
-            {{ $filters.translate(getPlaceholder()) }}
+            {{ getPlaceholder() }}
           </div>
         </template>
       </v-file-input>
