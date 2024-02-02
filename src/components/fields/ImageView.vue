@@ -10,7 +10,7 @@
         <v-file-input
           ref="input" :rules="getRules()" hide-details="auto" prepend-icon="" flat single-line
           :placeholder="getPlaceholder()" :clearable="false" :label="getPlaceholder()"
-          density="compact" variant="solo-filled" rounded persistent-placeholder :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="true"
+          density="compact" :variant="getVariant()" rounded persistent-placeholder :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="true"
           @change="onUploadChanged"
         >
           <template #selection />

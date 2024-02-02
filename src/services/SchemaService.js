@@ -31,7 +31,9 @@ class SchemaService {
         resource,
         locale,
         userLocale,
-        rootView
+        rootView: {
+          model: _.get(rootView, 'model', {})
+        }
       })
       schema = _.merge({}, field.options, schema)
       if ((field.input === 'file') && _.get(schema, 'maxCount', false) === false) {

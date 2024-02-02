@@ -5,7 +5,7 @@
         <div v-for="(line, i) in schema.layout.lines" :id="`${formId}-${i}`" :key="i" class="line-wrapper" :class="getLineClasses(line)">
           <div v-for="field in line.fields" :id="getFieldId(field)" :key="field.model" class="field-wrapper" :data-model="field.model" :class="getFieldClasses(field)">
             <!-- <div class="red--text">{{ getFieldType(field.schema) }}</div> -->
-            <component :is="getFieldType(field.schema)" v-if="field.schema" :key="field.model" :schema="field.schema" :model="model" :form-options="formOptions" :disabled="field.schema && field.schema.disabled" :focused="field.schema.focused" @input="onInput" />
+            <component :is="getFieldType(field.schema)" v-if="field.schema" :key="field.model" :paragraph-level="getParagraphLevel(field)" :schema="field.schema" :model="model" :form-options="formOptions" :disabled="field.schema && field.schema.disabled" :focused="field.schema.focused" @input="onInput" />
           </div>
         </div>
       </template>
@@ -100,11 +100,11 @@ $gapBetweenFields: 16px;
       &.nb-fields-#{$nbFields} {
         &.slots-#{$nbSlots} {
           >.field-wrapper {
-              @for $i from 1 through $maxColumns {
-                &.width-#{$i} {
-                  width: calc(100% / #{$nbSlots} * #{$i} - (#{$gapBetweenFields} / #{$nbFields} * (#{$nbFields} - 1)));
-                }
+            @for $i from 1 through $maxColumns {
+              &.width-#{$i} {
+                width: calc(100% / #{$nbSlots} * #{$i} - (#{$gapBetweenFields} / #{$nbFields} * (#{$nbFields} - 1)));
               }
+            }
           }
         }
       }

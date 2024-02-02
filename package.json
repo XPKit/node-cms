@@ -103,7 +103,7 @@
     "level-hooks": "^4.5.0",
     "level-store": "^3.10.1",
     "levelup": "^1.3.2",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "lru-cache": "^4.1.5",
     "md5-file": "^5.0.0",
     "measure": "^0.1.1",

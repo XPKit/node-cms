@@ -4,61 +4,52 @@
       v-if="schema"
       :key="`${schema.model}-${key}`"
       :list="items"
+      :class="{disabled}"
       draggable=".item"
       v-bind="dragOptions"
       handle=".handle"
       :group="`${schema.model}-${key}`"
-      :item-key="getKey"
       ghost-class="ghost"
-      :class="{disabled}"
       @end="onEndDrag"
       @start="dragging = true"
     >
-      <template v-if="paragraphLevel">
-        <v-card v-for="item in items" :key="getKey(item)" elevation="0" :class="`item nested-level-${paragraphLevel}`">
-          <v-card-title class="handle paragraph-header">
-            <div class="paragraph-title">{{ item.label }}</div>
-            <div class="add-btn-wrapper">
-              <v-btn class="remove-item" :disabled="disabled || schema.disabled" variant="text" icon rounded size="small" @click="onClickRemoveItem(item)"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
-            </div>
-          </v-card-title>
-          <div class="item-main-wrapper">
-            <div class="item-main">
-              <custom-form
-                :schema="getSchema(item)"
-                :model="item"
-                :paragraph-index="idx"
-                :paragraph-level="paragraphLevel + 1"
-                @error="onError"
-                @input="onModelUpdated"
-              />
-            </div>
-          </div>
-        </v-card>
-      </template>
-      <!-- TODO: hugo - may need to adapt -->
-      <template #footer>
-        <div class="paragraph-footer">
-          <v-select
-            ref="input"
-            transition="none"
-            :model-value="selectedType" :menu-props="{ bottom: true, offsetY: true }" :items="types" item-title="label" item-value="label"
-            hide-details variant="solo-filled" flat rounded density="compact" persistent-placeholder
-            :disabled="disabled || schema.disabled"
-            append-icon="mdi-chevron-down"
-            @update:model-value="onChangeType"
-          >
-            <template #prepend>
-              <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ schema.label }}
-            </template>
-            <template #label />
-          </v-select>
+      <v-card v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" elevation="0" :class="`item nested-level-${paragraphLevel}`">
+        <v-card-title class="handle paragraph-header">
+          <div class="paragraph-title">{{ item.label }}</div>
           <div class="add-btn-wrapper">
-            <v-btn elevation="0" class="add-new-item" rounded :disabled="disabled || schema.disabled" @click="onClickAddNewItem"><span>{{ $filters.translate('TL_ADD') }}</span></v-btn>
+            <v-btn class="remove-item" :disabled="disabled || schema.disabled" variant="text" icon rounded size="small" @click="onClickRemoveItem(item)"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
+          </div>
+        </v-card-title>
+        <div class="item-main-wrapper">
+          <div class="item-main">
+            <custom-form
+              :schema="getSchema(item)"
+              :model="item"
+              :paragraph-index="idx"
+              :paragraph-level="paragraphLevel + 1"
+              @error="onError"
+              @input="onModelUpdated"
+            />
           </div>
         </div>
-      </template>
+      </v-card>
     </draggable>
+    <div class="paragraph-footer">
+      <v-select
+        ref="input" transition="none"
+        :model-value="selectedType" :menu-props="{ bottom: true, offsetY: true }" :items="types" item-title="label" item-value="label"
+        hide-details rounded density="compact" persistent-placeholder variant="solo-filled" flat
+        :disabled="disabled || schema.disabled" append-icon="mdi-chevron-down" @update:model-value="onChangeType"
+      >
+        <template #prepend>
+          <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ schema.label }}
+        </template>
+        <template #label />
+      </v-select>
+      <div class="add-btn-wrapper">
+        <v-btn elevation="0" class="add-new-item" rounded :disabled="disabled || schema.disabled" @click="onClickAddNewItem"><span>{{ $filters.translate('TL_ADD') }}</span></v-btn>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -135,13 +126,13 @@ export default {
     updateLocalData () {
       this.localModel = _.cloneDeep(this.model)
     },
-    async validate () {
-      for (const vfg of this.$refs.vfg) {
-        if (_.get(await vfg.validate(), 'length', 0) !== 0) {
+    validate () {
+      _.each(this.$refs.vfg, vfg => {
+        if (!vfg.validate()) {
           this.errors = vfg.errors
           throw new Error('group validation error')
         }
-      }
+      })
       return true
     },
     debouncedValidate () {
@@ -153,9 +144,6 @@ export default {
       _.each(this.$refs.vfg, vfg => {
         vfg.clearValidationErrors()
       })
-    },
-    getKey (item) {
-      return `paragraph-item-${Math.random()}`
     },
     getSchema (item) {
       let schemaItems = []
@@ -210,24 +198,22 @@ export default {
         this.$emit('input', this.items, this.schema.model)
       }
     },
+    findIds (obj) {
+      const ids = []
+      _.each(obj, (value, key) => {
+        if (key === 'id') {
+          return ids.push(value)
+        }
+        if (_.isPlainObject(value) || _.isArray(value)) {
+          ids.push(...this.findIds(value))
+        }
+      })
+      return ids
+    },
     onClickRemoveItem (item) {
       let attachments = _.get(this.model, '_attachments', [])
       if (_.includes(['image', 'file', 'group'], item.input)) {
-        const findIds = obj => {
-          const ids = []
-          _.each(obj, (value, key) => {
-            if (key === 'id') {
-              return ids.push(value)
-            }
-            if (_.isPlainObject(value) || _.isArray(value)) {
-              ids.push(...findIds(value))
-            }
-          })
-          return ids
-        }
-        const ids = findIds(item)
-        console.warn('IDS = ', ids)
-        _.each(ids, fileItemId => {
+        _.each(this.findIds(item), fileItemId => {
           attachments = _.reject(attachments, {_fields: {fileItemId}})
         })
       }
