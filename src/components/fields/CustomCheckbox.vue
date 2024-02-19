@@ -1,6 +1,6 @@
 <template>
   <div class="custom-checkbox" :class="{disabled: schema.disabled}">
-    <div class="field-label">{{ schema.label }}</div>
+    <field-label :schema="schema" />
     <div ref="input" class="switch" :class="{active: getValue()}" @click="onChange">
       <div class="drag" />
       <div class="labels">

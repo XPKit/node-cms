@@ -1,7 +1,7 @@
 <template>
   <div class="image-view" :class="{'full-width': !(schema.width && schema.height)}">
     <form enctype="multipart/form-data">
-      <div class="field-label"><span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ schema.label }}</div>
+      <field-label :schema="schema" />
       <v-card
         v-if="schema.disabled"
         class="file-input-card" elevation="0" :class="{ 'drag-and-drop': dragover }"

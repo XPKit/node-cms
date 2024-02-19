@@ -10,52 +10,49 @@
 @mixin normal-text {
   font-style: normal;
   line-height: normal;
+  font-weight: 400;
 }
 
 @mixin italic-text {
   font-style: italic;
   line-height: normal;
+  font-weight: 400;
 }
 
 @mixin h1 {
   font-size: vw(59px);
-  font-weight: 700;
   @include normal-text;
+  font-weight: 700;
 }
 
 @mixin h2 {
   font-size: vw(44px);
-  font-weight: 400;
   @include normal-text;
 }
 
 @mixin h3 {
   font-size: vw(33px);
-  font-weight: 400;
   @include normal-text;
 }
 
 @mixin h4 {
   font-size: vw(25px);
-  font-weight: 400;
   @include italic-text;
 }
 
 @mixin h5 {
   font-size: vw(19px);
-  font-weight: 700;
   @include normal-text;
+  font-weight: 700;
 }
 
 @mixin h6 {
   font-size: vw(16px);
-  font-weight: 400;
   @include italic-text;
 }
 
 @mixin subtext {
   font-size: vw(12px);
-  font-weight: 400;
   @include italic-text;
 }
 
@@ -72,6 +69,12 @@
   font-size: vw(12px);
   font-weight: 700;
   @include italic-text;
+}
+
+@mixin textarea-text {
+  font-size: 14px;
+  font-weight: 400;
+  @include normal-text;
 }
 
 @mixin blurred-background {

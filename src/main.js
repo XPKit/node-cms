@@ -27,6 +27,7 @@ import CmsImport from '@c/pages/CmsImport.vue'
 import SyncResource from '@c/pages/SyncResource.vue'
 
 // Field components
+import FieldLabel from '@c/fields/FieldLabel.vue'
 import CustomTreeView from '@c/fields/CustomTreeView.vue'
 import CustomCode from '@c/fields/CustomCode.vue'
 import ColorPicker from '@c/fields/ColorPicker.vue'
@@ -80,6 +81,7 @@ app.use(router)
 
 // // Vue.config.devtools = false
   .component('CustomForm', CustomForm)
+  .component('FieldLabel', FieldLabel)
   .component('AttachmentView', AttachmentView)
   .component('ImageView', ImageView)
   .component('CustomInput', CustomInput)

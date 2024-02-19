@@ -1,6 +1,5 @@
-import { get as objGet, set as objSet, join, forEach, isFunction, isString, isArray, debounce, uniqueId, uniq as arrayUniq } from 'lodash'
+import { get as objGet, set as objSet, join, forEach, isFunction, isString, isArray, debounce, uniq as arrayUniq } from 'lodash'
 import validators from '@u/validators'
-import { slugifyFormID } from '@u/schema'
 
 function convertValidator (validator) {
   if (isString(validator)) {
@@ -25,7 +24,7 @@ function attributesDirective (el, binding, vnode) {
 }
 
 export default {
-  props: ['model', 'schema', 'formOptions', 'disabled', 'focused'],
+  props: ['model', 'schema', 'formOptions', 'disabled', 'focused', 'paragraphLevel'],
   data () {
     return {
       errors: [],
@@ -229,10 +228,6 @@ export default {
       }
       options.key = list.join('.')
       return options
-    },
-    getFieldID (schema, unique = false) {
-      const idPrefix = objGet(this.formOptions, 'fieldIdPrefix', '')
-      return slugifyFormID(schema, idPrefix) + (unique ? '-' + uniqueId() : '')
     },
     getFieldClasses () {
       return objGet(this.schema, 'fieldClasses', [])

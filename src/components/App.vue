@@ -291,6 +291,7 @@ export default {
     },
     async selectResource (resource) {
       if (_.isUndefined(resource)) {
+        console.error('TODO: hugo')
         // TODO: hugo - check why it is called with undefined
         return
       }
@@ -481,11 +482,7 @@ export default {
       overflow-y: auto;
     }
   }
-  .field-label {
-    @include subtext;
-    padding-left: 16px;
-    color: $field-label-color;
-  }
+
   .border-wrapper  {
     border: 1px solid rgba(0,0,0,.42);
     border-radius: 4px;

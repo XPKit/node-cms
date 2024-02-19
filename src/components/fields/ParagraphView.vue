@@ -39,11 +39,9 @@
         ref="input" transition="none"
         :model-value="selectedType" :menu-props="{ bottom: true, offsetY: true }" :items="types" item-title="label" item-value="label"
         hide-details rounded density="compact" persistent-placeholder variant="solo-filled" flat
-        :disabled="disabled || schema.disabled" append-icon="mdi-chevron-down" @update:model-value="onChangeType"
+        :disabled="disabled || schema.disabled" menu-icon="mdi-chevron-down" @update:model-value="onChangeType"
       >
-        <template #prepend>
-          <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ schema.label }}
-        </template>
+        <template #prepend><field-label :schema="schema" /></template>
         <template #label />
       </v-select>
       <div class="add-btn-wrapper">
@@ -398,6 +396,10 @@ export default {
     .add-new-item {
       margin: 0;
     }
+  }
+  .v-input {
+    display: flex;
+    flex-direction: column;
   }
 }
 </style>

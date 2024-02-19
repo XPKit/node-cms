@@ -1,24 +1,11 @@
 <template>
   <div class="custom-textarea">
     <v-textarea
-      ref="input"
-      multi-line
-      :class="[schema.labelClasses]"
-      :type="getType()"
-      :model-value="value"
-      :max-length="schema.max"
-      :min-length="schema.min"
-      :density="get('density')"
-      :disabled="schema.disabled ? true : false"
-      :readonly="schema.readonly ? true : false"
-      hide-details
-      :variant="getVariant()"
-      @update:model-value="onChangeData"
+      ref="input" multi-line :class="[schema.labelClasses]" :type="getType()" :model-value="value" :max-length="schema.max" :min-length="schema.min"
+      :density="get('density')" :flat="get('flat')" :disabled="schema.disabled ? true : false" :readonly="schema.readonly ? true : false"
+      hide-details :variant="getVariant()" @update:model-value="onChangeData"
     >
-      <template #prepend>
-        <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ schema.label }}
-      </template>
-      <template #label />
+      <template #prepend><field-label v-if="paragraphLevel == 1" :schema="schema" /></template>
     </v-textarea>
   </div>
 </template>
@@ -46,6 +33,8 @@ export default {
 
 <style lang="scss">
   .custom-textarea {
-
+    .v-field__input {
+      padding-top: 8px;
+    }
   }
 </style>

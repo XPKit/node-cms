@@ -15,6 +15,7 @@
       :flat="get('flat')"
       item-title="text"
       item-value="_id"
+      menu-icon="mdi-chevron-down"
       :clearable="getSelectOpt('clearable')"
       :variant="getVariant()" :density="get('density')" rounded hide-details
       @update:model-value="updateSelected"
@@ -22,7 +23,7 @@
       @tag="addTag"
     >
       <template #prepend>
-        <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ getLabel() }}
+        <field-label :schema="schema" :label="getLabel()" />
         <v-btn v-if="schema.listBox" size="small" rounded elevation="0" @click="onChangeSelectAll">{{ $filters.translate(allOptionsSelected() ? 'TL_DESELECT_ALL' : 'TL_SELECT_ALL') }}</v-btn>
       </template>
       <template #label />

@@ -75,6 +75,9 @@ li {
   .v-field--active .v-label.v-field-label {
     visibility: visible;
   }
+  .v-field__input {
+    padding-top: 0px;
+  }
 }
 
 .v-overlay-container {

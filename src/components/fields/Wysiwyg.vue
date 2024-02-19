@@ -1,6 +1,6 @@
 <template>
   <div ref="wysiwygWrapper" class="wysiwyg-wrapper">
-    <div class="field-label">{{ schema.label }}</div>
+    <field-label v-if="paragraphLevel == 1" :schema="schema" />
     <div class="border-wrapper">
       <v-card v-if="editor" class="editor" rounded elevation="0">
         <tiptap-menu-bar class="editor__header" :editor="editor" />
@@ -105,6 +105,7 @@ export default {
     font-style: normal;
     font-weight: 300;
     line-height: normal;
+    cursor: text;
     strong {
       font-weight: 700;
     }

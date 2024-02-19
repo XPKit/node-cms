@@ -9,9 +9,7 @@
     persistent-placeholder hide-details
     @update:model-value="onChangeData"
   >
-    <template #prepend>
-      <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ schema.label }}
-    </template>
+    <template #prepend><field-label :schema="schema" /></template>
     <template #label />
   </v-text-field>
 </template>

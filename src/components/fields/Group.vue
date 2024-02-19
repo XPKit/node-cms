@@ -1,7 +1,7 @@
 <template>
   <div :class="`group nested-level-${paragraphLevel}`">
     <div class="header">
-      <div class="field-label">{{ schema.label }}</div>
+      <field-label :schema="schema" />
     </div>
     <div class="group-content">
       <custom-form

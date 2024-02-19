@@ -1,7 +1,7 @@
 <template>
   <div class="attachment-view">
     <form v-if="!disabled" enctype="multipart/form-data">
-      <div class="field-label"><span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ schema.label }}</div>
+      <field-label :schema="schema" />
       <v-card
         class="file-input-card" elevation="0" :class="{ 'drag-and-drop': dragover }"
         @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"

@@ -5,13 +5,13 @@
         <div v-for="(line, i) in schema.layout.lines" :id="`${formId}-${i}`" :key="i" class="line-wrapper" :class="getLineClasses(line)">
           <div v-for="field in line.fields" :id="getFieldId(field)" :key="field.model" class="field-wrapper" :data-model="field.model" :class="getFieldClasses(field)">
             <!-- <div class="red--text">{{ getFieldType(field.schema) }}</div> -->
-            <component :is="getFieldType(field.schema)" v-if="field.schema" :key="field.model" :paragraph-level="getParagraphLevel(field)" :schema="field.schema" :model="model" :form-options="formOptions" :disabled="field.schema && field.schema.disabled" :focused="field.schema.focused" @input="onInput" />
+            <component :is="getFieldType(field.schema)" v-if="field.schema" :key="field.model" :paragraph-level="paragraphLevel" :schema="field.schema" :model="model" :form-options="formOptions" :disabled="field.schema && field.schema.disabled" :focused="field.schema.focused" @input="onInput" />
           </div>
         </div>
       </template>
       <div v-for="field in schema.fields" v-else :id="getFieldId(field)" :key="field.model" class="field-wrapper" :data-model="field.model" :class="{focused: field.focused === -1}">
         <!-- <div class="red--text">{{ getFieldType(field) }}</div> -->
-        <component :is="getFieldType(field)" :key="field.model" :paragraph-level="getParagraphLevel(field)" :schema="field" :model="model" :form-options="formOptions" :disabled="field.schema && field.schema.disabled" :focused="field.focused" @input="onInput" />
+        <component :is="getFieldType(field)" :key="field.model" :paragraph-level="paragraphLevel" :schema="field" :model="model" :form-options="formOptions" :disabled="field.schema && field.schema.disabled" :focused="field.focused" @input="onInput" />
       </div>
     </fieldset>
   </div>
@@ -40,9 +40,6 @@ export default {
   methods: {
     getFieldId (field) {
       return `${_.isUndefined(field.model) ? this.getFieldType(field) : field.model}-${_.isUndefined(this.formId) ? '1' : this.formId}`
-    },
-    getParagraphLevel (field) {
-      return _.includes(['ParagraphView', 'Group'], this.getFieldType(field)) ? this.paragraphLevel : 1
     },
     getFieldClasses (field) {
       const classes = [`width-${_.get(field, 'width', '1')}`]

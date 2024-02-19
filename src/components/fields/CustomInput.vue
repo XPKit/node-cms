@@ -1,17 +1,11 @@
 <template>
   <v-text-field
-    ref="input"
-    :class="[schema.labelClasses]" :type="getType()" :model-value="value"
-    :max-length="schema.max" :min-length="schema.min" autocomplete="off"
-    validate-on-submit :rules="[validateField]"
-    :flat="get('flat')"
-    :variant="getVariant()" elevation="0" :rounded="get('rounded')" :density="get('density')" :disabled="disabled" :readonly="get('readonly')"
-    persistent-placeholder hide-details
-    @update:model-value="onChangeData"
+    ref="input" :class="[schema.labelClasses]" :type="getType()" :model-value="value"
+    :max-length="schema.max" :min-length="schema.min" autocomplete="off" validate-on-submit :rules="[validateField]"
+    :variant="getVariant()" :flat="get('flat')" :rounded="get('rounded')" :density="get('density')" :disabled="disabled" :readonly="get('readonly')"
+    persistent-placeholder hide-details @update:model-value="onChangeData"
   >
-    <template #prepend>
-      <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ schema.label }}
-    </template>
+    <template #prepend><field-label v-if="paragraphLevel == 1" :schema="schema" /></template>
     <template #label />
   </v-text-field>
 </template>

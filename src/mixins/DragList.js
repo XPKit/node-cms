@@ -22,7 +22,6 @@ export default {
       const suffix = filenameComponents.length > 1 ? `.${_.last(filenameComponents)}` : ''
       const win = window.open(window.origin + a.url + suffix, '_blank')
       win.focus()
-      console.log(a)
     }
   }
 }
