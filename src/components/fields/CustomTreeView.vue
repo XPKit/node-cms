@@ -1,9 +1,14 @@
 <template>
-  <json-tree-view v-if="schema" ref="input" :key="schema.model" :data="get(model,schema.model)" :options="options" @change-data="onChangeData" />
+  <div class="json-viewer-wrapper">
+    <field-label :schema="schema" />
+    <json-viewer v-if="schema" ref="input" :key="schema.model" :value="getData()" :copyable="true">
+      <template #copy><v-btn icon size="small" elevation="0" variant="flat"><v-icon>mdi-content-copy</v-icon></v-btn></template>
+    </json-viewer>
+  </div>
 </template>
 
 <script>
-import _ from 'lodash'
+import {get as objGet} from 'lodash'
 import AbstractField from '@m/AbstractField'
 
 export default {
@@ -23,12 +28,22 @@ export default {
     }
   },
   methods: {
-    onChangeData (data) {
-      console.warn('onChangeData - ', data)
-      _.set(this.model, _.get(this.schema, 'model', false), data)
-    },
-    get: _.get
+    getData () {
+      return objGet(this.model, this.schema.model, false)
+    }
   }
-
 }
 </script>
+<style lang="scss">
+.json-viewer-wrapper {
+  .jv-container {
+    .jv-button {
+      padding: 0;
+    }
+    .jv-code {
+      padding: 8px 0px;
+      padding-left: 16px;
+    }
+  }
+}
+</style>

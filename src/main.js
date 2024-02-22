@@ -3,10 +3,8 @@ import { createApp, h } from 'vue'
 import * as Vue from 'vue'
 
 import { createRouter, createWebHashHistory } from 'vue-router'
-import 'vue3-easy-data-table/dist/style.css'
-import Vue3EasyDataTable from 'vue3-easy-data-table'
+import JsonViewer from 'vue-json-viewer'
 import VueShortkey from 'vue3-shortkey'
-import { JsonTreeView } from 'json-tree-view-vue3'
 import VueVirtualScroller from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import axios from 'axios'
@@ -44,11 +42,6 @@ import CustomTextarea from '@c/fields/CustomTextarea.vue'
 import CustomCheckbox from '@c/fields/CustomCheckbox.vue'
 import CustomInputTag from '@c/fields/CustomInputTag.vue'
 import Group from '@c/fields/Group.vue'
-
-// Table fields
-import TableImageView from '@c/vue-table/TableImageView.vue'
-import TableCustomCheckbox from '@c/vue-table/TableCustomCheckbox.vue'
-import TableRowActions from '@c/vue-table/TableRowActions.vue'
 
 import Loading from './modules/Loading'
 
@@ -103,14 +96,10 @@ app.use(router)
   .component('CmsImport', CmsImport)
   .component('SyncResource', SyncResource)
   .component('Draggable', VueDraggableNext)
-  .component('TableImageView', TableImageView)
-  .component('TableCustomCheckbox', TableCustomCheckbox)
-  .component('TableRowActions', TableRowActions)
-  .component('EasyDataTable', Vue3EasyDataTable)
-  .component('JsonTreeView', JsonTreeView)
+  .use(JsonViewer)
   .use(Loading)
   .use(VueVirtualScroller)
-  .use(VueShortkey)
+  .use(VueShortkey, {prevent: ['input', 'textarea']})
 
 function addPlugin (title, displayName, group = 'System', allowed = ['admins', 'imagination']) {
   window.plugins = window.plugins || []

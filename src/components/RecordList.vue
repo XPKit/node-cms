@@ -33,8 +33,8 @@
     </div>
     <div v-if="hasEditableRecords()" class="records-top-bar">
       <div class="toggle-view-mode" @click="toggleViewMode()">
-        <v-icon size="small" :class="{selected: !multiselect}">mdi-note-edit-outline</v-icon>
-        <v-icon size="small" :class="{selected: multiselect}">mdi-format-list-checks</v-icon>
+        <v-icon :class="{selected: !multiselect}">mdi-note-edit-outline</v-icon>
+        <v-icon :class="{selected: multiselect}">mdi-format-list-checks</v-icon>
       </div>
       <div v-if="multiselect" class="multiselect-buttons">
         <span :class="{disabled: allRecordsSelected()}" @click="onClickSelectAll">{{ $filters.translate('TL_SELECT_ALL') }}</span>
@@ -48,12 +48,12 @@
           @click.exact="select(item)" @click.shift="selectTo(item)" @click.ctrl="selectTo(item, true)"
         >
           <div class="item-info">
-            <div v-if="multiselect" class="checkbox" :class="{'blink-background': isItemSelected(item)}" @click.exact="select(item, true)">
+            <div v-if="multiselect" class="checkbox" @click.exact="select(item, true)">
               <v-icon v-if="item._local" :class="{displayed: isItemSelected(item)}" size="small">mdi-check-bold</v-icon>
             </div>
             <div class="infos-wrapper">
               <div v-if="item" class="main">
-                <v-tooltip location="right">
+                <v-tooltip location="right" eager>
                   <template #activator="{ props }">
                     <span v-bind="props">{{ $filters.truncate(getName(item), 15) }}</span>
                   </template>
@@ -239,10 +239,7 @@ export default {
       this.omnibarDisplayed = status
     },
     getShortcuts () {
-      if (this.omnibarDisplayed) {
-        return {}
-      }
-      return {esc: ['esc'], open: ['ctrl', '/']}
+      return this.omnibarDisplayed ? {} : {esc: ['esc'], open: ['ctrl', '/']}
     },
     getSelectedRecordIds () {
       return _.map(this.localMultiselectItems, '_id')

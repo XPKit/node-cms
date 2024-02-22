@@ -35,7 +35,7 @@
     <div v-if="isForMultipleImages()" class="preview-multiple">
       <draggable :list="getAttachments()">
         <v-card v-for="(a, i) in getAttachments()" :key="getKey(a)" elevation="0" class="preview-attachment" :class="{odd: i % 2 !== 0}">
-          <v-tooltip location="bottom">
+          <v-tooltip location="right" eager>
             <template #activator="{ props }">
               <v-chip variant="outlined" class="filename" closable close-icon="mdi-close-circle-outline" v-bind="props" @click:close="removeImage(a)">#{{ i + 1 }} - {{ $filters.truncate(a._filename,10) }} ({{ imageSize(a) }})</v-chip>
             </template>
@@ -52,7 +52,7 @@
     </div>
     <template v-else-if="attachment() && isImage()">
       <div v-if="!(schema.width && schema.height)" class="preview-single-attachment">
-        <v-tooltip location="right">
+        <v-tooltip location="right" eager>
           <template #activator="{ props }">
             <v-chip class="filename" closable v-bind="props" @click:close="removeImage(attachment())">{{ truncate(attachment()._filename) }} ({{ imageSize(attachment()) }})</v-chip>
           </template>

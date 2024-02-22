@@ -211,15 +211,16 @@ export default {
     async checkFormValid () {
       let formValid = false
       try {
+        this.$refs.vfg.resetValidation()
         formValid = _.get(await this.$refs.vfg.validate(), 'valid', false)
       } catch (error) {
         console.error('Not valid: ', error)
         formValid = false
       }
-      const firstInvalidField = _.find(this.$refs.vfg.inputs, (input) => !input.valid)
+      const firstInvalidField = _.find(this.$refs.vfg.items, (input) => !input.isValid)
       if (!_.isUndefined(firstInvalidField)) {
         formValid = false
-        firstInvalidField.focus()
+        document.querySelector(`#${firstInvalidField.id}`).focus()
       }
       this.formValid = formValid
       if (!this.formValid) {

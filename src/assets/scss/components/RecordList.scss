@@ -138,12 +138,21 @@
    align-items: center;
    justify-content: space-between;
    cursor: pointer;
+   padding: 2px;
    .v-icon {
       border-radius: 100px;
       color: $sidebar-records-list-delete-icon-color;
-      padding: 4px;
-      min-width: 16px;
-      min-height: 16px;
+      height: 24px;
+      width: 24px;
+      position: relative;
+      &:before {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          font-size: 16px;
+          height: 16px;
+      }
       &.selected {
         color: $sidebar-records-list-delete-icon-selected-color;
         background-color: $imag-purple;
@@ -163,17 +172,6 @@
         pointer-events: none;
         touch-action: none;
       }
-    }
-  }
-  @keyframes blinkBackground {
-    0% {
-      background-color: white;
-    }
-    50% {
-      background-color: rgba(255, 255, 255, 0.25);
-    }
-    100% {
-      background-color: white;
     }
   }
 }

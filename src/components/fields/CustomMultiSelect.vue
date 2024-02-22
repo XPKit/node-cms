@@ -1,42 +1,17 @@
 <template>
   <div class="multiselect-wrapper">
     <v-autocomplete
-      :id="selectOptions.id"
-      ref="input"
-      :chips="getSelectOpt('chips')"
-      :model-value="objectValue || value"
-      :items="formattedOptions"
-      :closable-chips="getSelectOpt('deletableChips') || getSelectOpt('multiple')"
-      :hide-selected="getSelectOpt('hideSelected')"
-      :disabled="disabled || schema.disabled"
-      :placeholder="schema.placeholder"
-      :multiple="getSelectOpt('multiple')"
-      :ripple="false"
-      :flat="get('flat')"
-      item-title="text"
-      item-value="_id"
-      menu-icon="mdi-chevron-down"
-      :clearable="getSelectOpt('clearable')"
-      :variant="getVariant()" :density="get('density')" rounded hide-details
-      @update:model-value="updateSelected"
-      @search-change="onSearchChange"
-      @tag="addTag"
+      :id="selectOptions.id" ref="input" :chips="getSelectOpt('chips')"
+      :model-value="objectValue || value" :items="formattedOptions" :closable-chips="getSelectOpt('deletableChips') || getSelectOpt('multiple')" :hide-selected="getSelectOpt('hideSelected')"
+      :disabled="disabled || schema.disabled" :placeholder="schema.placeholder" :multiple="getSelectOpt('multiple')" :ripple="false" :flat="get('flat')" item-title="text" item-value="_id"
+      menu-icon="mdi-chevron-down" :clearable="getSelectOpt('clearable')" :variant="getVariant()" :density="get('density')" rounded hide-details
+      @update:model-value="updateSelected" @search-change="onSearchChange" @tag="addTag"
     >
       <template #prepend>
         <field-label :schema="schema" :label="getLabel()" />
-        <v-btn v-if="schema.listBox" size="small" rounded elevation="0" @click="onChangeSelectAll">{{ $filters.translate(allOptionsSelected() ? 'TL_DESELECT_ALL' : 'TL_SELECT_ALL') }}</v-btn>
+        <v-btn v-if="schema.listBox" variant="tonal" size="small" rounded elevation="0" @click="onChangeSelectAll">{{ $filters.translate(allOptionsSelected() ? 'TL_DESELECT_ALL' : 'TL_SELECT_ALL') }}</v-btn>
       </template>
       <template #label />
-      <template #item="{item, props}">
-        <v-list-item v-bind="props" :title="item.title" :value="item.value">
-          <template #prepend>
-            <div v-if="getSelectOpt('multiple')" class="checkbox">
-              <v-icon :class="{displayed: props.inputValue}" size="small">mdi-check-bold</v-icon>
-            </div>
-          </template>
-          <!-- <div class="label" :class="{selected: props.inputValue}">{{ item.title }}</div> -->
-        </v-list-item>
-      </template>
       <template #append />
     </v-autocomplete>
   </div>
@@ -64,7 +39,7 @@ export default {
       return values
     },
     formattedOptions () {
-      const formattedOptions = this.selectOptions.label || this.options
+      const formattedOptions = _.cloneDeep(this.selectOptions.label || this.options)
       if (_.isString(_.first(formattedOptions))) {
         return formattedOptions
       }
@@ -159,17 +134,22 @@ export default {
 
 <style lang="scss">
 .multiselect-wrapper {
-  .v-input__prepend-outer {
+  .v-input__prepend {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
   }
-  .v-autocomplete.v-select--chips {
+  .v-autocomplete {
     input {
-      padding: 0;
-      height: 100%;
-      max-height: 100% !important;
+      position: absolute;
+    }
+    &.v-select--chips {
+      input {
+        padding: 0;
+        height: 100%;
+        max-height: 100% !important;
+      }
     }
   }
   .v-select__selections {

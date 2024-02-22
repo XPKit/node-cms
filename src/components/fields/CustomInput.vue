@@ -16,14 +16,7 @@ import AbstractField from '@m/AbstractField'
 
 export default {
   mixins: [AbstractField],
-  data () {
-    return {
-    }
-  },
   methods: {
-    onChangeData (data) {
-      this.value = data
-    },
     getType () {
       return _.get(this.schema, 'inputFieldType', 'text')
     },

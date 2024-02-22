@@ -21,8 +21,7 @@ exports = (module.exports = {
       searchable: true,
       localised: false,
       options: {
-        index: 4,
-        sortBy: ''
+        index: 4
       }
     },
     {
@@ -34,8 +33,7 @@ exports = (module.exports = {
       options: {
         breakdown: true,
         size: '150',
-        index: 1,
-        filter: 'multiple'
+        index: 1
       }
     },
     {
@@ -55,8 +53,7 @@ exports = (module.exports = {
       input: 'checkbox',
       localised: false,
       options: {
-        index: 3,
-        filter: 'single'
+        index: 3
       }
     },
     {

@@ -54,11 +54,11 @@ class ViteUtils {
       throw new Error(`No .plugins folder found @ ${this.plugins.fallback}`)
     }
     if (fs.existsSync(path.join(this.plugins.toBuild, 'js/main.js'))) {
-      console.log(`found plugins folder symlink @ ${this.plugins.toBuild}`)
+      console.log(`Found plugins folder symlink @ ${this.plugins.toBuild}`)
       fs.unlinkSync(this.plugins.toBuild)
     }
     if (!(this.isInNodeModules && fs.existsSync(this.plugins.source))) {
-      console.log(`will use fallback path ${this.plugins.fallback}`)
+      console.log(`Will use fallback path ${this.plugins.fallback}`)
       this.plugins.source = this.plugins.fallback
     }
     fs.symlinkSync(this.plugins.source, this.plugins.toBuild)

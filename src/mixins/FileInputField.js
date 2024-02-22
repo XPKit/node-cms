@@ -138,8 +138,6 @@ export default {
       return kbLimit > 1000 ? `${kbLimit / 1000} MB` : `${kbLimit} KB`
     },
     removeImage (attachment) {
-      this.$refs.input.internalValue = null
-      this.$refs.input.$refs.input.value = null
       this.localModel._attachments = _.filter(this.localModel._attachments, item => item !== attachment)
       this.attachments = _.filter(this.localModel._attachments, attachment => this.isSameAttachment(attachment))
       this.$forceUpdate()
@@ -163,7 +161,7 @@ export default {
       }
       files = _.isNull(files) ? [] : files
       if (_.get(files, 'target.files', false)) {
-        files = files.target.files
+        files = _.values(files.target.files)
       }
       if (!_.isArray(files)) {
         files = [files]
@@ -176,10 +174,8 @@ export default {
       if (maxCount > 1 && totalNbFiles > maxCount) {
         console.info(`Reached max number of files for ${this.schema.model}`, totalNbFiles, maxCount)
         files = _.take(files, files.length - (totalNbFiles - maxCount))
-      } else if (maxCount === 1 && totalNbFiles > 1) {
-        if (!this.isForParagraph) {
-          this.localModel._attachments = _.filter(this.localModel._attachments, (attachment) => !this.isSameAttachment(attachment))
-        }
+      } else if (maxCount === 1 && totalNbFiles > 1 && !this.isForParagraph) {
+        this.localModel._attachments = _.filter(this.localModel._attachments, (attachment) => !this.isSameAttachment(attachment))
       }
       const results = await this.readAllFiles(files)
       if (this.isForParagraph) {
@@ -195,9 +191,7 @@ export default {
       const newAttachment = {
         _filename: _.get(file, '[0].name', file.name),
         _name: key,
-        _fields: {
-          locale
-        },
+        _fields: {locale},
         field: this.schema.model,
         localised: this.schema.localised,
         file: _.get(file, '[0]', file),
@@ -205,14 +199,9 @@ export default {
       }
       if (this.isForParagraph) {
         const fileItemId = uuid()
-        const newItem = {
-          id: fileItemId
-        }
-        this.items.push(newItem)
+        this.items.push({id: fileItemId})
         this.items = _.clone(this.items)
         newAttachment._fields.fileItemId = fileItemId
-      }
-      if (this.isForParagraph) {
         this.schema.rootView.model._attachments.push(newAttachment)
       } else {
         this.localModel._attachments.push(newAttachment)

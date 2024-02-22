@@ -11,7 +11,6 @@ export default {
   components: {
     TiptapMenuItem
   },
-
   props: {
     editor: {
       type: Object,
@@ -22,7 +21,6 @@ export default {
       default: () => []
     }
   },
-
   data () {
     return {
       menuBarButtons: false,
@@ -140,31 +138,17 @@ export default {
     setLink () {
       const previousUrl = this.editor.getAttributes('link').href
       const url = window.prompt('URL', previousUrl)
-
       // cancelled
       if (url === null) {
         return
       }
-
       // empty
       if (url === '') {
-        this.editor
-          .chain()
-          .focus()
-          .extendMarkRange('link')
-          .unsetLink()
-          .run()
-
+        this.editor.chain().focus().extendMarkRange('link').unsetLink().run()
         return
       }
-
       // update link
-      this.editor
-        .chain()
-        .focus()
-        .extendMarkRange('link')
-        .setLink({ href: url })
-        .run()
+      this.editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
     }
   }
 }
@@ -172,8 +156,8 @@ export default {
 
 <style lang="scss" scoped>
 .toolbar {
-  padding: 8px 16px;
+  padding: 4px 8px;
   display: flex;
-  gap: 8px;
+  gap: 2px;
 }
 </style>

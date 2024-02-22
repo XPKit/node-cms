@@ -1,17 +1,8 @@
 <template>
   <div class="paragraph-view">
     <draggable
-      v-if="schema"
-      :key="`${schema.model}-${key}`"
-      :list="items"
-      :class="{disabled}"
-      draggable=".item"
-      v-bind="dragOptions"
-      handle=".handle"
-      :group="`${schema.model}-${key}`"
-      ghost-class="ghost"
-      @end="onEndDrag"
-      @start="dragging = true"
+      v-if="schema" :key="`${schema.model}-${key}`" :list="items"
+      :class="{disabled}" draggable=".item" v-bind="dragOptions" handle=".handle" :group="`${schema.model}-${key}`" ghost-class="ghost" @end="onEndDrag" @start="dragging = true"
     >
       <v-card v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" elevation="0" :class="`item nested-level-${paragraphLevel}`">
         <v-card-title class="handle paragraph-header">
@@ -22,14 +13,7 @@
         </v-card-title>
         <div class="item-main-wrapper">
           <div class="item-main">
-            <custom-form
-              :schema="getSchema(item)"
-              :model="item"
-              :paragraph-index="idx"
-              :paragraph-level="paragraphLevel + 1"
-              @error="onError"
-              @input="onModelUpdated"
-            />
+            <custom-form :schema="getSchema(item)" :model="item" :paragraph-index="idx" :paragraph-level="paragraphLevel + 1" @error="onError" @input="onModelUpdated" />
           </div>
         </div>
       </v-card>
@@ -166,10 +150,7 @@ export default {
           item.input = _.camelCase(`paragraph ${item.input}`)
         }
       })
-      let extraSources = {}
-      if (_.isString(item.source)) {
-        extraSources = _.get(ResourceService.getSchema(item.source), 'extraSources', {})
-      }
+      let extraSources = _.isString(item.source) ? _.get(ResourceService.getSchema(item.source), 'extraSources', {}) : {}
       const fields = SchemaService.getSchemaFields(schemaItems, resource, locale, userLocale, disabled, extraSources, this.schema.rootView || this)
       const groups = SchemaService.getNestedGroups(resource, fields, 0, null, 'value.')
       return {fields: groups}

@@ -1,17 +1,11 @@
 <template>
-  <div
-    id="omnibar" v-shortkey="showOmnibar ? shortcuts : shortcutsWhenClosed"
-    @shortkey="interactiveSearch"
-  >
+  <div id="omnibar" v-shortkey="getShortcuts()" @shortkey="interactiveSearch">
     <div id="omnibar-backdrop" :class="{displayed: showOmnibar}" @click="showHideOmnibar(false)" />
     <v-card v-show="showOmnibar" elevation="24">
       <v-card-title class="search">
         <v-text-field
           ref="search" v-model="search" class="search-bar" flat variant="solo-filled" rounded hide-details prepend-inner-icon="mdi-magnify" density="compact" :placeholder="$filters.translate('TL_INSERT_KEYWORDS')"
-          type="text"
-          autocomplete="off"
-          name="search"
-          :prefix="searchMode === 'all' ? '' : `${searchMode}:`"
+          type="text" autocomplete="off" name="search" :prefix="searchMode === 'all' ? '' : `${searchMode}:`"
         />
       </v-card-title>
       <template v-if="results && results.length > 0">
@@ -119,6 +113,9 @@ export default {
     }))
   },
   methods: {
+    getShortcuts () {
+      return this.showOmnibar ? this.shortcuts : this.shortcutsWhenClosed
+    },
     onScroll ({ target: { scrollTop, clientHeight, scrollHeight } }) {
       this.scrolledToBottom = scrollTop + clientHeight >= scrollHeight - 50
     },
@@ -169,14 +166,6 @@ export default {
       this.searchMode = mode
       this.search = ''
     },
-    // elementIsVisibleInViewport (el) {
-    //   const clientHeight = this.$refs.scrollWrapper.clientHeight
-    //   const scrollTop = this.$refs.scrollWrapper.scrollTop
-    //   const rect = el.getBoundingClientRect()
-    //   return (
-    //     rect.top >= 0 && rect.top < scrollTop
-    //   )
-    // },
     scrollToResult (result) {
       const elem = document.getElementById(`result-${this.highlightedItem}`)
       if (elem) {

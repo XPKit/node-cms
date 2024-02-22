@@ -1,17 +1,13 @@
 <template>
-  <v-text-field
-    ref="input"
-    :class="[schema.labelClasses]" :type="getType()" :model-value="value" :input-value="value"
-    :max-length="schema.max" :min-length="schema.min" autocomplete="off"
-    validate-on-submit :rules="[validateField]"
-    :flat="get('flat')"
-    :variant="getVariant()" :density="get('density')" :disabled="disabled" :readonly="get('readonly')"
-    persistent-placeholder hide-details
+  <v-combobox
+    ref="input" :class="[schema.labelClasses]" :type="getType()" :model-value="value" :input-value="value"
+    :max-length="schema.max" :min-length="schema.min" autocomplete="off" validate-on-submit :rules="[validateField]" persistent-placeholder hide-details chips multiple
+    :variant="getVariant()" :flat="get('flat')" :rounded="get('rounded')" :density="get('density')" :disabled="disabled" :readonly="get('readonly')" clearable
     @update:model-value="onChangeData"
   >
     <template #prepend><field-label :schema="schema" /></template>
     <template #label />
-  </v-text-field>
+  </v-combobox>
 </template>
 
 <script>
@@ -20,14 +16,7 @@ import AbstractField from '@m/AbstractField'
 
 export default {
   mixins: [AbstractField],
-  data () {
-    return {
-    }
-  },
   methods: {
-    onChangeData (data) {
-      this.value = data
-    },
     getType () {
       return _.get(this.schema, 'inputFieldType', 'text')
     },

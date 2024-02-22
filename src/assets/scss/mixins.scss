@@ -20,39 +20,39 @@
 }
 
 @mixin h1 {
-  font-size: vw(59px);
+  font-size: clamp(59px, 59px, vw(59px));
   @include normal-text;
   font-weight: 700;
 }
 
 @mixin h2 {
-  font-size: vw(44px);
+  font-size: clamp(44px, 44px, vw(44px));
   @include normal-text;
 }
 
 @mixin h3 {
-  font-size: vw(33px);
+  font-size: clamp(33px, 33px, vw(33px));
   @include normal-text;
 }
 
 @mixin h4 {
-  font-size: vw(25px);
+  font-size: clamp(25px, 25px, vw(25px));
   @include italic-text;
 }
 
 @mixin h5 {
-  font-size: vw(19px);
+  font-size: clamp(19px, 19px, vw(19px));
   @include normal-text;
   font-weight: 700;
 }
 
 @mixin h6 {
-  font-size: vw(16px);
+  font-size: clamp(16px, 16px, vw(16px));
   @include italic-text;
 }
 
 @mixin subtext {
-  font-size: vw(12px);
+  font-size: clamp(12px, 12px, vw(12px));
   @include italic-text;
 }
 
@@ -62,18 +62,17 @@
 
 @mixin cta-text {
   @include h5;
-  font-size: vw(14px);
+  font-size: clamp(14px, 14px, vw(14px));
 }
 
 @mixin small-cta-text {
-  font-size: vw(12px);
+  font-size: clamp(12px, 12px, vw(12px));
   font-weight: 700;
   @include italic-text;
 }
 
 @mixin textarea-text {
-  font-size: 14px;
-  font-weight: 400;
+  font-size: clamp(14px, 14px, vw(14px));
   @include normal-text;
 }
 

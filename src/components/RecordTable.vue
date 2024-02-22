@@ -21,7 +21,7 @@
         <top-bar-locale-list :locales="resource.locales" :locale="locale" :select-locale="selectLocale" :back="back" />
         <div v-shortkey="getShortcuts()" class="search" @shortkey="interactiveSearch">
           <v-text-field
-            ref="search" v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat variant="solo-filled" rounded hide-details density="compact" :placeholder="translate('TL_SEARCH')"
+            ref="search" v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat variant="solo-filled" rounded hide-details density="compact" :placeholder="$filters.translate('TL_SEARCH')"
             type="text"
             name="search"
           />
@@ -38,16 +38,6 @@
           :options="options" :resource="resource" :schema="schema" :items="filteredList"
           @remove="removeRecord" @edit="editRecord"
         />
-      <!-- <paginate
-        v-if="!search"
-        v-model="page"
-        :page-count="pageCount"
-        :click-handler="onPaginationClick"
-        :prev-text="'Prev'"
-        :next-text="'Next'"
-        :container-class="'pager'"
-      /> -->
-      <!-- <button class="update" @click="updateRecords">{{ $filters.translate("TL_UPDATE") }}</button> -->
       </template>
       <!-- editing -->
       <record-editor
@@ -72,8 +62,7 @@ import pAll from 'p-all'
 
 import TranslateService from '@s/TranslateService'
 import NotificationsService from '@s/NotificationsService'
-import VueTableGenerator from '@c/vue-table/VueTableGenerator.vue'
-// import Paginate from 'vuejs-paginate'
+import VueTableGenerator from '@c/VueTableGenerator.vue'
 import TopBarLocaleList from '@c/TopBarLocaleList.vue'
 
 import RecordEditor from '@c/RecordEditor.vue'
@@ -85,7 +74,6 @@ export default {
     VueTableGenerator,
     RecordEditor,
     TopBarLocaleList
-    // Paginate
   },
   mixins: [AbstractEditorView, Notification],
   props: {
@@ -101,7 +89,6 @@ export default {
       type: String,
       default: 'enUS'
     },
-
     selectedResourceCallback: {
       type: Function,
       default: () => {}
@@ -117,7 +104,6 @@ export default {
   },
   data () {
     return {
-      page: 1,
       menuOpened: false,
       isReady: false,
       omnibarDisplayed: false,
@@ -142,9 +128,6 @@ export default {
         displayUpdatedAt: _.get(this.resource, 'options.displayUpdatedAt', true)
       }
     },
-    pageCount () {
-      return Math.ceil(this.listCount / this.options.paging)
-    },
     maxCount () {
       return _.get(this.resource, 'maxCount', 0)
     },
@@ -156,10 +139,10 @@ export default {
       if (fields.length === 0) {
         fields = [_.first(this.resource.schema)]
       }
+      if (_.isEmpty(this.search)) {
+        return this.clonedRecordList
+      }
       return _.filter(this.clonedRecordList, (item, index) => {
-        if (_.isEmpty(this.search)) {
-          return (index >= (this.options.paging * (this.page - 1)) && index < this.options.paging * this.page)
-        }
         const values = []
         _.forEach(fields, (field) => {
           values.push(this.getValue(item, field))
@@ -200,10 +183,7 @@ export default {
       this.omnibarDisplayed = status
     },
     getShortcuts () {
-      if (this.omnibarDisplayed) {
-        return {}
-      }
-      return {esc: ['esc'], open: ['ctrl', '/']}
+      return this.omnibarDisplayed ? {} : {esc: ['esc'], open: ['ctrl', '/']}
     },
     async interactiveSearch (event) {
       const action = _.get(event, 'srcKey', false)
@@ -282,32 +262,30 @@ export default {
       _.forEach(values, (value) => {
         found = new RegExp(this.search, 'i').test(value)
         if (found) {
-          return false // Exist loop
+          return false // Exit loop
         }
       })
       return found
+    },
+    getFieldValue (record, fieldName, field) {
+      const value = _.get(record, fieldName)
+      if (!_.includes(['pillbox', 'json'], field.input)) {
+        return value
+      }
+      return value || (field.input === 'pillbox' ? [] : {})
     },
     async updateRecord (record) {
       const uploadObject = {}
       let oldRecord = _.find(this.recordList, {_id: record._id})
       _.each(this.resource.schema, (field) => {
-        if (field.input === 'file') {
-          return
-        }
-        if (field.input === 'image') {
+        if (_.includes(['file', 'image'], field.input)) {
           return
         }
         const isLocalised = this.resource.locales && (field.localised || _.isUndefined(field.localised))
-
         if (isLocalised) {
           _.each(this.resource.locales, (locale) => {
             const fieldName = `${locale}.${field.field}`
-            let value = _.get(record, fieldName)
-            if (field.input === 'pillbox') {
-              value = value || []
-            } else if (field.input === 'json') {
-              value = value || {}
-            }
+            const value = this.getFieldValue(record, fieldName, field)
             if (_.isEqual(value, _.get(oldRecord, fieldName))) {
               return
             }
@@ -316,12 +294,7 @@ export default {
           })
         } else {
           const fieldName = field.field
-          let value = _.get(record, fieldName)
-          if (field.input === 'pillbox') {
-            value = value || []
-          } else if (field.input === 'json') {
-            value = value || {}
-          }
+          const value = this.getFieldValue(record, fieldName, field)
           if (_.isEqual(value, _.get(oldRecord, fieldName))) {
             return
           }
@@ -398,27 +371,23 @@ export default {
       this.selectRecord(obj)
     },
     getSearchableFields () {
-      return _.filter(this.resource.schema, item => item.searchable === true)
+      return _.filter(this.resource.schema, {searchable: true})
     },
     selectLocale (item) {
       this.$emit('update:locale', item)
     },
     getValue (item, field) {
-      let displayname = ''
-      if (field) {
-        if (field.input === 'file') {
-          const attachment = _(item).get('_attachments', []).find(file => file._name === field.field)
-          displayname = attachment && attachment._filename
-        } else {
-          const isLocalised = this.resource.locales && (field.localised || _.isUndefined(field.localised))
-          if (isLocalised) {
-            displayname = _.get(item, `${this.locale}.${field.field}`)
-          } else {
-            displayname = _.get(item, field.field)
-          }
-        }
+      if (!field) {
+        return ''
       }
-      return displayname
+      if (field.input === 'file') {
+        const attachment = _(item).get('_attachments', []).find(file => file._name === field.field)
+        return attachment && attachment._filename
+      }
+      if (this.resource.locales && (field.localised || _.isUndefined(field.localised))) {
+        return _.get(item, `${this.locale}.${field.field}`)
+      }
+      return _.get(item, field.field)
     },
     back () {
       this.$emit('unsetRecord')

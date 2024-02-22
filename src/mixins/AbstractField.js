@@ -81,8 +81,8 @@ export default {
     }
   },
   methods: {
-    get (key) {
-      return objGet(this.schema, key, false)
+    get (key, defaultVal = false) {
+      return objGet(this.schema, key, defaultVal)
     },
     getOpt (opt, defaultVal) {
       return objGet(this.schema, `options.${opt}`, defaultVal)
@@ -95,6 +95,9 @@ export default {
         }
       })
       return join(variant, ' ')
+    },
+    onChangeData (data) {
+      this.value = data
     },
     async validate (calledParent) {
       this.clearValidationErrors()
@@ -205,14 +208,12 @@ export default {
             o = o[k]
           } else {
           // Create missing property (new level)
-            // TODO: hugo - check if it works properly with nested props
             objSet(this.model, k, {})
             // this.$root.$set(o, k, {})
             o = o[k]
           }
         } else {
           // Set final property value
-          // TODO: hugo - check if it works properly with nested props
           objSet(this.model, k, value)
           // this.$root.$set(o, k, value)
           return

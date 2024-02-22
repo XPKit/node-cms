@@ -6,7 +6,7 @@
         <v-menu open-on-hover location="bottom" :close-on-content-click="false" content-class="resources-menu" attach=".v-application">
           <template #activator="{ props }">
             <div class="menu-btn-wrapper" v-bind="props">
-              <v-btn :variant="groupSelected(resourceGroup) ? 'text' : 'outlined'" rounded size="small" :class="{selected: groupSelected(resourceGroup)}">
+              <v-btn variant="text" rounded size="small" :class="{selected: groupSelected(resourceGroup)}">
                 {{ $filters.translate(resourceGroup.name) }}
               </v-btn>
             </div>
@@ -101,6 +101,7 @@ export default {
 .v-btn {
   min-height: 26px;
   @include cta-text;
+  font-size: clamp(14px, 14px, vw(14px));
   font-weight: normal;
   font-style: normal;
   background-color: $navbar-resource-group-background;

@@ -28,14 +28,15 @@ class SchemaService {
         readonly: _.get(field, 'options.readonly', false),
         required: !!field.required,
         options: field.options,
+        hint: field.hint,
         resource,
         locale,
-        userLocale
+        userLocale,
+        rootView
       })
-      if (_.get(rootView, 'model', false)) {
-        _.set(schema, 'rootView.model', rootView.model)
-      }
-      schema = _.merge({}, field.options, schema)
+      _.each(field.options, (val, key) => {
+        _.set(schema, key, val)
+      })
       if ((field.input === 'file') && _.get(schema, 'maxCount', false) === false) {
         schema.maxCount = Infinity
       } else if (field.input === 'select' && _.get(schema, 'labels', false)) {

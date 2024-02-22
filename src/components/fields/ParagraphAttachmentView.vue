@@ -20,7 +20,7 @@
     >
       <v-card v-for="(i, index) in items" :key="getKey(i)" elevation="0" class="preview-attachment" :class="{odd: index % 2 !== 0}">
         <div class="row-handle">
-          <v-tooltip location="right">
+          <v-tooltip location="right" eager>
             <template #activator="{ props }">
               <v-chip class="filename" closable v-bind="props" @click:close="onClickRemoveFileItem(i)">#{{ index + 1 }} - {{ $filters.translate(getAttachment(i, '_filename')) }} ({{ imageSize(getAttachment(i)) }})</v-chip>
             </template>
@@ -63,7 +63,7 @@ export default {
   },
   mounted () {
     this.attachments = this.formatItems()
-    // console.warn('attachments = ', this.attachments)
+    console.warn('attachments = ', this.attachments, this.schema.rootView)
   },
   methods: {
     formatItems () {
@@ -74,7 +74,6 @@ export default {
       return field ? _.get(attach, field) : attach
     },
     onClickRemoveFileItem (fileItem) {
-      // console.warn('onClickRemoveFileItem -', fileItem)
       let attachments = this.schema.rootView.model._attachments = this.schema.rootView.model._attachments || []
       attachments = _.reject(attachments, {_fields: {fileItemId: fileItem.id}})
       this.items = _.difference(this.items, [fileItem])

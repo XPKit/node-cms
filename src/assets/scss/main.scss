@@ -78,9 +78,15 @@ li {
   .v-field__input {
     padding-top: 0px;
   }
+  .v-field--rounded {
+    border-radius: 32px;
+  }
 }
 
 .v-overlay-container {
+  .v-overlay {
+    margin: 0;
+  }
   >.v-menu {
     >.v-overlay__content.resources-menu {
       max-height: 40vh !important;
@@ -98,6 +104,7 @@ li {
         .v-list-item {
           display: inline-block;
           @include cta-text;
+          font-size: clamp(14px, 14px, vw(14px));
           font-weight: normal;
           font-style: normal;
           background-color: $navbar-resource-group-background;
@@ -430,7 +437,15 @@ body {
       }
     }
   }
-
+  .v-input {
+    &:not(.v-autocomplete):not(.v-textarea) {
+      .v-field__input {
+        height: 34px !important;
+        min-height: 34px !important;
+        max-height: 34px !important;
+      }
+    }
+  }
   .search {
     background-color: $layout-card-background;
     display: flex;
@@ -440,6 +455,8 @@ body {
     .v-input__slot,
     input {
       height: 34px !important;
+      min-height: 34px !important;
+      max-height: 34px !important;
     }
 
     input {
@@ -531,6 +548,7 @@ body {
 
     .resource-title {
       @include h5;
+      font-size: clamp(19px, 19px, vw(19px));
     }
 
     .v-icon {
@@ -571,28 +589,22 @@ body {
     &:hover {
       background-color: rgba(255, 255, 255, 0.25);
     }
-
-    &.blink-background {
-      animation: blinkBackground 0.1s;
-    }
   }
 
-  .v-snack.notification {
-    z-index: 200;
-
+  .v-snackbar.notification {
     p {
       margin: 0;
       text-align: center;
       @include h6;
     }
 
-    .v-snack__wrapper {
+    .v-snackbar__wrapper {
       @include blurred-background;
       margin-top: $navbar-height;
       padding: 0;
-
+      color: $imag-black;
       .v-btn {
-        background-color: $imag-white;
+        background-color: transparent;
         color: $imag-black;
       }
     }
@@ -705,8 +717,8 @@ body {
       }
     }
 
-    .v-snack.notification {
-      .v-snack__wrapper {
+    .v-snackbar.notification {
+      .v-snackbar__wrapper {
         .v-btn {
           background-color: $imag-black;
           color: $imag-white;

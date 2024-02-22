@@ -1,24 +1,24 @@
 <template>
   <div class="code-wrapper">
     <div class="label">{{ schema.label }}</div>
-    <!-- TODO: hugo - make it work again -->
-    <!-- <codemirror v-if="isReady" ref="input" v-model="value" :style="getStyle()" :options="cmOption" @input="onChangeData" /> -->
+    <codemirror v-if="isReady" ref="input" v-model:value="value" :style="getStyle()" :options="cmOption" @input="onChangeData" />
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
-// import 'codemirror/keymap/sublime'
-// import { codemirror } from 'codemirror-editor-vue3'
-// import 'codemirror/mode/javascript/javascript.js'
-// import 'codemirror/mode/htmlmixed/htmlmixed.js'
-// import 'codemirror/mode/css/css.js'
-// import 'codemirror/lib/codemirror.css'
-// import 'codemirror/theme/dracula.css'
+import Codemirror from 'codemirror-editor-vue3'
+import 'codemirror/keymap/sublime'
+import 'codemirror/mode/javascript/javascript.js'
+import 'codemirror/addon/display/placeholder.js'
+import 'codemirror/mode/htmlmixed/htmlmixed.js'
+import 'codemirror/mode/css/css.js'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/theme/dracula.css'
 import AbstractField from '@m/AbstractField'
 
 export default {
-  // components: {codemirror},
+  components: {Codemirror},
   mixins: [AbstractField],
   data () {
     return {
@@ -32,7 +32,7 @@ export default {
         line: this.getOpt('line', true),
         foldGutter: this.getOpt('foldGutter', true),
         styleSelectedText: this.getOpt('styleSelectedText', true),
-        mode: this.getOpt('mode', 'javascript'),
+        mode: this.getOpt('mode', 'text/javascript'),
         keyMap: 'sublime',
         matchBrackets: this.getOpt('matchBrackets', true),
         showCursorWhenSelecting: this.getOpt('showCursorWhenSelecting', true),
@@ -58,8 +58,8 @@ export default {
   methods: {
     getStyle () {
       return _.merge({
-        height: _.get(this.schema, 'options.height', 'auto'),
-        width: _.get(this.schema, 'options.width', 'auto')
+        height: _.get(this.schema, 'options.height', '100%'),
+        width: _.get(this.schema, 'options.width', '100%')
       }, _.get(this.schema, 'options.css', {}))
     },
     onChangeData (data) {
@@ -72,8 +72,8 @@ export default {
 
 <style lang="scss">
 .code-wrapper {
-  .CodeMirror {
-    height: auto;
+  .codemirror-container  {
+    border-radius: 4px;
   }
 }
 </style>

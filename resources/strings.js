@@ -6,7 +6,7 @@ exports = (module.exports = {
       field: 'string',
       input: 'string',
       required: true,
-      help: 'blablabla',
+      hint: 'blablabla',
       options: {
         regex: {
           value: /^\d{3}$/g,

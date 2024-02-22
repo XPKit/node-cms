@@ -113,6 +113,10 @@ exports = (module.exports = {
     },
     {
       field: 'image',
+      input: 'image'
+    },
+    {
+      field: 'image2',
       input: 'image',
       options: {
         disabled: true

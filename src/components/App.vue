@@ -7,7 +7,7 @@
       >
         <p>{{ notification.message }}</p>
         <template #actions>
-          <v-btn rounded icon @click="notification = {}">
+          <v-btn rounded @click="resetNotification()">
             <v-icon>mdi-close-circle-outline</v-icon>
           </v-btn>
         </template>
@@ -265,10 +265,6 @@ export default {
   methods: {
     resetNotification () {
       this.showSnackBar = false
-      setTimeout(() => {
-        this.notification = {}
-        this.$forceUpdate()
-      }, 1000)
     },
     setToolbarTitle () {
       this.toolbarTitle = _.get(ConfigService.config, `toolbarTitle.${TranslateService.locale}`, _.get(ConfigService.config, 'toolbarTitle', false))
@@ -291,8 +287,6 @@ export default {
     },
     async selectResource (resource) {
       if (_.isUndefined(resource)) {
-        console.error('TODO: hugo')
-        // TODO: hugo - check why it is called with undefined
         return
       }
       try {
