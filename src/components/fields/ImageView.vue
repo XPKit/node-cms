@@ -54,25 +54,27 @@
       <div v-if="!(schema.width && schema.height)" class="preview-single-attachment">
         <v-tooltip location="right" eager>
           <template #activator="{ props }">
-            <v-chip class="filename" closable v-bind="props" @click:close="removeImage(attachment())">{{ truncate(attachment()._filename) }} ({{ imageSize(attachment()) }})</v-chip>
+            <v-chip class="filename" closable v-bind="props" @click:close="removeImage(attachment())">{{ $filters.truncate(attachment()._filename) }} ({{ imageSize(attachment()) }})</v-chip>
           </template>
           <span>{{ attachment()._filename }}</span>
         </v-tooltip>
         <v-img class="preview" cover :src="getImageSrc()" />
       </div>
-      <template v-else>
-        <cropper
-          ref="cropper"
-          :src="imageUrl()"
-          :transitions="true"
-          image-restriction="fill-area" image-class="cropper__image" default-boundaries="fill" class="cropper"
-          :default-size="schema.options.width && schema.options.height ? getDefaultCropSize() : false" :default-position="getDefaultCropPosition"
-          :min-width="schema.options.width" :max-width="schema.options.width" :min-height="schema.options.height " :max-height="schema.options.height"
-          :move-image="schema.options.moveImage ? true : false" :resize-image="schema.options.resizeImage ? true : false"
-          :stencil-props="stencilProps"
-          @change="onCropperChange"
-        />
-      </template>
+      <div v-else class="parent-parent">
+        <div class="cropper-parent">
+          <cropper
+            ref="cropper"
+            :src="imageUrl()"
+            :transitions="true"
+            image-restriction="fit-area" image-class="cropper__image" default-boundaries="fill" class="cropper"
+            :default-size="schema.options.width && schema.options.height ? getDefaultCropSize() : false" :default-position="getDefaultCropPosition"
+            :min-width="schema.options.width" :max-width="schema.options.width" :min-height="schema.options.height " :max-height="schema.options.height"
+            :move-image="schema.options.moveImage ? true : false" :resize-image="schema.options.resizeImage ? true : false"
+            :stencil-props="stencilProps"
+            @change="onCropperChange"
+          />
+        </div>
+      </div>
     </template>
     <template v-if="model._local && !disabled">
       <template v-if="isForMultipleImages()">
@@ -100,8 +102,8 @@
 
 <script>
 import _ from 'lodash'
-import 'vue-advanced-cropper/dist/style.css'
 import { Cropper } from 'vue-advanced-cropper'
+import 'vue-advanced-cropper/dist/style.css'
 import AbstractField from '@m/AbstractField'
 import FileInputField from '@m/FileInputField'
 import DragList from '@m/DragList'
@@ -163,6 +165,8 @@ export default {
           }
         }
       })
+      console.warn('onCropperChange ----', this.localModel._attachments)
+      // TODO: hugo - when updating 2 cropped images, only the last one is updated
       this.$emit('input', this.localModel._attachments, this.schema.model)
     },
     imageUrl () {
@@ -176,8 +180,27 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.v-card {
-  background-color: transparent;
+<style lang="scss">
+.image-view {
+  .v-card {
+    background-color: transparent;
+  }
+  .parent-parent {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 281.25px;
+    max-width: 500px;
+  }
+  .cropper-parent {
+    flex: 1;
+    height: 500px;
+    min-height: 0;
+  }
+  .cropper {
+    min-height: 281.25px;
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>

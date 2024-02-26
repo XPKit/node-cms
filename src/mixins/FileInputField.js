@@ -117,13 +117,9 @@ export default {
           }
           return TranslateService.get(`TL_TOO_MANY_${this.getFieldType()}S`)
         })
-        if (_.get(this.schema, 'options.limit', false)) {
-          rules.push(files => !files || !files.some(file => file.size > this.schema.limit) || TranslateService.get(`TL_${this.getFieldType()}_IS_TOO_BIG`))
-        }
-      } else {
-        if (_.get(this.schema, 'options.limit', false)) {
-          rules.push(file => !file || file.size <= this.schema.limit || TranslateService.get(`TL_${this.getFieldType()}_IS_TOO_BIG`))
-        }
+      }
+      if (_.get(this.schema, 'options.limit', false)) {
+        rules.push(files => !files || !files.some(file => file.size > this.schema.limit) || TranslateService.get(`TL_${this.getFieldType()}_IS_TOO_BIG`))
       }
       return rules
     },
@@ -169,7 +165,10 @@ export default {
       if (!files.length) {
         return
       }
-      const maxCount = this.getMaxCount()
+      let maxCount = this.getMaxCount()
+      if (_.get(this.schema, 'width', false) && _.get(this.schema, 'height', false)) {
+        maxCount = 1
+      }
       const totalNbFiles = this.getAttachments().length + files.length
       if (maxCount > 1 && totalNbFiles > maxCount) {
         console.info(`Reached max number of files for ${this.schema.model}`, totalNbFiles, maxCount)

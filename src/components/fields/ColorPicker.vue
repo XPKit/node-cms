@@ -2,18 +2,9 @@
   <div class="wrapper-color">
     <field-label :schema="schema" />
     <v-color-picker
-      v-if="options.model"
-      ref="input"
-      :key="schema.model + 'custom'"
-      v-model="color"
-      variant="outlined"
-      elevation="1"
-      :dot-size="options.dotSize"
-      :hide-canvas="options.hideCanvas"
-      :hide-sliders="options.hideSliders"
-      :hide-inputs="options.hideInputs"
-      :model="options.outputModel"
-      :class="{disabled: disabled}"
+      v-if="options.model" ref="input" :key="schema.model + 'custom'" v-model="color" variant="outlined"
+      elevation="1" :dot-size="options.dotSize" :hide-canvas="options.hideCanvas" :hide-sliders="options.hideSliders"
+      :hide-inputs="options.hideInputs" :model="options.outputModel" :class="{disabled: disabled}"
     />
   </div>
 </template>
@@ -53,7 +44,7 @@ export default {
   },
   methods: {
     getColor () {
-      return _.get(this.model, this.schema.model)
+      return _.get(this.model, `${this.schema.model}.hexa`, '#000000FF')
     }
   }
 }

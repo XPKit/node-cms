@@ -63,7 +63,7 @@ export default {
   },
   mounted () {
     this.attachments = this.formatItems()
-    console.warn('attachments = ', this.attachments, this.schema.rootView)
+    // console.warn('attachments = ', this.attachments, this.schema.rootView)
   },
   methods: {
     formatItems () {
