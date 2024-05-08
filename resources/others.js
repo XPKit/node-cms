@@ -116,7 +116,6 @@ exports = (module.exports = {
     {
       field: 'file',
       input: 'file',
-      required: true,
       options: {
         accept: 'image/*'
       }

@@ -165,9 +165,14 @@ export default {
           }
         }
       })
-      console.warn('onCropperChange ----', this.localModel._attachments)
-      // TODO: hugo - when updating 2 cropped images, only the last one is updated
-      this.$emit('input', this.localModel._attachments, this.schema.model)
+      const updatedAttachments = _.filter(this.localModel._attachments, (attachment) => {
+        // NOTE: Localized fields
+        if (_.get(attachment, '_fields.locale', false) && _.get(attachment, '_name', false) && `${attachment._fields.locale}.${attachment._name}` === this.schema.model) {
+          return true
+        }
+        return _.get(attachment, '_name', false) === this.schema.model
+      })
+      this.$emit('input', updatedAttachments, this.schema.model)
     },
     imageUrl () {
       const attachment = this.attachment()

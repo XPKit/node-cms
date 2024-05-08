@@ -5,7 +5,11 @@ import * as Mustache from 'mustache'
 export default {
   methods: {
     getName (item) {
-      return this.getValue(item, _.first(this.resource.schema), this.resource.displayItem)
+      const name = this.getValue(item, _.first(this.resource.schema), this.resource.displayItem)
+      if (!_.isString(name)) {
+        return _.get(item, '_id', false)
+      }
+      return name
     },
     getValue (item, field, template) {
       let displayname = ''

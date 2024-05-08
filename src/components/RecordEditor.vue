@@ -330,7 +330,7 @@ export default {
         // console.warn('record attachments', this.record._attachments)
         // console.warn('editingRecord attachments', this.editingRecord._attachments)
         if (!_.isEmpty(removedAttachments)) {
-          console.warn('REMOVED ATTACHMENTS = ', _.map(removedAttachments, a => `${a.order}-${a._filename}`))
+          console.warn('REMOVED ATTACHMENTS = ', _.map(removedAttachments, a => `${a.order}-${a._name}-${a._filename}`), removedAttachments)
           await this.removeAttachments(data._id, removedAttachments)
         }
         this.notify(TranslateService.get('TL_RECORD_UPDATED', null, { id: this.editingRecord._id }))
@@ -349,12 +349,37 @@ export default {
       modelParts.push(attachment._name)
       return _.join(modelParts, '.')
     },
+    getUpdatedAttachments (attachments) {
+      return _.filter(attachments, (attachment) => _.get(attachment, 'cropOptions.updated', false))
+    },
     updateFields (value, model) {
       if (!this.isAttachmentField(model)) {
+        if (!model || _.isUndefined(model)) {
+          return console.info('No model found for value', value)
+        }
         return _.set(this.editingRecord, model, value)
       }
-      _.set(this.editingRecord, '_attachments', value)
+      const updatedCroppedAttachments = this.getUpdatedAttachments(value)
       console.info(`Will update attachment ${model}`, value)
+      let attachmentsToFindFrom = value
+      if (updatedCroppedAttachments.length > 0) {
+        attachmentsToFindFrom = updatedCroppedAttachments
+      }
+      this.editingRecord._attachments = _.map(_.get(this.editingRecord, '_attachments', []), (attachment) => {
+        let nameToFind = attachment._name
+        if (_.get(attachment, 'fields._locale', false)) {
+          nameToFind = `${attachment.fields._locale}.${nameToFind}`
+        }
+        const updatedAttachment = _.find(attachmentsToFindFrom, {_name: nameToFind})
+        return _.isUndefined(updatedAttachment) ? attachment : updatedAttachment
+      })
+      _.each(value, (attachment) => {
+        // NOTE: Adds new attachments
+        if (_.isUndefined(_.find(this.editingRecord._attachments, {_name: attachment._name}))) {
+          this.editingRecord._attachments.push(attachment)
+        }
+      })
+      console.info('attachments are now: ', this.editingRecord._attachments)
     },
     onModelUpdated (value, model) {
       this.updateFields(value, model)
