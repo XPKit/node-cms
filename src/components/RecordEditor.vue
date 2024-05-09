@@ -335,6 +335,7 @@ export default {
         }
         this.notify(TranslateService.get('TL_RECORD_UPDATED', null, { id: this.editingRecord._id }))
         this.$emit('updateRecordList', data)
+        console.warn('record is now: ', data)
       } catch (error) {
         console.error('Error happen during updateRecord:', error)
         this.manageError(error, 'update', this.editingRecord)
@@ -355,7 +356,8 @@ export default {
     updateFields (value, model) {
       if (!this.isAttachmentField(model)) {
         if (!model || _.isUndefined(model)) {
-          return console.info('No model found for value', value)
+          // console.info('No model found for value', value)
+          return
         }
         return _.set(this.editingRecord, model, value)
       }

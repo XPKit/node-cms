@@ -22,7 +22,7 @@
         <div class="row-handle">
           <v-tooltip location="right" eager>
             <template #activator="{ props }">
-              <v-chip class="filename" closable v-bind="props" @click:close="onClickRemoveFileItem(i)">#{{ index + 1 }} - {{ $filters.translate(getAttachment(i, '_filename')) }} ({{ imageSize(getAttachment(i)) }})</v-chip>
+              <v-chip class="filename" closable v-bind="props" @click:close="onClickRemoveFileItem(i)">#{{ index + 1 }} - {{ $filters.truncate($filters.translate(getAttachment(i, '_filename'))) }} ({{ imageSize(getAttachment(i)) }})</v-chip>
             </template>
             <span>{{ getAttachment(i, '_filename') }}</span>
           </v-tooltip>

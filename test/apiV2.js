@@ -32,7 +32,7 @@ before(async () => {
     apiVersion: 2,
     disableJwtLogin: false,
     disableAuthentication: true,
-    auth: { secret: 'auth.jwt.secret' }
+    auth: { secret: 'auth.jwt.secretauth.jwt.secret' }
   })
 
   cms.resource('articles',

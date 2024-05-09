@@ -25,7 +25,7 @@ export default {
   },
   watch: {
     color () {
-      _.set(this.model, this.schema.model, this.color)
+      this.onChangeData(this.color)
     },
     'schema.model': function () {
       this.color = this.getColor()
@@ -44,7 +44,7 @@ export default {
   },
   methods: {
     getColor () {
-      return _.get(this.model, `${this.schema.model}.hexa`, '#000000FF')
+      return _.get(this.model, `${this.schema.model}`, '#000000FF')
     }
   }
 }

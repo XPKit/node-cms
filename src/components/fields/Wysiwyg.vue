@@ -1,6 +1,6 @@
 <template>
   <div ref="wysiwygWrapper" class="wysiwyg-wrapper">
-    <field-label v-if="paragraphLevel == 1" :schema="schema" />
+    <field-label :schema="schema" />
     <div class="border-wrapper">
       <v-card v-if="editor" class="editor" rounded elevation="0">
         <tiptap-menu-bar class="editor__header" :editor="editor" />

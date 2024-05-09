@@ -5,7 +5,7 @@
       :density="get('density')" :flat="get('flat')" :disabled="schema.disabled ? true : false" :readonly="schema.readonly ? true : false"
       hide-details :variant="getVariant()" rounded="get('rounded')" @update:model-value="onChangeData"
     >
-      <template #prepend><field-label v-if="paragraphLevel == 1" :schema="schema" /></template>
+      <template #prepend><field-label :schema="schema" /></template>
     </v-textarea>
   </div>
 </template>

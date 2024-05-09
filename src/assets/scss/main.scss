@@ -61,8 +61,11 @@ li {
   }
 
   .v-chip {
-    display: flex;
+    display: flex !important;
     align-items: center;
+    .v-chip__content {
+      line-height: 1;
+    }
   }
 
   .v-text-field {
