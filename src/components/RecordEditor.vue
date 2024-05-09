@@ -367,14 +367,18 @@ export default {
       if (updatedCroppedAttachments.length > 0) {
         attachmentsToFindFrom = updatedCroppedAttachments
       }
-      this.editingRecord._attachments = _.map(_.get(this.editingRecord, '_attachments', []), (attachment) => {
+      this.editingRecord._attachments = _.compact(_.map(_.get(this.editingRecord, '_attachments', []), (attachment) => {
         let nameToFind = attachment._name
-        if (_.get(attachment, 'fields._locale', false)) {
-          nameToFind = `${attachment.fields._locale}.${nameToFind}`
+        const locale = _.get(attachment, '_fields.locale', false)
+        if (locale) {
+          nameToFind = `${locale}.${nameToFind}`
         }
         const updatedAttachment = _.find(attachmentsToFindFrom, {_name: nameToFind})
+        if (_.isUndefined(updatedAttachment) && nameToFind === model) {
+          return false
+        }
         return _.isUndefined(updatedAttachment) ? attachment : updatedAttachment
-      })
+      }))
       _.each(value, (attachment) => {
         // NOTE: Adds new attachments
         if (_.isUndefined(_.find(this.editingRecord._attachments, {_name: attachment._name}))) {

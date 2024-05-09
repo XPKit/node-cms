@@ -74,6 +74,7 @@
             @change="onCropperChange"
           />
         </div>
+        <v-btn elevation="2" class="delete" icon :disabled="imageUrl().length === 0" @click="removeImage(attachment())"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
       </div>
     </template>
     <template v-if="model._local && !disabled">
@@ -191,11 +192,19 @@ export default {
     background-color: transparent;
   }
   .parent-parent {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     height: 281.25px;
     max-width: 500px;
+    .v-btn {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 2;
+      transform: translate(50%, -50%);
+    }
   }
   .cropper-parent {
     flex: 1;
