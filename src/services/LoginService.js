@@ -37,7 +37,7 @@ class LoginService {
     }
   }
 
-  async changeTheme (isDark) {
+  async changeTheme () {
     try {
       const newTheme = _.get(this.user, 'theme', 'dark') === 'dark' ? 'light' : 'dark'
       // console.warn('changeTheme ', this.user, newTheme)

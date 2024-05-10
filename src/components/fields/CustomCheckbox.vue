@@ -40,6 +40,7 @@ export default {
       position: relative;
       width: 80px;
       height: 32px;
+      left: 4px;
       border-radius: 100px;
       border: 2px solid $switch-field-border-color;
       background-color: $switch-field-background;
@@ -76,7 +77,6 @@ export default {
       &.active {
         background-color: $switch-field-active-background;
         color: $switch-field-active-color;
-        left: 4px;
         right: auto;
         .drag {
           background-color: $switch-field-active-drag-background;

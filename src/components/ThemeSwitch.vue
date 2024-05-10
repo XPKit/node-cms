@@ -5,25 +5,17 @@
   </div>
 </template>
 <script setup>
-import _ from 'lodash'
+// import _ from 'lodash'
 import { useTheme } from 'vuetify'
 import LoginService from '@s/LoginService'
 
 const theme = useTheme()
-
-function getTheme () {
-  return _.get(LoginService, 'user.theme', 'light')
-}
 function isDark () {
-  return getTheme() === 'dark'
+  return theme.global.name.value === 'dark'
 }
 
-theme.global.name.value = getTheme()
-
-function toggleTheme () {
-  console.warn('theme !', theme.global.name.value)
-  theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
-  _.set(LoginService, 'user.theme', theme.global.name.value)
+async function toggleTheme () {
+  theme.global.name.value = await LoginService.changeTheme()
 }
 </script>
 

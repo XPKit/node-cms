@@ -117,6 +117,7 @@ export default {
     })
     await WebsocketService.init(this.config)
     this.getSystemData()
+    this.$vuetify.theme.global.name = LoginService.user.theme
   },
   unmounted () {
     this.destroyed = true
