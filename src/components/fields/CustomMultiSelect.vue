@@ -94,10 +94,7 @@ export default {
       if (this.disabled) {
         return ''
       }
-      if (!_.isString(this.selectOptions.label)) {
-        return this.schema.label
-      }
-      return this.selectOptions.label
+      return !_.isString(this.selectOptions.label) ? this.schema.label : this.selectOptions.label
     },
     updateSelected (value) {
       this.objectValue = value
@@ -132,9 +129,9 @@ export default {
     gap: 16px;
   }
   .v-autocomplete {
-    input {
-      position: absolute;
-    }
+    // input {
+    //   position: absolute;
+    // }
     &.v-select--chips {
       input {
         padding: 0;

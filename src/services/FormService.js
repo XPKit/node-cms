@@ -239,6 +239,8 @@ let typeMapper = {
       multiple: true,
       listBox: true,
       trackBy: '_id',
+      chips: true,
+      deletableChips: true,
       customLabel,
       searchable: true
     },
