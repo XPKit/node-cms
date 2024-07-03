@@ -1,6 +1,5 @@
 <template>
   <div class="multiselect-wrapper">
-    <!--
     <v-autocomplete
       :id="selectOptions.id"
       ref="input"
@@ -11,15 +10,6 @@
       :item-title="customLabel" :item-value="getValue"
       menu-icon="mdi-chevron-down" :clearable="getSelectOpt('clearable')" :variant="getVariant()" :density="get('density')" rounded hide-details
       @update:model-value="updateSelected" @search-change="onSearchChange" @tag="addTag"
-    >
- -->
-
-    <v-autocomplete
-      ref="input"
-      :model-value="value" :items="options"
-      multiple
-      :item-title="customLabel" :item-value="getValue"
-      @update:model-value="updateSelected"
     >
       <template #prepend>
         <field-label :schema="schema" :label="getLabel()" />
@@ -69,16 +59,16 @@ export default {
     },
     customLabel (item) {
       const val = _.get(item, 'raw', item)
-      if (_.get(this.schema, 'localised', false)) {
-        if (_.get(val, '_id', false)) {
-          return _.get(val, _.first(_.without(_.keys(val), '_id')), val)
-        }
-        if (!_.get(this.schema, `options.labels.${val}.${this.schema.locale}`, false)) {
-          return _.get(val, 'text', val)
-        }
-        return _.get(this.schema, `options.labels.${val}.${this.schema.locale}`, val)
+      if (!_.get(this.schema, 'localised', false)) {
+        return this.schema.selectOptions.customLabel(val)
       }
-      return this.schema.selectOptions.customLabel(val)
+      if (_.get(val, '_id', false)) {
+        return _.get(val, _.first(_.without(_.keys(val), '_id')), val)
+      }
+      if (!_.get(this.schema, `options.labels.${val}.${this.schema.locale}`, false)) {
+        return _.get(val, 'text', val)
+      }
+      return _.get(this.schema, `options.labels.${val}.${this.schema.locale}`, val)
     },
     getSelectOpt (key) {
       return _.get(this.selectOptions, key, false)
@@ -97,7 +87,7 @@ export default {
         }
         this.objectValue = allValues
       }
-      // this.value = this.objectValue
+      this.value = this.objectValue
       this.$emit('input', this.value, this.schema.model)
     },
     getLabel () {
