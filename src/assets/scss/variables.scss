@@ -7,11 +7,13 @@ $imag-light-grey-2: #E1E1E1;
 $imag-grey: #818386;
 $imag-blue: #71DBD4;
 $imag-purple: #8094DD;
+$imag-dark-purple: #292F47;
+$imag-darker-purple: #1B1F2D;
 $imag-orange: #FF5C39;
 $imag-yellow: #E1E000;
 $imag-green: #8DE971;
 
-$imag-field-background: rgba(255, 255, 255, 0.08);
+$imag-wysiwyg-background: rgba(255, 255, 255, 0.08);
 
 $layout-background: var(--layout-background);
 $layout-card-background: var(--layout-card-background);
@@ -77,6 +79,7 @@ $locales-selected-background: var(--locales-selected-background);
 $locales-border-color: var(--locales-border-color);
 $record-editor-top-height: var(--record-editor-top-height);
 $record-editor-background: var(--record-editor-background);
+$record-editor-inside-background: var(--record-editor-inside-background);
 $field-background: var(--field-background);
 
 $btn-action-background: var(--btn-action-background);
@@ -201,6 +204,7 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
   --field-background: #{$imag-light-grey};
   --record-editor-top-height: 34px;
   --record-editor-background: #{$imag-light-grey-2};
+  --record-editor-inside-background: #{$imag-white};
   --locales-color: #{$imag-black};
   --locales-selected-color: #{$imag-white};
   --locales-background: #{$imag-white};
@@ -247,13 +251,14 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
     --layout-card-background: #{$imag-black};
     --layout-color: #{$imag-black};
 
-    --blurred-background-box-shadow-color: #{rgba(255, 255, 255, 0.25)};
-    --blurred-background-background-color: #{rgba(0, 0, 0, 0.55)};
-    --blurred-background-before-background-color: #{black};
+    --blurred-background-box-shadow-color: #{rgba(0, 0, 0, 0.25)};
+    --blurred-background-background-color: #{rgba(41, 47, 71, 0.75)};
+    --blurred-background-before-background-color: #{rgba(41, 47, 71, 0.75)};
 
     --navbar-resource-title-color: #{$imag-white};
     --navbar-resource-title-color-hover: #{$imag-white};
-    --record-editor-background: #{$imag-black};
+    --record-editor-background: #{$imag-dark-purple};
+    --record-editor-inside-background: #{$imag-darker-purple};
 
     --system-info-background: #{$imag-black};
     --system-info-color: #{$imag-white};
@@ -281,7 +286,7 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
     --field-label-color: #{$imag-white};
 
     --wysiwyg-toolbar-background: #{$imag-black};
-    --wysiwyg-editor-background: #{$imag-field-background};
+    --wysiwyg-editor-background: #{$imag-wysiwyg-background};
     --wysiwyg-toolbar-border: #{$imag-black};
 
     --table-header-background: #{$imag-black};

@@ -174,7 +174,7 @@ export default {
         changed = true
       }
       if (changed) {
-        // console.warn(`value for '${this.schema.model}' changed to `, newValue)
+        console.warn(`value for '${this.schema.model}' changed to `, newValue)
         if (isFunction(this.schema.onChanged)) {
           this.schema.onChanged.call(this, this.model, newValue, oldValue, this.schema)
         }

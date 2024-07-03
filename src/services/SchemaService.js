@@ -108,16 +108,14 @@ class SchemaService {
     }
     fields[id].values = cachedData || []
     if (fields[id].type === 'CustomMultiSelect') {
-      fields[id].selectOptions = fields[id].selectOptions || {}
-      fields[id].selectOptions = _.clone(fields[id].selectOptions)
+      fields[id].selectOptions = _.clone(fields[id].selectOptions || {})
       fields[id].selectOptions.key = '_id'
       fields[id].selectOptions.customLabel = (itemId) => {
         const item = _.isString(itemId) ? _.find(cachedData, {_id: itemId}) : itemId
         if (fields[id].customLabel) {
           return Mustache.render(fields[id].customLabel, item)
-        } else {
-          return _.get(item, key)
         }
+        return _.get(item, key)
       }
     }
   }

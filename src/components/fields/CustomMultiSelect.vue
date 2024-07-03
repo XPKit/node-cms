@@ -1,11 +1,25 @@
 <template>
   <div class="multiselect-wrapper">
+    <!--
     <v-autocomplete
-      :id="selectOptions.id" ref="input" :chips="getSelectOpt('chips')"
-      :model-value="objectValue || value" :items="formattedOptions" :closable-chips="getSelectOpt('deletableChips') || getSelectOpt('multiple')" :hide-selected="getSelectOpt('hideSelected')"
-      :disabled="disabled || schema.disabled" :placeholder="schema.placeholder" :multiple="getSelectOpt('multiple')" :ripple="false" :flat="get('flat')" item-title="text" item-value="_id"
+      :id="selectOptions.id"
+      ref="input"
+      :chips="getSelectOpt('chips')"
+      :menu-props="menuProps"
+      :model-value="objectValue || value" :items="options" :closable-chips="getSelectOpt('deletableChips') || getSelectOpt('multiple')" :hide-selected="getSelectOpt('hideSelected')"
+      :disabled="disabled || schema.disabled" :placeholder="schema.placeholder" :multiple="getSelectOpt('multiple')" :ripple="false" :flat="get('flat')"
+      :item-title="customLabel" :item-value="getValue"
       menu-icon="mdi-chevron-down" :clearable="getSelectOpt('clearable')" :variant="getVariant()" :density="get('density')" rounded hide-details
       @update:model-value="updateSelected" @search-change="onSearchChange" @tag="addTag"
+    >
+ -->
+
+    <v-autocomplete
+      ref="input"
+      :model-value="value" :items="options"
+      multiple
+      :item-title="customLabel" :item-value="getValue"
+      @update:model-value="updateSelected"
     >
       <template #prepend>
         <field-label :schema="schema" :label="getLabel()" />
@@ -13,6 +27,9 @@
       </template>
       <template #label />
       <template #append />
+      <template #item="{props, item}">
+        <v-list-item density="compact" v-bind="props" :title="customLabel(item)" />
+      </template>
     </v-autocomplete>
   </div>
 </template>
@@ -24,7 +41,13 @@ export default {
   mixins: [AbstractField],
   data () {
     return {
-      objectValue: this.value
+      objectValue: this.value,
+      menuProps: {
+        contentProps: {
+          density: 'compact'
+        },
+        attach: '.v-application'
+      }
     }
   },
   computed: {
@@ -33,64 +56,48 @@ export default {
     },
     options () {
       let values = this.schema.values
-      if (typeof (values) === 'function') {
+      if (_.isFunction(values)) {
         return values.apply(this, [this.model, this.schema])
       }
       return values
-    },
-    formattedOptions () {
-      const formattedOptions = _.cloneDeep(this.selectOptions.label || this.options)
-      if (_.isString(_.first(formattedOptions))) {
-        return formattedOptions
-      }
-      const customLabel = this.customLabel
-      if (!_.isFunction(this.customLabel)) {
-        return formattedOptions
-      }
-      return _.map(formattedOptions, (option) => {
-        const optionLabel = customLabel(option)
-        if (_.isString(optionLabel)) {
-          option.text = optionLabel
-        }
-        if (_.isUndefined(_.get(option, 'value', undefined))) {
-          option.value = _.get(option, '_id', undefined)
-        }
-        return option
-      })
-    },
-    hasCustomLabel () {
-      const selectOptions = _.get(this.schema, 'selectOptions')
-      return typeof selectOptions !== 'undefined' && typeof selectOptions.customLabel !== 'undefined' && typeof selectOptions.customLabel === 'function'
-    },
-    customLabel () {
-      if (_.isString(_.first(this.options))) {
-        return this.options
-      }
-      if (!this.hasCustomLabel) {
-        return 'text'
-      }
-      return this.schema.selectOptions.customLabel
     }
   },
   methods: {
+    getValue (item) {
+      const val = _.get(item, 'raw', item)
+      return _.get(val, '_id', _.get(val, 'value', val))
+    },
+    customLabel (item) {
+      const val = _.get(item, 'raw', item)
+      if (_.get(this.schema, 'localised', false)) {
+        if (_.get(val, '_id', false)) {
+          return _.get(val, _.first(_.without(_.keys(val), '_id')), val)
+        }
+        if (!_.get(this.schema, `options.labels.${val}.${this.schema.locale}`, false)) {
+          return _.get(val, 'text', val)
+        }
+        return _.get(this.schema, `options.labels.${val}.${this.schema.locale}`, val)
+      }
+      return this.schema.selectOptions.customLabel(val)
+    },
     getSelectOpt (key) {
       return _.get(this.selectOptions, key, false)
     },
     allOptionsSelected () {
-      return _.get(this.formattedOptions, 'length', 0) === _.get(this.objectValue, 'length', 0)
+      return _.get(this.options, 'length', 0) === _.get(this.objectValue || this.value, 'length', 0)
     },
     onChangeSelectAll (checked) {
       const allSelected = this.allOptionsSelected()
       if (allSelected) {
         this.objectValue = []
       } else {
-        let allValues = _.compact(_.map(this.formattedOptions, 'value'))
+        let allValues = _.compact(_.map(this.options, 'value'))
         if (_.get(allValues, 'length', 0) === 0) {
-          allValues = this.formattedOptions
+          allValues = this.options
         }
         this.objectValue = allValues
       }
-      this.value = this.objectValue
+      // this.value = this.objectValue
       this.$emit('input', this.value, this.schema.model)
     },
     getLabel () {
@@ -104,15 +111,9 @@ export default {
     },
     updateSelected (value) {
       this.objectValue = value
-      const key = _.get(this.schema, 'selectOptions.key')
+      const key = _.get(this.schema, 'selectOptions.key', false)
       if (key) {
-        if (_.isString(this.objectValue)) {
-          this.value = this.objectValue
-        } else {
-          this.value = _.get(this.objectValue, key)
-        }
-      } else {
-        this.value = this.objectValue
+        value = _.isString(value) ? value : _.get(value, key, value)
       }
       this.$emit('input', value, this.schema.model)
     },

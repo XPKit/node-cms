@@ -95,10 +95,8 @@ export default {
 .nav-bar-wrapper {
   z-index: 2001;
   .v-toolbar {
-    &.v-theme--light {
-      background-color: $navbar-background;
-      color: $navbar-color;
-    }
+    background-color: $navbar-background;
+    color: $navbar-color;
   }
 }
 

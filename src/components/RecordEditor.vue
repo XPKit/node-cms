@@ -255,7 +255,7 @@ export default {
           return
         }
         if (!_.isEqual(value, _.get(this.record, fieldName))) {
-          _.set(uploadObject, fieldName, value)
+          _.set(uploadObject, fieldName, _.isUndefined(value) ? null : value)
         }
       })
     },
@@ -279,7 +279,7 @@ export default {
           const fieldName = field.field
           const value = this.fieldValueOrDefault(field, _.get(this.editingRecord, fieldName))
           if (!_.isEqual(value, _.get(this.record, fieldName))) {
-            _.set(uploadObject, fieldName, value)
+            _.set(uploadObject, fieldName, _.isUndefined(value) ? null : value)
           }
         }
       })
@@ -312,8 +312,8 @@ export default {
       this.$loading.start('update-record')
       try {
         let data = this.editingRecord
-        console.info('Will send', uploadObject)
         if (!_.isEmpty(uploadObject)) {
+          console.info('Will send', uploadObject)
           const response = await axios.put(`../api/${this.resource.title}/${this.editingRecord._id}`, uploadObject)
           data = response.data
         }

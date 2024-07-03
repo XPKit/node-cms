@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-theme-provider :theme="$vuetify && $vuetify.theme && !$vuetify.theme.isDark ? 'light' : 'dark'">
+    <v-theme-provider :theme="getTheme()">
       <v-snackbar
         v-model="showSnackBar" transition="scroll-y-reverse-transition" multi-line
         location="centered" class="notification elevation-10" :timeout="notification.type === 'error' ? -1 : 1000" :class="getNotificationClass()" @update:modelValue="resetNotification()"
@@ -13,7 +13,7 @@
         </template>
       </v-snackbar>
       <div v-if="user" class="cms-layout">
-        <div class="cms-inner-layout" :class="getThemeClass()">
+        <div class="cms-inner-layout">
           <nav-bar
             v-if="resourceList.length > 0" :config="config" :toolbar-title="toolbarTitle" :locale-class="{locale:localeList && localeList.length > 1}" :select-resource-group-callback="selectResourceGroup" :select-resource-callback="selectResource" :grouped-list="groupedList" :selected-resource-group="selectedResourceGroup"
             :selected-item="selectedResource || selectedPlugin"
@@ -263,6 +263,9 @@ export default {
     })
   },
   methods: {
+    getTheme () {
+      return _.get(this.$vuetify, 'theme.dark', false) ? 'dark' : 'light'
+    },
     resetNotification () {
       this.showSnackBar = false
     },
@@ -276,11 +279,6 @@ export default {
     },
     getNotificationClass () {
       return `notification-${this.notification.type}`
-    },
-    getThemeClass () {
-      const classes = {}
-      _.set(classes, `v-theme--${_.get(this.user, 'theme', 'light')}`, true)
-      return classes
     },
     async selectResourceGroup (resourceGroup) {
       this.selectedResourceGroup = resourceGroup
