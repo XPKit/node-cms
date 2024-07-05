@@ -133,6 +133,12 @@ $file-input-chip-border: var(--file-input-chip-border);
 $file-input-chip-background: var(--file-input-chip-background);
 $file-input-chip-color: var(--file-input-chip-color);
 
+$date-time-background: var(--date-time-background);
+$date-time-color: var(--date-time-color);
+$date-time-active-color: var(--date-time-active-color);
+$date-time-active-background: var(--date-time-active-background);
+$date-time-hover-color: var(--date-time-hover-color);
+
 @import "./mixins.scss";
 
 @font-face {
@@ -253,6 +259,12 @@ $file-input-chip-color: var(--file-input-chip-color);
   --file-input-chip-background: #{transparent};
   --file-input-chip-color: #{$imag-black};
 
+  --date-time-background: #{$imag-white};
+  --date-time-color: #{$imag-black};
+  --date-time-active-color: #{$imag-white};
+  --date-time-active-background: #{$imag-purple};
+  --date-time-hover-color: #{$imag-blue};
+
   &.v-theme--dark {
     --layout-background: #{$imag-black};
     --layout-card-background: #{$imag-black};
@@ -341,6 +353,12 @@ $file-input-chip-color: var(--file-input-chip-color);
     --file-input-chip-border: #{$imag-purple-border};
     --file-input-chip-background: #{transparent};
     --file-input-chip-color: #{$imag-white};
+
+    --date-time-background: #{$imag-dark-purple};
+    --date-time-color: #{$imag-white};
+    --date-time-active-color: #{$imag-white};
+    --date-time-active-background: #{$imag-purple};
+    --date-time-hover-color: #{$imag-blue};
   }
 }
 

@@ -6,7 +6,7 @@
         ref="input" readonly type="text" :value="display()" :name="name" autocomplete="off"
         @click="toggleCal"
       >
-      <div class="calender-div" :class="{noDisplay: hideCal}">
+      <div class="calendar-div" :class="{noDisplay: hideCal}">
         <div :class="{noDisplay: hideDate}">
           <div class="year-month-wrapper">
             <div class="month-setter">
@@ -342,168 +342,171 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 @import '@a/scss/variables.scss';
 
-.year-month-wrapper{
-  background-color: $imag-purple;
-  display: flex;
-}
-input{
-  min-width: 226px;
-  width:100%;
-  height: 30px;
-  padding: 3px;
-  border: 1px solid #ddd;
-}
-.datetime-picker{
-  position: relative;
-}
+.datetime-picker {
+  .year-month-wrapper{
+    background-color: $date-time-active-background;
+    display: flex;
+  }
+  input{
+    min-width: 226px;
+    width:100%;
+    height: 30px;
+    padding: 3px;
+    // border: 1px solid #ddd;
+  }
+  .datetime-picker{
+    position: relative;
+  }
 
-.calendar-div{
-  width: 232px;
-  box-shadow: 1px 2px 5px #ccc;
-  position: absolute;
-  display: inline-block;
-  left: 0;
-  top: 40px;
-  color: #444;
-  font-size: 14px;
-  padding-bottom: 10px;
-  user-select: none;
-  z-index: 100;
-  background-color: white;
-  .v-icon {
+  .calendar-div{
+    width: 232px;
+    box-shadow: 1px 2px 5px #ccc;
+    position: absolute;
+    display: inline-block;
+    left: 0;
+    top: 40px;
+    color: #444;
+    font-size: 14px;
+    padding-bottom: 10px;
+    user-select: none;
+    z-index: 100;
+    background-color: $date-time-background;
+    .v-icon {
+      color: white;
+    }
+  }
+  .port, .days{
+    display: inline-block;
+    width: 31px;
+    height: 20px;
+    padding: 3px;
+    margin: 1px;
+    text-align: center;
+    vertical-align: top;
+    cursor: pointer;
+    @include subtext;
+  }
+  .days{
+    color: $imag-purple;
+    font-weight: bold;
+  }
+  .port:hover{
+    color: $date-time-active-background;
+    font-weight: bold;
+  }
+  .activePort, .activePort:hover {
+    background-color: $date-time-active-background;
     color: white;
   }
-}
-.port, .days{
-  display: inline-block;
-  width: 31px;
-  height: 20px;
-  padding: 3px;
-  margin: 1px;
-  text-align: center;
-  vertical-align: top;
-  cursor: pointer;
-  @include subtext;
-}
-.days{
-  color: $imag-purple;
-  font-weight: bold;
-}
-.port:hover{
-  color: $imag-purple;
-  font-weight: bold;
-}
-.activePort, .activePort:hover {
-  background-color: $imag-purple;
-  color: white;
-}
-.month-setter, .year-setter{
-  color: white;
-  font-weight: 900;
-  display: flex;
-  width: 47.5%;
-  gap: 5%;
-  align-items: center;
-  justify-content: space-between;
-}
-.nav-l:hover, .nav-r:hover {
-  background-color: $imag-blue;
-}
-.nav-l, .nav-r {
-  display: inline-block;
-  width: 25px;
-  background-color: $imag-purple;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  border: 0;
-  margin:0;
-}
-.nav-l{
-  float: left;
-}
-.nav-r{
-  float: right;
-}
-.month, .year{
-  display: inline-block;
-  color: white;
-  // padding: 7px 0;
-  @include subtext;
-  text-align: center;
-}
-.hour-selector, .minute-selector{
-  width: 30px;
-  display: inline-block;
-  text-align: center;
-  font-weight: bold;
-  position: relative;
-  cursor: pointer;
-}
-.time-separator{
-  display: inline-block;
-  font-weight: bold;
-}
-.time-picker{
-  margin: 10px
-}
-.nav-t, .nav-d{
-  font-weight: bold;
-  cursor: pointer;
-}
-.scroll-hider {
-  display: none;
-  vertical-align:top;
-  overflow:hidden;
-  border:0;
-  position: absolute;
-  top: -40px;
-  left: 0;
-  box-shadow: 0 0 3px #333;
-  background-color: white;
-}
-.scroll-hider ul {
-  padding:5px;
-  margin:-5px -13px -5px -5px;
-  list-style-type: none;
-  height: 100px;
-  overflow: auto;
-  width:55px;
-  color: #999;
-  overflow-x: hidden;
-}
-.showSelector{
-  display:inline-block;
-}
-li.active{
-  background-color: $imag-purple;
-  color: white;
-}
-li{
-  padding: 4px;
-  font-size: 16px;
-  width: 100%;
-  cursor: pointer;
-}
-.time-picker{
-  display: inline-block;
-}
-.noDisplay{
-  display: none;
-}
-.okButton{
-  color: $imag-purple;
-  font-size: 15px;
-  font-weight: bold;
-  padding: 0;
-  float: right;
-  border: 0;
-  margin-right: 10px;
-  margin-top: 10px;
-  cursor: pointer;
-  background: transparent;
+  .month-setter, .year-setter{
+    color: $date-time-active-color;
+    font-weight: 900;
+    display: flex;
+    width: 47.5%;
+    gap: 5%;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-l:hover, .nav-r:hover {
+    background-color: $date-time-hover-color;
+  }
+  .nav-l, .nav-r {
+    display: inline-block;
+    width: 25px;
+    background-color: $date-time-active-background;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border: 0;
+    margin:0;
+  }
+  .nav-l{
+    float: left;
+  }
+  .nav-r{
+    float: right;
+  }
+  .month, .year{
+    display: inline-block;
+    color: $date-time-active-color;
+    // padding: 7px 0;
+    @include subtext;
+    text-align: center;
+  }
+  .hour-selector, .minute-selector{
+    width: 30px;
+    display: inline-block;
+    text-align: center;
+    font-weight: bold;
+    position: relative;
+    cursor: pointer;
+  }
+  .time-separator{
+    display: inline-block;
+    font-weight: bold;
+  }
+  .time-picker{
+    margin: 10px
+  }
+  .nav-t, .nav-d{
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .scroll-hider {
+    display: none;
+    vertical-align:top;
+    overflow:hidden;
+    border:0;
+    position: absolute;
+    top: -40px;
+    left: 0;
+    box-shadow: 0 0 3px #333;
+    background-color: $date-time-background;
+  }
+  .scroll-hider ul {
+    padding:5px;
+    margin:-5px -13px -5px -5px;
+    list-style-type: none;
+    height: 100px;
+    overflow: auto;
+    width:55px;
+    color: $date-time-color;
+    overflow-x: hidden;
+  }
+  .showSelector{
+    display:inline-block;
+  }
+  li.active{
+    background-color: $date-time-active-background;
+    color: $date-time-color;
+  }
+  li{
+    padding: 4px;
+    font-size: 16px;
+    width: 100%;
+    cursor: pointer;
+  }
+  .time-picker{
+    display: inline-block;
+    color: $date-time-active-background;
+  }
+  .noDisplay{
+    display: none;
+  }
+  .okButton{
+    color: $date-time-active-background;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 0;
+    float: right;
+    border: 0;
+    margin-right: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    background: transparent;
+  }
 }
 </style>

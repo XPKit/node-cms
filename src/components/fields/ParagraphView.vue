@@ -19,16 +19,17 @@
       </v-card>
     </draggable>
     <div class="paragraph-footer">
-      <v-select
+      <v-autocomplete
         ref="input"
+        :ripple="false" :menu-props="menuProps"
         :theme="theme" transition="none"
-        :model-value="selectedType" :menu-props="{ bottom: true, offsetY: true }" :items="types" item-title="label" item-value="label"
+        :model-value="selectedType" :items="types" item-title="label" item-value="label"
         hide-details rounded density="compact" persistent-placeholder variant="solo-filled" flat
         :disabled="disabled || schema.disabled" menu-icon="mdi-chevron-down" @update:model-value="onChangeType"
       >
         <template #prepend><field-label :schema="schema" /></template>
         <template #label />
-      </v-select>
+      </v-autocomplete>
       <div class="add-btn-wrapper">
         <v-btn elevation="0" class="add-new-item" rounded :disabled="disabled || schema.disabled" @click="onClickAddNewItem"><span>{{ $filters.translate('TL_ADD') }}</span></v-btn>
       </div>
@@ -75,7 +76,13 @@ export default {
       types: [],
       selectedType: false,
       localModel: {},
-      key: uuid()
+      key: uuid(),
+      menuProps: {
+        contentProps: {
+          density: 'compact'
+        },
+        attach: '.v-application'
+      }
     }
   },
   watch: {
@@ -166,7 +173,8 @@ export default {
     onChangeType (type) {
       const foundType = _.find(this.types, {label: type})
       if (_.isUndefined(foundType)) {
-        return console.warn(`No type found for ${type} in types:`, this.types)
+        // console.warn(`No type found for ${type} in types:`, this.types)
+        return
       }
       this.selectedType = foundType
     },
