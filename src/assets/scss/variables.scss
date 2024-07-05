@@ -74,7 +74,6 @@ $cms-import-btn-color: var(--cms-import-btn-color);
 
 $search-icon-color: var(--search-icon-color);
 
-
 $locales-color: var(--locales-color);
 $locales-selected-color: var(--locales-selected-color);
 $locales-background: var(--locales-background);
@@ -129,6 +128,10 @@ $wysiwyg-toolbar-hover-background: var(--wysiwyg-toolbar-hover-background);
 
 $levelBackgrounds: $paragraph-top-bar-background $paragraph-top-bar-background-level-2 $paragraph-top-bar-background-level-3;
 $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragraph-top-bar-color-level-3;
+
+$file-input-chip-border: var(--file-input-chip-border);
+$file-input-chip-background: var(--file-input-chip-background);
+$file-input-chip-color: var(--file-input-chip-color);
 
 @import "./mixins.scss";
 
@@ -246,6 +249,10 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
   --wysiwyg-toolbar-color: #{$imag-black};
   --wysiwyg-toolbar-hover-background: #{$imag-blue};
 
+  --file-input-chip-border: #{$imag-grey};
+  --file-input-chip-background: #{transparent};
+  --file-input-chip-color: #{$imag-black};
+
   &.v-theme--dark {
     --layout-background: #{$imag-black};
     --layout-card-background: #{$imag-black};
@@ -331,6 +338,9 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
     --wysiwyg-toolbar-color: #{$imag-white};
     --wysiwyg-toolbar-hover-background: #{$imag-blue};
 
+    --file-input-chip-border: #{$imag-purple-border};
+    --file-input-chip-background: #{transparent};
+    --file-input-chip-color: #{$imag-white};
   }
 }
 

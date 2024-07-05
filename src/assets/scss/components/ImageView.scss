@@ -60,6 +60,20 @@
     .filename {
       display: block;
     }
+    .v-card {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      .v-chip {
+        border-width: 2px;
+        padding: 0 8px;
+        height: 24px;
+        color: $file-input-chip-color;
+        border-color: $file-input-chip-border;
+        background-color: $file-input-chip-background;
+      }
+    }
   }
   .preview-single-attachment {
     min-width: 230px;
