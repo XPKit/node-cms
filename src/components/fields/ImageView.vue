@@ -3,7 +3,7 @@
     <form enctype="multipart/form-data">
       <field-label :schema="schema" />
       <v-card
-        v-if="schema.disabled"
+        v-if="schema.disabled" :theme="theme"
         class="file-input-card" elevation="0" :class="{ 'drag-and-drop': dragover }"
         @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
       >
@@ -17,12 +17,13 @@
         </v-file-input>
       </v-card>
       <v-card
-        v-else
+        v-else :theme="theme"
         class="file-input-card" elevation="0" :class="{ 'drag-and-drop': dragover }"
         @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
       >
         <v-file-input
           ref="input"
+          :theme="theme"
           variant="solo-filled" :rules="getRules()" hide-details="auto" prepend-icon="" flat single-line
           :placeholder="getPlaceholder()" :clearable="false" :label="getPlaceholder()"
           density="compact" rounded persistent-placeholder :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
@@ -33,9 +34,14 @@
       </v-card>
     </form>
     <div v-if="isForMultipleImages()" class="preview-multiple">
-      <draggable :list="getAttachments()">
-        <v-card v-for="(a, i) in getAttachments()" :key="getKey(a)" elevation="0" class="preview-attachment" :class="{odd: i % 2 !== 0}">
-          <v-tooltip location="right" eager>
+      <draggable
+        :key="`${schema.model}-${key}`"
+        :list="getAttachments()" :group="`${schema.model}-${key}`" :item-key="getKey"
+        draggable=".preview-attachment" handle=".row-handle" ghost-class="ghost"
+        v-bind="dragOptions" :class="{disabled}" class="preview-multiple" @end="onEndDrag" @start="onStartDrag"
+      >
+        <v-card v-for="(a, i) in getAttachments()" :key="getKey(a)" :theme="theme" elevation="0" class="preview-attachment" :class="{odd: i % 2 !== 0}">
+          <v-tooltip :theme="theme" location="right" eager>
             <template #activator="{ props }">
               <v-chip variant="outlined" class="filename" closable close-icon="mdi-close-circle-outline" v-bind="props" @click:close="removeImage(a)">#{{ i + 1 }} - {{ $filters.truncate(a._filename,10) }} ({{ imageSize(a) }})</v-chip>
             </template>
@@ -45,20 +51,22 @@
             <div v-if="isImage(a)" class="image-wrapper">
               <v-img cover :src="getImageSrc(a)" />
             </div>
-            <v-btn v-else-if="a._id" size="small" rounded elevation="0" @click="viewFile(a)">{{ $filters.translate('TL_VIEW') }}</v-btn>
+            <v-btn v-else-if="a._id" :theme="theme" size="small" rounded elevation="0" @click="viewFile(a)">{{ $filters.translate('TL_VIEW') }}</v-btn>
           </div>
         </v-card>
       </draggable>
     </div>
     <template v-else-if="attachment() && isImage()">
       <div v-if="!(schema.width && schema.height)" class="preview-single-attachment">
-        <v-tooltip location="right" eager>
+        <v-tooltip :theme="theme" location="right" eager>
           <template #activator="{ props }">
             <v-chip class="filename" closable v-bind="props" @click:close="removeImage(attachment())">{{ $filters.truncate(attachment()._filename) }} ({{ imageSize(attachment()) }})</v-chip>
           </template>
           <span>{{ attachment()._filename }}</span>
         </v-tooltip>
-        <v-img class="preview" cover :src="getImageSrc()" />
+        <div class="image-wrapper">
+          <v-img class="preview" cover :src="getImageSrc()" />
+        </div>
       </div>
       <div v-else class="parent-parent">
         <div class="cropper-parent">
@@ -178,9 +186,6 @@ export default {
     imageUrl () {
       const attachment = this.attachment()
       return attachment && (attachment.url || attachment.data)
-    },
-    getKey (elem) {
-      return `${elem._filename}-${Math.random()}`
     }
   }
 }

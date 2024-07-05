@@ -37,7 +37,6 @@
 </template>
 
 <script>
-import {v4 as uuid} from 'uuid'
 import _ from 'lodash'
 import AbstractField from '@m/AbstractField'
 import FileInputField from '@m/FileInputField'
@@ -47,10 +46,8 @@ export default {
   mixins: [AbstractField, FileInputField, DragList],
   data () {
     return {
-      dragover: false,
       isForParagraph: true,
       items: _.get(this.model, this.schema.model, []),
-      key: uuid(),
       attachments: []
     }
   },
@@ -80,9 +77,6 @@ export default {
       _.set(this.schema.rootView.model, '_attachments', attachments)
       _.set(this.model, this.schema.model, this.items)
       this.$emit('input', this.model, this.schema.model)
-    },
-    getKey (elem) {
-      return `${elem._filename}-${Math.random()}`
     }
   }
 

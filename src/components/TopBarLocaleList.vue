@@ -42,11 +42,6 @@ export default {
       default: () => {}
     }
   },
-  data () {
-    return {
-      TranslateService
-    }
-  },
   methods: {
     getLocaleTranslation (locale) {
       return TranslateService.get('TL_' + locale.toUpperCase())
@@ -58,7 +53,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import '@a/scss/variables.scss';
 .top-bar-locale-list {
   display: flex;
@@ -69,7 +64,6 @@ export default {
     border-radius: 100px;
     padding: 4px;
     gap: 8px;
-
     .v-chip {
       user-select: none;
       text-transform: uppercase;
@@ -78,15 +72,16 @@ export default {
       transition: all 0.3s;
       @include small-cta-text;
       font-style: normal;
+      .v-chip__underlay {
+        background-color: transparent;
+      }
       &.selected {
         color: $locales-selected-color;
         background-color: $locales-selected-background;
       }
     }
-
     &.toggle-mode {
       cursor: pointer;
-
       .v-chip {
         cursor: pointer;
       }

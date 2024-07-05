@@ -3,6 +3,7 @@
     <v-autocomplete
       :id="selectOptions.id"
       ref="input"
+      :theme="theme"
       :chips="getSelectOpt('chips')"
       :menu-props="menuProps"
       :model-value="objectValue || value" :items="options" :closable-chips="getSelectOpt('deletableChips') || getSelectOpt('multiple')" :hide-selected="getSelectOpt('hideSelected')"

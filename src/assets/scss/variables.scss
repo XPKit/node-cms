@@ -7,7 +7,9 @@ $imag-light-grey-2: #E1E1E1;
 $imag-grey: #818386;
 $imag-blue: #71DBD4;
 $imag-purple: #8094DD;
+$imag-purple-border: #3E4B78;
 $imag-dark-purple: #292F47;
+$imag-light-dark-purple: #20263C;
 $imag-darker-purple: #1B1F2D;
 $imag-orange: #FF5C39;
 $imag-yellow: #E1E000;
@@ -55,6 +57,7 @@ $sidebar-records-list-item-background: var(--sidebar-records-list-item-backgroun
 $sidebar-records-list-item-background-selected: var(--sidebar-records-list-item-background-selected);
 $sidebar-records-list-item-background-disabled: var(--sidebar-records-list-item-background-disabled);
 $sidebar-toggle-view-mode-background: var(--sidebar-toggle-view-mode-background);
+$sidebar-toggle-view-mode-border-color: var(--sidebar-toggle-view-mode-border-color);
 
 $multiselect-delete-button-color: var(--multiselect-delete-button-color);
 $multiselect-delete-button-background: var(--multiselect-delete-button-background);
@@ -102,15 +105,12 @@ $notification-error-color: var(--notification-error-color);
 
 $paragraph-top-bar-background: var(--paragraph-top-bar-background);
 $paragraph-top-bar-color: var(--paragraph-top-bar-color);
-$paragraph-background: var(--paragraph-background);
 
 $paragraph-top-bar-background-level-2: var(--paragraph-top-bar-background-level-2);
 $paragraph-top-bar-color-level-2: var(--paragraph-top-bar-color-level-2);
-$paragraph-background-level-2: var(--paragraph-background-level-2);
 
 $paragraph-top-bar-color-level-3: var(--paragraph-top-bar-color-level-3);
 $paragraph-top-bar-background-level-3: var(--paragraph-top-bar-background-level-3);
-$paragraph-background-level-3: var(--paragraph-background-level-3);
 
 $switch-field-background: var(--switch-field-background);
 $switch-field-active-background: var(--switch-field-active-background);
@@ -124,6 +124,8 @@ $switch-field-drag-background: var(--switch-field-drag-background);
 $wysiwyg-toolbar-background: var(--wysiwyg-toolbar-background);
 $wysiwyg-editor-background: var(--wysiwyg-editor-background);
 $wysiwyg-toolbar-border: var(--wysiwyg-toolbar-border);
+$wysiwyg-toolbar-color: var(--wysiwyg-toolbar-color);
+$wysiwyg-toolbar-hover-background: var(--wysiwyg-toolbar-hover-background);
 
 $levelBackgrounds: $paragraph-top-bar-background $paragraph-top-bar-background-level-2 $paragraph-top-bar-background-level-3;
 $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragraph-top-bar-color-level-3;
@@ -180,6 +182,7 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
   --sidebar-records-list-item-background-selected: #{$imag-purple};
   --sidebar-records-list-item-background-disabled: #{$imag-grey};
   --sidebar-toggle-view-mode-background: #{$imag-white};
+  --sidebar-toggle-view-mode-border-color: #{$imag-white};
 
   --multiselect-delete-button-color: #{$imag-white};
   --multiselect-delete-button-background: #{$imag-orange};
@@ -224,15 +227,10 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
 
   --paragraph-top-bar-background: #{$imag-black};
   --paragraph-top-bar-color: #{$imag-white};
-  --paragraph-background: #{$imag-white};
-
   --paragraph-top-bar-background-level-2: #{$imag-light-grey};
   --paragraph-top-bar-color-level-2: #{$imag-black};
-  --paragraph-background-level-2: #{$imag-white};
-
   --paragraph-top-bar-background-level-3: #{$imag-light-grey-2};
   --paragraph-top-bar-color-level-3: #{$imag-black};
-  --paragraph-background-level-3: #{$imag-white};
 
   --switch-field-background: #{$imag-white};
   --switch-field-active-background: #{$imag-purple};
@@ -245,6 +243,8 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
   --wysiwyg-toolbar-background: #{$imag-white};
   --wysiwyg-editor-background: #{$imag-light-grey};
   --wysiwyg-toolbar-border: #{$imag-light-grey};
+  --wysiwyg-toolbar-color: #{$imag-black};
+  --wysiwyg-toolbar-hover-background: #{$imag-blue};
 
   &.v-theme--dark {
     --layout-background: #{$imag-black};
@@ -271,15 +271,23 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
     --sidebar-resource-selector-background-opened: #{$imag-purple};
     --sidebar-resource-selector-color: #{$imag-white};
     --search-icon-color: #{$imag-white};
-    --sidebar-records-list-background: #{$imag-black};
+    --sidebar-records-list-background: #{$imag-darker-purple};
     --sidebar-records-list-checkbox-background: #{$imag-white};
     --sidebar-records-list-checkbox-color: #{$imag-purple};
     --sidebar-records-list-delete-icon-color: #{$imag-white};
     --sidebar-records-list-delete-icon-selected-color: #{$imag-white};
-    --sidebar-records-list-item-background: #{$imag-grey};
+    --sidebar-records-list-item-background: #{$imag-dark-purple};
     --sidebar-records-list-item-background-selected: #{$imag-purple};
     --sidebar-records-list-item-background-disabled: #{$imag-grey};
-    --sidebar-toggle-view-mode-background: #{$imag-grey};
+    --sidebar-toggle-view-mode-background: #{transparent};
+    --sidebar-toggle-view-mode-border-color: #{$imag-purple-border};
+
+
+    --locales-border-color: #{$imag-purple-border};
+    --locales-color: #{$imag-white};
+    --locales-selected-color: #{$imag-white};
+    --locales-background: #{transparent};
+    --locales-selected-background: #{$imag-purple};
 
     --btn-action-color: #{$imag-white};
     --btn-icon-color: #{$imag-white};
@@ -288,6 +296,7 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
     --wysiwyg-toolbar-background: #{$imag-black};
     --wysiwyg-editor-background: #{$imag-wysiwyg-background};
     --wysiwyg-toolbar-border: #{$imag-black};
+    --wysiwyg-toolbar-hover-background: #{$imag-blue};
 
     --table-header-background: #{$imag-black};
     --table-header-color: #{$imag-white};
@@ -301,7 +310,26 @@ $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragra
     --notification-success-color: #{$imag-white};
     --notification-error-color: #{$imag-orange};
 
-    --switch-field-drag-background: #{$imag-grey};
+    --paragraph-top-bar-background: #{$imag-black};
+    --paragraph-top-bar-color: #{$imag-white};
+    --paragraph-top-bar-background-level-2: #{$imag-dark-purple};
+    --paragraph-top-bar-color-level-2: #{$imag-white};
+    --paragraph-top-bar-background-level-3: #{$imag-light-dark-purple};
+    --paragraph-top-bar-color-level-3: #{$imag-white};
+
+    --switch-field-background: #{transparent};
+    --switch-field-active-background: #{$imag-purple};
+    --switch-field-color: #{$imag-white};
+    --switch-field-active-color: #{$imag-white};
+    --switch-field-border-color: #{$imag-purple-border};
+    --switch-field-active-drag-background: #{$imag-white};
+    --switch-field-drag-background: #{$imag-light-grey};
+
+    --wysiwyg-toolbar-background: #{$imag-light-dark-purple};
+    --wysiwyg-editor-background: #{$imag-dark-purple};
+    --wysiwyg-toolbar-border: #{$imag-dark-purple};
+    --wysiwyg-toolbar-color: #{$imag-white};
+    --wysiwyg-toolbar-hover-background: #{$imag-blue};
 
   }
 }

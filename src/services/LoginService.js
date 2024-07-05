@@ -1,8 +1,10 @@
 import _ from 'lodash'
 import axios from 'axios'
+import Emitter from 'tiny-emitter'
 
 class LoginService {
   constructor () {
+    this.events = new Emitter()
     this.user = null
     this.logoutCallbackList = []
   }
@@ -41,9 +43,11 @@ class LoginService {
     try {
       const newTheme = _.get(this.user, 'theme', 'dark') === 'dark' ? 'light' : 'dark'
       // console.warn('changeTheme ', this.user, newTheme)
+      this.events.emit('changed-theme', newTheme)
       await axios.get(`${window.location.pathname}changeTheme/${newTheme}`)
       console.warn('Successfully changed the theme for user')
       _.set(this.user, 'theme', newTheme)
+
       return newTheme
     } catch (error) {
       console.error('Failed to change theme: ', error)

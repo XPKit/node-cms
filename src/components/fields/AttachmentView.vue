@@ -3,12 +3,13 @@
     <form v-if="!disabled" enctype="multipart/form-data">
       <field-label :schema="schema" />
       <v-card
+        :theme="theme"
         class="file-input-card" elevation="0" :class="{ 'drag-and-drop': dragover }"
         @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
       >
         <v-file-input
           ref="input"
-          flat :rules="getRules()" prepend-icon="" :label="getPlaceholder()" :placeholder="getPlaceholder()" :clearable="false" hide-details="auto"
+          :theme="theme" flat :rules="getRules()" prepend-icon="" :label="getPlaceholder()" :placeholder="getPlaceholder()" :clearable="false" hide-details="auto"
           density="compact" :variant="getVariant()" rounded persistent-placeholder single-line :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
           @change="onUploadChanged"
         >
@@ -17,8 +18,13 @@
       </v-card>
     </form>
     <div v-if="isForMultipleImages()" class="preview-multiple">
-      <draggable :list="getAttachments()">
-        <v-card v-for="(a, i) in getAttachments()" :key="getKey(a)" elevation="0" class="preview-attachment" :class="{odd: i % 2 !== 0}">
+      <draggable
+        :key="`${schema.model}-${key}`"
+        :list="getAttachments()" :group="`${schema.model}-${key}`" :item-key="getKey"
+        draggable=".preview-attachment" handle=".row-handle" ghost-class="ghost"
+        v-bind="dragOptions" :class="{disabled}" class="preview-multiple" @end="onEndDrag" @start="onStartDrag"
+      >
+        <v-card v-for="(a, i) in getAttachments()" :key="getKey(a)" :theme="theme" elevation="0" class="preview-attachment" :class="{odd: i % 2 !== 0}">
           <v-tooltip location="right" eager>
             <template #activator="{ props }">
               <v-chip variant="outlined" class="filename" closable close-icon="mdi-close-circle-outline" v-bind="props" @click:close="removeImage(a)">#{{ i + 1 }} - {{ $filters.truncate(a._filename,10) }} ({{ imageSize(a) }})</v-chip>
@@ -41,6 +47,7 @@
         </template>
         <span>{{ attachment()._filename }}</span>
       </v-tooltip>
+
       <div v-if="isImage()" class="image-wrapper">
         <v-img cover :src="getImageSrc(a)" />
       </div>
@@ -75,12 +82,7 @@ import AbstractField from '@m/AbstractField'
 import FileInputField from '@m/FileInputField'
 import DragList from '@m/DragList'
 export default {
-  mixins: [AbstractField, FileInputField, DragList],
-  methods: {
-    getKey (elem) {
-      return `${elem._filename}-${Math.random()}`
-    }
-  }
+  mixins: [AbstractField, FileInputField, DragList]
 }
 </script>
 

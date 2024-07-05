@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="record" elevation="0" class="record-editor" :class="{frozen:!record._local}">
+  <v-card v-if="record" :dark="$vuetify.theme.dark" elevation="0" class="record-editor" :class="{frozen:!record._local}">
     <div class="top-bar">
       <top-bar-locale-list :locales="resource.locales" :locale="locale" :select-locale="selectLocale" :back="back" />
       <div class="buttons">
@@ -178,6 +178,7 @@ export default {
       this.editingRecord._id = this.record._id
       try {
         this.editingRecord._attachments = _.cloneDeep(this.record._attachments || [])
+        console.warn('attachments are', this.editingRecord._attachments)
       } catch (error) {
         console.error('Error during cloneEditingRecord:', error)
         this.editingRecord._attachments = []
@@ -323,7 +324,7 @@ export default {
           return item._id && !_.includes(newAttachmentsIds, item._id) && (_.get(item, 'cropOptions.updated', false) || _.get(item, 'orderUpdated', false))
         })
         if (!_.isEmpty(updatedAttachments)) {
-          console.warn('UPDATED ATTACHMENTS = ', _.map(updatedAttachments, a => `${a.orderUpdated}-${a.order}-${a._filename}`))
+          console.warn('UPDATED ATTACHMENTS = ', _.map(updatedAttachments, a => `${a.order}-${a._filename}`))
           await this.updateAttachments(data._id, updatedAttachments)
         }
         const removedAttachments = _.filter(this.record._attachments, item => !_.find(this.editingRecord._attachments, { _id: item._id }))
@@ -381,11 +382,11 @@ export default {
       }))
       _.each(value, (attachment) => {
         // NOTE: Adds new attachments
-        if (_.isUndefined(_.find(this.editingRecord._attachments, {_name: attachment._name}))) {
+        if (_.isUndefined(_.find(this.editingRecord._attachments, {_name: attachment._name, order: attachment.order}))) {
           this.editingRecord._attachments.push(attachment)
         }
       })
-      console.info('attachments are now: ', this.editingRecord._attachments)
+      console.info('attachments are now: ', value, this.editingRecord._attachments)
     },
     onModelUpdated (value, model) {
       this.updateFields(value, model)

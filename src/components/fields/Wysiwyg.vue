@@ -89,6 +89,7 @@ export default {
   position: relative;
   .border-wrapper {
     padding: 0;
+    border: none;
   }
   .editor {
     background-color: $wysiwyg-editor-background;

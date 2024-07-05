@@ -84,7 +84,7 @@ li {
     padding-top: 0px;
   }
   .v-field--rounded {
-    border-radius: 32px;
+    border-radius: 8px;
   }
 }
 
@@ -405,7 +405,7 @@ body {
       left: 0;
       width: 100%;
       height: 120px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #FFF 100%);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, white 100%);
       opacity: 1;
       transition: all 0.3s;
     }
@@ -584,9 +584,6 @@ body {
       }
     }
 
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.25);
-    }
   }
 
   .v-snackbar.notification {
@@ -638,6 +635,28 @@ body {
   .v-theme--dark {
     // background: #4e4e4e;
     color: rgba(255, 255, 255, 0.87);
+
+    .search {
+      background-color: transparent;
+    }
+
+    .record-list {
+      .search {
+        background-color: $imag-light-dark-purple;
+        button {
+          background-color: transparent;
+        }
+      }
+    }
+    .top-bar {
+      .buttons {
+        button {
+          &.delete {
+            background-color: transparent;
+          }
+        }
+      }
+    }
 
     .node-cms-title {
       color: white;

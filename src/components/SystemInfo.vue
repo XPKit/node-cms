@@ -15,7 +15,7 @@
       </div>
     </v-menu>
 
-    <v-menu content-class="system-info-menu" location="bottom" :close-on-content-click="false" transition="slide-y-transition" attach=".v-application">
+    <v-menu content-class="system-info-menu" :theme="$vuetify.theme.dark ? 'dark' : 'light'" location="bottom" :close-on-content-click="false" transition="slide-y-transition" attach=".v-application">
       <template #activator="{ props }">
         <v-btn icon v-bind="props">
           <v-icon>mdi-cog-outline</v-icon>

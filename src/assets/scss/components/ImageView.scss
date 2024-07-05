@@ -103,13 +103,15 @@
   .image-wrapper {
     max-width: 100px;
     min-width: 100px;
-    background-color: #ffffff;
-    opacity: 1;
-    background-image: repeating-linear-gradient(45deg, #dfdfdf 25%, transparent 25%, transparent 75%, #dfdfdf 75%, #dfdfdf), repeating-linear-gradient(45deg, #dfdfdf 25%, #ffffff 25%, #ffffff 75%, #dfdfdf 75%, #dfdfdf);
-    background-position: 0 0, 11px 11px;
-    background-size: 22px 22px;
-    background-repeat: repeat, repeat;
-    border-radius: 8px;
+    img {
+      border-radius: 8px;
+      background-color: #ffffff;
+      opacity: 1;
+      background-repeat: repeat, repeat;
+      background-image:  repeating-linear-gradient(45deg, #cdcdcd 25%, transparent 25%, transparent 75%, #cdcdcd 75%, #cdcdcd), repeating-linear-gradient(45deg, #cdcdcd 25%, #ffffff 25%, #ffffff 75%, #cdcdcd 75%, #cdcdcd);
+      background-position: 0 0, 4px 4px;
+      background-size: 8px 8px;
+    }
     .v-img {
       border-radius:8px;
       width: 100%;

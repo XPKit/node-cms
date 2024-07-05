@@ -44,7 +44,7 @@
               @unsetRecord="unsetSelectedRecord" @updateRecordList="updateRecordList"
             />
             <plugin-page v-if="selectedPlugin" :plugin="selectedPlugin" />
-
+          <!-- TODO: hugo - to remove ? -->
           <!-- <multiselect-page
             v-if="selectedResource && multiselect"
             :multiselect-items="multiselectItems"

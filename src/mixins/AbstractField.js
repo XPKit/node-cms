@@ -24,7 +24,7 @@ function attributesDirective (el, binding, vnode) {
 }
 
 export default {
-  props: ['model', 'schema', 'formOptions', 'disabled', 'focused', 'paragraphLevel'],
+  props: ['model', 'schema', 'formOptions', 'disabled', 'focused', 'paragraphLevel', 'theme'],
   data () {
     return {
       errors: [],
@@ -174,7 +174,7 @@ export default {
         changed = true
       }
       if (changed) {
-        console.warn(`value for '${this.schema.model}' changed to `, newValue)
+        // console.warn(`value for '${this.schema.model}' changed to `, newValue)
         if (isFunction(this.schema.onChanged)) {
           this.schema.onChanged.call(this, this.model, newValue, oldValue, this.schema)
         }

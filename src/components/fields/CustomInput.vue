@@ -1,6 +1,7 @@
 <template>
   <v-text-field
-    ref="input" :class="[schema.labelClasses]" :type="getType()" :model-value="value"
+    ref="input"
+    :theme="theme" :class="[schema.labelClasses]" :type="getType()" :model-value="value"
     :max-length="schema.max" :min-length="schema.min" autocomplete="off" validate-on-submit :rules="[validateField]"
     :variant="getVariant()" :flat="get('flat')" :rounded="get('rounded')" :density="get('density')" :disabled="disabled" :readonly="get('readonly')"
     persistent-placeholder hide-details @update:model-value="onChangeData"

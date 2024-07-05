@@ -4,7 +4,7 @@
       v-if="schema" :key="`${schema.model}-${key}`" :list="items"
       :class="{disabled}" draggable=".item" v-bind="dragOptions" handle=".handle" :group="`${schema.model}-${key}`" ghost-class="ghost" @end="onEndDrag" @start="dragging = true"
     >
-      <v-card v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" elevation="0" :class="`item nested-level-${paragraphLevel}`">
+      <v-card v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" :theme="theme" elevation="0" :class="`item nested-level-${paragraphLevel}`">
         <v-card-title class="handle paragraph-header">
           <div class="paragraph-title">{{ item.label }}</div>
           <div class="add-btn-wrapper">
@@ -20,7 +20,8 @@
     </draggable>
     <div class="paragraph-footer">
       <v-select
-        ref="input" transition="none"
+        ref="input"
+        :theme="theme" transition="none"
         :model-value="selectedType" :menu-props="{ bottom: true, offsetY: true }" :items="types" item-title="label" item-value="label"
         hide-details rounded density="compact" persistent-placeholder variant="solo-filled" flat
         :disabled="disabled || schema.disabled" menu-icon="mdi-chevron-down" @update:model-value="onChangeType"
@@ -67,7 +68,7 @@ const defaultTypes = [
 
 export default {
   mixins: [DragList],
-  props: ['schema', 'vfg', 'model', 'disabled', 'paragraphLevel'],
+  props: ['schema', 'vfg', 'model', 'disabled', 'paragraphLevel', 'theme'],
   data () {
     return {
       items: _.cloneDeep(_.get(this.model, this.schema.model, [])),
@@ -381,6 +382,9 @@ export default {
   .v-input {
     display: flex;
     flex-direction: column;
+  }
+  .v-card {
+    background-color: transparent;
   }
 }
 </style>

@@ -34,21 +34,21 @@ export default {
 .menu-item {
   background: transparent;
   border: none;
-  color: $imag-black;
+  color: $wysiwyg-toolbar-color;
   border-radius: 8px;
   width: 32px;
   height: 32px;
   cursor: pointer;
 
   .v-icon {
-    color: $imag-black;
+    color: $wysiwyg-toolbar-color;
     font-size: 16px;
     width: 16px;
     height: 16px;
   }
   &.is-active,
   &:hover {
-    background-color: $imag-blue;
+    background-color: $wysiwyg-toolbar-hover-background;
     .v-icon {
       color: white;
     }

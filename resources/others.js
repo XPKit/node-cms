@@ -114,12 +114,19 @@ exports = (module.exports = {
       }
     },
     {
+      field: 'gimageMultiple',
+      input: 'image',
+      localised: false,
+      options: {
+        maxCount: 5
+      }
+    },
+    {
       field: 'file',
       input: 'file',
       options: {
         accept: 'image/*'
       }
-
     },
     {
       field: 'file2',
