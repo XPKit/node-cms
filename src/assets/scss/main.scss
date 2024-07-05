@@ -701,7 +701,7 @@ body {
       div,
       tr {
         &[data-schematype=object] {
-          background-color: $imag-black;
+          background-color: $imag-darker-purple;
         }
       }
 
@@ -729,7 +729,7 @@ body {
       }
 
       select option {
-        background-color: black;
+        background-color: $imag-darker-purple;
       }
     }
     &.v-snackbar {

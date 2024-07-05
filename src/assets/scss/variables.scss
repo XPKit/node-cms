@@ -90,6 +90,7 @@ $btn-icon-color: var(--btn-icon-color);
 
 $field-label-color: var(--field-label-color);
 
+$table-background: var(--table-background);
 $table-header-background: var(--table-header-background);
 $table-header-color: var(--table-header-color);
 $table-row-odd-background: var(--table-row-odd-background);
@@ -97,6 +98,7 @@ $table-row-odd-color: var(--table-row-odd-color);
 $table-row-even-background: var(--table-row-even-background);
 $table-row-even-color: var(--table-row-even-color);
 $table-row-icon-color: var(--table-row-icon-color);
+$table-row-icon-background: var(--table-row-icon-background);
 
 $notification-background: var(--notification-background);
 $notification-success-color: var(--notification-success-color);
@@ -222,6 +224,7 @@ $date-time-hover-color: var(--date-time-hover-color);
   --locales-background: #{$imag-white};
   --locales-selected-background: #{$imag-purple};
 
+  --table-background: #{$imag-white};
   --table-header-background: #{$imag-black};
   --table-header-color: #{$imag-white};
   --table-row-odd-background: #{$imag-light-grey};
@@ -229,6 +232,7 @@ $date-time-hover-color: var(--date-time-hover-color);
   --table-row-even-background: #{$imag-light-grey-2};
   --table-row-even-color: #{$imag-black};
   --table-row-icon-color: #{$imag-black};
+  --table-row-icon-background: #{$imag-white};
 
   --notification-background: #{$imag-white};
   --notification-success-color: #{$imag-black};
@@ -317,13 +321,15 @@ $date-time-hover-color: var(--date-time-hover-color);
     --wysiwyg-toolbar-border: #{$imag-black};
     --wysiwyg-toolbar-hover-background: #{$imag-blue};
 
-    --table-header-background: #{$imag-black};
+    --table-background: #{$imag-darker-purple};
+    --table-header-background: #{$imag-darker-purple};
     --table-header-color: #{$imag-white};
     --table-row-odd-background: #{$imag-black};
     --table-row-odd-color: #{$imag-white};
     --table-row-even-background: #{$imag-grey};
     --table-row-even-color: #{$imag-black};
-    --table-row-icon-color: #{$imag-black};
+    --table-row-icon-color: #{$imag-white};
+    --table-row-icon-background: #{transparent};
 
     --notification-background: #{$imag-grey};
     --notification-success-color: #{$imag-white};

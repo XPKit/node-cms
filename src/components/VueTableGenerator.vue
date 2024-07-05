@@ -2,7 +2,8 @@
 <template>
   <div class="vue-table-generator vue-form-generator table">
     <v-data-table-virtual
-      v-model="localSelectedRecords" :sort-by="sortBy"
+      v-model="localSelectedRecords"
+      :theme="theme" :sort-by="sortBy"
       height="73vh" density="compact" multi-sort show-select sticky :no-data-text="$filters.translate('TL_NO_DATA_FOUND')" :item-value="item => item._id" fixed-header :items="tableData" :headers="columns"
       @update:sortBy="onChangeSortBy"
     >
@@ -30,7 +31,7 @@ import _ from 'lodash'
 import TranslateService from '@s/TranslateService'
 
 export default {
-  props: ['resource', 'schema', 'items', 'locale', 'options', 'selectedRecords'],
+  props: ['resource', 'schema', 'items', 'locale', 'options', 'selectedRecords', 'theme'],
   data () {
     return {
       localSelectedRecords: [],
@@ -199,6 +200,9 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 6px;
+  button {
+    background-color: $table-row-icon-background;
+  }
   .v-icon {
     color: $table-row-icon-color;
   }

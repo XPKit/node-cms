@@ -52,7 +52,6 @@
         .ve-table-sort {
           color: $table-header-color !important;
         }
-
         .v-icon {
           font-size: 16px;
         }
@@ -119,27 +118,10 @@
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
   }
-}
-
-.v-theme--dark {
-  .record-table {
-    .table {
-      .row {
-        .cell {
-          color: white;
-
-          input,
-          textarea {
-            color: white;
-          }
-        }
-
-        &.header {
-          .cell {
-            color: #4f5f4f;
-          }
-        }
-      }
+  .v-table {
+    background-color: $table-background;
+    &.v-table--fixed-header > .v-table__wrapper > table > thead > tr > th {
+      background-color: $table-background;
     }
   }
 }

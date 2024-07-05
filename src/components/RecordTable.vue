@@ -33,8 +33,9 @@
       </div>
       <template v-if="!record">
         <vue-table-generator
-          v-if="isReady" v-model:selected-records="selectedRecords"
-          v-model:locale="localLocale"
+          v-if="isReady"
+          v-model:selected-records="selectedRecords" v-model:locale="localLocale"
+          :theme="theme"
           :options="options" :resource="resource" :schema="schema" :items="filteredList"
           @remove="removeRecord" @edit="editRecord"
         />
@@ -68,6 +69,7 @@ import TopBarLocaleList from '@c/TopBarLocaleList.vue'
 import RecordEditor from '@c/RecordEditor.vue'
 import AbstractEditorView from '@c/AbstractEditorView'
 import Notification from '@m/Notification'
+import FieldTheme from '@m/FieldTheme'
 
 export default {
   components: {
@@ -75,7 +77,7 @@ export default {
     RecordEditor,
     TopBarLocaleList
   },
-  mixins: [AbstractEditorView, Notification],
+  mixins: [AbstractEditorView, Notification, FieldTheme],
   props: {
     groupedList: {
       type: Array,
