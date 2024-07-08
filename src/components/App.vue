@@ -44,17 +44,6 @@
               @unsetRecord="unsetSelectedRecord" @updateRecordList="updateRecordList"
             />
             <plugin-page v-if="selectedPlugin" :plugin="selectedPlugin" />
-          <!-- TODO: hugo - to remove ? -->
-          <!-- <multiselect-page
-            v-if="selectedResource && multiselect"
-            :multiselect-items="multiselectItems"
-            :locale="locale"
-            :resource="selectedResource"
-            :record-list="recordList"
-            @cancel="onCancelMultiselectPage"
-            @changeMultiselectItems="onChangeMultiselectItems"
-            @updateRecordList="updateRecordList"
-          /> -->
           </div>
           <loading v-if="LoadingService.isShow" />
         </div>

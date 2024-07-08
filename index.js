@@ -16,7 +16,7 @@ const mkdirp = require('mkdirp')
 const session = require('express-session')
 
 const UUID = require('./lib/util/uuid')
-const WebsocketManager = require('./lib/WebsocketManager')
+// const WebsocketManager = require('./lib/WebsocketManager')
 const SyslogManager = require('./lib/SyslogManager')
 const SystemManager = require('./lib/SystemManager')
 let Resource = null
@@ -118,9 +118,7 @@ class CMS {
     /* Enable compression */
     this._app.use(compression({
       filter (req, res) {
-        if (req.headers['x-no-compression']) {
-          return false
-        } return compression.filter(req, res)
+        return req.headers['x-no-compression'] ? false : compression.filter(req, res)
       }
     }))
     if (!options.disableAuthentication || !options.disableJwtLogin) {
@@ -162,7 +160,7 @@ class CMS {
     this.bootstrapFunctions.push(async (callback) => {
       SyslogManager.init(this, options)
       SystemManager.init(this, options)
-      this.websocketServer.init()
+      // this.websocketServer.init()
       callback()
     })
     this._app.use(SyslogManager.express())
@@ -215,7 +213,7 @@ class CMS {
         server = undefined
       }
       this.server = server
-      this.websocketServer = new WebsocketManager(this.options, SystemManager.getSystem, SyslogManager.getSyslogData)
+      // this.websocketServer = new WebsocketManager(this.options, SystemManager.getSystem, SyslogManager.getSyslogData)
       await pAll(_.map(this.bootstrapFunctions, bootstrap => {
         return async () => {
           await Q.nfcall(bootstrap)

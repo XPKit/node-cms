@@ -30,6 +30,7 @@ class ViteUtils {
       origin: `${this.baseUrl}:${this.devPort}`,
       port: this.devPort,
       proxy: this.getProxy(),
+      compress: false,
       fs: {
         allow: ['..'] // Allow serving files from one level up to the project root
       }
@@ -94,7 +95,9 @@ class ViteUtils {
       configure: (proxy, _options) => this.handleProxyCall(`^${this.nodeCmsMountPath}(admin)`, proxy)
     })
     _.set(this.proxy, `^${this.nodeCmsMountPath}(api)`, {
-      target: `${this.baseUrl}:${this.serverPort}`
+      target: `${this.baseUrl}:${this.serverPort}`,
+      changeOrigin: true,
+      ws: true
     })
     if (this.isInNodeModules && this.nodeCmsMountPath !== '/') {
       _.set(this.proxy, '^/(api)', {
@@ -105,7 +108,7 @@ class ViteUtils {
       route.ws = true
       route.changeOrigin = true
     })
-    // console.warn('Proxy is', this.proxy)
+    console.warn('Proxy is', this.proxy)
     return this.proxy
   }
 }

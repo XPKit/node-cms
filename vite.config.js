@@ -6,6 +6,7 @@ import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import ViteUtils from './vite.utils.js'
 import vuetify from 'vite-plugin-vuetify'
+import rollupNodePolyFill from 'rollup-plugin-node-polyfills'
 
 const viteUtils = ViteUtils.getInstance()
 
@@ -24,6 +25,8 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
     resolve: {
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
       alias: viteUtils.resolveAliases({
+        events: 'rollup-plugin-node-polyfills/polyfills/events',
+        stream: 'rollup-plugin-node-polyfills/polyfills/stream',
         os: 'rollup-plugin-node-polyfills/polyfills/os',
         '@s': 'services',
         '@p': viteUtils.isInNodeModules ? path.resolve('../../node-cms/plugins') : 'plugins',
@@ -48,6 +51,11 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       manifest: false,
       outDir: '../dist',
       rollupOptions: {
+        plugins: [
+          // Enable rollup polyfills plugin
+          // used during production bundling
+          rollupNodePolyFill()
+        ],
         output: {
           manualChunks: (id) => {
             if (id.includes('node_modules') && !id.includes('node-cms/src')) {

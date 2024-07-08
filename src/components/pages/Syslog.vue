@@ -48,10 +48,8 @@
 
 <script>
 import _ from 'lodash'
-import axios from 'axios'
 import sift from 'sift'
 import JSON5 from 'json5'
-import WebsocketService from '@s/WebsocketService'
 
 export default {
   data () {
@@ -75,29 +73,12 @@ export default {
       errorQty: 0,
       ignoreNextScrollEvent: false,
       fakeData: [],
-      config: null
+      eventSource: false
     }
   },
-  async mounted () {
-    const {data: config} = await axios.get(`${window.location.pathname}../api/_syslog/config`)
-    this.config = config
-    if (this.config.wss) {
-      WebsocketService.events.on('syslog', (data) => {
-        if (!_.isEmpty(data)) {
-          this.error = false
-          this.logLines.push(...data)
-          this.lastId = _.last(this.logLines).id
-          this.updateSysLog()
-        }
-        if (this.autoscroll) {
-          this.ignoreNextScrollEvent = true
-          this.$refs.scroller.scrollToBottom()
-        }
-      })
-    }
-
+  mounted () {
     this.$nextTick(() => {
-      this.refreshLog()
+      this.connectToLogStream()
       if (this.$refs.scroller) {
         const element = this.$refs.scroller.$el
         element.addEventListener('scroll', this.detectScroll)
@@ -106,6 +87,7 @@ export default {
   },
   async unmounted () {
     this.destroyed = true
+    this.disconnectFromLogStream()
     if (this.$refs.scroller) {
       const element = this.$refs.scroller.$el
       element.removeEventListener('scroll', this.detectScroll)
@@ -113,6 +95,30 @@ export default {
     clearTimeout(this.timer)
   },
   methods: {
+    disconnectFromLogStream () {
+      this.eventSource.close()
+    },
+    connectToLogStream () {
+      this.eventSource = new EventSource(`${window.location.pathname}../api/_syslog`)
+      this.eventSource.onmessage = (event) => {
+        this.logLines.push(JSON.parse(event.data))
+        if (this.autoscroll) {
+          this.ignoreNextScrollEvent = true
+          if (_.get(this.$refs, 'scroller', false)) {
+            this.$refs.scroller.scrollToBottom()
+          }
+        }
+        this.updateSysLog()
+      }
+      this.eventSource.addEventListener('end', () => {
+        this.eventSource.close()
+        console.warn('Log stream ended')
+      })
+      this.eventSource.onerror = (error) => {
+        console.error('Error in SSE connection:', error)
+        this.eventSource.close()
+      }
+    },
     filterLevel (level) {
       this.searchKey = `sift:{level: {$gte: ${level}}}`
       this.updateSysLog()
@@ -181,37 +187,6 @@ export default {
         }
         this.stickyId = id
       })
-    },
-    async refreshLog () {
-      try {
-        if (this.config.wss) {
-          if (WebsocketService.client) {
-            WebsocketService.send({action: 'syslog', id: this.lastId})
-            this.isLoading = false
-            this.error = false
-          }
-        } else {
-          const response = await axios.get(`${window.location.pathname}../api/_syslog`, {params: {id: this.lastId}})
-          this.isLoading = false
-          this.error = false
-          if (!_.isEmpty(response.data)) {
-            this.error = false
-            this.logLines.push(...response.data)
-            this.lastId = _.last(this.logLines).id
-            this.updateSysLog()
-          }
-          if (this.autoscroll) {
-            this.ignoreNextScrollEvent = true
-            this.$refs.scroller.scrollToBottom()
-          }
-        }
-      } catch (error) {
-        console.error(error)
-        this.error = true
-      }
-      if (!this.destroyed) {
-        this.timer = setTimeout(this.refreshLog, this.error ? 2000 : 200)
-      }
     },
     updateSysLog () {
       let lines = _.uniqBy(this.logLines, 'id')

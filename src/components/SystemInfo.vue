@@ -63,7 +63,6 @@ import _ from 'lodash'
 import Dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import TranslateService from '@s/TranslateService'
-import WebsocketService from '@s/WebsocketService'
 import LoginService from '@s/LoginService'
 import ThemeSwitch from '@c/ThemeSwitch'
 
@@ -102,7 +101,8 @@ export default {
         network: 'not supported',
         drive: 'not supported',
         uptime: 0
-      }
+      },
+      eventSource: false
     }
   },
   computed: {
@@ -111,12 +111,8 @@ export default {
     }
   },
   async mounted () {
-    WebsocketService.events.on('getSystemInfo', (system) => {
-      this.system = system
-      this.$forceUpdate()
-    })
-    await WebsocketService.init(this.config)
-    this.getSystemData()
+    this.connectToLogStream()
+    // this.getSystemData()
     this.$vuetify.theme.global.name = LoginService.user.theme
   },
   unmounted () {
@@ -124,6 +120,28 @@ export default {
     clearTimeout(this.timer)
   },
   methods: {
+    disconnectFromLogStream () {
+      this.eventSource.close()
+    },
+    connectToLogStream () {
+      this.eventSource = new EventSource(`${window.location.pathname}../api/system`)
+      this.eventSource.onmessage = (event) => {
+        try {
+          this.system = JSON.parse(event.data)
+          this.$forceUpdate()
+        } catch (error) {
+          console.error('Failed to parse system info:', error)
+        }
+      }
+      this.eventSource.addEventListener('end', () => {
+        this.eventSource.close()
+        console.warn('System info stream ended')
+      })
+      this.eventSource.onerror = (error) => {
+        console.error('Error in SSE connection:', error)
+        this.eventSource.close()
+      }
+    },
     isActiveLink (url) {
       const urlA = new URL(window.location)
       const urlB = new URL(url)
@@ -131,16 +149,6 @@ export default {
     },
     async logout () {
       await LoginService.logout()
-    },
-    async getSystemData () {
-      try {
-        WebsocketService.send({action: 'getSystemInfo'})
-      } catch (error) {
-        console.error(error)
-      }
-      if (!this.destroyed) {
-        this.timer = setTimeout(this.getSystemData, this.error ? 10000 : 5000)
-      }
     },
     select (item) {
       this.$emit('selectItem', item)

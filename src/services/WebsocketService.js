@@ -2,6 +2,7 @@ import _ from 'lodash'
 import autoBind from 'auto-bind'
 import Emitter from 'tiny-emitter'
 
+// TODO: hugo - to remove / disable since not used anymore
 class WebsocketService {
   constructor () {
     autoBind(this)
