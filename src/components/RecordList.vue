@@ -76,7 +76,7 @@
 <script>
 import _ from 'lodash'
 import TranslateService from '@s/TranslateService'
-import Notification from '@m/Notification'
+import Notification from '@m/Notification.vue'
 import NotificationsService from '@s/NotificationsService'
 
 import RecordNameHelper from './RecordNameHelper'

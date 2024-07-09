@@ -68,7 +68,7 @@ import TopBarLocaleList from '@c/TopBarLocaleList.vue'
 
 import RecordEditor from '@c/RecordEditor.vue'
 import AbstractEditorView from '@c/AbstractEditorView'
-import Notification from '@m/Notification'
+import Notification from '@m/Notification.vue'
 import FieldTheme from '@m/FieldTheme'
 
 export default {

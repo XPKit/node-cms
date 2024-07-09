@@ -28,7 +28,7 @@ import _ from 'lodash'
 import RecordNameHelper from './RecordNameHelper'
 import AbstractEditorView from './AbstractEditorView'
 import TranslateService from '@s/TranslateService'
-import Notification from '@m/Notification'
+import Notification from '@m/Notification.vue'
 
 export default {
   mixins: [RecordNameHelper, AbstractEditorView, Notification],
