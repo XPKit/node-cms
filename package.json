@@ -141,12 +141,15 @@
     "vue-json-viewer": "^3.0.4",
     "vue-router": "^4.2.5",
     "vue-virtual-scroller": "^2.0.0-beta.8",
-    "vue3-shortkey": "^4.0.0",
+    "vue3-shortkey": "git+ssh://github.com/Zegfault/vue3-shortkey",
     "vuetify": "^3.5.1",
     "ws": "^8.13.0",
     "xlsx": "^0.17.3"
   },
   "config": {
     "port": 9990
+  },
+  "devDependencies": {
+    "rollup-plugin-visualizer": "^5.12.0"
   }
 }

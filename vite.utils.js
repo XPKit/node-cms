@@ -108,7 +108,7 @@ class ViteUtils {
       route.ws = true
       route.changeOrigin = true
     })
-    console.warn('Proxy is', this.proxy)
+    // console.warn('Proxy is', this.proxy)
     return this.proxy
   }
 }

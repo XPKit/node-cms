@@ -2,13 +2,17 @@
 
 import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import path from 'path'
+import _ from 'lodash'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import ViteUtils from './vite.utils.js'
 import vuetify from 'vite-plugin-vuetify'
 import rollupNodePolyFill from 'rollup-plugin-node-polyfills'
+import visualizer from 'rollup-plugin-visualizer'
 
 const viteUtils = ViteUtils.getInstance()
+
+const separatedVendors = ['lodash', 'vue/', '@vue', 'vuetify', 'codemirror', '@json-editor', '@tiptap', 'prosemirror']
 
 export default defineConfig(({ command, mode, ssrBuild }) => {
   return {
@@ -19,7 +23,8 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       vue({exclude: 'os'}),
       vueJsx({}),
       vuetify({ autoImport: true }),
-      splitVendorChunkPlugin()
+      splitVendorChunkPlugin(),
+      visualizer()
     ],
     server: viteUtils.serverConfig,
     resolve: {
@@ -57,9 +62,14 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
           rollupNodePolyFill()
         ],
         output: {
-          manualChunks: (id) => {
+          manualChunks: (id, {getModuleInfo}) => {
             if (id.includes('node_modules') && !id.includes('node-cms/src')) {
-              return 'vendor'
+              const moduleName = _.get(path.dirname(id).split('/node_modules/').pop().split('/'), '[0]', false)
+              if (!moduleName) {
+                return 'vendor'
+              }
+              const foundSeperatedVendor = _.find(separatedVendors, (separatedVendor) => id.includes(`node_modules/${separatedVendor}`))
+              return !_.isUndefined(foundSeperatedVendor) ? moduleName : 'vendor'
             }
             return null
           }

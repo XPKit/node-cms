@@ -178,7 +178,7 @@ export default {
       this.editingRecord._id = this.record._id
       try {
         this.editingRecord._attachments = _.cloneDeep(this.record._attachments || [])
-        console.warn('attachments are', this.editingRecord._attachments)
+        console.log('attachments are', this.editingRecord._attachments)
       } catch (error) {
         console.error('Error during cloneEditingRecord:', error)
         this.editingRecord._attachments = []
@@ -336,7 +336,7 @@ export default {
         }
         this.notify(TranslateService.get('TL_RECORD_UPDATED', null, { id: this.editingRecord._id }))
         this.$emit('updateRecordList', data)
-        console.warn('record is now: ', data)
+        console.log('record is now: ', data)
       } catch (error) {
         console.error('Error happen during updateRecord:', error)
         this.manageError(error, 'update', this.editingRecord)
@@ -386,7 +386,7 @@ export default {
           this.editingRecord._attachments.push(attachment)
         }
       })
-      console.info('attachments are now: ', value, this.editingRecord._attachments)
+      console.log('attachments are now: ', value, this.editingRecord._attachments)
     },
     onModelUpdated (value, model) {
       this.updateFields(value, model)
