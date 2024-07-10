@@ -10,6 +10,7 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import axios from 'axios'
 import { VueDraggableNext } from 'vue-draggable-next'
 import vuetify from './vuetify.js'
+import '@p/js/main.js'
 import '@a/scss/main.scss'
 import '@p/scss/main.scss'
 
