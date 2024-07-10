@@ -19,7 +19,7 @@
       <template #label />
       <template #append />
       <template #item="{props, item}">
-        <v-list-item density="compact" :rounded="50" v-bind="props" :title="customLabel(item)" />
+        <v-list-item density="compact" v-bind="props" :title="customLabel(item)" />
       </template>
     </v-autocomplete>
   </div>

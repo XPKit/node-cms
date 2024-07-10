@@ -13,7 +13,7 @@
           </template>
           <v-list rounded>
             <v-list-item
-              v-for="resource in resourceGroup.list" :key="resource.name" density="compact" :rounded="50"
+              v-for="resource in resourceGroup.list" :key="resource.name" density="compact"
               :class="{selected: selectedItem === resource}" @click="selectResourceCallback(resource)"
             >
               <v-list-item-title>{{ getResourceTitle(resource) }}</v-list-item-title>

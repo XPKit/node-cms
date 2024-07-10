@@ -111,7 +111,7 @@ li {
             font-weight: normal;
             font-style: normal;
             background-color: $navbar-resource-group-background;
-            border-radius: 50px;
+            border-radius: 50px !important;
             min-height: 18px;
             height: 18px;
             padding: 0px 16px;
@@ -125,7 +125,7 @@ li {
               padding: 0;
             }
             &:before {
-              border-radius: 50px;
+              border-radius: 50px !important;
               opacity: 1;
               background-color: $imag-blue !important;
               opacity: 0;
@@ -218,7 +218,7 @@ li {
           font-weight: normal;
           font-style: normal;
           background-color: $navbar-resource-group-background;
-          border-radius: 50px;
+          border-radius: 50px !important;
           min-height: 18px;
           padding: 4px 16px;
 
@@ -232,7 +232,7 @@ li {
         }
 
         &:before {
-          border-radius: 50px;
+          border-radius: 50px !important;
           opacity: 1;
           background-color: transparent !important;
           opacity: 0;
