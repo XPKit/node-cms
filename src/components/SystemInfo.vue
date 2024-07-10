@@ -1,6 +1,6 @@
 <template>
   <div class="system-info">
-    <v-menu v-if="settingsData && settingsData.linksGroups && settingsData.linksGroups.length > 0" content-class="links-menu" location="bottom" :close-on-content-click="false" transition="slide-y-transition" attach=".v-application">
+    <v-menu v-if="settingsData && settingsData.linksGroups && settingsData.linksGroups.length > 0" content-class="links-menu" location="bottom" :close-on-content-click="false" transition="slide-y-transition">
       <template #activator="{ props }">
         <v-btn icon v-bind="props">
           <v-icon>mdi-dots-vertical</v-icon>
@@ -15,7 +15,7 @@
       </div>
     </v-menu>
 
-    <v-menu content-class="system-info-menu" :theme="$vuetify.theme.dark ? 'dark' : 'light'" location="bottom" :close-on-content-click="false" transition="slide-y-transition" attach=".v-application">
+    <v-menu content-class="system-info-menu" :theme="$vuetify.theme.dark ? 'dark' : 'light'" location="bottom" :close-on-content-click="false" transition="slide-y-transition">
       <template #activator="{ props }">
         <v-btn icon v-bind="props">
           <v-icon>mdi-cog-outline</v-icon>
@@ -114,6 +114,7 @@ export default {
     this.connectToLogStream()
     // this.getSystemData()
     this.$vuetify.theme.global.name = LoginService.user.theme
+    document.querySelectorAll('body')[0].classList = [`v-theme--${this.$vuetify.theme.global.name}`]
   },
   unmounted () {
     this.destroyed = true

@@ -47,7 +47,7 @@ class LoginService {
       await axios.get(`${window.location.pathname}changeTheme/${newTheme}`)
       console.warn('Successfully changed the theme for user')
       _.set(this.user, 'theme', newTheme)
-
+      document.querySelectorAll('body')[0].classList = [`v-theme--${newTheme}`]
       return newTheme
     } catch (error) {
       console.error('Failed to change theme: ', error)

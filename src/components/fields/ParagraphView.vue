@@ -80,8 +80,7 @@ export default {
       menuProps: {
         contentProps: {
           density: 'compact'
-        },
-        attach: '.v-application'
+        }
       }
     }
   },

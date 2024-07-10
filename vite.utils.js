@@ -28,7 +28,6 @@ class ViteUtils {
 
     this.serverConfig = {
       origin: `${this.baseUrl}:${this.devPort}`,
-      open: `${this.baseUrl}:${this.devPort}${this.nodeCmsMountPath}admin`,
       port: this.devPort,
       proxy: this.getProxy(),
       compress: false,

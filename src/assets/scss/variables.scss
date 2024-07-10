@@ -148,7 +148,7 @@ $date-time-hover-color: var(--date-time-hover-color);
   src: url('@a/fonts/SourceSans3-Regular.ttf');
 }
 
-.v-application {
+html body {
   font-family: Source Sans Pro !important;
 
   --layout-background: #{$imag-light-grey};

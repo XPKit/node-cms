@@ -1,6 +1,6 @@
 <template>
   <div class="record-table-wrapper">
-    <v-menu v-if="selectedResourceGroup && groupedList" v-model="menuOpened" content-class="resources-menu full-width" location="bottom" :close-on-content-click="true" attach=".v-application">
+    <v-menu v-if="selectedResourceGroup && groupedList" v-model="menuOpened" content-class="resources-menu full-width" location="bottom" :close-on-content-click="true">
       <template #activator="{ props }">
         <div class="resource-selector" v-bind="props" :class="{opened: menuOpened}">
           <div class="resource-title">{{ getResourceTitle(resource) }}</div>
