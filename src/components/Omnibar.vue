@@ -12,7 +12,7 @@
         <v-divider />
         <div ref="scrollWrapper" class="scroll-wrapper" :class="{'scrolled-to-bottom': scrolledToBottom || results.length < 20}" @scroll="onScroll">
           <v-list density="compact">
-            <v-list-item v-for="(item, i) in results" :id="'result-' + i" :key="i" class="list" :class="{highlighted: highlightedItem === i}" :ripple="false" @click="selectResult(i)">
+            <v-list-item v-for="(item, i) in results" :id="'result-' + i" :key="i" class="list" :class="{highlighted: highlightedItem === i}" :ripple="false" :rounded="50" @click="selectResult(i)">
               <v-list-item-title>
                 <v-icon size="small">{{ getIconForResult(item) }}</v-icon>
                 <span v-html="item.html" />

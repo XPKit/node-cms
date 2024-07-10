@@ -9,7 +9,7 @@
       </template>
       <v-list rounded>
         <v-list-item
-          v-for="r in selectedResourceGroup.list" :key="r.name" density="compact"
+          v-for="r in selectedResourceGroup.list" :key="r.name" density="compact" :rounded="50"
           :class="{selected: r === resource}" @click="r !== resource ? selectResourceCallback(r) : ''"
         >
           <v-list-item-title>{{ getResourceTitle(r) }}</v-list-item-title>
