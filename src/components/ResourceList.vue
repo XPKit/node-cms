@@ -14,7 +14,7 @@
           <v-list rounded>
             <v-list-item
               v-for="resource in resourceGroup.list" :key="resource.name" density="compact"
-              :class="{selected: selectedItem === resource}" @click="selectResourceCallback(resource)"
+              :class="{selected: isSelected(resource)}" @click="selectResourceCallback(resource)"
             >
               <v-list-item-title>{{ getResourceTitle(resource) }}</v-list-item-title>
             </v-list-item>
@@ -54,6 +54,12 @@ export default {
     }
   },
   methods: {
+    isSelected (resource) {
+      if (_.get(resource, 'type', false) === 'plugin') {
+        return _.get(resource, 'pluginComponent', false) === _.get(this.selectedItem, 'pluginComponent', false)
+      }
+      return this.selectedItem === resource
+    },
     getResourceTitle (resource) {
       return resource.displayname ? TranslateService.get(resource.displayname) : resource.title
     },

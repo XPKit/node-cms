@@ -1,11 +1,12 @@
-import TestComponent from './components/TestComponent.vue'
+import { defineAsyncComponent, markRaw } from 'vue'
 
 window.plugins = [
   {
     title: 'TestComponent',
     displayname: 'TestComponent',
     name: 'TestComponent',
-    component: TestComponent,
+    component: markRaw(markRaw(defineAsyncComponent(() => import("./components/TestComponent.vue")))),
+    pluginComponent: 'TestComponent',
     group: '- Dashboard -'
   }
 ]
