@@ -12,7 +12,7 @@ import visualizer from 'rollup-plugin-visualizer'
 
 const viteUtils = ViteUtils.getInstance()
 
-const separatedVendors = ['lodash', 'vue/', '@vue', 'vuetify', 'codemirror', '@json-editor', '@tiptap', 'prosemirror']
+const separatedVendors = ['lodash', 'vue/', '@vue', 'vuetify', '@json-editor', '@tiptap']
 
 export default defineConfig(({ command, mode, ssrBuild }) => {
   return {
@@ -51,6 +51,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       include: ['dayjs/plugin/relativeTime', 'fuzzysort']
     },
     build: {
+      chunkSizeWarningLimit: 1500,
       minify: true,
       cssCodeSplit: false,
       manifest: false,
