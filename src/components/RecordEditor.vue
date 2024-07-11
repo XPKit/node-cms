@@ -178,7 +178,7 @@ export default {
       this.editingRecord._id = this.record._id
       try {
         this.editingRecord._attachments = _.cloneDeep(this.record._attachments || [])
-        console.log('attachments are', this.editingRecord._attachments)
+        // console.log('attachments are', this.editingRecord._attachments)
       } catch (error) {
         console.error('Error during cloneEditingRecord:', error)
         this.editingRecord._attachments = []
