@@ -67,14 +67,12 @@ import Notification from '@m/Notification.vue'
 import Loading from '@c/Loading.vue'
 import LocaleList from '@c/LocaleList.vue'
 import NavBar from '@c/NavBar.vue'
-// import ResourceList from '@c/ResourceList.vue'
 import RecordList from '@c/RecordList.vue'
 import RecordEditor from '@c/RecordEditor.vue'
 import RecordTable from '@c/RecordTable.vue'
 
 export default {
   components: {
-    // ResourceList,
     NavBar,
     RecordList,
     RecordEditor,
@@ -248,6 +246,7 @@ export default {
         }
       } catch (error) {
         console.error('Error while getting resources: ', error)
+        LoginService.logout()
       }
     })
   },
