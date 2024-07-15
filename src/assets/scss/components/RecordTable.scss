@@ -77,12 +77,10 @@
     &:nth-child(2n + 1) {
       td {
         color: $table-row-even-color;
-
+        background-color: $table-row-even-background !important;
         span {
           color: $table-row-even-color;
         }
-
-        background-color: $table-row-even-background !important;
       }
     }
   }

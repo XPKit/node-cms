@@ -98,12 +98,14 @@ li {
         .v-list {
           border-radius: 0px 0px 8px 8px !important;
           @include blurred-background;
-          transform: translate3d(0, 0, 0);
-          display: flex;
-          padding-left: 24px;
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 8px;
+          & {
+            transform: translate3d(0, 0, 0);
+            display: flex;
+            padding-left: 24px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+          }
           .v-list-item {
             display: inline-block;
             @include cta-text;
@@ -188,13 +190,15 @@ li {
     .v-list {
       border-radius: 0px 0px 8px 8px !important;
       @include blurred-background;
-      transform: translate3d(0, 0, 0);
-      display: flex;
-      padding-left: 24px;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 16px;
-      gap: 0;
+      & {
+        transform: translate3d(0, 0, 0);
+        display: flex;
+        padding-left: 24px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        gap: 0;
+      }
 
       .v-list-item {
         display: flex;
@@ -554,11 +558,11 @@ body {
     }
 
     &.opened {
+      background-color: $sidebar-resource-selector-background-opened;
       .v-icon {
         transform: rotate(180deg);
       }
 
-      background-color: $sidebar-resource-selector-background-opened;
     }
   }
 
@@ -595,9 +599,11 @@ body {
 
     .v-snackbar__wrapper {
       @include blurred-background;
-      margin-top: $navbar-height;
-      padding: 0;
-      color: $imag-black;
+      & {
+        margin-top: $navbar-height;
+        padding: 0;
+        color: $imag-black;
+      }
       .v-btn {
         background-color: transparent;
         color: $imag-black;
