@@ -4,7 +4,7 @@
   "description": "Content management system, written in node.js, uses leveldb as an asset and content store.",
   "main": "index.js",
   "scripts": {
-    "dev": "vite",
+    "dev": "cross-env VITE_CJS_IGNORE_WARNING=true vite",
     "build": "vite build --emptyOutDir",
     "preview": "vite preview",
     "serve-backend": "cross-env VITE_DEV_MODE=true node server.js",
