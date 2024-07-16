@@ -55,7 +55,7 @@
               <div v-if="item" class="main">
                 <v-tooltip location="right" eager>
                   <template #activator="{ props }">
-                    <span v-bind="props">{{ $filters.truncate(getName(item), 15) }}</span>
+                    <span v-bind="props">{{ $filters.truncate(getName(item), 25) }}</span>
                   </template>
                   <span>{{ getName(item) }}</span>
                 </v-tooltip>

@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import { createApp, h } from 'vue'
 import * as Vue from 'vue'
-
 import { createRouter, createWebHashHistory } from 'vue-router'
 import JsonViewer from 'vue-json-viewer'
 import VueShortkey from 'vue3-shortkey'
@@ -49,7 +48,6 @@ import Loading from './modules/Loading'
 import TranslateFilter from '@f/Translate'
 import TruncateFilter from '@f/Truncate'
 import TranslateService from '@s/TranslateService'
-
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [ { path: '/', component: App } ]

@@ -1,6 +1,6 @@
 // vite.config.js
 
-import { defineConfig, splitVendorChunkPlugin } from 'vite'
+import { defineConfig } from 'vite'
 import path from 'path'
 import _ from 'lodash'
 import vue from '@vitejs/plugin-vue'
@@ -12,7 +12,9 @@ import visualizer from 'rollup-plugin-visualizer'
 
 const viteUtils = ViteUtils.getInstance()
 
-const separatedVendors = ['lodash', 'vue/', '@vue', 'vuetify', '@json-editor', '@tiptap']
+const defaultVendorsFilename = 'vendors'
+const separatedVendors = ['lodash', 'vuetify', '@json-editor', '@tiptap', 'codemirror']
+const regroupModulesStartingWith = ['vue', 'prosemirror']
 
 export default defineConfig(({ command, mode, ssrBuild }) => {
   return {
@@ -23,7 +25,6 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
       vue({exclude: 'os'}),
       vueJsx({}),
       vuetify({ autoImport: true }),
-      splitVendorChunkPlugin(),
       visualizer()
     ],
     server: viteUtils.serverConfig,
@@ -67,10 +68,14 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
             if (id.includes('node_modules') && !id.includes('node-cms/src')) {
               const moduleName = _.get(path.dirname(id).split('/node_modules/').pop().split('/'), '[0]', false)
               if (!moduleName) {
-                return 'vendor'
+                return defaultVendorsFilename
+              }
+              const shouldRegroupModule = _.find(regroupModulesStartingWith, (startingWith) => id.includes(startingWith))
+              if (!_.isUndefined(shouldRegroupModule)) {
+                return shouldRegroupModule
               }
               const foundSeperatedVendor = _.find(separatedVendors, (separatedVendor) => id.includes(`node_modules/${separatedVendor}`))
-              return !_.isUndefined(foundSeperatedVendor) ? moduleName : 'vendor'
+              return !_.isUndefined(foundSeperatedVendor) ? moduleName : defaultVendorsFilename
             }
             return null
           }
