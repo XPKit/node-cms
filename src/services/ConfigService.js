@@ -1,5 +1,5 @@
-import axios from 'axios/dist/axios.min'
-// import _ from 'lodash'
+import RequestService from '@s/RequestService'
+
 class ConfigService {
   constructor () {
     this.config = {}
@@ -7,8 +7,7 @@ class ConfigService {
 
   async init () {
     try {
-      const { data } = await axios.get(`${window.location.pathname}config`)
-      this.config = data
+      this.config = await RequestService.get(`${window.location.pathname}config`)
       // console.warn('Config:', data)
     } catch (error) {
       console.error('Error during init of ConfigService:', error)

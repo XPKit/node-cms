@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import axios from 'axios/dist/axios.min'
 import _ from 'lodash'
 
 import Loading from '@c/Loading.vue'
@@ -34,6 +33,7 @@ import ConfigService from '@s/ConfigService'
 import TranslateService from '@s/TranslateService'
 import LoginService from '@s/LoginService'
 import Notification from '@m/Notification.vue'
+import RequestService from '@s/RequestService'
 
 export default {
   components: {
@@ -90,7 +90,7 @@ export default {
       this.$loading.start('login')
       this.loggingIn = true
       try {
-        await axios.post(`${window.location.pathname}login`, {username: this.username, password: this.password})
+        await RequestService.post(`${window.location.pathname}login`, {username: this.username, password: this.password})
         this.$loading.stop('login')
         window.location.reload()
       } catch (error) {

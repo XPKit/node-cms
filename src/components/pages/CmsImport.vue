@@ -57,8 +57,8 @@
 </template>
 
 <script>
+import RequestService from '@s/RequestService'
 import _ from 'lodash'
-import axios from 'axios'
 export default {
   data () {
     return {
@@ -72,8 +72,8 @@ export default {
     }
   },
   async mounted () {
-    const response = await axios('./config')
-    this.config = response.data.import
+    const data = await RequestService.get('./config')
+    this.config = data.import
   },
   methods: {
     getRules () {
@@ -108,8 +108,7 @@ export default {
       this.type = 0
       this.$nextTick(async () => {
         try {
-          const response = await axios('../import/status')
-          this.status = response.data
+          this.status = await RequestService.get('../import/status')
         } catch (e) {
           this.status = null
           this.error = _.get(e, 'message', e)
@@ -126,8 +125,7 @@ export default {
       this.$loading.start('cms-import')
       this.$nextTick(async () => {
         try {
-          const response = await axios('../import/execute')
-          this.status = response.data
+          this.status = await RequestService.get('../import/execute')
         } catch (e) {
           this.status = null
           this.error = _.get(e, 'message', e)
@@ -146,8 +144,7 @@ export default {
         try {
           const formData = new FormData()
           formData.append('xlsx', this.uploadedXlsx)
-          const response = await axios.post('../import/statusXlsx', formData)
-          this.status = response.data
+          this.status = await RequestService.post('../import/statusXlsx', formData)
         } catch (e) {
           this.status = null
           this.error = _.get(e, 'message', e)
@@ -166,8 +163,7 @@ export default {
         try {
           const formData = new FormData()
           formData.append('xlsx', this.uploadedXlsx)
-          const response = await axios.post('../import/executeXlsx', formData)
-          this.status = response.data
+          this.status = await RequestService.post('../import/statusXlsx', formData)
         } catch (e) {
           this.status = null
           this.error = _.get(e, 'message', e)

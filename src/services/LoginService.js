@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import axios from 'axios'
 import Emitter from 'tiny-emitter'
+import RequestService from './RequestService'
 
 class LoginService {
   constructor () {
@@ -18,9 +18,9 @@ class LoginService {
 
   async getStatus () {
     try {
-      const { data } = await axios.get(`${window.location.pathname}login`)
+      const data = await RequestService.get(`${window.location.pathname}login`)
       this.user = data
-      return data
+      return this.user
     } catch (error) {
       return null
     }
@@ -44,7 +44,7 @@ class LoginService {
       const newTheme = _.get(this.user, 'theme', 'dark') === 'dark' ? 'light' : 'dark'
       // console.warn('changeTheme ', this.user, newTheme)
       this.events.emit('changed-theme', newTheme)
-      await axios.get(`${window.location.pathname}changeTheme/${newTheme}`)
+      await RequestService.get(`${window.location.pathname}changeTheme/${newTheme}`)
       console.warn('Successfully changed the theme for user')
       _.set(this.user, 'theme', newTheme)
       document.querySelectorAll('body')[0].classList = [`v-theme--${newTheme}`]
@@ -57,7 +57,7 @@ class LoginService {
   async logout () {
     this.user = null
     try {
-      await axios.get(`${window.location.pathname}logout`)
+      await RequestService.get(`${window.location.pathname}logout`)
       window.location.reload()
     } catch (error) {
       console.error('Failed to logout: ', error)

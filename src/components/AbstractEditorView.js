@@ -1,8 +1,8 @@
 import _ from 'lodash'
-import axios from 'axios/dist/axios.min'
 import TranslateServiceLib from '@s/TranslateService'
 import SchemaService from '@s/SchemaService'
 import Notification from '@m/Notification.vue'
+import RequestService from '@s/RequestService'
 
 const TranslateService = window.TranslateService || TranslateServiceLib
 
@@ -29,10 +29,10 @@ export default {
             data.append('cropOptions', JSON.stringify(attachment.cropOptions))
           }
           if (_.get(attachment, 'orderUpdated', false) && _.get(attachment, 'order', false)) {
-            // console.warn('detected orderUpdated, will add it to the request')
+            console.warn('detected orderUpdated, will add it to the request')
             data.append('order', attachment.order)
           }
-          await axios.post(`../api/${this.resource.title}/${id}/attachments`, data)
+          await RequestService.post(`../api/${this.resource.title}/${id}/attachments`, data)
         }
       } catch (error) {
         console.error('Error happen during uploadAttachments:', error)
@@ -45,7 +45,7 @@ export default {
         for (const [i, attachment] of attachments.entries()) {
           const cropOptions = _.omit(_.get(attachment, 'cropOptions', {}), ['updated'])
           const order = _.get(attachment, 'order', i + 1)
-          await axios.put(`../api/${this.resource.title}/${id}/attachments/${attachment._id}`, {cropOptions, order})
+          await RequestService.put(`../api/${this.resource.title}/${id}/attachments/${attachment._id}`, {cropOptions, order})
         }
       } catch (error) {
         console.error('Error happen during updateAttachments:', error)
@@ -56,7 +56,7 @@ export default {
       this.$loading.start('remove-attachments')
       try {
         for (const attachment of attachments) {
-          await axios.delete(`../api/${this.resource.title}/${id}/attachments/${attachment._id}`)
+          await RequestService.delete(`../api/${this.resource.title}/${id}/attachments/${attachment._id}`)
         }
       } catch (error) {
         console.error('Error happen during removeAttachments:', error)

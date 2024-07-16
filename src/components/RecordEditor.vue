@@ -23,7 +23,6 @@
 </template>
 
 <script>
-import axios from 'axios/dist/axios.min'
 import _ from 'lodash'
 
 import TranslateService from '@s/TranslateService'
@@ -31,6 +30,7 @@ import FieldSelectorService from '@s/FieldSelectorService'
 import AbstractEditorView from './AbstractEditorView'
 import Notification from '@m/Notification.vue'
 import TopBarLocaleList from '@c/TopBarLocaleList.vue'
+import RequestService from '@s/RequestService'
 
 export default {
   components: {TopBarLocaleList},
@@ -199,7 +199,7 @@ export default {
       } else {
         this.$loading.start('delete-record')
         try {
-          await axios.delete(`../api/${this.resource.title}/${this.editingRecord._id}`)
+          await RequestService.delete(`../api/${this.resource.title}/${this.editingRecord._id}`)
           this.notify(TranslateService.get('TL_RECORD_DELETED', null, { id: this.editingRecord._id }))
           this.$emit('updateRecordList', null)
         } catch (error) {
@@ -299,7 +299,7 @@ export default {
     async createRecord (uploadObject, newAttachments) {
       this.$loading.start('create-record')
       try {
-        const {data} = await axios.post(`../api/${this.resource.title}`, uploadObject)
+        const data = await RequestService.post(`../api/${this.resource.title}`, uploadObject)
         await this.uploadAttachments(data._id, newAttachments)
         this.notify(TranslateService.get('TL_RECORD_CREATED', null, { id: data._id }))
         this.$emit('updateRecordList', data)
@@ -315,8 +315,7 @@ export default {
         let data = this.editingRecord
         if (!_.isEmpty(uploadObject)) {
           console.info('Will send', uploadObject)
-          const response = await axios.put(`../api/${this.resource.title}/${this.editingRecord._id}`, uploadObject)
-          data = response.data
+          data = await RequestService.put(`../api/${this.resource.title}/${this.editingRecord._id}`, uploadObject)
         }
         await this.uploadAttachments(data._id, newAttachments)
         const newAttachmentsIds = _.map(newAttachments, '_id')

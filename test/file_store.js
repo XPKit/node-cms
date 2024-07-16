@@ -28,8 +28,3 @@ it('#constructor', function () {
   assert(FileStore(getDbPath(), 'abc123', {}) instanceof FileStore)
   assert(FileStore.length === 3)
 })
-
-// it '#sync', ->
-//   assert typeof FileStore(getDbPath(), 'abc123', {}).sync == 'function'
-
-// TODO: continue with API, check sync at this point

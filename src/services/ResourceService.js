@@ -1,5 +1,5 @@
-import axios from 'axios/dist/axios.min'
 import _ from 'lodash'
+import RequestService from '@s/RequestService'
 
 class ResourceService {
   constructor () {
@@ -7,7 +7,7 @@ class ResourceService {
   }
 
   async cache (resource) {
-    const {data} = await axios.get(`${window.location.pathname}../api/${resource}`)
+    const data = await RequestService.get(`${window.location.pathname}../api/${resource}`)
     if (_.get(data, 'userLoggedOut', false)) {
       console.info('Received userLoggedOut from server, will redirect to login page')
       window.location.reload()

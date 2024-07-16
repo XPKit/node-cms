@@ -6,7 +6,6 @@ import JsonViewer from 'vue-json-viewer'
 import VueShortkey from 'vue3-shortkey'
 import VueVirtualScroller from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import axios from 'axios'
 import { VueDraggableNext } from 'vue-draggable-next'
 import vuetify from './vuetify.js'
 import '@p/js/main.js'
@@ -48,6 +47,7 @@ import Loading from './modules/Loading'
 import TranslateFilter from '@f/Translate'
 import TruncateFilter from '@f/Truncate'
 import TranslateService from '@s/TranslateService'
+import RequestService from '@s/RequestService.js'
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [ { path: '/', component: App } ]
@@ -118,8 +118,7 @@ window.addEventListener('load', async function () {
     item.type = 'plugin'
   })
   window.TranslateService = TranslateService
-  const response = await axios.get(`${window.location.pathname}config`)
-  const config = response.data
+  const config = RequestService.get(`${window.location.pathname}config`)
   addPlugin('Syslog', 'Syslog')
   if (config.import) {
     addPlugin('CmsImport', 'Cms Import')

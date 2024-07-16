@@ -54,8 +54,8 @@
 </template>
 
 <script>
+import RequestService from '@s/RequestService'
 import _ from 'lodash'
-import axios from 'axios'
 import pAll from 'p-all'
 
 export default {
@@ -82,29 +82,24 @@ export default {
     }
   },
   async mounted () {
-    let response
-    response = await axios.get(`${window.location.pathname}resources`)
-    _.each(response.data, resource => {
+    let data = await RequestService.get(`${window.location.pathname}resources`)
+    _.each(data, resource => {
       let uniqueKeyField = _.find(resource.schema, {unique: true})
       if (uniqueKeyField) {
         this.uniqueKeyMap[resource.title] = uniqueKeyField.field
       }
     })
-
-    response = await axios.get(`${window.location.pathname}/config`)
-    this.config = response.data
+    this.config = await RequestService.get(`${window.location.pathname}/config`)
     if (this.selectedResource) {
       this.update()
     }
-
     this.statusInterval = setInterval(async () => {
       if (this.selectedResource) {
         try {
           await pAll(_.map(['local', 'remote'], env => {
             return async () => {
               try {
-                const response = await axios.get(`${window.location.pathname}/sync/${env}/${this.selectedResource}/status`)
-                this.syncStatus[env] = response.data
+                this.syncStatus[env] = await RequestService.get(`${window.location.pathname}/sync/${env}/${this.selectedResource}/status`)
                 this.syncStatus = _.clone(this.syncStatus)
               } catch (error) {
                 console.error(error)
@@ -138,12 +133,10 @@ export default {
         await pAll(_.map(this.environments, env => {
           return async () => {
             try {
-              let response
-              response = await axios.get(`${window.location.pathname}sync/${env}/${this.selectedResource}`)
-              _.set(this.recordData, env, response.data)
-
-              response = await axios.get(`${window.location.pathname}sync/${env}/${this.selectedResource}/status`)
-              _.set(this.syncStatus, env, response.data)
+              let data = await RequestService.get(`${window.location.pathname}sync/${env}/${this.selectedResource}`)
+              _.set(this.recordData, env, data)
+              data = await RequestService.get(`${window.location.pathname}sync/${env}/${this.selectedResource}/status`)
+              _.set(this.syncStatus, env, data)
               this.syncStatus = _.clone(this.syncStatus)
             } catch (error) {
               console.error(error)
@@ -151,10 +144,8 @@ export default {
           }
         }), {concurrency: 1})
         this.recordData = _.clone(this.recordData)
-
         const fromData = this.recordData.local
         const toData = this.recordData.remote
-
         const fromKeys = _.map(fromData, item => item[uniqueKey])
         const toKeys = _.map(toData, item => item[uniqueKey])
         let updateKeys = _.intersection(fromKeys, toKeys)
@@ -165,13 +156,11 @@ export default {
           toItem._attachments = _.map(toItem._attachments, item => _.omit(item, ['url']))
           return !_.isEqual(fromItem, toItem)
         })
-
         if (!_.isEmpty(updateKeys)) {
           _.each(updateKeys, key => {
             console.log(key, 'local', _.find(fromData, {[uniqueKey]: key}), 'remote', _.find(toData, {[uniqueKey]: key}))
           })
         }
-
         this.reportData = {
           create: _.difference(fromKeys, toKeys).length,
           remove: _.difference(toKeys, fromKeys).length,
@@ -188,7 +177,7 @@ export default {
 
       this.syncingEnvironment = true
       try {
-        await axios.post(`../sync/${this.selectedResource}/from/${from}/to/${to}`)
+        await RequestService.post(`../sync/${this.selectedResource}/from/${from}/to/${to}`)
         _.set(this.syncStatus, `${to}.status`, 'syncing')
         this.syncStatus = _.clone(this.syncStatus)
       } catch (error) {

@@ -23,12 +23,12 @@
 
 <script>
 import pAll from 'p-all'
-import axios from 'axios'
 import _ from 'lodash'
 import RecordNameHelper from './RecordNameHelper'
 import AbstractEditorView from './AbstractEditorView'
 import TranslateService from '@s/TranslateService'
 import Notification from '@m/Notification.vue'
+import RequestService from '@s/RequestService'
 
 export default {
   mixins: [RecordNameHelper, AbstractEditorView, Notification],
@@ -80,7 +80,7 @@ export default {
         await pAll(_.map(this.multiselectItems, item => {
           return async () => {
             try {
-              await axios.delete(`../api/${this.resource.title}/${item._id}`)
+              await RequestService.delete(`../api/${this.resource.title}/${item._id}`)
               this.notify(TranslateService.get('TL_RECORD_DELETED', null, { id: item._id }))
             } catch (error) {
               console.error(error)
@@ -96,37 +96,6 @@ export default {
       this.$emit('updateRecordList', null)
       this.$emit('cancel')
     }
-    // async onClickClone () {
-    //   if (!window.confirm(
-    //     TranslateService.get('TL_ARE_YOU_SURE_TO_CLONE_RECORDS', null, {num: _.size(this.multiselectItems)}),
-    //     TranslateService.get('TL_YES'),
-    //     TranslateService.get('TL_NO')
-    //   )) {
-    //     return
-    //   }
-
-    //   this.$loading.start('onCloneMultiselectedItems')
-    //   try {
-    //     await pAll(_.map(this.multiselectItems, item => {
-    //       return async () => {
-    //         try {
-    //           const {data} = await axios.post(`../api/${this.resource.title}`, item)
-    //           this.notify(TranslateService.get('TL_RECORD_CREATED', null, { id: data._id })
-    //         } catch (error) {
-    //           console.error(error)
-    //           this.manageError(error, 'create')
-    //         }
-    //       }
-    //     }), {concurrency: 1})
-    //   } catch (error) {
-    //     console.error(error)
-    //   }
-    //   this.multiselect = false
-    //   this.$loading.stop('onCloneMultiselectedItems')
-
-    //   this.$emit('updateRecordList', null)
-    //   this.$emit('cancel')
-    // }
   }
 }
 </script>

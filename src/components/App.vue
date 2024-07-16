@@ -53,7 +53,6 @@
 </template>
 
 <script>
-import axios from 'axios/dist/axios.min'
 import _ from 'lodash'
 import pAll from 'p-all'
 
@@ -70,6 +69,7 @@ import NavBar from '@c/NavBar.vue'
 import RecordList from '@c/RecordList.vue'
 import RecordEditor from '@c/RecordEditor.vue'
 import RecordTable from '@c/RecordTable.vue'
+import RequestService from '@s/RequestService'
 
 export default {
   components: {
@@ -229,9 +229,9 @@ export default {
       }
 
       try {
-        const resourcesResponse = await axios.get(`${window.location.pathname}resources`)
+        const data = await RequestService.get(`${window.location.pathname}resources`)
         this.$loading.stop('init')
-        const resourceList = _.sortBy(resourcesResponse.data, item => item.title)
+        const resourceList = _.sortBy(data, item => item.title)
         this.resourceList = _.filter(resourceList, resource => {
           if (_.isUndefined(resource.allowed)) {
             return true

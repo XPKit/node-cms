@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import axios from 'axios/dist/axios.min'
+import RequestService from './RequestService'
 
 class TranslateService {
   constructor () {
@@ -8,13 +8,12 @@ class TranslateService {
   }
 
   async init () {
-    const { data } = await axios.get(`${window.location.pathname}i18n/config.json`)
+    const data = await RequestService.get(`${window.location.pathname}i18n/config.json`)
     this.config = _.get(data, 'config.language', { 'defaultLocale': 'enUS', 'locales': ['enUS'] })
     this.locale = _.get(this.config, 'defaultLocale', 'enUS')
     for (const locale of this.config.locales) {
       try {
-        const { data } = await axios.get(`${window.location.pathname}i18n/${locale}.json`)
-        this.dict[locale] = data
+        this.dict[locale] = await RequestService.get(`${window.location.pathname}i18n/${locale}.json`)
       } catch (error) {
         console.warn(`TranslateService wasn't able to pull ${locale}: `, error)
       }

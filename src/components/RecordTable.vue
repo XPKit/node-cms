@@ -58,11 +58,11 @@
 <script>
 
 import _ from 'lodash'
-import axios from 'axios/dist/axios.min'
 import pAll from 'p-all'
 
 import TranslateService from '@s/TranslateService'
 import NotificationsService from '@s/NotificationsService'
+import RequestService from '@s/RequestService'
 import VueTableGenerator from '@c/VueTableGenerator.vue'
 import TopBarLocaleList from '@c/TopBarLocaleList.vue'
 
@@ -248,7 +248,7 @@ export default {
       } else {
         this.$loading.start('delete-record')
         try {
-          await axios.delete(`../api/${this.resource.title}/${record._id}`)
+          await RequestService.delete(`../api/${this.resource.title}/${record._id}`)
           this.notify(TranslateService.get('TL_RECORD_DELETED', null, { id: record._id }))
           this.$emit('updateRecordList', null)
         } catch (error) {
@@ -310,10 +310,10 @@ export default {
       if (_.isUndefined(record._id)) {
         this.$loading.start('create-record')
         try {
-          const response = await axios.post(`../api/${this.resource.title}`, uploadObject)
-          await this.uploadAttachments(response.data._id, newAttachments)
-          this.notify(TranslateService.get('TL_RECORD_CREATED', null, { id: response.data._id }))
-          this.$emit('updateRecordList', response.data)
+          const data = await RequestService.post(`../api/${this.resource.title}`, uploadObject)
+          await this.uploadAttachments(data._id, newAttachments)
+          this.notify(TranslateService.get('TL_RECORD_CREATED', null, { id: data._id }))
+          this.$emit('updateRecordList', data)
         } catch (error) {
           console.error('Error happend during updateRecord/create:', error)
           this.manageError(error, 'create')
@@ -324,7 +324,7 @@ export default {
         try {
           let response
           if (!_.isEmpty(uploadObject)) {
-            response = await axios.put(`../api/${this.resource.title}/${record._id}`, uploadObject)
+            response.data = await RequestService.put(`../api/${this.resource.title}/${record._id}`, uploadObject)
           } else {
             response = { data: record }
           }
@@ -349,7 +349,7 @@ export default {
         for (const record of removedRecordList) {
           promises.push(async () => {
             this.$loading.start('delete-record')
-            await axios.delete(`../api/${this.resource.title}/${record._id}`)
+            await RequestService.delete(`../api/${this.resource.title}/${record._id}`)
             this.notify(TranslateService.get('TL_RECORD_DELETED', null, { id: record._id }))
             this.$emit('updateRecordList', null)
             this.$loading.stop('delete-record')
