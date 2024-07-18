@@ -144,7 +144,7 @@ export default {
       if (_.isEmpty(this.search)) {
         return this.clonedRecordList
       }
-      return _.filter(this.clonedRecordList, (item, index) => {
+      return _.filter(this.clonedRecordList, (item) => {
         const values = []
         _.forEach(fields, (field) => {
           values.push(this.getValue(item, field))

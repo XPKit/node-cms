@@ -5,8 +5,6 @@ const host = 'mongodb://127.0.0.1'
 
 async function run () {
   const client = await Q.ninvoke(MongoClient, 'connect', host, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     tls: true,
     tlsCertificateKeyFile: './ssl/client.pem',
     tlsCAFile: './ssl/ca.pem'

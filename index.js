@@ -16,10 +16,9 @@ const mkdirp = require('mkdirp')
 const session = require('express-session')
 
 const UUID = require('./lib/util/uuid')
-// const WebsocketManager = require('./lib/WebsocketManager')
 const SyslogManager = require('./lib/SyslogManager')
 const SystemManager = require('./lib/SystemManager')
-let Resource = null
+const Resource = require('./lib/resource')
 
 /*
  * Default CMS configration
@@ -79,7 +78,6 @@ class CMS {
     /* aggregate options */
 
     this.options = (options = (this._options = _.extend({}, defaultConfig(), require(configPath), options)))
-    Resource = options.apiVersion === 2 ? require('./lib/resourceV2') : require('./lib/resource')
 
     /* ensure required folders are in place */
 
@@ -160,7 +158,6 @@ class CMS {
     this.bootstrapFunctions.push(async (callback) => {
       SyslogManager.init(this, options)
       SystemManager.init(this, options)
-      // this.websocketServer.init()
       callback()
     })
     this._app.use(SyslogManager.express())
@@ -213,7 +210,6 @@ class CMS {
         server = undefined
       }
       this.server = server
-      // this.websocketServer = new WebsocketManager(this.options, SystemManager.getSystem, SyslogManager.getSyslogData)
       await pAll(_.map(this.bootstrapFunctions, bootstrap => {
         return async () => {
           await Q.nfcall(bootstrap)

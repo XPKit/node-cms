@@ -118,7 +118,7 @@ export default {
       // console.warn('tableData = ', this.tableData)
     },
     createTableColumns () {
-      const columns = _.map(this.schemaFields, (field, key) => {
+      const columns = _.map(this.schemaFields, (field) => {
         const column = {
           value: field.model,
           key: field.model,

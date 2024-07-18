@@ -15,7 +15,7 @@ export default {
     this.attachments = this.getAttachments()
   },
   methods: {
-    onEndDrag ({newIndex, oldIndex}) {
+    onEndDrag () {
       this.dragging = false
       const items = _.map(this.getAttachments(), (item, i) => {
         if (item.order !== i + 1) {
@@ -208,8 +208,8 @@ export default {
     },
     async readAllFiles (files) {
       let nbFilesToRead = _.get(files, 'length', 1)
-      return new Promise((resolve, reject) => {
-        _.each(files, (file, i) => {
+      return new Promise((resolve) => {
+        _.each(files, (file) => {
           const reader = new FileReader()
           const vm = this
           reader.onload = (element) => {

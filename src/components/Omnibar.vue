@@ -86,7 +86,7 @@ export default {
       this.highlightedItem = 0
       this.results = []
       const results = fuzzysort.go(this.search, this.getDataForSearch(), this.searchOptions)
-      this.results = _.compact(_.map(results, (result, i) => {
+      this.results = _.compact(_.map(results, (result) => {
         if (_.isNull(_.get(result, '[0]', null))) {
           return false
         }
@@ -169,7 +169,7 @@ export default {
       this.searchMode = mode
       this.search = ''
     },
-    scrollToResult (result) {
+    scrollToResult () {
       const elem = document.getElementById(`result-${this.highlightedItem}`)
       if (elem) {
         elem.scrollIntoView()

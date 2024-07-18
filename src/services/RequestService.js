@@ -6,12 +6,14 @@ class RequestService {
     if (returnJson) {
       delete options.returnJson
     }
-    options.headers = {
-      'Accept': 'application/json'
+    const contentType = options.body instanceof FormData ? false : 'application/json'
+    if (!(options.body instanceof FormData)) {
+      options.headers = {
+        'Accept': 'application/json',
+        'Content-Type': contentType
+      }
     }
-    const contentType = options.body instanceof FormData ? 'x-www-form-urlencoded' : 'json'
-    _.set(options.headers, 'Content-Type', `application/${contentType}`)
-    if (contentType === 'json' && _.get(options, 'body', false) && _.isObject(options.body)) {
+    if (_.get(options.headers, 'Content-Type', false) === 'application/json' && _.get(options, 'body', false) && _.isObject(options.body)) {
       options.body = JSON.stringify(options.body)
     }
     const response = await fetch(url, options)
@@ -26,15 +28,15 @@ class RequestService {
   }
 
   async post (url, body = {}, returnJson = true) {
-    return await this.handleRequest(url, {method: 'POST', body: body, returnJson})
+    return await this.handleRequest(url, {method: 'POST', body, returnJson})
   }
 
   async put (url, body = {}, returnJson = true) {
-    return await this.handleRequest(url, {method: 'PUT', body: body, returnJson})
+    return await this.handleRequest(url, {method: 'PUT', body, returnJson})
   }
 
   async delete (url, body = {}, returnJson = true) {
-    return await this.handleRequest(url, {method: 'DELETE', body: body, returnJson})
+    return await this.handleRequest(url, {method: 'DELETE', body, returnJson})
   }
 }
 

@@ -1,7 +1,7 @@
 const chai = require('chai')
 chai.should()
 const assert = require('assert')
-const FileStore = require('../lib/file_store')
+const FileStore = require('../lib/db/file_store')
 const fs = require('fs-extra')
 const _ = require('lodash')
 

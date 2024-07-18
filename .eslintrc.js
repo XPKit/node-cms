@@ -6,7 +6,6 @@ module.exports = {
     es2022: true
   },
   extends: [
-    'standard',
     'eslint:recommended',
     'plugin:vue/recommended',
     'plugin:vuetify/base'

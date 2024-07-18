@@ -67,7 +67,7 @@ const customLabel = (item, labelProp) => {
 const customValidators = {
   array: (a) => _.isArray(a),
   email: (e) => (new RegExp('/^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$/')).test(e),
-  text: (value, field, model) => {
+  text: (value, field) => {
     if (_.get(field, 'required', false) && (!_.isString(value) || _.isEmpty(value))) {
       return messages.fieldIsRequired
     }
@@ -128,10 +128,10 @@ const customValidators = {
     }
     return true
   },
-  select: (value, field, model) => {
+  select: (value, field) => {
     return _.get(field, 'required', false) && _.isEmpty(value) ? messages.fieldIsRequired : true
   },
-  pillbox: (value, field, model) => {
+  pillbox: (value, field) => {
     if (_.get(field, 'required', false) && (!_.isArray(value) || _.isEmpty(value))) {
       return messages.fieldIsRequired
     }

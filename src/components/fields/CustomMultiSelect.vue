@@ -76,7 +76,7 @@ export default {
     allOptionsSelected () {
       return _.get(this.options, 'length', 0) === _.get(this.objectValue || this.value, 'length', 0)
     },
-    onChangeSelectAll (checked) {
+    onChangeSelectAll () {
       const allSelected = this.allOptionsSelected()
       if (allSelected) {
         this.objectValue = []
