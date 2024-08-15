@@ -95,9 +95,9 @@ app.use(router)
   .component('CmsImport', CmsImport)
   .component('SyncResource', SyncResource)
   .component('Draggable', VueDraggableNext)
+  .use(VueVirtualScroller)
   .use(JsonViewer)
   .use(Loading)
-  .use(VueVirtualScroller)
   .use(VueShortkey, {prevent: ['input', 'textarea']})
 
 function addPlugin (title, displayName, group = 'System', allowed = ['admins', 'imagination']) {

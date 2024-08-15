@@ -42,7 +42,10 @@
       </div>
     </div>
     <div v-shortkey="multiselect ? ['ctrl', 'a'] : false" class="records" @shortkey="selectAll()">
-      <RecycleScroller v-slot="{ item }" class="list" :items="filteredList || []" :item-size="58" key-field="_id">
+      <RecycleScroller
+        v-slot="{ item }" class="list" :items="filteredList || []" :item-size="58" key-field="_id"
+        @scroll.passive="handleScroll"
+      >
         <div
           class="item" :class="{selected: isItemSelected(item), frozen:!item._local}"
           @click.exact="select(item)" @click.shift="selectTo(item)" @click.ctrl="selectTo(item, true)"
@@ -75,11 +78,6 @@
 
 <script>
 import _ from 'lodash'
-import TranslateService from '@s/TranslateService'
-import Notification from '@m/Notification.vue'
-import NotificationsService from '@s/NotificationsService'
-
-import RecordNameHelper from './RecordNameHelper'
 import qs from 'qs'
 import sift from 'sift'
 import JSON5 from 'json5'
@@ -87,12 +85,21 @@ import Dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 Dayjs.extend(relativeTime)
 
+import TranslateService from '@s/TranslateService'
+import Notification from '@m/Notification.vue'
+import NotificationsService from '@s/NotificationsService'
+import RecordNameHelper from './RecordNameHelper'
+
 export default {
   mixins: [Notification, RecordNameHelper],
   props: {
     list: {
       type: [Array, Boolean],
       default: () => []
+    },
+    numRecords: {
+      type: [Number],
+      default: 0
     },
     resource: {
       type: [Object, Boolean],
@@ -136,8 +143,14 @@ export default {
       lastSelectedItem: false,
       menuOpened: false,
       search: null,
+      searchReqDebouncer: false,
+      searchReqDebouncerTimeout: 250,
       TranslateService,
+      isLoadingMore: false,
       omnibarDisplayed: false,
+      firstLoad: true,
+      limit: 10,
+      page: 1,
       sift: {
         isQuery: false,
         isValid: false
@@ -157,6 +170,7 @@ export default {
       return _.get(this.list, 'length', 0)
     },
     filteredList () {
+      console.warn('filteredList')
       let fields = this.getSearchableFields()
       if (fields.length === 0) {
         fields = [_.first(this.resource.schema)]
@@ -207,9 +221,12 @@ export default {
     }
   },
   watch: {
-    selectedResourceGroup () {
-      this.search = ''
+    list () {
+      this.isLoadingMore = false
     },
+    // selectedResourceGroup () {
+    // this.search = ''
+    // },
     search () {
       this.query = this.flatten(qs.parse(this.search))
       this.sift.isQuery = false
@@ -219,6 +236,7 @@ export default {
           this.query = JSON5.parse(this.search.substr(5))
           this.sift.isValid = true
         }
+        this.emitSearchRequest()
       } catch (error) {
         this.sift.isValid = false
         this.query = {}
@@ -232,6 +250,44 @@ export default {
     NotificationsService.events.on('omnibar-display-status', this.onGetOmnibarDisplayStatus)
   },
   methods: {
+    emitSearchRequest () {
+      /* TODO: hugo -
+        1) when selecting a resource
+          if that resource has "extraSources"
+            then ask backend for all records in that resource but only the fields we need to compose the name
+        2) when selecting a record, ask backend for all the needed resources based on the select fields with paging and only the needed fields
+        3) when searching, launch the search req only 350ms after the last char input
+        4) when search bar is made empty, request the resource again with the pagination
+      */
+      // TODO: hugo - adapt to send a request for each search + add a debouncer to only send a new request after X sec/ms if the search query has been changed
+      if (this.searchReqDebouncer) {
+        console.info('Search req debounced')
+        const query = _.clone(this.query)
+        const sift = _.clone(this.sift)
+        return setTimeout(() => {
+          if (this.query !== query || (sift !== this.sift && this.sift.isValid)) {
+            console.warn('Query changed, will do a new search with updated request')
+            this.emitSearchRequest()
+          }
+        }, this.searchReqDebouncerTimeout)
+      }
+      this.searchReqDebouncer = true
+      console.warn('search changed, will emit \'updateRecordList\' event')
+      this.$emit('updateRecordList', this.selectedItem, -1, 1, this.query, this.sift)
+    },
+    handleScroll (event) {
+      const { target } = event
+      const currentScroll = target.scrollTop
+      const scrollableDistance = Math.max(0, target.scrollHeight - target.offsetHeight)
+      if (!this.isLoadingMore && currentScroll >= scrollableDistance - 15 && this.list.length < this.numRecords) {
+        this.isLoadingMore = true
+        console.info('will load more records')
+        this.page++
+        // TODO: hugo - change 12 to config val
+        console.warn('handleScroll ', this.selectedItem)
+        this.$emit('updateRecordList', this.selectedItem, 12, this.page, this.query, this.sift)
+      }
+    },
     getTimeAgo (item) {
       return Dayjs().to(Dayjs(_.get(item, '_updatedAt', 0)))
     },
@@ -360,6 +416,7 @@ export default {
       return action === 'esc' ? elem.blur() : elem.focus()
     },
     select (item, clickedCheckbox = false) {
+      console.warn('selected record', item)
       if (!item._local) {
         return this.$emit('selectItem', item)
       }
@@ -434,3 +491,12 @@ export default {
   }
 }
 </script>
+<!-- <style lang="scss">
+.record-list {
+  .list {
+    &.ready .vue-recycle-scroller__item-view {
+      position: relative !important;
+    }
+  }
+}
+</style> -->

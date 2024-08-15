@@ -15,7 +15,7 @@
     "mongodb-auth": "ulimit -n 1000 && mongod --tlsMode requireTLS --tlsCertificateKeyFile ./ssl/server.pem --tlsCAFile ./ssl/ca.pem --bind_ip localhost --dbpath=../node-cms-mongodb-data"
   },
   "engines": {
-    "node": "^22"
+    "node": "^20"
   },
   "repository": {
     "type": "git",
@@ -67,7 +67,7 @@
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.9",
     "debug": "^4.3.5",
-    "digest-stream": "^1.0.1",
+    "digest-stream": "^2.0.0",
     "eslint": "^8.56.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.4.0",
@@ -101,7 +101,7 @@
     "lru-cache": "^4.1.5",
     "md5-file": "^5.0.0",
     "measure": "^0.1.1",
-    "mkdirp": "^0.5.5",
+    "mkdirp": "^3.0.1",
     "mocha": "^7.2.0",
     "mongodb": "^4.12.1",
     "msgpack-stream": "0.0.12",

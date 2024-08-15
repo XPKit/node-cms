@@ -21,57 +21,65 @@ let startProcess = function () {
 }
 
 let convertData = function (value, type) {
-  switch (type) {
-    case 'select':
-      return _.trim(value)
-    case 'multiselect':
-      if (!_.isString(value)) {
-        return []
-      }
-      value = value.split(',')
-      return value = _.compact(_.map(value, _.trim))
-    case 'number':
-      if (_.isString(value)) {
-        return _.toNumber(value)
-      } else if (_.isNumber(value)) {
-        return value
-      } else {
-        return null
-      }
-    case 'integer':
-      if (_.isString(value)) {
-        return _.toNumber(value)
-      } else if (_.isNumber(value)) {
-        return value
-      } else {
-        return null
-      }
-    case 'checkbox':
-      if (_.isString(value)) {
-        value = _.includes(['TRUE', 'true', 'True'], value)
-      }
+  if (type === 'select') {
+    return _.trim(value)
+  } else if (type === 'multiselect') {
+    if (!_.isString(value)) {
+      return []
+    }
+    value = value.split(',')
+    return value = _.compact(_.map(value, _.trim))
+  } else if (type === 'number') {
+    if (_.isString(value)) {
+      return _.toNumber(value)
+    } else if (_.isNumber(value)) {
       return value
-    case 'pillbox':
-      if (!_.isString(value)) {
-        return []
-      }
-      value = value.split(',')
-      return value = _.compact(_.map(value, _.trim))
-    case 'datetime':
-    case 'date':
-      return Dayjs(value, 'DD/MM/YYYY').valueOf() || Dayjs(value, 'YYYY-MM-DD').valueOf()
-    default:
-      return _.trim(value)
+    } else {
+      return null
+    }
+  } else if (type === 'integer') {
+    if (_.isString(value)) {
+      return _.toNumber(value)
+    } else if (_.isNumber(value)) {
+      return value
+    } else {
+      return null
+    }
+  } else if (type === 'checkbox') {
+    if (_.isString(value)) {
+      value = _.includes(['TRUE', 'true', 'True'], value)
+    }
+    return value
+  } else if (type === 'pillbox') {
+    if (!_.isString(value)) {
+      return []
+    }
+    value = value.split(',')
+    return value = _.compact(_.map(value, _.trim))
+  } else if (type === 'datetime' || type === 'date') {
+    return Dayjs(value, 'DD/MM/YYYY').valueOf() || Dayjs(value, 'YYYY-MM-DD').valueOf()
+  } else {
+    return _.trim(value)
   }
 }
 
 let convertKeyToId = function (value, type, records, name, uniqueKeys, errors) {
   let v
   const uniqueKey = _.first(uniqueKeys)
-  switch (type) {
-    case 'select':
+  if (type === 'select') {
+    v = _.find(records, {
+      [uniqueKey]: value
+    })
+    if (!v) {
+      if (errors != null) {
+        errors.push('record (' + value + ') not found in resource ' + name)
+      }
+    }
+    return v != null ? v._id : void 0
+  } else if (type === 'multiselect') {
+    return _.compact(_.map(value, function (key) {
       v = _.find(records, {
-        [uniqueKey]: value
+        [uniqueKey]: key
       })
       if (!v) {
         if (errors != null) {
@@ -79,21 +87,9 @@ let convertKeyToId = function (value, type, records, name, uniqueKeys, errors) {
         }
       }
       return v != null ? v._id : void 0
-    case 'multiselect':
-      return _.compact(_.map(value, function (key) {
-        v = _.find(records, {
-          [uniqueKey]: key
-        })
-        if (!v) {
-          if (errors != null) {
-            errors.push('record (' + value + ') not found in resource ' + name)
-          }
-        }
-        return v != null ? v._id : void 0
-      }))
-    default:
-      return value
+    }))
   }
+  return value
 }
 
 exports = module.exports = {

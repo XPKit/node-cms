@@ -16,9 +16,11 @@ exports.suite = () => {
   })
 
   it('should reflect changes when "limit" and "page" are set', async () => {
+    // TODO: hugo - change unit test
     let body = await helper.getRequest('/api/comments?unpublished=true&limit=5&page=1')
     body.should.have.length(5)
     body.should.deep.equal(_.map(seeds.slice(0, 5), article => _.extend({_local: true}, article)))
+    // TODO: hugo - change unit test
     body = await helper.getRequest('/api/comments?unpublished=true&limit=5&page=2')
     body.should.have.length(5)
     body.should.deep.equal(_.map(seeds.slice(5, 10), article => _.extend({_local: true}, article)))

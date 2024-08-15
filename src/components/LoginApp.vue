@@ -54,9 +54,7 @@ export default {
     }
   },
   async mounted () {
-    console.warn('Login page mounted')
     this.$loading.start('init')
-
     try {
       const noLogin = _.get(window, 'noLogin', false)
       if (!noLogin) {

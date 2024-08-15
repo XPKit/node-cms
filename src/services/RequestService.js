@@ -20,7 +20,15 @@ class RequestService {
     if (!returnJson) {
       return response
     }
-    return await response.json()
+    const json = await response.json()
+    if (options.method === 'GET' && (url.indexOf('limit=') !== -1 || url.indexOf('page=') !== -1)) {
+      const test = {
+        numRecords: _.toNumber(response.headers.get('numrecords')),
+        records: json
+      }
+      return test
+    }
+    return json
   }
 
   async get (url, returnJson = true) {

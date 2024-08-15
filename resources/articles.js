@@ -7,6 +7,7 @@ exports = (module.exports = {
     enUS: 'abc',
     zhCN: '甲乙丙'
   },
+  paging: 12,
   schema: [
     {
       label: {

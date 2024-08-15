@@ -16,7 +16,7 @@ const defaultVendorsFilename = 'vendors'
 const separatedVendors = ['lodash', 'vuetify', '@json-editor', '@tiptap', 'codemirror']
 const regroupModulesStartingWith = ['vue', 'prosemirror']
 
-export default defineConfig(({ command, mode, ssrBuild }) => {
+export default defineConfig(({mode}) => {
   return {
     root: mode === 'development' ? __dirname : viteUtils.nodeCmsSrcPath,
     base: './',
@@ -64,7 +64,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
           rollupNodePolyFill()
         ],
         output: {
-          manualChunks: (id, {getModuleInfo}) => {
+          manualChunks: (id) => {
             if (id.includes('node_modules') && !id.includes('node-cms/src')) {
               const moduleName = _.get(path.dirname(id).split('/node_modules/').pop().split('/'), '[0]', false)
               if (!moduleName) {

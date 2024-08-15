@@ -24,7 +24,7 @@
           <div class="records">
             <template v-if="selectedResource && (!selectedResource.view || selectedResource.view == 'list')">
               <record-list
-                v-if="selectedResource" :list="recordList" :locale="locale" :selected-item="selectedRecord"
+                v-if="selectedResource" :list="recordList" :num-records="numRecords" :locale="locale" :selected-item="selectedRecord"
                 :grouped-list="groupedList"
                 :resource-group="selectedResourceGroup" :resource="selectedResource" :select-resource-callback="selectResource"
                 :multiselect="multiselect" :multiselect-items="multiselectItems"
@@ -39,7 +39,7 @@
               />
             </template>
             <record-table
-              v-if="selectedResource && selectedResource.view == 'table'"
+              v-else-if="selectedResource && selectedResource.view == 'table'"
               v-model:record="selectedRecord" v-model:locale="locale" :grouped-list="groupedList" :resource-group="selectedResourceGroup" :select-resource-callback="selectResource" :record-list="recordList" :resource="selectedResource" :user-locale="TranslateService.locale"
               @unsetRecord="unsetSelectedRecord" @updateRecordList="updateRecordList"
             />
@@ -54,7 +54,6 @@
 
 <script>
 import _ from 'lodash'
-import pAll from 'p-all'
 
 import LoadingService from '@s/LoadingService'
 import NotificationsService from '@s/NotificationsService'
@@ -84,11 +83,13 @@ export default {
   data () {
     return {
       config: false,
+      paging: 12,
       locale: 'enUS',
       resourceList: [],
       selectedResource: null,
       localeList: [],
       recordList: [],
+      numRecords: 0,
       notification: {},
       showSnackBar: false,
       toolbarTitle: false,
@@ -209,6 +210,7 @@ export default {
     this.$nextTick(async () => {
       await ConfigService.init()
       this.config = ConfigService.config
+      this.paging = _.get(this.config, 'defaultPaging', this.paging)
       await TranslateService.init()
       this.setToolbarTitle()
       const noLogin = _.get(window, 'noLogin', false)
@@ -227,7 +229,6 @@ export default {
           throw error
         }
       }
-
       try {
         const data = await RequestService.get(`${window.location.pathname}resources`)
         this.$loading.stop('init')
@@ -293,72 +294,35 @@ export default {
           return
         }
         this.locale = _.first(this.selectedResource.locales)
-
         this.$loading.start('selectResource')
-        await this.cacheRelatedResources(resource)
-        const data = ResourceService.get(resource.title)
-        this.recordList = _.sortBy(data, item => -item._updatedAt)
-
+        this.paging = _.get(resource, 'paging', this.paging)
+        const data = await ResourceService.cache(resource.title, this.paging, 1)
+        await this.getExtraSources()
+        const records = _.get(data, 'records', data)
+        this.recordList = _.sortBy(records, item => -item._updatedAt)
+        this.numRecords = _.get(data, 'numRecords', 0)
         if (_.get(resource, 'maxCount', 0) === 1) {
-          const first = _.get(this.recordList, '[0]', false)
-          if (!first) {
-            this.selectRecord({ _local: true })
-          } else {
-            this.selectRecord(first)
-          }
+          this.selectRecord(_.get(this.recordList, '[0]', false) || { _local: true })
         }
         this.$loading.stop('selectResource')
       } catch (error) {
         console.error('Error happen during selectResource:', error)
       }
     },
-    async cacheRelatedResources (resource) {
-      let resources = _.union([resource.title], _.values(resource.extraSources))
-
-      const extraResources = (obj) => {
-        if (_.isArray(obj)) {
-          _.each(obj, item => {
-            extraResources(item)
-          })
-        } else {
-          _.each(obj, (value, key) => {
-            switch (key) {
-              case 'input': {
-                const extraSources = _.get(obj, 'options.extraSources')
-                resources.push(..._.values(extraSources))
-                switch (value) {
-                  case 'select':
-                  case 'multiselect':
-                    const source = _.get(obj, 'source')
-                    if (_.isString(source)) {
-                      resources.push(source)
-                      const schema = ResourceService.getSchema(source)
-                      resources.push(..._.values(schema.extraSources))
-                    }
-                    break
-                  case 'paragraph':
-                    _.each(_.get(obj, 'options.types'), item => {
-                      extraResources(item)
-                      const paragraphSchema = _.get(item, 'schema')
-                      extraResources(paragraphSchema)
-                    })
-                }
-                break
-              }
-              case 'extraSources':
-                resources.push(..._.values(value))
-            }
-          })
-        }
-      }
-      extraResources(resource.schema)
-      resources = _.uniq(resources)
-
-      await pAll(_.map(resources, item => {
-        return async () => await ResourceService.cache(item)
-      }), {concurrency: 10})
+    async getExtraSources () {
+      this.emptyRelatedResourcesCache()
+      return await ResourceService.getExtraSources(this.selectedResource)
     },
-    selectRecord (record) {
+    emptyRelatedResourcesCache () {
+      console.warn('emptyRelatedResourcesCache')
+      let resources = _.values(this.selectedResource.extraSources)
+      _.each(resources, (resource)=> {
+        const schema = ResourceService.getSchema(resource)
+        ResourceService.removeFromCache(resource, schema.paging)
+      })
+    },
+    async selectRecord (record) {
+      this.emptyRelatedResourcesCache()
       this.selectedRecord = record
     },
     onSelectMultiselect (isMultiselect) {
@@ -370,13 +334,20 @@ export default {
     onChangeMultiselectItems (items) {
       this.multiselectItems = _.clone(items)
     },
-    async updateRecordList (record) {
+    async updateRecordList (record, limit = -1, page = 1, query = false, sift = false) {
       try {
+        console.warn(`update record list - ${limit} - ${page}`, query, sift)
         this.$loading.start('updateRecordList')
-        const data = await ResourceService.cache(this.selectedResource.title)
-        this.$loading.stop('updateRecordList')
-        this.recordList = _.sortBy(data, item => -item._updatedAt)
+        this.paging = _.get(this.selectResource, 'paging', this.paging)
+        // TODO: hugo - if we have query or sift, we send a search request to backend
+        const data = await ResourceService.cache(this.selectedResource.title, this.paging, page)
+        const records = _.get(data, 'records', data)
+        this.recordList = _.uniqBy(_.concat(this.recordList || [], records), (item)=> item._id)
+        this.recordList = _.sortBy(this.recordList, item => -item._updatedAt)
+        this.numRecords = _.get(data, 'numRecords', this.recordList.length)
         this.selectRecord(_.find(this.recordList, { _id: _.get(record, '_id') }))
+        this.$loading.stop('updateRecordList')
+        this.$forceUpdate()
       } catch (error) {
         console.error('Error happen during updateRecordList:', error)
       }

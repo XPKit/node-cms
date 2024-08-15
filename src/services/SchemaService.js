@@ -43,8 +43,6 @@ class SchemaService {
         schema.selectOptions.label = _.map(schema.labels, (label, value) => {
           return { value, text: _.get(label, `${locale}`, label) }
         })
-        // schema.selectOptions.label = _.mapValues(schema.labels, label => _.get(label, `${userLocale}`, label))
-        // console.warn('SchemaService - getSchemaFields - selectOptions.label:', schema.selectOptions.label)
       } else if (field.input === 'multiselect' && _.get(schema, 'labels', false)) {
         if (!_.isObject(_.first(field.source))) {
           const values = []
@@ -85,7 +83,8 @@ class SchemaService {
   }
 
   updateFieldSchema (fields, field, id, locale, extraSources) {
-    const cachedData = ResourceService.get(field.source)
+    // TODO: hugo - separate the cache for select fields and displayName
+    const cachedData = ResourceService.get(field.source, 4)
     // handle extra source
     extraSources = _.extend({}, extraSources, _.get(field, 'options.extraSources'))
     _.each(extraSources, (source, key) => {
@@ -112,10 +111,21 @@ class SchemaService {
       fields[id].selectOptions.key = '_id'
       fields[id].selectOptions.customLabel = (itemId) => {
         const item = _.isString(itemId) ? _.find(cachedData, {_id: itemId}) : itemId
-        if (fields[id].customLabel) {
-          return Mustache.render(fields[id].customLabel, item)
+        if (!fields[id].customLabel) {
+          return _.get(item, key)
         }
-        return _.get(item, key)
+        const firstLocale = _.get(relatedSchema, 'locales[0]', 'enUS')
+        const matches = fields[id].customLabel.matchAll(/\{\{(.*?)\}\}/g)
+        let finalCustomLabel = fields[id].customLabel
+        for (const match of matches) {
+          const foundField = _.find(relatedSchema.schema, {field: match[1]})
+          if (_.isUndefined(foundField)) {
+            console.error(`Couldn't find field ${match[1]} in ${field.source} schema`, relatedSchema)
+          } else if (_.get(foundField, 'localised', false)) {
+            finalCustomLabel = finalCustomLabel.replace(match[1], `${firstLocale}.${match[1]}`)
+          }
+        }
+        return Mustache.render(finalCustomLabel, item)
       }
     }
   }

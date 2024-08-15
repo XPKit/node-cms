@@ -4,9 +4,14 @@ exports = (module.exports = {
     enUS: 'abc',
     zhCN: '甲乙丙'
   },
+  // TODO: hugo - when having extraSources, parse the "displayItem" field to ask backend only for the needed fields
   extraSources: {
     'article': 'articles'
   },
+  locales: [
+    'enUS',
+    'zhCN'
+  ],
   displayItem: '{{name}} - {{#article}}{{article.string}}{{/article}}',
   schema: [
     {

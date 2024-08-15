@@ -11,7 +11,6 @@ module.exports = {
     'plugin:vuetify/base'
   ],
   parserOptions: {
-    ecmaVersion: 2018,
     sourceType: 'module',
     ecmaFeatures: {
       jsx: true
@@ -21,6 +20,7 @@ module.exports = {
     'vue'
   ],
   rules: {
+    'space-before-function-paren': 'error',
     'no-case-declarations': 'off',
     'no-return-await': 'off',
     'vue/no-use-v-if-with-v-for': ['error', {

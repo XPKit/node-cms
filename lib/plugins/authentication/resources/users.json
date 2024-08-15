@@ -1,0 +1,51 @@
+{
+  "displayname": {
+    "enUS": "Users",
+    "zhCN": "用户"
+  },
+  "group": {
+    "enUS": "CMS",
+    "zhCN": "内容管理系统"
+  },
+  "schema": [
+    {
+      "field": "username",
+      "input": "string",
+      "label": {
+        "enUS": "Username",
+        "zhCN": "用户名"
+      }
+    },
+    {
+      "field": "password",
+      "input": "password",
+      "label": {
+        "enUS": "Password",
+        "zhCN": "密码"
+      }
+    },
+    {
+      "field": "theme",
+      "input": "select",
+      "source": [
+        "light",
+        "dark"
+      ],
+      "default": "dark",
+      "label": {
+        "enUS": "Theme",
+        "zhCN": "主题"
+      }
+    },
+    {
+      "field": "group",
+      "input": "select",
+      "label": {
+        "enUS": "Group",
+        "zhCN": "组"
+      },
+      "source": "_groups"
+    }
+  ],
+  "type": "downstream"
+}

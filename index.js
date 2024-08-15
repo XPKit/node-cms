@@ -1,7 +1,3 @@
-/*
- * Module dependencies
- */
-
 const path = require('path')
 const fs = require('fs')
 const pAll = require('p-all')
@@ -14,49 +10,16 @@ const _ = require('lodash')
 const requireDir = require('require-dir')
 const mkdirp = require('mkdirp')
 const session = require('express-session')
-
 const UUID = require('./lib/util/uuid')
 const SyslogManager = require('./lib/SyslogManager')
 const SystemManager = require('./lib/SystemManager')
 const Resource = require('./lib/resource')
 
 /*
- * Default CMS configration
- */
-
-const defaultConfig = () =>
-  ({
-    ns: [],
-    resources: './resources',
-    data: './data',
-    autoload: true,
-    mode: 'normal',
-    mid: Date.now().toString(36),
-    disableREST: false,
-    disableAdmin: false,
-    disableJwtLogin: true,
-    disableReplication: false,
-    disableAuthentication: false,
-    disableAnonymous: false,
-    apiVersion: 1,
-    session: {
-      secret: 'MdjIwFRi9ezT',
-      resave: true,
-      saveUninitialized: true
-    }
-  })
-
-/*
  * Define a new resource if not present
  */
-
-/*
- * Constructor
- */
-
 class CMS {
   constructor (options) {
-    /* get config path */
     this.resource = this.resource.bind(this)
     this.api = this.api.bind(this)
     this.use = this.use.bind(this)
@@ -67,40 +30,28 @@ class CMS {
     if (options) {
       delete options.config
     }
-
     /* create a default config, if not exist */
-
     if (!fs.existsSync(configPath)) {
-      const cfg = _.extend(defaultConfig(), options)
+      const cfg = _.extend(this.defaultConfig(), options)
       fs.writeFileSync(configPath, JSON.stringify(cfg, null, 2))
     }
-
     /* aggregate options */
-
-    this.options = (options = (this._options = _.extend({}, defaultConfig(), require(configPath), options)))
-
+    this.options = (options = (this._options = _.extend({}, this.defaultConfig(), require(configPath), options)))
     /* ensure required folders are in place */
-
     mkdirp.sync(path.resolve(options.resources))
     mkdirp.sync(path.resolve(options.data))
-
     /* keep track of available resources */
     this._tempResources = {}
     this._resources = {}
     this._resourceNames = []
-
     /* keep track of available plugins */
     this._plugins = {}
-
     /* Use prefixed UUID */
     options.uuid = new UUID(options.mid)
-
     /* automaticly populate CMS resources, if specified */
-
     if (this._options.autoload) {
       _.each(requireDir(options.resources), (value, key) => this.resource(key, value))
     }
-
     /* create main application */
     this._app = express()
     this._app.use(helmet.dnsPrefetchControl())
@@ -112,7 +63,6 @@ class CMS {
     this._app.use(helmet.noSniff())
     this._app.use(helmet.permittedCrossDomainPolicies())
     this._app.use(helmet.referrerPolicy())
-
     /* Enable compression */
     this._app.use(compression({
       filter (req, res) {
@@ -151,8 +101,8 @@ class CMS {
         next()
       })
     }
+    // TODO: hugo - change to use the class correctly and then unify all the plugins to have a class and same structure
     this.use(require('./lib/plugins/authentication')(options))
-
     // handle syslog and system
     this.bootstrapFunctions = this.bootstrapFunctions || []
     this.bootstrapFunctions.push(async (callback) => {
@@ -162,47 +112,38 @@ class CMS {
     })
     this._app.use(SyslogManager.express())
     this._app.use(SystemManager.express())
-
     /* REST API */
     if (!options.disableREST) {
       this.use(require('./lib/plugins/rest')())
     }
-
     /* import API */
     if (options.import) {
       this.use(require('./lib/plugins/import')(options))
     }
-
     /* Admin API */
     if (!options.disableAdmin) {
       this.use(require('./lib/plugins/admin')(options))
     }
-
     /* Replication API */
     if (!options.disableReplication) {
       this.use(require('./lib/plugins/replicator')())
     }
-
     /* Migration API */
     if (options.migration) {
       this.use(require('./lib/plugins/migration')(options))
     }
-
     /* Sync API */
     if (options.sync) {
       this.use(require('./lib/plugins/sync')(options))
     }
-
     /* xlsx API */
     if (options.xlsx) {
       this.use(require('./lib/plugins/xlsx')(options))
     }
-
     /* anonymousRead */
     if (options.anonymousRead) {
       this.use(require('./lib/plugins/anonymousRead')(options))
     }
-
     // handle bootstrap
     this.bootstrap = async (server, callback) => {
       if (_.isFunction(server) && _.isUndefined(callback)) {
@@ -219,35 +160,43 @@ class CMS {
     }
   }
 
-  underscoreObject (list, values) {
-    let result = {}
-    for (let i = 0, length = _.get(list, 'length', 0); i < length; i++) {
-      if (values) {
-        result[list[i]] = values[i]
-      } else {
-        result[list[i][0]] = list[i][1]
+  // Default CMS configration
+  defaultConfig () {
+    return {
+      ns: [],
+      resources: './resources',
+      data: './data',
+      autoload: true,
+      mode: 'normal',
+      mid: Date.now().toString(36),
+      disableREST: false,
+      disableAdmin: false,
+      disableJwtLogin: true,
+      disableReplication: false,
+      disableAuthentication: false,
+      disableAnonymous: false,
+      apiVersion: 1,
+      session: {
+        secret: 'MdjIwFRi9ezT',
+        resave: true,
+        saveUninitialized: true
       }
     }
-    return result
   }
 
   resource (name, config, resolves) {
     resolves = _.intersection(resolves, this._resourceNames)
-
     if (_.isEmpty(resolves)) {
       resolves = undefined
     }
     const key = JSON.stringify({ name, resolves })
-
     if (!this._tempResources[key] && (config || resolves || (this._options.mode === 'normal'))) {
       let opts = _.extend(config || Resource.DEFAULTS, { cms: this._options })
       if (!_.isEmpty(resolves)) {
         const referenceKey = JSON.stringify({ name, resolves: undefined })
         opts = this._tempResources[referenceKey].options
       }
-
       const resolveMap = _.zipObject(resolves, _.map(resolves, item => this.resource(item)))
-
       this._tempResources[key] = new Resource(name, opts, resolveMap, this)
       if (_.isEmpty(resolves)) {
         this._resources[name] = this._tempResources[key]
@@ -256,7 +205,6 @@ class CMS {
         this._resourceNames.push(name)
       }
     }
-
     return this._tempResources[key]
   }
 
@@ -283,7 +231,6 @@ class CMS {
   /*
    * Install a plugin
    */
-
   use (plugin) {
     return plugin.apply(this)
   }

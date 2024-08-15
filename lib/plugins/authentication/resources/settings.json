@@ -1,0 +1,80 @@
+{
+  "displayname": {
+    "enUS": "Settings",
+    "zhCN": "设置 "
+  },
+  "group": {
+    "enUS": "CMS",
+    "zhCN": "内容管理系统"
+  },
+  "schema": [
+    {
+      "field": "logo",
+      "input": "image",
+      "options": {
+        "maxCount": 1
+      }
+    },
+    {
+      "label": "Title",
+      "field": "title",
+      "localised": true,
+      "input": "string"
+    },
+    {
+      "label": "Groups",
+      "field": "linksGroups",
+      "input": "paragraph",
+      "localised": false,
+      "options": {
+        "types": [
+          {
+            "label": "Group",
+            "localised": false,
+            "input": "group",
+            "schema": [
+              {
+                "label": "Group title",
+                "field": "title",
+                "localised": false,
+                "input": "string",
+                "required": true
+              },
+              {
+                "field": "links",
+                "input": "paragraph",
+                "required": true,
+                "localised": false,
+                "options": {
+                  "types": [
+                    {
+                      "field": "groupNested",
+                      "localised": false,
+                      "input": "group",
+                      "schema": [
+                        {
+                          "field": "name",
+                          "localised": false,
+                          "input": "string",
+                          "required": true
+                        },
+                        {
+                          "field": "url",
+                          "localised": false,
+                          "input": "url",
+                          "required": true
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "type": "downstream",
+  "maxCount": 1
+}

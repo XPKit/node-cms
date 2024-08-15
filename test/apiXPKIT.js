@@ -227,11 +227,13 @@ describe('HTTP', async () => {
     it('should reflect changes when "limit" and "page" are set', async () => {
       seeds = _.orderBy(seeds, ['name'], ['asc'])
       const body = await helper.getRequest('/api/comments?unpublished=true&limit=5&page=1&x__order_by=name__asc')
+      // TODO: hugo - change unit test
       body.should.have.length(5)
       ids = _.map(seeds.slice(0, 5), '_id')
       returnedIds = _.map(body, '_id')
       returnedIds.should.deep.equal(ids)
       const commentsFound = await helper.getRequest('/api/comments?unpublished=true&limit=5&page=2&x__order_by=name__asc')
+      // TODO: hugo - change unit test
       commentsFound.should.have.length(5)
       ids = _.map(seeds.slice(5, 10), '_id')
       _.map(commentsFound, '_id').should.deep.equal(ids)

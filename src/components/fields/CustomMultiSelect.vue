@@ -45,7 +45,7 @@ export default {
       return this.schema.selectOptions || {}
     },
     options () {
-      let values = this.schema.values
+      let values = _.get(this.schema.values, 'records', _.get(this.schema, 'values', []))
       if (_.isFunction(values)) {
         return values.apply(this, [this.model, this.schema])
       }
@@ -59,9 +59,10 @@ export default {
     },
     customLabel (item) {
       const val = _.get(item, 'raw', item)
-      if (!_.get(this.schema, 'localised', false)) {
+      if (_.get(this.schema, 'selectOptions.customLabel', false)) {
         return this.schema.selectOptions.customLabel(val)
       }
+      console.warn(`CustomMultiselect - customLabel - No custom label for field ${this.schema.model}`)
       if (_.get(val, '_id', false)) {
         return _.get(val, _.first(_.without(_.keys(val), '_id')), val)
       }

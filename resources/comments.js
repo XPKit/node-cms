@@ -7,6 +7,12 @@ exports = (module.exports = {
   },
   schema: [
     {
+      field: 'title',
+      input: 'string',
+      localised: true,
+      unique: true
+    },
+    {
       field: 'author',
       input: 'select',
       source: 'authors',
@@ -14,12 +20,6 @@ exports = (module.exports = {
         customLabel: '{{name}}'
       },
       localised: false
-    },
-    {
-      field: 'title',
-      input: 'string',
-      localised: true,
-      unique: true
     },
     {
       field: 'category',

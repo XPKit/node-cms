@@ -26,7 +26,8 @@
     "dev-release": true,
     "tmp": true
   },
-  "javascript.format.enable": false,
+  "javascript.format.enable": true,
+  "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
   "javascript.validate.enable": false,
   "files.eol": "\n"
 }

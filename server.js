@@ -11,25 +11,14 @@ const path = require('path')
 const logger = new (require(path.join(__dirname, 'lib/logger')))()
 
 // start with leveldb
-// let options = {
-//   // debug: true,
-//   apiVersion: 2,
-//   xlsx: true,
-//   import: {
-//     oauth: {
-//       email: 'view-edit-spreadsheets@sinuous-voice-178902.iam.gserviceaccount.com',
-//       keyFile: 'view-edit-spreadsheets.pem'
-//     },
-//     createOnly: true,
-//     gsheetId: '1ydmCIx42P9Tmxp50-Le3KV661DMdZKQYDdbuH354McA',
-//     resources: [
-//       'articles',
-//       'themes',
-//       'markets',
-//       'dealerships'
-//     ]
-//   }
-// }
+let options = {
+  // debug: true,
+  apiVersion: 1
+  // dbEngine: {
+  //     type: 'mongodb',
+  //     url: `${process.env.XPKIT_HOST || '127.0.0.1'}/node-cms`
+  //   }
+}
 
 // // start with dbEngine
 // let options = {
@@ -41,13 +30,13 @@ const logger = new (require(path.join(__dirname, 'lib/logger')))()
 // }
 
 // start with mongo dbEngine
-let options = {
-  apiVersion: 2,
-  dbEngine: {
-    type: 'mongodb',
-    url: `${process.env.XPKIT_HOST || '127.0.0.1'}/node-cms`
-  }
-}
+// let options = {
+//   apiVersion: 2,
+//   dbEngine: {
+//     type: 'mongodb',
+//     url: `${process.env.XPKIT_HOST || '127.0.0.1'}/node-cms`
+//   }
+// }
 
 const cms = new CMS(options)
 
