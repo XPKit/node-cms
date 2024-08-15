@@ -45,10 +45,10 @@
       <RecycleScroller v-slot="{ item }" class="list" :items="filteredList || []" :item-size="58" key-field="_id">
         <div
           class="item" :class="{selected: isItemSelected(item), frozen:!item._local}"
-          @click.exact="select(item)" @click.shift="selectTo(item)" @click.ctrl="selectTo(item, true)"
+          @click.exact="select($event, item)" @click.shift="selectTo(item)" @click.ctrl="selectTo(item, true)"
         >
           <div class="item-info">
-            <div v-if="multiselect" class="checkbox" @click.exact="select(item, true)">
+            <div v-if="multiselect" class="checkbox" @click.exact="select($event, item, true)">
               <v-icon v-if="item._local" :class="{displayed: isItemSelected(item)}" size="small">mdi-check-bold</v-icon>
             </div>
             <div class="infos-wrapper">
@@ -359,7 +359,10 @@ export default {
       }
       return action === 'esc' ? elem.blur() : elem.focus()
     },
-    select (item, clickedCheckbox = false) {
+    select (event, item, clickedCheckbox = false) {
+      if (clickedCheckbox) {
+        event.stopPropagation()
+      }
       if (!item._local) {
         return this.$emit('selectItem', item)
       }
