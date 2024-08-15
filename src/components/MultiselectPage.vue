@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="0" class="multiselect-page">
     <div class="top-bar">
-      <h3>{{ $filters.translate('TL_NUMBER_OF_SELECTED_RECORDS', { num: size(multiselectItems) }) }}</h3>
+      <h3>{{ $filters.translate('TL_NUMBER_OF_SELECTED_RECORDS', { num: size(multiselectItems) }) }}: {{ size(multiselectItems) }}</h3>
       <div class="buttons">
         <v-btn elevation="0" class="delete" rounded :disabled="isEmpty(multiselectItems)" @click="onClickDelete">{{ $filters.translate('TL_DELETE') }}</v-btn>
       </div>
@@ -13,7 +13,7 @@
             <v-avatar start>
               <v-icon size="small" @click="deselectItem(item)">mdi-close-circle-outline</v-icon>
             </v-avatar>
-            {{ $filters.translate(getName(item),15) }} ({{ item._id }})
+            {{ $filters.translate(getName(item)) }} ({{ item._id }})
           </v-chip>
         </div>
       </div>
@@ -110,19 +110,15 @@ h3 {
   align-items: center;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin-top: 16px;
+  gap: 8px;
+  padding: 16px 8px;
   .selected-record {
-    flex-basis: 50%;
-    margin-bottom: 8px;
+    flex-basis: calc(50% - 4px);
   }
   .v-chip {
-    padding-left: 0;
     @include subtext;
     .v-avatar {
-      button {
-        font-size: 20px !important;
-        margin-left: 8px;
-      }
+      font-size: 20px;
     }
   }
 }

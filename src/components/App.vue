@@ -37,6 +37,16 @@
                 v-if="selectedRecord && !multiselect" :key="selectedRecord._id" v-model:record="selectedRecord" v-model:locale="locale" :resource="selectedResource"
                 :user-locale="TranslateService.locale" @updateRecordList="updateRecordList"
               />
+              <multiselect-page
+                v-if="selectedResource && multiselect"
+                :multiselect-items="multiselectItems"
+                :locale="locale"
+                :resource="selectedResource"
+                :record-list="recordList"
+                @cancel="onCancelMultiselectPage"
+                @changeMultiselectItems="onChangeMultiselectItems"
+                @updateRecordList="updateRecordList"
+              />
             </template>
             <record-table
               v-if="selectedResource && selectedResource.view == 'table'"
@@ -67,6 +77,7 @@ import Loading from '@c/Loading.vue'
 import LocaleList from '@c/LocaleList.vue'
 import NavBar from '@c/NavBar.vue'
 import RecordList from '@c/RecordList.vue'
+import MultiselectPage from '@c/MultiselectPage.vue'
 import RecordEditor from '@c/RecordEditor.vue'
 import RecordTable from '@c/RecordTable.vue'
 import RequestService from '@s/RequestService'
@@ -75,6 +86,7 @@ export default {
   components: {
     NavBar,
     RecordList,
+    MultiselectPage,
     RecordEditor,
     Loading,
     LocaleList,
