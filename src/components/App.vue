@@ -345,7 +345,7 @@ export default {
                     if (_.isString(source)) {
                       resources.push(source)
                       const schema = ResourceService.getSchema(source)
-                      resources.push(..._.values(schema.extraSources))
+                      resources.push(..._.values(_.get(schema, 'extraSources', [])))
                     }
                     break
                   case 'paragraph':

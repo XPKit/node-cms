@@ -6,6 +6,7 @@ exports = (module.exports = {
       input: 'paragraph',
       localised: false,
       options: {
+        maxItems: 4,
         types: [
           {
             label: 'normal group',

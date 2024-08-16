@@ -31,7 +31,7 @@
         <template #label />
       </v-autocomplete>
       <div class="add-btn-wrapper">
-        <v-btn elevation="0" class="add-new-item" rounded :disabled="disabled || schema.disabled" @click="onClickAddNewItem"><span>{{ $filters.translate('TL_ADD') }}</span></v-btn>
+        <v-btn elevation="0" class="add-new-item" rounded :disabled="blockMoreItems()" @click="onClickAddNewItem"><span>{{ $filters.translate('TL_ADD') }}</span></v-btn>
       </div>
     </div>
   </div>
@@ -77,6 +77,7 @@ export default {
       selectedType: false,
       localModel: {},
       key: uuid(),
+      maxItems: _.get(this.schema, 'options.maxItems', -1),
       menuProps: {
         contentProps: {
           density: 'compact'
@@ -109,6 +110,9 @@ export default {
     this.selectedType = _.first(this.types)
   },
   methods: {
+    blockMoreItems() {
+      return (this.disabled || this.schema.disabled) || (this.maxItems !== -1 && this.items.length >= this.maxItems)
+    },
     onError (error) {
       console.error('ParagraphView - error', error)
     },
