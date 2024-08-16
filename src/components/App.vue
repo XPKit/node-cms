@@ -339,7 +339,6 @@ export default {
                 if (_.isString(source)) {
                   resources.push(source)
                   const schema = ResourceService.getSchema(source)
-                  console.warn(`tamer -???? ${source}`, schema)
                   if (_.get(schema, 'extraSources', false)) {
                     resources.push(..._.values(schema.extraSources))
                   }
