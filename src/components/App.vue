@@ -305,12 +305,10 @@ export default {
           return
         }
         this.locale = _.first(this.selectedResource.locales)
-
         this.$loading.start('selectResource')
         await this.cacheRelatedResources(resource)
         const data = ResourceService.get(resource.title)
         this.recordList = _.sortBy(data, item => -item._updatedAt)
-
         if (_.get(resource, 'maxCount', 0) === 1) {
           const first = _.get(this.recordList, '[0]', false)
           if (!first) {
@@ -326,7 +324,6 @@ export default {
     },
     async cacheRelatedResources (resource) {
       let resources = _.union([resource.title], _.values(resource.extraSources))
-
       const extraResources = (obj) => {
         if (_.isArray(obj)) {
           _.each(obj, item => {
@@ -334,40 +331,42 @@ export default {
           })
         } else {
           _.each(obj, (value, key) => {
-            switch (key) {
-              case 'input': {
-                const extraSources = _.get(obj, 'options.extraSources')
-                resources.push(..._.values(extraSources))
-                switch (value) {
-                  case 'select':
-                  case 'multiselect':
-                    const source = _.get(obj, 'source')
-                    if (_.isString(source)) {
-                      resources.push(source)
-                      const schema = ResourceService.getSchema(source)
-                      resources.push(..._.values(_.get(schema, 'extraSources', [])))
-                    }
-                    break
-                  case 'paragraph':
-                    _.each(_.get(obj, 'options.types'), item => {
-                      extraResources(item)
-                      const paragraphSchema = _.get(item, 'schema')
-                      extraResources(paragraphSchema)
-                    })
+            if (key === 'input') {
+              const extraSources = _.get(obj, 'options.extraSources')
+              resources.push(..._.values(extraSources))
+              if (value === 'select' || value === 'multiselect') {
+                const source = _.get(obj, 'source')
+                if (_.isString(source)) {
+                  resources.push(source)
+                  const schema = ResourceService.getSchema(source)
+                  console.warn(`tamer -???? ${source}`, schema)
+                  if (_.get(schema, 'extraSources', false)) {
+                    resources.push(..._.values(schema.extraSources))
+                  }
                 }
-                break
+              } else if (value === 'paragraph') {
+                _.each(_.get(obj, 'options.types'), item => {
+                  extraResources(item)
+                  const paragraphSchema = _.get(item, 'schema')
+                  extraResources(paragraphSchema)
+                })
               }
-              case 'extraSources':
-                resources.push(..._.values(value))
+            } else if (key === 'extraSources') {
+              resources.push(..._.values(value))
             }
           })
         }
       }
       extraResources(resource.schema)
       resources = _.uniq(resources)
-
       await pAll(_.map(resources, item => {
-        return async () => await ResourceService.cache(item)
+        return async () => {
+          try {
+            return await ResourceService.cache(item)
+          } catch (error) {
+            console.error(`Failed to get extra resource ${item}`, error)
+          }
+        }
       }), {concurrency: 10})
     },
     selectRecord (record) {
