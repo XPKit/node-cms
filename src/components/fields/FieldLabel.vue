@@ -20,10 +20,6 @@ export default {
     schema: {
       type: Object,
       default: () => {}
-    },
-    label: {
-      type: String,
-      default: () => ''
     }
   },
   methods: {
@@ -31,7 +27,8 @@ export default {
       return _.get(this.schema, 'hint', '')
     },
     getLabel () {
-      return this.label.length > 0 ? this.label : this.schema.label
+      // console.warn(`Field-label - ${this.schema.label}`, this.schema)
+      return this.schema.label
     }
   }
 }

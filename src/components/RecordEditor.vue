@@ -270,7 +270,7 @@ export default {
       }
       const uploadObject = {}
       _.each(this.resource.schema, (field) => {
-        if (!this.formValid || _.includes(this.fileInputTypes, field.input)) {
+        if (_.includes(this.fileInputTypes, field.input)) {
           return
         }
         const isLocalised = this.resource.locales && (field.localised || _.isUndefined(field.localised))
@@ -278,19 +278,21 @@ export default {
           this.updateLocalisedField(uploadObject, field)
         } else {
           const fieldName = field.field
-          const value = this.fieldValueOrDefault(field, _.get(this.editingRecord, fieldName))
+          let value = this.fieldValueOrDefault(field, _.get(this.editingRecord, fieldName))
           if (!_.isEqual(value, _.get(this.record, fieldName))) {
-            _.set(uploadObject, fieldName, _.isUndefined(value) ? null : value)
+            value = _.isUndefined(value) ? null : value
+            _.set(uploadObject, fieldName, value)
           }
         }
       })
       const newAttachments = _.filter(this.editingRecord._attachments, item => !item._id)
       if (!_.isEmpty(newAttachments)) {
-        console.warn('NEW ATTACHMENTS = ', newAttachments)
+        console.info('New attachments ', newAttachments)
       }
       if (!this.formValid) {
         return this.handleFormNotValid()
       }
+      console.info('UploadObject', uploadObject)
       if (_.isUndefined(this.editingRecord._id)) {
         return this.createRecord(uploadObject, newAttachments)
       }

@@ -6,16 +6,19 @@ exports = (module.exports = {
       input: 'paragraph',
       localised: false,
       options: {
-        maxItems: 4,
+        maxCount: 4,
         types: [
           {
             label: 'normal group',
             input: 'group',
             schema: [
               {
+                label: 'String label',
                 field: 'string',
                 input: 'string',
-                required: true
+                required: true,
+                // TODO: hugo - make translations work in paragraphs
+                localised: true
               },
               {
                 field: 'paragraph',
@@ -32,10 +35,12 @@ exports = (module.exports = {
                 }
               },
               {
+                label: 'Checkbox label',
                 field: 'checkbox',
                 input: 'checkbox'
               },
               {
+                label: 'Image label',
                 field: 'image',
                 input: 'image'
               },
@@ -47,6 +52,11 @@ exports = (module.exports = {
                   customLabel: '{{title}} {{category}}'
                 }
               }
+            ],
+            // TODO: hugo - make translations work in paragraphs
+            locales: [
+              'enUS',
+              'zhCN'
             ]
           }
         ]

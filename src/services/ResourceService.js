@@ -4,6 +4,7 @@ import RequestService from '@s/RequestService'
 class ResourceService {
   constructor () {
     this.cacheMap = {}
+    this.paragraphs = {}
   }
 
   async cache (resource) {
@@ -15,6 +16,18 @@ class ResourceService {
     }
     this.cacheMap[resource] = data
     return this.get(resource)
+  }
+
+  async getAll() {
+    return await RequestService.get(`${window.location.pathname}resources`)
+  }
+
+  async getAllParagraphs() {
+    const paragraphs = await RequestService.get(`${window.location.pathname}paragraphs`)
+    _.each(paragraphs, (paragraph)=> {
+      _.set(this.paragraphs, paragraph.title, paragraph)
+    })
+    // console.warn('ResourceService - getAllParagraphs', this.paragraphs)
   }
 
   get (resource) {
@@ -32,6 +45,10 @@ class ResourceService {
 
   getSchema (resource) {
     return _.find(this.schemas, { title: resource })
+  }
+
+  getParagraphSchema(key) {
+    return _.get(this.paragraphs, key, false)
   }
 }
 

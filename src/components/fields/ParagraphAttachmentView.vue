@@ -4,6 +4,7 @@
       elevation="0" :class="{ 'drag-and-drop': dragover }"
       @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
     >
+      <!-- <field-label :schema="schema" /> -->
       <v-file-input
         ref="input" :rules="getRules()" prepend-icon="" flat single-line
         :accept="model.input === 'image'? 'image/*': '*'" :clearable="false" :placeholder="getPlaceholder()" :label="getPlaceholder()"

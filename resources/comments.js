@@ -7,6 +7,7 @@ exports = (module.exports = {
   },
   schema: [
     {
+      label: 'Select author',
       field: 'author',
       input: 'select',
       source: 'authors',
@@ -43,6 +44,7 @@ exports = (module.exports = {
           'file',
           'image',
           {
+            label: 'Select paragraph author',
             input: 'select',
             source: 'authors',
             options: {

@@ -106,7 +106,7 @@ export default {
       resource.displayname = _.get(resource, 'displayname.enUS', _.get(resource, 'displayname', resource.title))
       return resource
     })
-    this.fieldsList = _.flatten(_.map(this.resourcesList, (resource) => {
+    this.fieldsList = _.flatten(_.map(_.cloneDeep(this.resourcesList), (resource) => {
       return _.map(resource.schema, (field) => {
         field.resource = resource
         field.displayname = `${resource.displayname}.${_.get(field, 'label.enUS', _.get(field, 'label', field.field))}`

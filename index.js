@@ -87,6 +87,7 @@ class CMS {
     /* keep track of available resources */
     this._tempResources = {}
     this._resources = {}
+    this._paragraphs = {}
     this._resourceNames = []
 
     /* keep track of available plugins */
@@ -99,6 +100,10 @@ class CMS {
 
     if (this._options.autoload) {
       _.each(requireDir(options.resources), (value, key) => this.resource(key, value))
+      const paragraphsDir = _.get(options, 'paragraphs', `${options.resources}/paragraphs`)
+      _.each(requireDir(paragraphsDir), (value, key) => {
+        _.set(this._paragraphs, key, value)
+      })
     }
 
     /* create main application */
@@ -233,21 +238,17 @@ class CMS {
 
   resource (name, config, resolves) {
     resolves = _.intersection(resolves, this._resourceNames)
-
     if (_.isEmpty(resolves)) {
       resolves = undefined
     }
     const key = JSON.stringify({ name, resolves })
-
     if (!this._tempResources[key] && (config || resolves || (this._options.mode === 'normal'))) {
       let opts = _.extend(config || Resource.DEFAULTS, { cms: this._options })
       if (!_.isEmpty(resolves)) {
         const referenceKey = JSON.stringify({ name, resolves: undefined })
         opts = this._tempResources[referenceKey].options
       }
-
       const resolveMap = _.zipObject(resolves, _.map(resolves, item => this.resource(item)))
-
       this._tempResources[key] = new Resource(name, opts, resolveMap, this)
       if (_.isEmpty(resolves)) {
         this._resources[name] = this._tempResources[key]
@@ -256,7 +257,6 @@ class CMS {
         this._resourceNames.push(name)
       }
     }
-
     return this._tempResources[key]
   }
 

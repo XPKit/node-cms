@@ -11,13 +11,17 @@ class TranslateService {
     const data = await RequestService.get(`${window.location.pathname}i18n/config.json`)
     this.config = _.get(data, 'config.language', { 'defaultLocale': 'enUS', 'locales': ['enUS'] })
     this.locale = _.get(this.config, 'defaultLocale', 'enUS')
-    for (const locale of this.config.locales) {
+    for (const locale of this.getLocales()) {
       try {
         this.dict[locale] = await RequestService.get(`${window.location.pathname}i18n/${locale}.json`)
       } catch (error) {
         console.warn(`TranslateService wasn't able to pull ${locale}: `, error)
       }
     }
+  }
+
+  getLocales() {
+    return _.get(this.config, 'locales', [])
   }
 
   setLocale (locale) {
@@ -33,10 +37,7 @@ class TranslateService {
       }
       return key
     }
-    if (_.isEmpty(key)) {
-      return ''
-    }
-    return key[locale || this.locale] || ''
+    return _.isEmpty(key) ? '' : (key[locale || this.locale] || '')
   }
 }
 

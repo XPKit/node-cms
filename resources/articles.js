@@ -9,6 +9,7 @@ exports = (module.exports = {
   },
   schema: [
     {
+      // TODO: hugo - later fix the label when changing language
       label: {
         enUS: 'Title',
         zhCN: '标题'
@@ -17,7 +18,7 @@ exports = (module.exports = {
       input: 'string',
       required: true,
       unique: true,
-      localised: false
+      localised: true
     },
     {
       field: 'rate',

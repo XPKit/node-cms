@@ -4,26 +4,45 @@ import TranslateServiceLib from '@s/TranslateService'
 import FormService from '@s/FormService'
 import ResourceService from './ResourceService'
 
-let TranslateService
-if (window.TranslateService) {
-  TranslateService = window.TranslateService
-} else {
-  TranslateService = TranslateServiceLib
-}
+const TranslateService = window.TranslateService || TranslateServiceLib
 
 class SchemaService {
   constructor () {
     this.typeMapper = FormService.typeMapper
+    this.paragraphsDefaultTypes = [
+      'string',
+      'text',
+      'password',
+      'email',
+      'url',
+      'number',
+      'double',
+      'integer',
+      'checkbox',
+      'date',
+      'time',
+      'datetime',
+      'pillbox',
+      'json',
+      'code',
+      'wysiwyg',
+      'object',
+      'color',
+      'image',
+      'file'
+    ]
   }
+
   getSchemaFields (schema, resource, locale, userLocale, disabled, extraSources, rootView) {
     let fields = _.map(schema, (field) => {
       const isLocalised = resource.locales && (field.localised || _.isUndefined(field.localised))
       const name = field.label && TranslateService.get(field.label)
-      let schema = _.extend({}, this.typeMapper[field.input], {
-        label: `${name || field.field}${isLocalised ? ` (${TranslateService.get(`TL_${locale.toUpperCase()}`)})` : ''}`,
+      const label = `${name || field.field}${isLocalised ? ` (${TranslateService.get(`TL_${locale.toUpperCase()}`)})` : ''}`
+      const schema = _.extend({}, this.typeMapper[field.input], {
+        label,
         model: isLocalised ? `${locale}.${field.field}` : field.field,
         originalModel: field.field,
-        placeholder: `${name || field.field}${isLocalised ? ` (${TranslateService.get(`TL_${locale.toUpperCase()}`)})` : ''}`,
+        placeholder: label,
         disabled: disabled || _.get(field, 'options.disabled', false),
         readonly: _.get(field, 'options.readonly', false),
         required: !!field.required,
@@ -37,14 +56,15 @@ class SchemaService {
       _.each(field.options, (val, key) => {
         _.set(schema, key, val)
       })
+      if (field.input === 'paragraph') {
+        schema.key = field.key
+      }
       if ((field.input === 'file') && _.get(schema, 'maxCount', false) === false) {
         schema.maxCount = Infinity
       } else if (field.input === 'select' && _.get(schema, 'labels', false)) {
         schema.selectOptions.label = _.map(schema.labels, (label, value) => {
           return { value, text: _.get(label, `${locale}`, label) }
         })
-        // schema.selectOptions.label = _.mapValues(schema.labels, label => _.get(label, `${userLocale}`, label))
-        // console.warn('SchemaService - getSchemaFields - selectOptions.label:', schema.selectOptions.label)
       } else if (field.input === 'multiselect' && _.get(schema, 'labels', false)) {
         if (!_.isObject(_.first(field.source))) {
           const values = []
@@ -69,7 +89,6 @@ class SchemaService {
         schema.selectOptions.min = field.min
         schema.selectOptions.max = field.max
       }
-
       return schema
     })
     for (const id in schema) {

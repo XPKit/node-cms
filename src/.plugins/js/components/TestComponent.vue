@@ -1,5 +1,5 @@
 <template>
-  <div ref="test" class="activations">
+  <div class="activations">
     node-cms - Plugin example
   </div>
 </template>
@@ -11,7 +11,6 @@ export default {
     }
   },
   async mounted () {
-    // console.warn('refs ====', this.$refs)
   },
   methods: {
   }

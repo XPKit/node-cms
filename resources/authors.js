@@ -26,7 +26,15 @@ exports = (module.exports = {
       field: 'otherName',
       input: 'string',
       localised: true
+    },
+    {
+      field: 'paragraph',
+      input: 'paragraph',
+      types: [
+        'textParagraph', 'testParagraph'
+      ]
     }
+
   ],
   type: 'normal'
 })

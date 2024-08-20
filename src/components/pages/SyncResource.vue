@@ -55,6 +55,7 @@
 
 <script>
 import RequestService from '@s/RequestService'
+import ResourceService from '@s/ResourceService'
 import _ from 'lodash'
 import pAll from 'p-all'
 
@@ -82,7 +83,7 @@ export default {
     }
   },
   async mounted () {
-    let data = await RequestService.get(`${window.location.pathname}resources`)
+    let data = await ResourceService.getAll()
     _.each(data, resource => {
       let uniqueKeyField = _.find(resource.schema, {unique: true})
       if (uniqueKeyField) {

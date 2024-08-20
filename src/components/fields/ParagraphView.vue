@@ -1,7 +1,7 @@
 <template>
   <div class="paragraph-view">
     <draggable
-      v-if="schema" :key="`${schema.model}-${key}`" :list="items"
+      v-if="schema && subResourcesLoaded" :key="`${schema.model}-${key}`" :list="items"
       :class="{disabled}" draggable=".item" v-bind="dragOptions" handle=".handle" :group="`${schema.model}-${key}`" ghost-class="ghost" @end="onEndDrag" @start="dragging = true"
     >
       <v-card v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" :theme="theme" elevation="0" :class="`item nested-level-${paragraphLevel}`">
@@ -43,29 +43,7 @@ import SchemaService from '@s/SchemaService'
 import ResourceService from '@s/ResourceService'
 import DragList from '@m/DragList'
 import {v4 as uuid} from 'uuid'
-
-const defaultTypes = [
-  'string',
-  'text',
-  'password',
-  'email',
-  'url',
-  'number',
-  'double',
-  'integer',
-  'checkbox',
-  'date',
-  'time',
-  'datetime',
-  'pillbox',
-  'json',
-  'code',
-  'wysiwyg',
-  'object',
-  'color',
-  'image',
-  'file'
-]
+import pAll from 'p-all'
 
 export default {
   mixins: [DragList],
@@ -75,9 +53,10 @@ export default {
       items: _.cloneDeep(_.get(this.model, this.schema.model, [])),
       types: [],
       selectedType: false,
+      subResourcesLoaded: false,
       localModel: {},
       key: uuid(),
-      maxItems: _.get(this.schema, 'options.maxItems', -1),
+      maxCount: _.get(this.schema, 'options.maxCount', -1),
       menuProps: {
         contentProps: {
           density: 'compact'
@@ -91,33 +70,64 @@ export default {
     }
   },
   created () {
-    this.updateLocalData()
+    this.localModel = _.cloneDeep(this.model)
   },
-  mounted () {
-    const types = _.get(this, 'schema.types', defaultTypes)
-    this.types = _.map(types, type => {
-      if (_.isString(type)) {
-        type = {
-          input: type,
-          parentKey: this.schema.model
-        }
-      }
-      if (!type.label) {
-        type.label = _.includes(['select', 'multiselect'], type.input) ? `${type.input}(${type.source})` : type.input
-      }
-      return type
-    })
+  async mounted () {
+    this.getTypes()
+    this.getSchemaForItems()
+    await this.getSubResources()
     this.selectedType = _.first(this.types)
   },
   methods: {
+    async getSubResources() {
+      await pAll(_.map(this.types, type => {
+        return async () => {
+          try {
+            if (_.get(type, 'source', false) && _.isString(type.source)) {
+              return await ResourceService.cache(type.source)
+            }
+          } catch (error) {
+            console.error(`Failed to get extra resource ${type.source}`, error)
+          }
+        }
+      }), {concurrency: 10})
+      this.subResourcesLoaded = true
+    },
+    getTypes() {
+      let types = _.get(this, 'schema.types', SchemaService.paragraphsDefaultTypes)
+      types = _.map(types, (type)=> {
+        return _.get(ResourceService.getParagraphSchema(type), 'schema', [])
+      })
+      this.types = _.map(_.flatten(types), type => {
+        if (_.isString(type)) {
+          type = {
+            input: type,
+            parentKey: this.schema.model
+          }
+        }
+        if (!type.label) {
+          type.label = _.includes(['select', 'multiselect'], type.input) ? `${type.input}(${type.source})` : type.input
+        }
+        return type
+      })
+    },
+    getSchemaForItems() {
+      this.items = _.map(this.items, (item)=> {
+        if (!_.get(item, 'input', false) || !_.get(item, 'label', false)) {
+          const foundField = _.find(this.types, {field: item.field})
+          if (!_.isUndefined(foundField)) {
+            return _.extend(_.omit(foundField, ['value']), item)
+          }
+          console.error(`Couldn't find field ${item.field} in the paragraph's fields`, this.types)
+        }
+        return item
+      })
+    },
     blockMoreItems() {
-      return (this.disabled || this.schema.disabled) || (this.maxItems !== -1 && this.items.length >= this.maxItems)
+      return (this.disabled || this.schema.disabled) || (this.maxCount !== -1 && this.items.length >= this.maxCount)
     },
     onError (error) {
       console.error('ParagraphView - error', error)
-    },
-    updateLocalData () {
-      this.localModel = _.cloneDeep(this.model)
     },
     validate () {
       _.each(this.$refs.vfg, vfg => {
@@ -181,12 +191,11 @@ export default {
       }
       this.selectedType = foundType
     },
-    onClickAddNewItem () {
+    async onClickAddNewItem () {
       if (this.selectedType) {
         const newItem = _.cloneDeep(this.selectedType)
         this.items.push(newItem)
-        _.set(this.localModel, this.schema.model, this.items)
-        this.$emit('input', this.items, this.schema.model)
+        this.updateItems()
       }
     },
     findIds (obj) {
@@ -202,39 +211,31 @@ export default {
       return ids
     },
     onClickRemoveItem (item) {
+      // console.warn('REMOVE ITEM', item)
       let attachments = _.get(this.model, '_attachments', [])
       if (_.includes(['image', 'file', 'group'], item.input)) {
         _.each(this.findIds(item), fileItemId => {
           attachments = _.reject(attachments, {_fields: {fileItemId}})
         })
       }
-      this.items = _.difference(this.items, [item])
-      // console.warn('PARAGRAPH - ITEMS - ', this.items)
-      // console.warn('PARAGRAPH - ATTACHMENTS - ', attachments)
-      // console.warn('PARAGRAPH - LOCAL ATTACHMENTS - ', _.get(this.localModel, '_attachments', []))
-      _.set(this.localModel, this.schema.model, this.items)
       _.set(this.model, '_attachments', attachments)
-      this.items = _.clone(this.items)
+      this.items = _.difference(this.items, [item])
       this.key = uuid()
-      this.$emit('input', this.items, this.schema.model)
-    },
-    onChange () {
-      _.set(this.localModel, this.schema.model, this.items)
-      this.$emit('input', this.items, this.schema.model)
+      this.updateItems()
     },
     onEndDrag () {
       this.dragging = false
-      _.set(this.localModel, this.schema.model, this.items)
-      // console.warn('onEndDrag ', this.items)
       this.key = uuid()
-      this.$emit('input', this.items, this.schema.model)
+      this.updateItems()
     },
     onModelUpdated (value, model, paragraphIndex) {
-      if (_.includes(model, '.')) {
-        _.set(this.items, `[${paragraphIndex}].${model}`, value)
-      }
-      _.set(this.localModel, this.schema.model, this.items)
-      this.$emit('input', this.items, this.schema.model)
+      _.set(this.items, `[${paragraphIndex}].${model}`, value)
+      this.updateItems()
+    },
+    updateItems() {
+      const items = _.map(this.items, (item)=> _.pick(item, ['field', 'value']))
+      _.set(this.localModel, this.schema.model, items)
+      this.$emit('input', items, this.schema.model)
     }
   }
 }

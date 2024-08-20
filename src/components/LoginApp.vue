@@ -7,7 +7,7 @@
             {{ $filters.translate('TL_LOGIN') }}
           </div>
           <input
-            ref="username" v-model="username" autofocus type="test" name="nodeCmsUsername" autocomplete="on"
+            ref="username" v-model="username" autofocus type="text" name="nodeCmsUsername" autocomplete="on"
             :placeholder="$filters.translate('TL_USERNAME')"
           >
           <input ref="password" v-model="password" type="password" name="nodeCmsPassword" autocomplete="on" :placeholder="$filters.translate('TL_PASSWORD')">

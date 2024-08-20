@@ -80,7 +80,6 @@ import RecordList from '@c/RecordList.vue'
 import MultiselectPage from '@c/MultiselectPage.vue'
 import RecordEditor from '@c/RecordEditor.vue'
 import RecordTable from '@c/RecordTable.vue'
-import RequestService from '@s/RequestService'
 
 export default {
   components: {
@@ -141,13 +140,7 @@ export default {
         }
         if (_.isString(item.group)) {
           const oldGroup = _.find(groups, (group) => {
-            if (group === item.group) {
-              return group
-            }
-            if (group.name === item.group) {
-              return group
-            }
-            if (_.includes(_.values(group.name), item.group)) {
+            if (group === item.group || group.name === item.group || _.includes(_.values(group.name), item.group)) {
               return group
             }
           })
@@ -186,7 +179,7 @@ export default {
       return _.filter(groups, (group) => group.list && group.list.length !== 0)
     },
     pluginList () {
-      let list = _.filter(window.plugins, (item) => {
+      return _.filter(window.plugins, (item) => {
         if (_.isUndefined(item.allowed)) {
           return true
         }
@@ -195,13 +188,12 @@ export default {
         }
         return _.includes(item.allowed, this.user.group)
       })
-      return list
     }
   },
   watch: {
     '$route': function () {
       if (this.$route.query.id != null) {
-        const allResources = _.union(this.pluginList, this.resourceList)
+        const allResources = this.getResourcesAndPlugins()
         if (allResources.length > 0) {
           this.selectResource(_.find(allResources, {title: this.$route.query.id}))
         }
@@ -223,25 +215,10 @@ export default {
       this.config = ConfigService.config
       await TranslateService.init()
       this.setToolbarTitle()
-      const noLogin = _.get(window, 'noLogin', false)
-      if (noLogin) {
-        this.user = {}
-      } else {
-        LoginService.init()
-        try {
-          this.user = await LoginService.getStatus()
-          const isDark = _.get(this.user, 'theme', 'light') === 'dark'
-          this.$vuetify.theme.dark = isDark
-          this.$forceUpdate()
-        } catch (error) {
-          const errorMessage = _.get(error, 'response.data.message', error.message)
-          this.notify(errorMessage, 'error')
-          throw error
-        }
-      }
-
+      await this.getUser()
       try {
-        const data = await RequestService.get(`${window.location.pathname}resources`)
+        const data = await ResourceService.getAll()
+        await ResourceService.getAllParagraphs()
         this.$loading.stop('init')
         const resourceList = _.sortBy(data, item => item.title)
         this.resourceList = _.filter(resourceList, resource => {
@@ -263,6 +240,24 @@ export default {
     })
   },
   methods: {
+    getResourcesAndPlugins() {
+      return _.union(this.pluginList, this.resourceList)
+    },
+    async getUser() {
+      if (_.get(window, 'noLogin', false)) {
+        this.user = {}
+        return
+      }
+      LoginService.init()
+      try {
+        this.user = await LoginService.getStatus()
+        this.$vuetify.theme.dark = _.get(this.user, 'theme', 'light') === 'dark'
+        this.$forceUpdate()
+      } catch (error) {
+        this.notify(_.get(error, 'response.data.message', error.message), 'error')
+        throw error
+      }
+    },
     getTheme () {
       return _.get(this.$vuetify, 'theme.dark', false) ? 'dark' : 'light'
     },
