@@ -26,8 +26,8 @@ export default {
       if (this.disabled) {
         return
       }
-      this.value = !this.getValue()
-      this.$emit('input', this.value, this.schema.model)
+      this._value = !this.getValue()
+      this.$emit('input', this._value, this.schema.model)
     }
   }
 }

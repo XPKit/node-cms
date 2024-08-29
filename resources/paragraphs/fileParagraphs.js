@@ -8,7 +8,7 @@ exports = (module.exports = {
     {
       label: 'File paragraph sub text paragraph',
       field: 'testParagraph3',
-      input: 'newParagraph',
+      input: 'paragraph',
       options: {
         types: ['textParagraphs']
       },

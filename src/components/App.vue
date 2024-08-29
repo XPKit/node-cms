@@ -222,10 +222,7 @@ export default {
         this.$loading.stop('init')
         const resourceList = _.sortBy(data, item => item.title)
         this.resourceList = _.filter(resourceList, resource => {
-          if (_.isUndefined(resource.allowed)) {
-            return true
-          }
-          return _.includes(resource.allowed, this.user.group)
+          return _.isUndefined(resource.allowed) ||  _.includes(resource.allowed, this.user.group)
         })
         ResourceService.setSchemas(this.resourceList)
         this.localeList = TranslateService.config.locales

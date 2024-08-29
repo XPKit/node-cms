@@ -19,7 +19,7 @@ class ResourceService {
   }
 
   async getAll() {
-    return await RequestService.get(`${window.location.pathname}resources`)
+    return await RequestService.get(`${window.location.pathname}resources?listAttachments=true`)
   }
 
   async getAllParagraphs() {

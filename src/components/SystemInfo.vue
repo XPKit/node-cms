@@ -8,8 +8,8 @@
       </template>
       <div class="links-wrapper">
         <div v-for="(group, i) in settingsData.linksGroups" :key="i" class="group">
-          <div class="node-cms-title">{{ group.value.title }}</div>
-          <a v-for="(link, y) in group.value.links" :key="y" class="link" :href="link.value.url" :class="{active: isActiveLink(link.value.url)}">{{ link.value.name }}</a>
+          <div class="node-cms-title">{{ group.title }}</div>
+          <a v-for="(link, y) in group.links" :key="y" class="link" :href="link.url" target="_blank" :class="{active: isActiveLink(link.url)}">{{ link.name }}</a>
           <v-divider v-if="i < settingsData.linksGroups.length - 1" />
         </div>
       </div>

@@ -9,7 +9,6 @@
       acl: { ... },                  // Access control list settings
       schema: [{...}, {...}, {...}], // Resource schema definition
       locales: [],                   // List of resource locales. when defined, enables localisation support
-      filterUnpublished: true,       // extra-feature flag
       type: 'normal'                 // replication type, when defined, enables replication support
     }
 
@@ -64,7 +63,6 @@ curl -XPOST localhost:3000/api/articles?locale=enUS -H 'Content-type: applicatio
       "_createdAt": 1392187894165,
       "_updatedBy": "localAdmin",
       "_updatedAt": 1392187894165,
-      "_publishedAt": null,
       "_doc": {
         "enUS": {
           "_id": "hrk8q651hrk8q5wly7tjryp9",
@@ -75,12 +73,6 @@ curl -XPOST localhost:3000/api/articles?locale=enUS -H 'Content-type: applicatio
     }
 ```
 Check api and spec `tests` for more examples of localisation support.
-
-### Extras
-
-extras enabled to provide support for most commonly used routines
-
-`filterUnpublished` will filter from query results `documents` where `_publishedAt` is not set
 
 ## Query syntax
 

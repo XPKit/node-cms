@@ -37,7 +37,7 @@ export default {
   },
   mounted () {
     this.editor = new Editor({
-      content: this.value,
+      content: this._value,
       extensions: [
         StarterKit.configure({history: true, code: true, blockquote: true}),
         Superscript,
@@ -47,7 +47,7 @@ export default {
       onUpdate: () => {
         const val = this.editor.getHTML()
         this.$emit('change', val)
-        this.value = val
+        this._value = val
       }
     })
     this.loaded = true

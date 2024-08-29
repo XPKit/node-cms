@@ -63,6 +63,7 @@ class CMS {
     this.express = this.express.bind(this)
     // NOTE: Min auth key length
     this.requiredKeyLength = 16
+    this.fieldFileTypes = ['file', 'img', 'image', 'imageView', 'attachmentView']
     const configPath = path.resolve((options != null ? options.config : undefined) || './cms.json')
     if (options) {
       delete options.config
@@ -103,6 +104,7 @@ class CMS {
       const paragraphsDir = _.get(options, 'paragraphs', `${options.resources}/paragraphs`)
       _.each(requireDir(paragraphsDir), (value, key) => {
         _.set(this._paragraphs, key, value)
+        this.formatSchema(this._paragraphs, key, true)
       })
     }
 
@@ -236,6 +238,23 @@ class CMS {
     return result
   }
 
+  formatSchema(resourcesList, name, forParagraph = false) {
+    const schemaKey = forParagraph ? `[${name}].schema` : `[${name}]options.schema`
+    const localesKey = forParagraph ? `[${name}].locales` : `[${name}]options.locales`
+    const attachmentsKey = forParagraph ? `[${name}]._attachments` : `[${name}]options._attachments`
+    const schema = _.get(resourcesList, schemaKey, [])
+    const attachmentFields = []
+    const resourceIsLocalised = _.get(resourcesList, `${localesKey}.length`, 0) !== 0
+    _.each(schema, (field)=> {
+      field.localised = _.get(field, 'localised', resourceIsLocalised)
+      if (_.includes(this.fieldFileTypes, _.get(field, 'input', false))) {
+        attachmentFields.push(field.field)
+      }
+    })
+    _.set(resourcesList, schemaKey, schema)
+    _.set(resourcesList, attachmentsKey, attachmentFields)
+  }
+
   resource (name, config, resolves) {
     resolves = _.intersection(resolves, this._resourceNames)
     if (_.isEmpty(resolves)) {
@@ -252,6 +271,7 @@ class CMS {
       this._tempResources[key] = new Resource(name, opts, resolveMap, this)
       if (_.isEmpty(resolves)) {
         this._resources[name] = this._tempResources[key]
+        this.formatSchema(this._resources, name)
       }
       if (!_.includes(this._resourceNames, name)) {
         this._resourceNames.push(name)

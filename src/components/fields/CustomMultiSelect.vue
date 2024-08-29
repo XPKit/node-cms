@@ -6,7 +6,7 @@
       :theme="theme"
       :chips="getSelectOpt('chips')"
       :menu-props="menuProps"
-      :model-value="objectValue || value" :items="options" :closable-chips="getSelectOpt('deletableChips') || getSelectOpt('multiple')" :hide-selected="getSelectOpt('hideSelected')"
+      :model-value="objectValue || _value" :items="options" :closable-chips="getSelectOpt('deletableChips') || getSelectOpt('multiple')" :hide-selected="getSelectOpt('hideSelected')"
       :disabled="disabled || schema.disabled" :placeholder="schema.placeholder" :multiple="getSelectOpt('multiple')" :ripple="false" :flat="get('flat')"
       :item-title="customLabel" :item-value="getValue"
       menu-icon="mdi-chevron-down" :clearable="getSelectOpt('clearable')" :variant="getVariant()" :density="get('density')" rounded hide-details
@@ -32,7 +32,7 @@ export default {
   mixins: [AbstractField],
   data () {
     return {
-      objectValue: this.value,
+      objectValue: this._value,
       menuProps: {
         contentProps: {
           density: 'compact'
@@ -55,7 +55,7 @@ export default {
   methods: {
     getValue (item) {
       const val = _.get(item, 'raw', item)
-      return _.get(val, '_id', _.get(val, 'value', val))
+      return _.get(val, '_id', _.get(val, '_value', val))
     },
     customLabel (item) {
       const val = _.get(item, 'raw', item)
@@ -74,21 +74,21 @@ export default {
       return _.get(this.selectOptions, key, false)
     },
     allOptionsSelected () {
-      return _.get(this.options, 'length', 0) === _.get(this.objectValue || this.value, 'length', 0)
+      return _.get(this.options, 'length', 0) === _.get(this.objectValue || this._value, 'length', 0)
     },
     onChangeSelectAll () {
       const allSelected = this.allOptionsSelected()
       if (allSelected) {
         this.objectValue = []
       } else {
-        let allValues = _.compact(_.map(this.options, 'value'))
+        let allValues = _.compact(_.map(this.options, '_value'))
         if (_.get(allValues, 'length', 0) === 0) {
           allValues = this.options
         }
         this.objectValue = allValues
       }
-      this.value = this.objectValue
-      this.$emit('input', this.value, this.schema.model)
+      this._value = this.objectValue
+      this.$emit('input', this._value, this.schema.model)
     },
     getLabel () {
       if (this.disabled) {

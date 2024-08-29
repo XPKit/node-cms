@@ -13,7 +13,7 @@
         </v-card-title>
         <div class="item-main-wrapper">
           <div class="item-main">
-            <custom-form :schema="getSchema(item)" :model="item" :paragraph-index="idx" :paragraph-level="paragraphLevel + 1" @error="onError" @input="onModelUpdated" />
+            <custom-form :schema="getSchema(item, idx)" :model="item" :paragraph-index="idx" :paragraph-level="paragraphLevel + 1" @error="onError" @input="onModelUpdated" />
           </div>
         </div>
       </v-card>
@@ -52,9 +52,9 @@ export default {
     return {
       items: _.cloneDeep(_.get(this.model, this.schema.model, [])),
       types: [],
+      fileInputTypes: ['file', 'img', 'image', 'imageView', 'attachmentView'],
       selectedType: false,
       subResourcesLoaded: false,
-      localModel: {},
       key: uuid(),
       maxCount: _.get(this.schema, 'options.maxCount', -1),
       menuProps: {
@@ -70,7 +70,6 @@ export default {
     }
   },
   created () {
-    this.localModel = _.cloneDeep(this.model)
   },
   async mounted () {
     this.getTypes()
@@ -83,45 +82,47 @@ export default {
       await pAll(_.map(this.types, type => {
         return async () => {
           try {
-            if (_.get(type, 'source', false) && _.isString(type.source)) {
-              return await ResourceService.cache(type.source)
-            }
+            await this.requestResourcesForParagraph(type)
           } catch (error) {
             console.error(`Failed to get extra resource ${type.source}`, error)
           }
         }
-      }), {concurrency: 10})
+      }), {concurrency: 1})
       this.subResourcesLoaded = true
     },
     getTypes() {
-      let types = _.get(this, 'schema.types', SchemaService.paragraphsDefaultTypes)
-      types = _.map(types, (type)=> {
-        return _.get(ResourceService.getParagraphSchema(type), 'schema', [])
-      })
-      this.types = _.map(_.flatten(types), type => {
-        if (_.isString(type)) {
-          type = {
-            input: type,
-            parentKey: this.schema.model
-          }
+      this.types = _.map(_.get(this, 'schema.types', []), (type)=> {
+        let schema = false
+        schema = ResourceService.getParagraphSchema(type)
+        if (schema) {
+          schema.input = 'group'
+          schema.label = _.get(schema, 'displayname', schema.title)
+          schema.field = schema.title
+        } else {
+          console.error(`Couldnt get schema for paragraph type ${type}`)
         }
-        if (!type.label) {
-          type.label = _.includes(['select', 'multiselect'], type.input) ? `${type.input}(${type.source})` : type.input
-        }
-        return type
+        return schema
       })
     },
     getSchemaForItems() {
       this.items = _.map(this.items, (item)=> {
         if (!_.get(item, 'input', false) || !_.get(item, 'label', false)) {
-          const foundField = _.find(this.types, {field: item.field})
+          if (this.schema.localised) {
+            item.localised = true
+          }
+          let foundField = _.find(this.types, {field: item._type})
           if (!_.isUndefined(foundField)) {
-            return _.extend(_.omit(foundField, ['value']), item)
+            // console.warn('---------- foundField', foundField, item)
+            foundField = _.extend(_.omit(foundField, ['_value', '_type']), {
+              _value: _.omit(item, '_type')
+            })
+            return foundField
           }
           console.error(`Couldn't find field ${item.field} in the paragraph's fields`, this.types)
         }
         return item
       })
+      // console.warn('getSchemaForItems ----', this.items, this.schema.model)
     },
     blockMoreItems() {
       return (this.disabled || this.schema.disabled) || (this.maxCount !== -1 && this.items.length >= this.maxCount)
@@ -138,65 +139,64 @@ export default {
       })
       return true
     },
-    debouncedValidate () {
-      _.each(this.$refs.vfg, vfg => {
-        vfg.debouncedValidate()
-      })
-    },
-    clearValidationErrors () {
-      _.each(this.$refs.vfg, vfg => {
-        vfg.clearValidationErrors()
-      })
-    },
-    getSchema (item) {
+    getSchema (item, index) {
       let schemaItems = []
       const {resource, locale, userLocale, disabled} = this.schema
       if (item.input === 'group') {
         schemaItems = _.map(item.schema, schemaItems => {
+          let paragraphKey = `${this.paragraphLevel > 1 ? this.schema.paragraphKey : this.schema.model}[${index}].${schemaItems.field}`
           return _.extend({}, schemaItems, {
-            field: `value.${schemaItems.field}`,
-            localised: this.schema.localised,
+            field: `_value.${schemaItems.field}`,
+            paragraphKey,
+            paragraphType: item.title,
+            localised: _.get(schemaItems, 'localised', false),
             label: schemaItems.label || schemaItems.field
           })
         })
       } else {
-        const schemaItem = _.extend({}, item, {
-          field: 'value',
+        schemaItems.push(_.extend({}, item, {
+          field: '_value',
           localised: this.schema.localised
-        })
-        schemaItems.push(schemaItem)
+        }))
       }
-      _.each(schemaItems, item => {
-        if (_.includes(['image', 'file'], item.input)) {
-          item.input = _.camelCase(`paragraph ${item.input}`)
-        }
-      })
       let extraSources = _.isString(item.source) ? _.get(ResourceService.getSchema(item.source), 'extraSources', {}) : {}
       const fields = SchemaService.getSchemaFields(schemaItems, resource, locale, userLocale, disabled, extraSources, this.schema.rootView || this)
-      const groups = SchemaService.getNestedGroups(resource, fields, 0, null, 'value.')
+      const groups = SchemaService.getNestedGroups(resource, fields, 0, null, '_value.')
       return {fields: groups}
     },
     getAttachment (fileItemId, field) {
       const attach = _.find(this.model._attachments, {_fields: {fileItemId}})
-      if (field) {
-        return _.get(attach, field)
-      }
-      return attach
+      return field ? _.get(attach, field) : attach
     },
     onChangeType (type) {
       const foundType = _.find(this.types, {label: type})
       if (_.isUndefined(foundType)) {
-        // console.warn(`No type found for ${type} in types:`, this.types)
+        console.warn(`No type found for ${type} in types:`, this.types)
         return
       }
       this.selectedType = foundType
     },
+    async requestResourcesForParagraph(paragraph) {
+      // NOTE: Requests additional resources
+      await pAll(_.map(paragraph.schema, (field)=> {
+        return async () => {
+          if (_.includes(['select', 'multiselect'], _.get(field, 'input', false)) && _.isString(_.get(field, 'source', false))) {
+            const result = ResourceService.get(field.source)
+            if (_.isUndefined(result)) {
+              await ResourceService.cache(field.source)
+            }
+          }
+        }
+      }), {concurrency: 5})
+    },
     async onClickAddNewItem () {
-      if (this.selectedType) {
-        const newItem = _.cloneDeep(this.selectedType)
-        this.items.push(newItem)
-        this.updateItems()
+      if (!this.selectedType) {
+        return
       }
+      const newItem = _.cloneDeep(this.selectedType)
+      await this.requestResourcesForParagraph(newItem)
+      this.items.push(newItem)
+      this.updateItems()
     },
     findIds (obj) {
       const ids = []
@@ -211,7 +211,6 @@ export default {
       return ids
     },
     onClickRemoveItem (item) {
-      // console.warn('REMOVE ITEM', item)
       let attachments = _.get(this.model, '_attachments', [])
       if (_.includes(['image', 'file', 'group'], item.input)) {
         _.each(this.findIds(item), fileItemId => {
@@ -229,12 +228,19 @@ export default {
       this.updateItems()
     },
     onModelUpdated (value, model, paragraphIndex) {
+      if (value instanceof Event) {
+        return
+      }
       _.set(this.items, `[${paragraphIndex}].${model}`, value)
       this.updateItems()
     },
     updateItems() {
-      const items = _.map(this.items, (item)=> _.pick(item, ['field', 'value']))
-      _.set(this.localModel, this.schema.model, items)
+      console.warn('updateItems before ', _.cloneDeep(this.items))
+      const items = _.map(this.items, (item)=> {
+        const obj = _.get(item, '_value', {})
+        obj._type = item.title
+        return obj
+      })
       this.$emit('input', items, this.schema.model)
     }
   }

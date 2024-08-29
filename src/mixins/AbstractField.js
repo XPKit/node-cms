@@ -1,4 +1,4 @@
-import { get as objGet, set as objSet, join, forEach, isFunction, isString, isArray, debounce, uniq as arrayUniq } from 'lodash'
+import { get as objGet, set as objSet, join, forEach, isFunction, isString, isArray, uniq as arrayUniq } from 'lodash'
 import validators from '@u/validators'
 
 function convertValidator (validator) {
@@ -27,9 +27,7 @@ export default {
   props: ['model', 'schema', 'formOptions', 'disabled', 'focused', 'paragraphLevel', 'theme'],
   data () {
     return {
-      errors: [],
-      debouncedValidateFunc: null,
-      debouncedFormatFunc: null
+      errors: []
     }
   },
   directives: {
@@ -61,7 +59,7 @@ export default {
     }
   },
   computed: {
-    value: {
+    _value: {
       cache: false,
       get () {
         if (isFunction(objGet(this.schema, 'get'))) {
@@ -70,11 +68,10 @@ export default {
         return objGet(this.model, this.schema.model)
       },
       set (newValue) {
-        let oldValue = this.value
+        let oldValue = this._value
         if (isFunction(newValue)) {
           newValue(newValue, oldValue)
         } else {
-          // console.warn(`UPDATE VAL ${this.schema.model}`, newValue)
           this.updateModelValue(newValue, oldValue)
         }
       }
@@ -97,7 +94,7 @@ export default {
       return join(variant, ' ')
     },
     onChangeData (data) {
-      this.value = data
+      this._value = data
     },
     async validate (calledParent) {
       this.clearValidationErrors()
@@ -114,9 +111,9 @@ export default {
         }
         forEach(validators, validator => {
           if (validateAsync) {
-            results.push(validator(this.value, this.schema, this.model))
+            results.push(validator(this._value, this.schema, this.model))
           } else {
-            let result = validator(this.value, this.schema, this.model)
+            let result = validator(this._value, this.schema, this.model)
             if (result && isFunction(result.then)) {
               result.then(err => {
                 if (err) {
@@ -155,77 +152,36 @@ export default {
       }
       return Promise.all(results).then(handleErrors)
     },
-    debouncedValidate () {
-      if (!isFunction(this.debouncedValidateFunc)) {
-        this.debouncedValidateFunc = debounce(
-          this.validate.bind(this),
-          objGet(this.schema, 'validateDebounceTime', objGet(this.formOptions, 'validateDebounceTime', 500))
-        )
-      }
-      this.debouncedValidateFunc()
-    },
     async updateModelValue (newValue, oldValue) {
       let changed = false
       if (isFunction(this.schema.set)) {
         this.schema.set(this.model, newValue)
         changed = true
       } else if (this.schema.model) {
-        this.setModelValueByPath(this.schema.model, newValue)
+        objSet(this.model, this.schema.model, newValue)
         changed = true
       }
       if (changed) {
-        // console.warn(`value for '${this.schema.model}' changed to `, newValue)
         if (isFunction(this.schema.onChanged)) {
           this.schema.onChanged.call(this, this.model, newValue, oldValue, this.schema)
         }
         if (objGet(this.formOptions, 'validateAfterChanged', false) === true) {
-          if (objGet(this.schema, 'validateDebounceTime', objGet(this.formOptions, 'validateDebounceTime', 0)) > 0) {
-            this.debouncedValidate()
-          } else {
-            await this.validate()
-          }
+          await this.validate()
         }
+        console.warn('VALUE CHANGED ||||| ', this.schema.paragraphKey, this.schema.model, newValue)
         this.$emit('input', newValue, this.schema.model)
+      } else {
+        console.error('VALUE NOT CHANGED', this.schema.model, oldValue, newValue)
       }
     },
     clearValidationErrors () {
       this.errors.splice(0)
     },
-    setModelValueByPath (path, value) {
-      // convert array indexes to properties
-      let s = path.replace(/\[(\w+)\]/g, '.$1')
-      // strip a leading dot
-      s = s.replace(/^\./, '')
-      let o = this.model
-      const a = s.split('.')
-      let i = 0
-      const n = a.length
-      while (i < n) {
-        let k = a[i]
-        if (i < n - 1) {
-          if (o[k] !== undefined) {
-          // Found parent property. Step in
-            o = o[k]
-          } else {
-          // Create missing property (new level)
-            objSet(this.model, k, {})
-            // this.$root.$set(o, k, {})
-            o = o[k]
-          }
-        } else {
-          // Set final property value
-          objSet(this.model, k, value)
-          // this.$root.$set(o, k, value)
-          return
-        }
-        ++i
-      }
-    },
     getKeyLocale () {
       const options = {}
       const list = this.schema.model.split('.')
       if (this.schema.localised) {
-        options.locale = list.shift()
+        options.locale = list.pop()
       }
       options.key = list.join('.')
       return options

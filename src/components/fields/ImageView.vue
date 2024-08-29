@@ -2,6 +2,7 @@
   <div class="image-view" :class="{'full-width': !(schema.width && schema.height)}">
     <form enctype="multipart/form-data">
       <field-label :schema="schema" />
+      <div class="test-info" />
       <v-card
         v-if="schema.disabled" :theme="theme"
         class="file-input-card" elevation="0" :class="{ 'drag-and-drop': dragover }"
@@ -43,7 +44,7 @@
         <v-card v-for="(a, i) in getAttachments()" :key="getKey(a)" :theme="theme" elevation="0" class="preview-attachment" :class="{odd: i % 2 !== 0}">
           <v-tooltip :theme="theme" location="right" eager>
             <template #activator="{ props }">
-              <v-chip variant="outlined" class="filename" closable close-icon="mdi-close-circle-outline" v-bind="props" @click:close="removeImage(a)">#{{ i + 1 }} - {{ $filters.truncate(a._filename,10) }} ({{ imageSize(a) }})</v-chip>
+              <v-chip variant="outlined" class="filename" closable close-icon="mdi-close-circle-outline" v-bind="props" @click:close="removeImage(a, i)">#{{ i + 1 }} - {{ $filters.truncate(a._filename || (a._fields && a._fields._filename),10) }} ({{ imageSize(a) }})</v-chip>
             </template>
             <span>{{ a._filename }}</span>
           </v-tooltip>
@@ -60,7 +61,7 @@
       <div v-if="!(schema.width && schema.height)" class="preview-single-attachment">
         <v-tooltip :theme="theme" location="right" eager>
           <template #activator="{ props }">
-            <v-chip class="filename" closable v-bind="props" @click:close="removeImage(attachment())">{{ $filters.truncate(attachment()._filename) }} ({{ imageSize(attachment()) }})</v-chip>
+            <v-chip class="filename" closable v-bind="props" @click:close="removeImage(attachment(), i)">{{ $filters.truncate(attachment()._filename) }} ({{ imageSize(attachment()) }})</v-chip>
           </template>
           <span>{{ attachment()._filename }}</span>
         </v-tooltip>
@@ -82,7 +83,7 @@
             @change="onCropperChange"
           />
         </div>
-        <v-btn elevation="2" class="delete" icon :disabled="imageUrl().length === 0" @click="removeImage(attachment())"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
+        <v-btn elevation="2" class="delete" icon :disabled="imageUrl().length === 0" @click="removeImage(attachment(), 0)"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
       </div>
     </template>
     <template v-if="model._local && !disabled">
@@ -164,7 +165,7 @@ export default {
     },
     onCropperChange (data) {
       const attachment = this.attachment()
-      _.each(this.localModel._attachments, (localAttachment) => {
+      _.each(this._value, (localAttachment) => {
         if (localAttachment._id === attachment._id) {
           localAttachment.cropOptions = data.coordinates
           if (this.firstCropUpdate) {
@@ -174,7 +175,7 @@ export default {
           }
         }
       })
-      const updatedAttachments = _.filter(this.localModel._attachments, (attachment) => {
+      const updatedAttachments = _.filter(this._value, (attachment) => {
         // NOTE: Localized fields
         if (_.get(attachment, '_fields.locale', false) && _.get(attachment, '_name', false) && `${attachment._fields.locale}.${attachment._name}` === this.schema.model) {
           return true
@@ -221,5 +222,8 @@ export default {
     width: 100%;
     height: 100%;
   }
+}
+.test-info {
+  max-width: 100%;
 }
 </style>

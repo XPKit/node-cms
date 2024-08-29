@@ -9,7 +9,6 @@ exports = (module.exports = {
   },
   schema: [
     {
-      // TODO: hugo - later fix the label when changing language
       label: {
         enUS: 'Title',
         zhCN: '标题'
@@ -24,41 +23,6 @@ exports = (module.exports = {
       field: 'rate',
       input: 'number',
       localised: false
-    },
-    {
-      label: 'Paragraph',
-      field: 'paragraph',
-      input: 'paragraph',
-      localised: false,
-      options: {
-        types: [
-          'wysiwyg',
-          'text',
-          'string',
-          'image',
-          {
-            input: 'select',
-            source: 'comments',
-            options: {
-              customLabel: '{{title}} {{category}}'
-            }
-          }
-        ]
-      }
-    },
-    {
-      label: 'Localized Paragraph',
-      field: 'localizedParagraph',
-      input: 'paragraph',
-      localised: true,
-      options: {
-        types: [
-          'wysiwyg',
-          'text',
-          'string',
-          'image'
-        ]
-      }
     },
     {
       label: 'Body',
@@ -138,17 +102,6 @@ exports = (module.exports = {
           },
           {
             model: 'rate', width: 2
-          }
-        ]
-      },
-      {
-        slots: 2,
-        fields: [
-          {
-            model: 'paragraph'
-          },
-          {
-            model: 'localizedParagraph'
           }
         ]
       },

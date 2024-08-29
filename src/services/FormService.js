@@ -12,7 +12,7 @@ const getKeyLocale = (schema) => {
   const options = {}
   const list = _.get(schema, 'model', '').split('.')
   if (_.get(schema, 'localised', false)) {
-    options.locale = list.shift()
+    options.locale = list.pop()
   }
   options.key = list.join('.')
   return options
@@ -287,18 +287,18 @@ let typeMapper = {
     type: 'ColorPicker',
     colorPickerOptions: {
     }
-  },
-  paragraphImage: {
-    type: 'paragraphAttachmentView',
-    overrideType: 'ParagraphAttachmentView',
-    fileType: 'image',
-    validator: customValidators.image
-  },
-  paragraphFile: {
-    type: 'paragraphAttachmentView',
-    overrideType: 'ParagraphAttachmentView',
-    validator: customValidators.file
   }
+  // paragraphImage: {
+  //   type: 'paragraphAttachmentView',
+  //   overrideType: 'ParagraphAttachmentView',
+  //   fileType: 'image',
+  //   validator: customValidators.image
+  // },
+  // paragraphFile: {
+  //   type: 'paragraphAttachmentView',
+  //   overrideType: 'ParagraphAttachmentView',
+  //   validator: customValidators.file
+  // }
 }
 
 _.each(typeMapper, (type) => {

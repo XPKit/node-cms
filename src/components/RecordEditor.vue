@@ -31,6 +31,7 @@ import AbstractEditorView from './AbstractEditorView'
 import Notification from '@m/Notification.vue'
 import TopBarLocaleList from '@c/TopBarLocaleList.vue'
 import RequestService from '@s/RequestService'
+import ResourceService from '@s/ResourceService'
 
 export default {
   components: {TopBarLocaleList},
@@ -119,7 +120,7 @@ export default {
     },
     onFieldSelected (field) {
       this.schema.fields = _.map(this.schema.fields, (f) => {
-        const key = `${f.localised ? `${TranslateService.locale}.` : ''}${field.field}`
+        const key = `${field.field}${f.localised ? `.${TranslateService.locale}` : ''}`
         if (f.model === key) {
           const elem = document.getElementById(`${key}-${this.randomId}`)
           const top = this.getFieldRealOffset(elem)
@@ -137,52 +138,35 @@ export default {
     selectLocale (item) {
       this.$emit('update:locale', item)
     },
+    cloneValue(field, value) {
+      if (field.input === 'pillbox') {
+        return value || []
+      }
+      if (field.input === 'json') {
+        return value || {}
+      }
+      if (_.isPlainObject(value)) {
+        value = _.cloneDeep(value)
+      }
+      return value
+    },
     cloneEditingRecord () {
       const dummy = {}
       _.each(this.resource.schema, (field) => {
-        if (_.includes(this.fileInputTypes, field.input)) {
-          return
-        }
-        const isLocalised = this.resource.locales && (field.localised || _.isUndefined(field.localised))
-
-        if (isLocalised) {
+        if (this.resource.locales && (field.localised || _.isUndefined(field.localised))) {
           _.each(this.resource.locales, (locale) => {
-            const fieldName = `${locale}.${field.field}`
+            const fieldName = `${field.field}.${locale}`
             let value = _.get(this.record, fieldName)
-            if (field.input === 'pillbox') {
-              value = value || []
-            } else if (field.input === 'json') {
-              value = value || {}
-            }
-            if (_.isPlainObject(value)) {
-              value = _.cloneDeep(value)
-            }
-            _.set(dummy, fieldName, value)
+            _.set(dummy, fieldName, this.cloneValue(field, value))
           })
         } else {
           const fieldName = field.field
           let value = _.get(this.record, fieldName)
-          if (field.input === 'pillbox') {
-            value = value || []
-          }
-          if (field.input === 'json') {
-            value = value || {}
-          }
-          if (_.isPlainObject(value)) {
-            value = _.cloneDeep(value)
-          }
-          _.set(dummy, fieldName, value)
+          _.set(dummy, fieldName, this.cloneValue(field, value))
         }
       })
       this.editingRecord = _.clone(dummy)
       this.editingRecord._id = this.record._id
-      try {
-        this.editingRecord._attachments = _.cloneDeep(this.record._attachments || [])
-        // console.log('attachments are', this.editingRecord._attachments)
-      } catch (error) {
-        console.error('Error during cloneEditingRecord:', error)
-        this.editingRecord._attachments = []
-      }
       this.removeDirtyFlags()
     },
     async deleteRecord () {
@@ -219,6 +203,7 @@ export default {
         formValid = false
       }
       const firstInvalidField = _.find(this.$refs.vfg.items, (input) => !input.isValid)
+      console.error('First invalid field', firstInvalidField)
       if (!_.isUndefined(firstInvalidField)) {
         formValid = false
         document.querySelector(`#${firstInvalidField.id}`).focus()
@@ -237,13 +222,14 @@ export default {
       }
       return value
     },
-    updateLocalisedField (uploadObject, field) {
+    getLocalisedFieldValue (originalData, data, field) {
+      let fieldValue = {}
       _.each(this.resource.locales, (locale) => {
         if (!this.formValid) {
           return this.handleFormNotValid()
         }
-        const fieldName = `${locale}.${field.field}`
-        const value = this.fieldValueOrDefault(field, _.get(this.editingRecord, fieldName))
+        const fieldName = `${field.field}.${locale}`
+        const value = this.fieldValueOrDefault(field, _.get(data, fieldName))
         if (locale !== this.locale && field.required &&
         (_.isUndefined(value) || (field.input === 'string' && value.length === 0))) {
           this.selectLocale(locale)
@@ -255,53 +241,104 @@ export default {
           console.warn('required field empty', field, this.formValid)
           return
         }
-        if (!_.isEqual(value, _.get(this.record, fieldName))) {
-          _.set(uploadObject, fieldName, _.isUndefined(value) ? null : value)
+        if (_.includes(this.fileInputTypes, field.input) || !_.isEqual(value, _.get(originalData, fieldName))) {
+          _.set(fieldValue, fieldName, _.isUndefined(value) ? null : value)
         }
       })
+      return fieldValue
     },
     handleFormNotValid () {
       console.info('form not valid')
+    },
+    getFieldValue(originalData, data, field) {
+      const isLocalised = this.resource.locales && (field.localised || _.isUndefined(field.localised))
+      if (isLocalised) {
+        return this.getLocalisedFieldValue(originalData, data, field)
+      }
+      const fieldName = field.field
+      const value = this.fieldValueOrDefault(field, _.get(data, fieldName))
+      if (!_.isEqual(value, _.get(originalData, fieldName))) {
+        const obj = {}
+        _.set(obj, fieldName, _.isUndefined(value) ? null : value)
+        return obj
+      }
+      return value
+    },
+    getDataToUpload(resource, originalRecord, record, uploadObject = {}, allAttachments = [], isParagraph = false) {
+      const schema = _.get(resource, 'schema', [])
+      const attachmentFields = _.get(resource, '_attachments', [])
+      _.each(schema, (field) => {
+        let fieldValue = this.getFieldValue(originalRecord, record, field)
+        if (_.includes(attachmentFields, field.field)) {
+          let attachmentsArray = _.get(fieldValue, field.field, fieldValue)
+          if (field.localised) {
+            _.each(this.resource.locales, (locale)=> {
+              _.each(_.get(attachmentsArray, locale, []), (attachment)=> {
+                allAttachments.push(attachment)
+              })
+            })
+          } else {
+            if (isParagraph)  {
+              attachmentsArray = _.get(record, field.field, [])
+            }
+            _.each(attachmentsArray, (attachment)=> {
+              allAttachments.push(attachment)
+            })
+          }
+          return
+        } else if (field.input === 'paragraph' && !_.isUndefined(fieldValue)) {
+          const paragraphs = _.get(fieldValue, field.field, [])
+          if (!paragraphs) {
+            return
+          }
+          if (paragraphs.length !== 0) {
+            const newFieldValue = {}
+            _.each(paragraphs, (paragraph)=> {
+              const paragraphSchema = ResourceService.getParagraphSchema(paragraph._type)
+              const test = this.getDataToUpload(paragraphSchema, originalRecord, paragraph, {}, allAttachments, true)
+              const obj = test.uploadObject
+              obj._type = paragraph._type
+              const array = _.get(newFieldValue, field.field, [])
+              array.push(obj)
+              _.set(newFieldValue, field.field, array)
+            })
+            fieldValue = newFieldValue
+          } else {
+            fieldValue = undefined
+          }
+        }
+        uploadObject = _.extend(uploadObject, fieldValue)
+      })
+      return {uploadObject, allAttachments}
     },
     async createUpdateClicked () {
       await this.checkFormValid()
       if (!this.formValid) {
         return this.handleFormNotValid()
       }
-      const uploadObject = {}
-      _.each(this.resource.schema, (field) => {
-        if (_.includes(this.fileInputTypes, field.input)) {
-          return
-        }
-        const isLocalised = this.resource.locales && (field.localised || _.isUndefined(field.localised))
-        if (isLocalised) {
-          this.updateLocalisedField(uploadObject, field)
-        } else {
-          const fieldName = field.field
-          let value = this.fieldValueOrDefault(field, _.get(this.editingRecord, fieldName))
-          if (!_.isEqual(value, _.get(this.record, fieldName))) {
-            value = _.isUndefined(value) ? null : value
-            _.set(uploadObject, fieldName, value)
-          }
-        }
-      })
-      const newAttachments = _.filter(this.editingRecord._attachments, item => !item._id)
+      // console.warn('BEFORE ---', _.cloneDeep(this.editingRecord))
+      const { uploadObject, allAttachments } = this.getDataToUpload(this.resource, this.record, this.editingRecord)
+      // console.warn('UPLOAD OBJECT', uploadObject)
+      // console.warn('All ATTACHMENTS', allAttachments)
+      const newAttachments = _.filter(allAttachments, item => !item._id)
+      if (!_.isEmpty(allAttachments)) {
+        console.info('All attachments ', allAttachments)
+      }
       if (!_.isEmpty(newAttachments)) {
         console.info('New attachments ', newAttachments)
       }
       if (!this.formValid) {
         return this.handleFormNotValid()
       }
-      console.info('UploadObject', uploadObject)
       if (_.isUndefined(this.editingRecord._id)) {
         return this.createRecord(uploadObject, newAttachments)
       }
-      this.updateRecord(uploadObject, newAttachments)
+      this.updateRecord(uploadObject, newAttachments, allAttachments)
     },
     async createRecord (uploadObject, newAttachments) {
       this.$loading.start('create-record')
       try {
-        const data = await RequestService.post(`../api/${this.resource.title}`, uploadObject)
+        let data = await RequestService.post(`../api/${this.resource.title}`, uploadObject)
         await this.uploadAttachments(data._id, newAttachments)
         this.notify(TranslateService.get('TL_RECORD_CREATED', null, { id: data._id }))
         this.$emit('updateRecordList', data)
@@ -311,29 +348,36 @@ export default {
       }
       this.$loading.stop('create-record')
     },
-    async updateRecord (uploadObject, newAttachments) {
+    async handleAttachmentsUpdates(previousData, currentData, uploadObject, newAttachments, allAttachments) {
+      await this.uploadAttachments(this.editingRecord._id, newAttachments)
+      const newAttachmentsIds = _.map(newAttachments, '_id')
+      const updatedAttachments = _.filter(allAttachments, item => {
+        return item._id && !_.includes(newAttachmentsIds, item._id) && (_.get(item, 'cropOptions.updated', false) || _.get(item, 'orderUpdated', false))
+      })
+      if (!_.isEmpty(updatedAttachments)) {
+        // console.warn('UPDATED ATTACHMENTS = ', _.map(updatedAttachments, a => `${a.order}-${a._filename}`))
+        await this.updateAttachments(this.editingRecord._id, updatedAttachments)
+      }
+      const removedAttachments = _.filter(previousData.allAttachments, item => !_.find(currentData.allAttachments, { _id: item._id }))
+      if (!_.isEmpty(removedAttachments)) {
+        // console.warn('REMOVED ATTACHMENTS = ', removedAttachments)
+        await this.removeAttachments(this.editingRecord._id, removedAttachments)
+      }
+    },
+    async updateRecord (uploadObject, newAttachments, allAttachments) {
       this.$loading.start('update-record')
       try {
         let data = this.editingRecord
+        const previousData = this.getDataToUpload(this.resource, {}, this.record)
+        const currentData = this.getDataToUpload(this.resource, {}, this.editingRecord)
+        await this.handleAttachmentsUpdates(previousData, currentData, uploadObject, newAttachments, allAttachments)
+        const url = `../api/${this.resource.title}/${this.editingRecord._id}`
         if (!_.isEmpty(uploadObject)) {
           console.info('Will send', uploadObject)
-          data = await RequestService.put(`../api/${this.resource.title}/${this.editingRecord._id}`, uploadObject)
-        }
-        await this.uploadAttachments(data._id, newAttachments)
-        const newAttachmentsIds = _.map(newAttachments, '_id')
-        const updatedAttachments = _.filter(this.editingRecord._attachments, item => {
-          return item._id && !_.includes(newAttachmentsIds, item._id) && (_.get(item, 'cropOptions.updated', false) || _.get(item, 'orderUpdated', false))
-        })
-        if (!_.isEmpty(updatedAttachments)) {
-          console.warn('UPDATED ATTACHMENTS = ', _.map(updatedAttachments, a => `${a.order}-${a._filename}`))
-          await this.updateAttachments(data._id, updatedAttachments)
-        }
-        const removedAttachments = _.filter(this.record._attachments, item => !_.find(this.editingRecord._attachments, { _id: item._id }))
-        // console.warn('record attachments', this.record._attachments)
-        // console.warn('editingRecord attachments', this.editingRecord._attachments)
-        if (!_.isEmpty(removedAttachments)) {
-          console.warn('REMOVED ATTACHMENTS = ', _.map(removedAttachments, a => `${a.order}-${a._name}-${a._filename}`), removedAttachments)
-          await this.removeAttachments(data._id, removedAttachments)
+          data = await RequestService.put(url, uploadObject)
+        } else {
+          data = await RequestService.get(url)
+          // data = await RequestService.get(url)
         }
         this.notify(TranslateService.get('TL_RECORD_UPDATED', null, { id: this.editingRecord._id }))
         this.$emit('updateRecordList', data)
@@ -356,40 +400,15 @@ export default {
       return _.filter(attachments, (attachment) => _.get(attachment, 'cropOptions.updated', false))
     },
     updateFields (value, model) {
-      if (!this.isAttachmentField(model)) {
-        if (!model || _.isUndefined(model)) {
-          // console.info('No model found for value', value)
-          return
-        }
-        return _.set(this.editingRecord, model, value)
+      if (!model || _.isUndefined(model)) {
+        // console.info('No model found for value', value)
+        return
       }
-      const updatedCroppedAttachments = this.getUpdatedAttachments(value)
-      console.info(`Will update attachment ${model}`, value)
-      let attachmentsToFindFrom = value
-      if (updatedCroppedAttachments.length > 0) {
-        attachmentsToFindFrom = updatedCroppedAttachments
-      }
-      this.editingRecord._attachments = _.compact(_.map(_.get(this.editingRecord, '_attachments', []), (attachment) => {
-        let nameToFind = attachment._name
-        const locale = _.get(attachment, '_fields.locale', false)
-        if (locale) {
-          nameToFind = `${locale}.${nameToFind}`
-        }
-        const updatedAttachment = _.find(attachmentsToFindFrom, {_name: nameToFind})
-        if (_.isUndefined(updatedAttachment) && nameToFind === model) {
-          return false
-        }
-        return _.isUndefined(updatedAttachment) ? attachment : updatedAttachment
-      }))
-      _.each(value, (attachment) => {
-        // NOTE: Adds new attachments
-        if (_.isUndefined(_.find(this.editingRecord._attachments, {_name: attachment._name, order: attachment.order}))) {
-          this.editingRecord._attachments.push(attachment)
-        }
-      })
-      console.log('attachments are now: ', value, this.editingRecord._attachments)
+      _.set(this.editingRecord, model, value)
+      console.warn(`Updated ${model} in record`, value, _.cloneDeep(this.editingRecord))
     },
     onModelUpdated (value, model) {
+      // console.warn('ON MODEL UPDATED', model, value, _.cloneDeep(this.editingRecord))
       this.updateFields(value, model)
       this.checkDirty()
     },
@@ -400,15 +419,7 @@ export default {
     },
     checkDirty () {
       _.each(this.originalFieldList, (field) => {
-        let isEqual = true
-        if (_.includes(['AttachmentView', 'ImageView'], field.type)) {
-          const { key, locale } = this.getKeyLocale(field)
-          const list1 = _.filter(this.record._attachments, attachment => attachment._name === key && (attachment._fields && attachment._fields.locale) === locale)
-          const list2 = _.filter(this.editingRecord._attachments, attachment => attachment._name === key && (attachment._fields && attachment._fields.locale) === locale)
-          isEqual = _.isEqual(list1, list2)
-        } else {
-          isEqual = _.isEqual(_.get(this.record, field.model), _.get(this.editingRecord, field.model))
-        }
+        let isEqual = _.isEqual(_.get(this.record, field.model), _.get(this.editingRecord, field.model))
         field.labelClasses = isEqual ? '' : 'dirty'
       })
     },
@@ -421,7 +432,7 @@ export default {
       const options = {}
       const list = schema.model.split('.')
       if (schema.localised) {
-        options.locale = list.shift()
+        options.locale = list.pop()
       }
       options.key = list.join('.')
       return options

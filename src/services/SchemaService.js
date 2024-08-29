@@ -9,28 +9,6 @@ const TranslateService = window.TranslateService || TranslateServiceLib
 class SchemaService {
   constructor () {
     this.typeMapper = FormService.typeMapper
-    this.paragraphsDefaultTypes = [
-      'string',
-      'text',
-      'password',
-      'email',
-      'url',
-      'number',
-      'double',
-      'integer',
-      'checkbox',
-      'date',
-      'time',
-      'datetime',
-      'pillbox',
-      'json',
-      'code',
-      'wysiwyg',
-      'object',
-      'color',
-      'image',
-      'file'
-    ]
   }
 
   getSchemaFields (schema, resource, locale, userLocale, disabled, extraSources, rootView) {
@@ -40,7 +18,7 @@ class SchemaService {
       const label = `${name || field.field}${isLocalised ? ` (${TranslateService.get(`TL_${locale.toUpperCase()}`)})` : ''}`
       const schema = _.extend({}, this.typeMapper[field.input], {
         label,
-        model: isLocalised ? `${locale}.${field.field}` : field.field,
+        model: isLocalised ? `${field.field}.${locale}` : field.field,
         originalModel: field.field,
         placeholder: label,
         disabled: disabled || _.get(field, 'options.disabled', false),
@@ -59,11 +37,15 @@ class SchemaService {
       if (field.input === 'paragraph') {
         schema.key = field.key
       }
+      if (_.get(field, 'paragraphKey', false)) {
+        schema.paragraphKey = field.paragraphKey
+        schema.paragraphType = field.paragraphType
+      }
       if ((field.input === 'file') && _.get(schema, 'maxCount', false) === false) {
         schema.maxCount = Infinity
       } else if (field.input === 'select' && _.get(schema, 'labels', false)) {
         schema.selectOptions.label = _.map(schema.labels, (label, value) => {
-          return { value, text: _.get(label, `${locale}`, label) }
+          return { value, text: _.get(label, locale, label) }
         })
       } else if (field.input === 'multiselect' && _.get(schema, 'labels', false)) {
         if (!_.isObject(_.first(field.source))) {
@@ -122,7 +104,7 @@ class SchemaService {
     if (firstField) {
       key = firstField.field
       if (relatedSchema.locales && locale && (firstField.localised || _.isUndefined(firstField.localised))) {
-        key = `${locale}.${key}`
+        key = `${key}.${locale}`
       }
     }
     fields[id].values = cachedData || []
@@ -166,6 +148,7 @@ class SchemaService {
       }
       let label = _.get(resource, `groups.${currentPath}.label`, key)
       label = TranslateService.get(label)
+      // console.warn(`Will get fields for group ${label}`)
       return _.extend({}, this.typeMapper.group, {
         label,
         key,

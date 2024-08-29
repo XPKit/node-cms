@@ -44,8 +44,8 @@ const logger = new (require(path.join(__dirname, 'lib/logger')))()
 let options = {
   apiVersion: 2,
   dbEngine: {
-    type: 'mongodb',
-    url: `${process.env.XPKIT_HOST || '127.0.0.1'}/node-cms`
+    type: ''
+    // url: `${process.env.XPKIT_HOST || '127.0.0.1'}/node-cms`
   }
 }
 

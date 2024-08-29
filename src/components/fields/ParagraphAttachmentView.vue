@@ -4,12 +4,12 @@
       elevation="0" :class="{ 'drag-and-drop': dragover }"
       @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
     >
-      <!-- <field-label :schema="schema" /> -->
+      <field-label :schema="schema" />
       <v-file-input
         ref="input" :rules="getRules()" prepend-icon="" flat single-line
         :accept="model.input === 'image'? 'image/*': '*'" :clearable="false" :placeholder="getPlaceholder()" :label="getPlaceholder()"
         density="compact" :variant="getVariant()" rounded persistent-placeholder :multiple="isForMultipleImages()" :disabled="isForMultipleImages() && isFieldDisabled()"
-        @change="onUploadChanged"
+        hide-details @change="onUploadChanged"
       >
         <template #selection />
       </v-file-input>
@@ -50,13 +50,6 @@ export default {
       isForParagraph: true,
       items: _.get(this.model, this.schema.model, []),
       attachments: []
-    }
-  },
-  watch: {
-    'schema.model': function () {
-      this.items = _.get(this.model, this.schema.model, [])
-      this.attachments = this.formatItems()
-      // console.warn('changed !', this.attachments)
     }
   },
   mounted () {

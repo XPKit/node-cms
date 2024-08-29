@@ -1,7 +1,7 @@
 <template>
   <div class="code-wrapper">
     <div class="label">{{ schema.label }}</div>
-    <codemirror v-if="isReady" ref="input" v-model:value="value" :style="getStyle()" :options="cmOption" @input="onChangeData" />
+    <codemirror v-if="isReady" ref="input" v-model:value="_value" :style="getStyle()" :options="cmOption" @input="onChangeData" />
   </div>
 </template>
 
@@ -47,8 +47,8 @@ export default {
   watch: {
   },
   mounted () {
-    if (_.isObject(this.value)) {
-      this.value = ''
+    if (_.isObject(this._value)) {
+      this._value = ''
     }
     if (_.get(this.cmOption, 'mode', false) === 'json') {
       this.cmOption.mode = 'javascript'

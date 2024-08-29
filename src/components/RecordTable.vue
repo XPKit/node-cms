@@ -286,7 +286,7 @@ export default {
         const isLocalised = this.resource.locales && (field.localised || _.isUndefined(field.localised))
         if (isLocalised) {
           _.each(this.resource.locales, (locale) => {
-            const fieldName = `${locale}.${field.field}`
+            const fieldName = `${field.field}.${locale}`
             const value = this.getFieldValue(record, fieldName, field)
             if (_.isEqual(value, _.get(oldRecord, fieldName))) {
               return
@@ -387,7 +387,7 @@ export default {
         return attachment && attachment._filename
       }
       if (this.resource.locales && (field.localised || _.isUndefined(field.localised))) {
-        return _.get(item, `${this.locale}.${field.field}`)
+        return _.get(item, `${field.field}.${this.locale}`)
       }
       return _.get(item, field.field)
     },

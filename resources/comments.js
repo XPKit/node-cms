@@ -32,45 +32,6 @@ exports = (module.exports = {
       field: 'wysiwyg',
       input: 'wysiwyg',
       localised: true
-    },
-    {
-      label: 'Paragraph',
-      field: 'paragraph',
-      input: 'paragraph',
-      localised: false,
-      options: {
-        types: [
-          'text',
-          'file',
-          'image',
-          {
-            label: 'Select paragraph author',
-            input: 'select',
-            source: 'authors',
-            options: {
-              customLabel: '{{name}}'
-            }
-          }
-        ]
-      }
-    },
-    {
-      label: 'Pillbox Paragraph',
-      field: 'pillboxParagraph',
-      input: 'paragraph',
-      localised: false,
-      options: {
-        types: ['pillbox']
-      }
-    },
-    {
-      label: 'Localized Paragraph',
-      field: 'localizedParagraph',
-      input: 'paragraph',
-      localised: true
-      // options: {
-      //   types: ['string']
-      // }
     }
   ],
   locales: [

@@ -16,7 +16,6 @@ For convenience, `node-cms` automatically handles `document` and `attachment` `i
       _id: 'hrk5v51ihrk5v4zpydyzwi06',   // a unique 24char key, comprised of machine-id, timestamp and random number
       _createdAt: 1392183087174,         // UTC timestamp
       _updatedAt: 1392183087174,         // UTC timestamp
-      _publishedAt: null,                // UTC timestamp, convenience
       _doc: {                            // actual document
         _id: 'hrk5v51ihrk5v4zpydyzwi06', // normalisation
         },
@@ -40,7 +39,6 @@ curl -XPOST http://localhost:3000/api/articles -H 'Content-type: application/jso
       "_id": "hrk5v51ihrk5v4zpydyzwi06",
       "_createdAt": 1392183087174,
       "_updatedAt": 1392183087174,
-      "_publishedAt": null,
       "_doc": {
         "_id": "hrk5v51ihrk5v4zpydyzwi06",
         "hello": "world"
@@ -66,7 +64,6 @@ curl http://localhost:3000/api/articles
       "_id": "hrk5v51ihrk5v4zpydyzwi06",
       "_createdAt": 1392183087174,
       "_updatedAt": 1392183087174,
-      "_publishedAt": null,
       "_doc": {
         "_id": "hrk5v51ihrk5v4zpydyzwi06",
         "hello": "world"

@@ -53,7 +53,7 @@ export default {
       _.forEach(fields, (field) => {
         if (_.get(field, 'options.breakdown', false)) {
           _.forEach(this.resource.locales, (locale, localeIndex) => {
-            if (field.model === `${locale}.${field.originalModel}`) {
+            if (field.model === `${field.originalModel}.${locale}`) {
               field.localised = false
               field.options.localeIndex = localeIndex + 1
             } else {
@@ -61,7 +61,7 @@ export default {
               newField.localised = false
               const name = field.originalModel && TranslateService.get(field.originalModel)
               newField.label = `${name} (${TranslateService.get(`TL_${locale.toUpperCase()}`)})`
-              newField.model = `${locale}.${field.originalModel}`
+              newField.model = `${field.originalModel}.${locale}`
               _.set(newField, 'options.localeIndex', localeIndex + 1)
               newFields.push(newField)
             }

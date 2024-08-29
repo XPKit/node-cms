@@ -4,12 +4,23 @@ exports = (module.exports = {
       field: 'name',
       input: 'string',
       required: false,
+      localised: true
+    },
+    {
+      label: 'Image label',
+      field: 'simpleImage',
+      input: 'image',
       localised: false
+    },
+    {
+      label: 'Image label',
+      field: 'imageLocalised',
+      input: 'image'
     },
     {
       label: 'Test Paragraph 1',
       field: 'testParagraph1',
-      input: 'newParagraph',
+      input: 'paragraph',
       options: {
         types: ['testParagraphs'],
         maxCount: 6

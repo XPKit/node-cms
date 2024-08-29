@@ -33,7 +33,7 @@ import WysiwygField from '@c/fields/Wysiwyg.vue'
 import ParagraphView from '@c/fields/ParagraphView.vue'
 import ImageView from '@c/fields/ImageView.vue'
 import AttachmentView from '@c/fields/AttachmentView.vue'
-import ParagraphAttachmentView from '@c/fields/ParagraphAttachmentView.vue'
+// import ParagraphAttachmentView from '@c/fields/ParagraphAttachmentView.vue'
 import CustomDatetimePicker from '@c/fields/CustomDatetimePicker.vue'
 import CustomMultiSelect from '@c/fields/CustomMultiSelect.vue'
 import CustomInput from '@c/fields/CustomInput.vue'
@@ -79,7 +79,7 @@ app.use(router)
   .component('CustomInput', CustomInput)
   .component('CustomTextarea', CustomTextarea)
   .component('CustomCheckbox', CustomCheckbox)
-  .component('ParagraphAttachmentView', ParagraphAttachmentView)
+  // .component('ParagraphAttachmentView', ParagraphAttachmentView)
   .component('ParagraphView', ParagraphView)
   .component('CustomTreeView', CustomTreeView)
   .component('CustomCode', CustomCode)

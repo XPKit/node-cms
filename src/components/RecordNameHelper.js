@@ -39,7 +39,7 @@ export default {
         if (displayname === '') {
           const isLocalised = this.resource.locales && (field.localised || _.isUndefined(field.localised))
           if (isLocalised) {
-            displayname = _.get(item, `${this.locale}.${field.field}`)
+            displayname = _.get(item, `${field.field}.${this.locale}`)
           } else {
             displayname = _.get(item, field.field)
           }

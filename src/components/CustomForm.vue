@@ -13,6 +13,7 @@
         </div>
       </template>
       <div v-for="field in schema.fields" v-else :id="getFieldId(field)" :key="field.model" class="field-wrapper" :data-model="field.model" :class="{focused: field.focused === -1}">
+        <!-- <div class="text-red">{{ getFieldType(field) }}</div> -->
         <component :is="getFieldType(field)" :key="field.model" :theme="theme" :paragraph-level="paragraphLevel" :schema="field" :model="model" :form-options="formOptions" :disabled="field.schema && field.schema.disabled" :focused="field.focused" @input="onInput" />
       </div>
     </fieldset>
@@ -57,7 +58,7 @@ export default {
     },
     onFieldSelected (field) {
       _.each(this.schema.fields, (f) => {
-        f.focused = f.model === `${f.localised ? `${TranslateService.locale}.` : ''}${field.field}`
+        f.focused = f.model === `${field.field}${f.localised ? `.${TranslateService.locale}` : ''}`
         if (f.focused) {
           setTimeout(() => {
             f.focused = -1

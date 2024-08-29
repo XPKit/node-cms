@@ -294,9 +294,10 @@ class ImportManager {
 
             if (item.locales) {
               _.each(item.locales, (locale) => {
-                let v = _.get(gsheetObj, `${locale}.${item.field}`)
+                let v = _.get(gsheetObj, `
+                  ${item.field}.${locale}`)
                 v = h.convertData(v, item.input)
-                _.set(obj, `${locale}.${item.field}`, v)
+                _.set(obj, `${item.field}.${locale}`, v)
               })
             } else {
               let v = _.get(gsheetObj, item.field)
@@ -599,13 +600,13 @@ class ImportManager {
             }
             if (field.locales) {
               _.each(field.locales, locale => {
-                let v = _.get(item, `${locale}.${field.field}`)
+                let v = _.get(item, `${field.field}.${locale}`)
                 if (_.isEmpty(v)) {
-                  return _.set(item, `${locale}.${field.field}`, null)
+                  return _.set(item, `${field.field}.${locale}`, null)
                 }
                 const relationUniqueKeys = this.api(field.source).getUniqueKeys()
                 v = h.convertKeyToId(v, field.input, this.cmsRecordsMap[field.source], field.source, relationUniqueKeys, errors)
-                _.set(item, `${locale}.${field.field}`, v)
+                _.set(item, `${field.field}.${locale}`, v)
               })
             } else {
               let v = _.get(item, field.field)

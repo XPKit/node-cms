@@ -27,7 +27,7 @@
         <v-card v-for="(a, i) in getAttachments()" :key="getKey(a)" :theme="theme" elevation="0" class="preview-attachment" :class="{odd: i % 2 !== 0}">
           <v-tooltip location="right" eager>
             <template #activator="{ props }">
-              <v-chip variant="outlined" class="filename" closable close-icon="mdi-close-circle-outline" v-bind="props" @click:close="removeImage(a)">#{{ i + 1 }} - {{ $filters.truncate(a._filename,10) }} ({{ imageSize(a) }})</v-chip>
+              <v-chip variant="outlined" class="filename" closable close-icon="mdi-close-circle-outline" v-bind="props" @click:close="removeImage(a, i)">#{{ i + 1 }} - {{ $filters.truncate(a._filename,10) }} ({{ imageSize(a) }})</v-chip>
             </template>
             <span>{{ a._filename }}</span>
           </v-tooltip>
@@ -43,7 +43,7 @@
     <div v-else-if="attachment()" class="preview-single-attachment">
       <v-tooltip location="right" eager>
         <template #activator="{ props }">
-          <v-chip class="filename" closable v-bind="props" @click:close="removeImage(attachment())">{{ $filters.truncate(attachment()._filename,10) }} ({{ imageSize(attachment()) }})</v-chip>
+          <v-chip class="filename" closable v-bind="props" @click:close="removeImage(attachment(), 0)">{{ $filters.truncate(attachment()._filename,10) }} ({{ imageSize(attachment()) }})</v-chip>
         </template>
         <span>{{ attachment()._filename }}</span>
       </v-tooltip>

@@ -3,6 +3,7 @@ import TranslateServiceLib from '@s/TranslateService'
 import SchemaService from '@s/SchemaService'
 import Notification from '@m/Notification.vue'
 import RequestService from '@s/RequestService'
+import pAll from 'p-all'
 
 const TranslateService = window.TranslateService || TranslateServiceLib
 
@@ -11,42 +12,42 @@ export default {
   methods: {
     async uploadAttachments (id, attachments) {
       this.$loading.start('uploadAttachments')
+      const url = `../api/${this.resource.title}/${id}/attachments`
+      console.warn('uploadAttachments', id, attachments)
       try {
-        for (const attachment of attachments) {
-          const data = new FormData()
-          data.append(attachment._name, attachment.file)
-          if (attachment._fields.locale) {
-            data.append('locale', attachment._fields.locale)
-          }
-          if (attachment._filename) {
-            data.append('_filename', attachment._filename)
-          }
-          if (attachment._fields.fileItemId) {
-            data.append('fileItemId', attachment._fields.fileItemId)
-          }
-          if (_.get(attachment, 'cropOptions', false)) {
-            console.warn('detected cropOptions, will add it to the request')
-            data.append('cropOptions', JSON.stringify(attachment.cropOptions))
-          }
-          if (_.get(attachment, 'orderUpdated', false) && _.get(attachment, 'order', false)) {
-            console.warn('detected orderUpdated, will add it to the request')
-            data.append('order', attachment.order)
-          }
-          await RequestService.post(`../api/${this.resource.title}/${id}/attachments`, data)
-        }
+        await pAll(_.map(attachments, attachment => {
+          return async () => {
+            const data = new FormData()
+            data.append(attachment.field, attachment.file)
+            if (_.get(attachment, '_fields.locale', false)) {
+              data.append('locale', attachment._fields.locale)
+            }
+            if (attachment._filename) {
+              data.append('_filename', attachment._filename)
+            }
+            if (_.get(attachment, 'cropOptions', false)) {
+              console.warn('detected cropOptions, will add it to the request')
+              data.append('cropOptions', JSON.stringify(attachment.cropOptions))
+            }
+            if (_.get(attachment, 'orderUpdated', false) && _.get(attachment, 'order', false)) {
+              console.warn('detected orderUpdated, will add it to the request')
+              data.append('order', attachment.order)
+            }
+            console.warn('Will upload attachment', attachment)
+            await RequestService.post(url, data)
+          }}), {concurrency: 5})
       } catch (error) {
         console.error('Error happen during uploadAttachments:', error)
       }
       this.$loading.stop('uploadAttachments')
     },
+    formatAttachments(attachments, fieldsToKeep = ['_id', 'cropOptions', 'order', '_name']) {
+      return _.map(attachments, (attachment)=> _.pick(attachment, fieldsToKeep))
+    },
     async updateAttachments (id, attachments) {
       this.$loading.start('updateAttachments')
       try {
-        for (const [i, attachment] of attachments.entries()) {
-          const cropOptions = _.omit(_.get(attachment, 'cropOptions', {}), ['updated'])
-          const order = _.get(attachment, 'order', i + 1)
-          await RequestService.put(`../api/${this.resource.title}/${id}/attachments/${attachment._id}`, {cropOptions, order})
-        }
+        await RequestService.put(`../api/${this.resource.title}/${id}/attachments`, this.formatAttachments(attachments))
       } catch (error) {
         console.error('Error happen during updateAttachments:', error)
       }
@@ -55,9 +56,7 @@ export default {
     async removeAttachments (id, attachments) {
       this.$loading.start('remove-attachments')
       try {
-        for (const attachment of attachments) {
-          await RequestService.delete(`../api/${this.resource.title}/${id}/attachments/${attachment._id}`)
-        }
+        await RequestService.delete(`../api/${this.resource.title}/${id}/attachments`, this.formatAttachments(attachments, ['_id']))
       } catch (error) {
         console.error('Error happen during removeAttachments:', error)
       }
@@ -125,7 +124,6 @@ export default {
           layout: _.cloneDeep(this.resource.layout)
         })
         this.$loading.stop('loading-schema')
-        console.warn('AbstractEditorView - schema ', this.schema)
         this.originalFieldList = fields
       } catch (error) {
         console.error('AbstractEditorView - updateSchema - Error happen during updateSchema:', error)
