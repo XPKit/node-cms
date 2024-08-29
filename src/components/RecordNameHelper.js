@@ -19,7 +19,7 @@ export default {
           displayname = attachment && attachment._filename
         } else if (field.input === 'select') {
           let value = _.get(item, field.field)
-          if (_.isString(value)) {
+          if (_.isString(value) && _.isString(field.source)) {
             value = _.find(ResourceService.get(field.source), {_id: value})
             if (value) {
               _.each(field.options && field.options.extraSources, (source, field) => {
