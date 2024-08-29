@@ -40,12 +40,8 @@ export default {
       }
       return `${a.url}?resize=autox100`
     },
-    isSameAttachment (attachment) {
-      const { key, locale } = this.getKeyLocale()
-      return attachment._name === key && (attachment._fields && attachment._fields.locale) === locale
-    },
     attachment () {
-      return _.find(this.attachments, attachment => this.isSameAttachment(attachment))
+      return _.first(this.attachments)
     },
     getAttachments () {
       return this._value || this.attachments
@@ -112,6 +108,9 @@ export default {
       const kbLimit = limit / 1024
       return kbLimit > 1000 ? `${kbLimit / 1000} MB` : `${kbLimit} KB`
     },
+    getAttachmentFilename(attachment) {
+      return attachment._filename || (attachment._fields && attachment._fields._filename)
+    },
     removeImage (attachment, index) {
       console.warn(`remove image -BEFORE ${index}`,_.cloneDeep(this.attachments[index]))
       _.remove(this.attachments, (val, i)=> i === index)
@@ -150,7 +149,7 @@ export default {
         maxCount = 1
       }
       const totalNbFiles = this.getAttachments().length + files.length
-      if (maxCount > 1 && totalNbFiles > maxCount) {
+      if (maxCount >= 1 && totalNbFiles > maxCount) {
         console.info(`Reached max number of files for ${this.schema.paragraphKey || this.schema.model}`, totalNbFiles, maxCount)
         files = _.take(files, files.length - (totalNbFiles - maxCount))
       }

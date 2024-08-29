@@ -203,7 +203,9 @@ export default {
         formValid = false
       }
       const firstInvalidField = _.find(this.$refs.vfg.items, (input) => !input.isValid)
-      console.error('First invalid field', firstInvalidField)
+      if (!_.isUndefined(firstInvalidField)) {
+        console.error('First invalid field', firstInvalidField)
+      }
       if (!_.isUndefined(firstInvalidField)) {
         formValid = false
         document.querySelector(`#${firstInvalidField.id}`).focus()

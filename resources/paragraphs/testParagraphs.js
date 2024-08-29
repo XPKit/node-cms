@@ -15,7 +15,10 @@ exports = (module.exports = {
     {
       label: 'Image label',
       field: 'image',
-      input: 'image'
+      input: 'image',
+      options: {
+        maxCount: 1
+      }
     },
     {
       label: 'Image label',

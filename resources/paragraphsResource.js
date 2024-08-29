@@ -10,6 +10,9 @@ exports = (module.exports = {
       label: 'Image label',
       field: 'simpleImage',
       input: 'image',
+      options: {
+        maxCount: 1
+      },
       localised: false
     },
     {
