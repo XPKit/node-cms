@@ -19,20 +19,24 @@ export default {
           displayname = attachment && attachment._filename
         } else if (field.input === 'select') {
           let value = _.get(item, field.field)
-          if (_.isString(value) && _.isString(field.source)) {
-            value = _.find(ResourceService.get(field.source), {_id: value})
-            if (value) {
-              _.each(field.options && field.options.extraSources, (source, field) => {
-                const subId = _.get(value, field)
-                if (_.isString(subId)) {
-                  _.set(value, field, _.find(ResourceService.get(source), {_id: subId}))
-                }
-              })
+          if (_.isString(value)) {
+            if (_.isString(field.source)) {
+              value = _.find(ResourceService.get(field.source), {_id: value})
+              if (value) {
+                _.each(field.options && field.options.extraSources, (source, field) => {
+                  const subId = _.get(value, field)
+                  if (_.isString(subId)) {
+                    _.set(value, field, _.find(ResourceService.get(source), {_id: subId}))
+                  }
+                })
+              }
+            } else {
+              displayname = value
             }
           }
           if (field.options && field.options.customLabel) {
             displayname = Mustache.render(field.options.customLabel, value || {})
-          } else {
+          } else if (!_.isString(value)) {
             displayname = _.get(value, _.chain(value).keys().first().value(), '')
           }
         }
