@@ -238,11 +238,11 @@ html body {
   --notification-success-color: #{$imag-black};
   --notification-error-color: #{$imag-orange};
 
-  --paragraph-top-bar-background: #{$imag-black};
-  --paragraph-top-bar-color: #{$imag-white};
+  --paragraph-top-bar-background: #{$imag-light-grey};
+  --paragraph-top-bar-color: #{$imag-black};
   --paragraph-top-bar-background-level-2: #{$imag-light-grey};
   --paragraph-top-bar-color-level-2: #{$imag-black};
-  --paragraph-top-bar-background-level-3: #{$imag-light-grey-2};
+  --paragraph-top-bar-background-level-3: #{$imag-light-grey};
   --paragraph-top-bar-color-level-3: #{$imag-black};
 
   --switch-field-background: #{$imag-white};
@@ -335,11 +335,11 @@ html body {
     --notification-success-color: #{$imag-white};
     --notification-error-color: #{$imag-orange};
 
-    --paragraph-top-bar-background: #{$imag-black};
+    --paragraph-top-bar-background: #{$imag-dark-purple};
     --paragraph-top-bar-color: #{$imag-white};
     --paragraph-top-bar-background-level-2: #{$imag-dark-purple};
     --paragraph-top-bar-color-level-2: #{$imag-white};
-    --paragraph-top-bar-background-level-3: #{$imag-light-dark-purple};
+    --paragraph-top-bar-background-level-3: #{$imag-dark-purple};
     --paragraph-top-bar-color-level-3: #{$imag-white};
 
     --switch-field-background: #{transparent};

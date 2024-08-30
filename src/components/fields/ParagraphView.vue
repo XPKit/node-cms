@@ -1,5 +1,21 @@
 <template>
   <div class="paragraph-view">
+    <div class="paragraph-footer">
+      <v-autocomplete
+        ref="input"
+        :ripple="false" :menu-props="menuProps"
+        :theme="theme" transition="none"
+        :model-value="selectedType" :items="types" item-title="label" item-value="label"
+        hide-details rounded density="compact" persistent-placeholder variant="solo-filled" flat
+        :disabled="disabled || schema.disabled" menu-icon="mdi-chevron-down" @update:model-value="onChangeType"
+      >
+        <template #prepend><field-label :schema="schema" /></template>
+        <template #label />
+      </v-autocomplete>
+      <div class="add-btn-wrapper">
+        <v-btn elevation="0" class="add-new-item" rounded :disabled="blockMoreItems()" @click="onClickAddNewItem"><span>{{ $filters.translate('TL_ADD') }}</span></v-btn>
+      </div>
+    </div>
     <draggable
       v-if="schema && subResourcesLoaded" :key="`${schema.model}-${key}`" :list="items"
       :class="{disabled}" draggable=".item" v-bind="dragOptions" handle=".handle" :group="`${schema.model}-${key}`" ghost-class="ghost" @end="onEndDrag" @start="dragging = true"
@@ -18,22 +34,6 @@
         </div>
       </v-card>
     </draggable>
-    <div class="paragraph-footer">
-      <v-autocomplete
-        ref="input"
-        :ripple="false" :menu-props="menuProps"
-        :theme="theme" transition="none"
-        :model-value="selectedType" :items="types" item-title="label" item-value="label"
-        hide-details rounded density="compact" persistent-placeholder variant="solo-filled" flat
-        :disabled="disabled || schema.disabled" menu-icon="mdi-chevron-down" @update:model-value="onChangeType"
-      >
-        <template #prepend><field-label :schema="schema" /></template>
-        <template #label />
-      </v-autocomplete>
-      <div class="add-btn-wrapper">
-        <v-btn elevation="0" class="add-new-item" rounded :disabled="blockMoreItems()" @click="onClickAddNewItem"><span>{{ $filters.translate('TL_ADD') }}</span></v-btn>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -251,6 +251,9 @@ export default {
 @import '@a/scss/variables.scss';
 .paragraph-view {
   width: 100%;
+  border: 2px $paragraph-top-bar-background solid;
+  border-radius: 8px;
+  padding: 8px;
 }
 .item {
   display: flex;
@@ -289,7 +292,7 @@ export default {
   }
   .item-main {
     width: 100%;
-    padding: 16px;
+    padding: 8px;
   }
   .file-item {
     display: flex;
@@ -338,6 +341,9 @@ export default {
   width: 100%;
   justify-content: flex-start;
   gap: 16px;
+}
+.paragraph-footer {
+  margin-bottom: 16px;
 }
 .paragraph-header {
   background-color: $paragraph-top-bar-background;
@@ -403,6 +409,7 @@ export default {
   }
   .v-card {
     background-color: transparent;
+    margin-bottom: 0;
   }
 }
 </style>
