@@ -393,6 +393,11 @@ export default {
       margin-bottom: 0;
     }
   }
+  .paragraph-footer {
+    .field-label {
+      padding-left: 8px;
+    }
+  }
   .custom-checkbox {
     margin-top: 12px;
   }

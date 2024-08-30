@@ -311,12 +311,8 @@ body {
   }
 
   .v-file-input {
-    min-height: 80px;
-    padding: 16px;
-    padding-top: 8px;
-    gap: 10px;
+    min-height: 40px;
     border-radius: 8px !important;
-
     .v-input__slot {
       min-height: 80px !important;
     }

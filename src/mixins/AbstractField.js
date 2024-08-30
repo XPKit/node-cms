@@ -168,10 +168,7 @@ export default {
         if (objGet(this.formOptions, 'validateAfterChanged', false) === true) {
           await this.validate()
         }
-        console.warn('VALUE CHANGED ||||| ', this.schema.paragraphKey, this.schema.model, newValue)
         this.$emit('input', newValue, this.schema.model)
-      } else {
-        console.error('VALUE NOT CHANGED', this.schema.model, oldValue, newValue)
       }
     },
     clearValidationErrors () {

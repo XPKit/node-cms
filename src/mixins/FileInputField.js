@@ -154,7 +154,6 @@ export default {
         files = _.take(files, files.length - (totalNbFiles - maxCount))
       }
       this.attachments = await this.readAllFiles(files)
-      console.warn('onUploadChanged - attachments', this.attachments)
       this._value = this.attachments
     },
     getFieldKey() {
@@ -172,7 +171,6 @@ export default {
         file: _.get(file, '[0]', file),
         data: element.target.result
       }
-      console.warn('ADDED NEW ATTACHMENT - ', newAttachment.field, this.schema)
       if (!_.isUndefined(locale)) {
         newAttachment._fields = {locale}
       }

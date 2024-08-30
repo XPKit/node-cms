@@ -407,7 +407,7 @@ export default {
         return
       }
       _.set(this.editingRecord, model, value)
-      console.warn(`Updated ${model} in record`, value, _.cloneDeep(this.editingRecord))
+      // console.warn(`Updated ${model} in record`, value, _.cloneDeep(this.editingRecord))
     },
     onModelUpdated (value, model) {
       // console.warn('ON MODEL UPDATED', model, value, _.cloneDeep(this.editingRecord))

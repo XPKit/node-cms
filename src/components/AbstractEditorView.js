@@ -13,7 +13,7 @@ export default {
     async uploadAttachments (id, attachments) {
       this.$loading.start('uploadAttachments')
       const url = `../api/${this.resource.title}/${id}/attachments`
-      console.warn('uploadAttachments', id, attachments)
+      // console.warn('uploadAttachments', id, attachments)
       try {
         await pAll(_.map(attachments, attachment => {
           return async () => {
@@ -33,7 +33,7 @@ export default {
               console.warn('detected orderUpdated, will add it to the request')
               data.append('order', attachment.order)
             }
-            console.warn('Will upload attachment', attachment)
+            // console.warn('Will upload attachment', attachment)
             await RequestService.post(url, data)
           }}), {concurrency: 5})
       } catch (error) {

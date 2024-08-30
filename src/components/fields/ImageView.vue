@@ -59,15 +59,17 @@
     </div>
     <template v-else-if="attachment() && isImage()">
       <div v-if="!(schema.width && schema.height)" class="preview-single-attachment">
-        <v-tooltip :theme="theme" location="right" eager>
-          <template #activator="{ props }">
-            <v-chip class="filename" closable v-bind="props" @click:close="removeImage(attachment(), 0)">{{ $filters.truncate(getAttachmentFilename(attachment()),10) }} ({{ imageSize(attachment()) }})</v-chip>
-          </template>
-          <span>{{ attachment()._filename }}</span>
-        </v-tooltip>
-        <div class="image-wrapper">
-          <v-img class="preview" cover :src="getImageSrc()" />
-        </div>
+        <v-card v-for="(a, i) in getAttachments()" :key="getKey(a)" :theme="theme" elevation="0" class="preview-attachment" :class="{odd: i % 2 !== 0}">
+          <v-tooltip :theme="theme" location="right" eager>
+            <template #activator="{ props }">
+              <v-chip variant="outlined" class="filename" closable close-icon="mdi-close-circle-outline" v-bind="props" @click:close="removeImage(attachment(), 0)">{{ $filters.truncate(getAttachmentFilename(attachment()),10) }} ({{ imageSize(attachment()) }})</v-chip>
+            </template>
+            <span>{{ attachment()._filename }}</span>
+          </v-tooltip>
+          <div class="image-wrapper">
+            <v-img class="preview" cover :src="getImageSrc()" />
+          </div>
+        </v-card>
       </div>
       <div v-else class="parent-parent">
         <div class="cropper-parent">
@@ -193,9 +195,17 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@a/scss/variables.scss';
+
 .image-view {
+  border: 2px $paragraph-top-bar-background solid;
+  border-radius: 8px;
+  padding: 8px;
   .v-card {
     background-color: transparent;
+  }
+  .field-label {
+    padding-left: 8px;
   }
   .parent-parent {
     position: relative;
