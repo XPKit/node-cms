@@ -259,13 +259,22 @@ export default {
       }
       const fieldName = field.field
       const value = this.fieldValueOrDefault(field, _.get(data, fieldName))
-      console.warn(`tamer ---- ${field.field}`, value, _.get(originalData, fieldName), originalData)
       const originalValue = _.get(originalData, fieldName)
       if (!_.isEqual(value, originalValue)) {
         const obj = {}
         _.set(obj, fieldName, _.isUndefined(value) ? null : value)
         console.warn(`${field.field} NOT EQUAL`, obj)
         return obj
+      }
+      if (field.required &&
+        (_.isUndefined(value) || (field.input === 'string' && value.length === 0))) {
+        this.formValid = false
+        this.$forceUpdate()
+        this.$nextTick(async () => {
+          await this.checkFormValid()
+        })
+        console.warn('required field empty', field, this.formValid)
+        return
       }
       return value
     },

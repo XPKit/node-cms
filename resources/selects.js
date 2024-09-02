@@ -12,6 +12,17 @@ exports = (module.exports = {
       localised: false
     },
     {
+      field: 'select2',
+      input: 'select',
+      source: [
+        'one',
+        'two',
+        'three'
+      ],
+      localised: false,
+      required: true
+    },
+    {
       label: {
         enUS: 'Type',
         zhCN: '类型'
