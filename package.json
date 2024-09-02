@@ -1,6 +1,6 @@
 {
   "name": "node-cms",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "description": "Content management system, written in node.js, uses leveldb as an asset and content store.",
   "main": "index.js",
   "scripts": {
@@ -51,6 +51,7 @@
     "@tiptap/vue-3": "^2.2.1",
     "@vitejs/plugin-vue": "^5.0.3",
     "@vitejs/plugin-vue-jsx": "^3.1.0",
+    "@vuepic/vue-datepicker": "^9.0.2",
     "abstract-leveldown": "^0.12.4",
     "ansi-html": "0.0.9",
     "auto-bind": "^4.0.0",
@@ -120,6 +121,7 @@
     "sass": "^1.77.8",
     "sift": "^3.2.1",
     "stack-trace": "0.0.10",
+    "stream-mime-type": "^2.0.0",
     "stream-to-array": "^2.3.0",
     "supertest": "^7.0.0",
     "table": "^6.8.1",
@@ -137,7 +139,6 @@
     "vue-virtual-scroller": "^2.0.0-beta.8",
     "vue3-shortkey": "git+ssh://github.com/Zegfault/vue3-shortkey",
     "vuetify": "^3.5.1",
-    "@vuepic/vue-datepicker": "^9.0.2",
     "ws": "^8.13.0",
     "xlsx": "^0.17.3"
   },
