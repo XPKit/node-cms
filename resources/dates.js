@@ -7,14 +7,6 @@ exports = (module.exports = {
       input: 'date'
     },
     {
-      field: 'test1',
-      input: 'text'
-    },
-    {
-      field: 'test2',
-      input: 'string'
-    },
-    {
       field: 'gdate',
       input: 'date',
       localised: false

@@ -259,9 +259,12 @@ export default {
       }
       const fieldName = field.field
       const value = this.fieldValueOrDefault(field, _.get(data, fieldName))
-      if (!_.isEqual(value, _.get(originalData, fieldName))) {
+      console.warn(`tamer ---- ${field.field}`, value, _.get(originalData, fieldName), originalData)
+      const originalValue = _.get(originalData, fieldName)
+      if (!_.isEqual(value, originalValue)) {
         const obj = {}
         _.set(obj, fieldName, _.isUndefined(value) ? null : value)
+        console.warn(`${field.field} NOT EQUAL`, obj)
         return obj
       }
       return value
@@ -309,7 +312,11 @@ export default {
             fieldValue = undefined
           }
         }
-        uploadObject = _.extend(uploadObject, fieldValue)
+        if (_.isString(fieldValue) && _.get(originalRecord, field.field) === fieldValue) {
+          console.info(`value for field ${field.field} is the same, will not update it`)
+        } else {
+          uploadObject = _.extend(uploadObject, fieldValue)
+        }
       })
       return {uploadObject, allAttachments}
     },
@@ -318,8 +325,8 @@ export default {
       if (!this.formValid) {
         return this.handleFormNotValid()
       }
-      // console.warn('BEFORE ---', _.cloneDeep(this.editingRecord))
-      const { uploadObject, allAttachments } = this.getDataToUpload(this.resource, this.record, this.editingRecord)
+      console.warn('BEFORE ---', _.cloneDeep(this.record))
+      const { uploadObject, allAttachments } = this.getDataToUpload(this.resource, _.cloneDeep(this.record), this.editingRecord)
       // console.warn('UPLOAD OBJECT', uploadObject)
       // console.warn('All ATTACHMENTS', allAttachments)
       const newAttachments = _.filter(allAttachments, item => !item._id)
@@ -370,7 +377,7 @@ export default {
       this.$loading.start('update-record')
       try {
         let data = this.editingRecord
-        const previousData = this.getDataToUpload(this.resource, {}, this.record)
+        const previousData = this.getDataToUpload(this.resource, {}, _.cloneDeep(this.record))
         const currentData = this.getDataToUpload(this.resource, {}, this.editingRecord)
         await this.handleAttachmentsUpdates(previousData, currentData, uploadObject, newAttachments, allAttachments)
         const url = `../api/${this.resource.title}/${this.editingRecord._id}`
