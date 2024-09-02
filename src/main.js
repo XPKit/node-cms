@@ -6,6 +6,8 @@ import JsonViewer from 'vue-json-viewer'
 import VueShortkey from 'vue3-shortkey'
 import VueVirtualScroller from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+import VueDatePicker from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
 import { VueDraggableNext } from 'vue-draggable-next'
 import vuetify from './vuetify.js'
 import '@p/js/main.js'
@@ -95,6 +97,7 @@ app.use(router)
   .component('CmsImport', CmsImport)
   .component('SyncResource', SyncResource)
   .component('Draggable', VueDraggableNext)
+  .component('date-picker', VueDatePicker)
   .use(JsonViewer)
   .use(Loading)
   .use(VueVirtualScroller)

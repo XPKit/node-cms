@@ -193,21 +193,21 @@ let typeMapper = {
     type: 'CustomDatetimePicker',
     format: 'YYYY-MM-DD',
     customDatetimePickerOptions: {
-      format: 'YYYY-MM-DD'
+      placeholder: 'YYYY-MM-DD'
     }
   },
   time: {
     type: 'CustomDatetimePicker',
-    format: 'hh:mm:ss a',
+    format: 'HH:mm:ss a',
     customDatetimePickerOptions: {
-      format: 'hh:mm:ss a'
+      placeholder: 'HH:mm:ss'
     }
   },
   datetime: {
     type: 'CustomDatetimePicker',
-    format: 'YYYY-MM-DD hh:mm:ss a',
+    format: 'YYYY-MM-DD HH:mm:ss',
     customDatetimePickerOptions: {
-      format: 'YYYY-MM-DD hh:mm:ss a'
+      placeholder: 'YYYY-MM-DD HH:mm:ss'
     }
   },
   pillbox: {
