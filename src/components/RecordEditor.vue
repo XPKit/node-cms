@@ -263,7 +263,7 @@ export default {
       if (!_.isEqual(value, originalValue)) {
         const obj = {}
         _.set(obj, fieldName, _.isUndefined(value) ? null : value)
-        console.warn(`${field.field} NOT EQUAL`, obj)
+        // console.warn(`${field.field} NOT EQUAL`, obj)
         return obj
       }
       if (field.required &&

@@ -31,11 +31,25 @@ export default {
     },
     isImage (attachment = false) {
       const a = attachment || this.attachment()
+      // console.warn('isImage', a)
+      let isAnImage = false
+      const attachmentFilename = this.getAttachmentFilename(a)
+      if (attachmentFilename) {
+        _.each(['jpg', 'jpeg', 'png', 'svg'], (type)=> {
+          if (_.endsWith(attachmentFilename, type)) {
+            isAnImage = true
+            return false
+          }
+        })
+        if (isAnImage) {
+          return true
+        }
+      }
       return a && /image/g.test(a._contentType || (a.file && a.file.type))
     },
     getPreviewUrl (attachment = false) {
       const a = attachment || this.attachment()
-      if (a._contentType.indexOf('svg') !== -1) {
+      if (_.get(a, '_contentType', '').indexOf('svg') !== -1) {
         return a.url
       }
       return `${a.url}?resize=autox100`
@@ -112,10 +126,10 @@ export default {
       return attachment._filename || (attachment._fields && attachment._fields._filename)
     },
     removeImage (attachment, index) {
-      console.warn(`remove image -BEFORE ${index}`,_.cloneDeep(this.attachments[index]))
+      // console.warn(`remove image -BEFORE ${index}`,_.cloneDeep(this.attachments[index]))
       _.remove(this.attachments, (val, i)=> i === index)
       this._value = this.attachments
-      console.warn(`remove image - ${index}`,this.attachments)
+      // console.warn(`remove image - ${index}`,this.attachments)
       this.$forceUpdate()
       // work around to force label update
       const dummy = this.schema.label
