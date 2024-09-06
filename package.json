@@ -1,6 +1,6 @@
 {
   "name": "node-cms",
-  "version": "2.1.11",
+  "version": "2.1.12",
   "description": "Content management system, written in node.js, uses leveldb as an asset and content store.",
   "main": "index.js",
   "scripts": {
@@ -103,6 +103,7 @@
     "md5-file": "^5.0.0",
     "measure": "^0.1.1",
     "mime-stream": "^2.2.0",
+    "mime-types": "^2.1.35",
     "mkdirp": "^0.5.5",
     "mocha": "^7.2.0",
     "mongodb": "^4.12.1",
