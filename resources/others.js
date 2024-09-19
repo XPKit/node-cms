@@ -96,7 +96,7 @@ exports = (module.exports = {
       field: 'image',
       input: 'image',
       options: {
-        accept: 'image/*',
+        accept: '.jpg,.png,.mp4,.webm',
         maxCount: 5
       }
     },

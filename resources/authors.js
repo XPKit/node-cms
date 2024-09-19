@@ -36,5 +36,9 @@ exports = (module.exports = {
     }
 
   ],
+  locales: [
+    'enUS',
+    'zhCN'
+  ],
   type: 'normal'
 })

@@ -47,6 +47,17 @@ exports = (module.exports = {
       }
     },
     {
+      label: 'Select Paragraph author',
+      input: 'multiselect',
+      field: 'select4',
+      options: {
+        // TODO: hugo - handle the case when multiselect and no customLabel
+        // TODO: hugo - handle the case when the first field of the linked resource is a localised field or when the field used in the customLabel is localised
+        customLabel: '{{name}}'
+      },
+      source: 'authors'
+    },
+    {
       label: 'Select 2',
       input: 'select',
       field: 'select2',
