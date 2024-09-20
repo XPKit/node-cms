@@ -130,6 +130,14 @@ export default {
   .ProseMirror:focus {
     outline: none;
   }
+  .editor-content {
+    .tiptap p {
+      margin-bottom: 8px;
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
 }
 .v-theme--dark {
   .wysiwyg-wrapper {
@@ -140,4 +148,5 @@ export default {
     }
   }
 }
+
 </style>
