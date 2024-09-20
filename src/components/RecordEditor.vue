@@ -334,7 +334,6 @@ export default {
       if (!this.formValid) {
         return this.handleFormNotValid()
       }
-      console.warn('BEFORE ---', _.cloneDeep(this.record))
       const { uploadObject, allAttachments } = this.getDataToUpload(this.resource, _.cloneDeep(this.record), this.editingRecord)
       // console.warn('UPLOAD OBJECT', uploadObject)
       // console.warn('All ATTACHMENTS', allAttachments)

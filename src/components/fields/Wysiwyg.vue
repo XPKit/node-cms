@@ -3,7 +3,7 @@
     <field-label :schema="schema" />
     <div class="border-wrapper">
       <v-card v-if="editor" class="editor" rounded elevation="0">
-        <tiptap-menu-bar class="editor__header" :editor="editor" />
+        <tiptap-menu-bar class="editor__header" :editor="editor" :buttons="getButtons()" />
         <editor-content class="editor-content" :editor="editor" />
       </v-card>
     </div>
@@ -56,6 +56,9 @@ export default {
   created () {
   },
   methods: {
+    getButtons() {
+      return _.get(this.schema, 'options.buttons', [])
+    },
     getColorForToolbar () {
       return this.$vuetify.theme.dark ? 'black' : 'white'
     },

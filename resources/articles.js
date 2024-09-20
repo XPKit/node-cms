@@ -35,6 +35,17 @@ exports = (module.exports = {
       }
     },
     {
+      label: 'Body 2',
+      field: 'wysiwyg2',
+      input: 'wysiwyg',
+      localised: true,
+      disabled: true,
+      options: {
+        buttons: ['bold', 'italic'],
+        disabled: false
+      }
+    },
+    {
       field: 'relatedArticles',
       input: 'multiselect',
       source: 'articles',

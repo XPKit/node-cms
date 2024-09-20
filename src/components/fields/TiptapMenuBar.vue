@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import TiptapMenuItem from './TiptapMenuItem.vue'
 
 export default {
@@ -128,11 +129,16 @@ export default {
           title: 'Redo',
           action: () => this.editor.chain().focus().redo().run()
         }
-      ]
+      ],
+      options: ['italic', 'bold']
     }
   },
   mounted () {
-    this.menuBarButtons = this.buttons.length > 0 ? this.buttons : this.defaultButtons
+    if (this.buttons.length > 0) {
+      this.menuBarButtons = _.filter(this.defaultButtons, button => _.includes(this.buttons, _.kebabCase(button.title)))
+    } else {
+      this.menuBarButtons = this.defaultButtons
+    }
   },
   methods: {
     setLink () {
