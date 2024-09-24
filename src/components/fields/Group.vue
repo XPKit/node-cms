@@ -29,7 +29,7 @@ export default {
     }
   },
   mounted() {
-    console.warn('GROUP', this.schema)
+    // console.warn('GROUP', this.schema)
   },
   methods: {
     onError (error) {
