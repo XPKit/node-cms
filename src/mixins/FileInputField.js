@@ -45,11 +45,12 @@ export default {
           return true
         }
       }
-      return a && /image/g.test(a._contentType || (a.file && a.file.type))
+      return a && /image/g.test(a._contentType || _.get(a, 'file.type', false))
     },
     getPreviewUrl (attachment = false) {
       const a = attachment || this.attachment()
-      if (_.get(a, '_contentType', '').indexOf('svg') !== -1) {
+      const contentType = _.get(a, '_contentType', false)
+      if (_.isString(contentType) && contentType.indexOf('svg') !== -1) {
         return a.url
       }
       return `${a.url}?resize=autox100`
@@ -142,7 +143,11 @@ export default {
       if (maxCount !== -1 && maxCount <= 1 && event.dataTransfer.files.length > 1) {
         return console.error('Only one file can be uploaded at a time..')
       }
-      this.onUploadChanged(event.dataTransfer.files)
+      let files = _.get(event, 'dataTransfer.files', [])
+      if (_.isObject(files)) {
+        files = _.toArray(files)
+      }
+      this.onUploadChanged(files)
     },
     async onUploadChanged (files) {
       if (_.get(await this.$refs.input.validate(), 'length', 0) !== 0) {

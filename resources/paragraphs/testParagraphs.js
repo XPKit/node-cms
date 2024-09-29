@@ -13,6 +13,12 @@ exports = (module.exports = {
       localised: false
     },
     {
+      label: 'value',
+      input: 'wysiwyg',
+      field: 'wysiwyg',
+      localised: false
+    },
+    {
       label: 'Image label',
       field: 'image',
       input: 'image',

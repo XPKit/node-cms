@@ -49,7 +49,7 @@
       </v-tooltip>
 
       <div v-if="isImage()" class="image-wrapper">
-        <v-img cover :src="getImageSrc(a)" />
+        <v-img cover :src="getImageSrc(attachment())" />
       </div>
       <v-btn v-else size="small" rounded elevation="0" @click="viewFile()">{{ $filters.translate('TL_VIEW') }}</v-btn>
     </div>

@@ -235,7 +235,7 @@ export default {
       this.updateItems()
     },
     updateItems() {
-      console.warn('updateItems before ', _.cloneDeep(this.items))
+      // console.warn('updateItems before ', _.cloneDeep(this.items))
       const items = _.map(this.items, (item)=> {
         const obj = _.get(item, '_value', {})
         obj._type = item.title
@@ -362,24 +362,12 @@ export default {
 }
 
 .item {
-  @for $i from 1 through 6 {
-    $valIndex: get-level-index($i);
-    &.nested-level-#{$i} {
-      @include nested-paragraph-levels-border($valIndex);
-      .paragraph-header {
-        @include nested-paragraph-levels($valIndex);
-      }
-      .add-btn-wrapper {
-        .remove-item {
-          color: nth($levelColors, $valIndex) !important;
-        }
-      }
-    }
-  }
+  @include nested-paragraphs;
 }
 
 </style>
 <style lang="scss">
+@import '@a/scss/variables.scss';
 .paragraph-view {
   .item-main-wrapper {
     display: flex;
@@ -413,8 +401,18 @@ export default {
     flex-direction: column;
   }
   .v-card {
-    background-color: transparent;
-    margin-bottom: 0;
+    &.item {
+      &:has(.v-input__control:hover, .v-input__control:focus, .switch:hover, .switch:focus, .wysiwyg-wrapper:hover, .wysiwyg-wrapper:focus) {
+        border-color: $level-hover-border;
+      }
+      &:has(.v-card.item .v-input__control:hover, .v-card.item .v-input__control:focus, ,.v-card.item .switch:hover, .v-card.item .switch:focus, .v-card.item .wysiwyg-wrapper:hover, .v-card.item .wysiwyg-wrapper:focus) {
+        @include nested-paragraphs;
+      }
+    }
+    &:not(.editor) {
+      background-color: transparent;
+      margin-bottom: 0;
+    }
   }
 }
 </style>

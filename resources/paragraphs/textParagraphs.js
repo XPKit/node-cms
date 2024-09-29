@@ -5,6 +5,11 @@ exports = (module.exports = {
       label: 'Text field',
       field: 'text',
       input: 'text'
+    },
+    {
+      label: 'Wysiwyg',
+      field: 'wysiwyg',
+      input: 'wysiwyg'
     }
   ]
 })

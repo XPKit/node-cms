@@ -8,6 +8,13 @@ exports = module.exports = {
       required: true
     },
     {
+      label: 'wysiwyg',
+      field: 'wysiwyg',
+      input: 'wysiwyg',
+      localised: true,
+      required: true
+    },
+    {
       label: 'Subtitle',
       field: 'subtitle',
       input: 'string',

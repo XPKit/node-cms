@@ -114,7 +114,7 @@ class SchemaService {
       fields[id].selectOptions.customLabel = (itemId) => {
         const item = _.isString(itemId) ? _.find(cachedData, {_id: itemId}) : itemId
         if (fields[id].customLabel) {
-          return Mustache.render(fields[id].customLabel, item)
+          return _.isUndefined(item) ? '' : Mustache.render(fields[id].customLabel, item)
         }
         return _.get(item, key)
       }

@@ -129,6 +129,7 @@ $wysiwyg-toolbar-color: var(--wysiwyg-toolbar-color);
 $wysiwyg-toolbar-hover-background: var(--wysiwyg-toolbar-hover-background);
 
 $levelBackgrounds: $paragraph-top-bar-background $paragraph-top-bar-background-level-2 $paragraph-top-bar-background-level-3;
+$level-hover-border: var(--level-hover-border);
 $levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragraph-top-bar-color-level-3;
 
 $file-input-chip-border: var(--file-input-chip-border);
@@ -269,6 +270,8 @@ html body {
   --date-time-active-background: #{$imag-purple};
   --date-time-hover-color: #{$imag-blue};
 
+  --level-hover-border: #{$imag-black};
+
   &.v-theme--dark {
     --layout-background: #{$imag-black};
     --layout-card-background: #{$imag-black};
@@ -365,6 +368,9 @@ html body {
     --date-time-active-color: #{$imag-white};
     --date-time-active-background: #{$imag-purple};
     --date-time-hover-color: #{$imag-blue};
+
+    --level-hover-border: #{$imag-white};
+
   }
 }
 

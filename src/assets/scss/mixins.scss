@@ -112,3 +112,21 @@
   color: nth($levelColors, $index) !important;
   background-color: nth($levelBackgrounds, $index);
 }
+
+
+@mixin nested-paragraphs() {
+  @for $i from 1 through 6 {
+    $valIndex: get-level-index($i);
+    &.nested-level-#{$i} {
+      @include nested-paragraph-levels-border($valIndex);
+      .paragraph-header {
+        @include nested-paragraph-levels($valIndex);
+      }
+      .add-btn-wrapper {
+        .remove-item {
+          color: nth($levelColors, $valIndex) !important;
+        }
+      }
+    }
+  }
+}

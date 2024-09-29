@@ -11,10 +11,17 @@ exports = module.exports = {
       required: true
     },
     {
+      label: 'wysiwyg',
+      field: 'wysiwyg',
+      input: 'wysiwyg',
+      localised: true,
+      required: true
+    },
+    {
       label: 'Options',
       field: 'options',
       input: 'paragraph',
-      required: true,
+      required: false,
       localised: false,
       options: {
         maxCount: 1,
