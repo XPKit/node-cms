@@ -3,7 +3,7 @@
     <v-textarea
       ref="input" multi-line :class="[schema.labelClasses]" :type="getType()" :model-value="_value" :max-length="schema.max" :min-length="schema.min"
       :density="get('density')" :flat="get('flat')" :disabled="schema.disabled ? true : false" :readonly="schema.readonly ? true : false"
-      hide-details :variant="getVariant()" rounded="get('rounded')" @update:model-value="onChangeData"
+      hide-details :variant="getVariant()" rounded="get('rounded')" @update:model-value="onChangeData" @update:focused="onFieldFocus"
     >
       <template #prepend><field-label :schema="schema" /></template>
     </v-textarea>

@@ -12,7 +12,7 @@
           ref="input" :rules="getRules()" hide-details="auto" prepend-icon="" flat single-line
           :placeholder="getPlaceholder()" :clearable="false" :label="getPlaceholder()"
           density="compact" :variant="getVariant()" rounded persistent-placeholder :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="true"
-          @change="onUploadChanged"
+          @change="onUploadChanged" @update:focused="onFieldFocus"
         >
           <template #selection />
         </v-file-input>
@@ -28,7 +28,7 @@
           variant="solo-filled" :rules="getRules()" hide-details="auto" prepend-icon="" flat single-line
           :placeholder="getPlaceholder()" :clearable="false" :label="getPlaceholder()"
           density="compact" rounded persistent-placeholder :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
-          @change="onUploadChanged"
+          @change="onUploadChanged" @update:focused="onFieldFocus"
         >
           <template #selection />
         </v-file-input>

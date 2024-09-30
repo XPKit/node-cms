@@ -6,7 +6,8 @@
           <div v-for="field in line.fields" :id="getFieldId(field)" :key="field.model" class="field-wrapper" :data-model="field.model" :class="getFieldClasses(field)">
             <!-- <div class="text-red">{{ getFieldType(field.schema) }}</div> -->
             <component
-              :is="getFieldType(field.schema)" v-if="field.schema" :key="field.model" :theme="theme" :paragraph-level="paragraphLevel" :schema="field.schema" :model="model" :form-options="formOptions" :disabled="field.schema && field.schema.disabled" :focused="field.schema.focused"
+              :is="getFieldType(field.schema)" v-if="field.schema" :key="field.model" :theme="theme" :paragraph-level="paragraphLevel" :paragraph-index="paragraphIndex" :schema="field.schema" :model="model" :form-options="formOptions" :disabled="field.schema && field.schema.disabled"
+              :focused="field.schema.focused"
               @input="onInput"
             />
           </div>
@@ -14,7 +15,10 @@
       </template>
       <div v-for="field in schema.fields" v-else :id="getFieldId(field)" :key="field.model" class="field-wrapper" :data-model="field.model" :class="{focused: field.focused === -1}">
         <!-- <div class="text-red">{{ getFieldType(field) }}</div> -->
-        <component :is="getFieldType(field)" :key="field.model" :theme="theme" :paragraph-level="paragraphLevel" :schema="field" :model="model" :form-options="formOptions" :disabled="field.schema && field.schema.disabled" :focused="field.focused" @input="onInput" />
+        <component
+          :is="getFieldType(field)" :key="field.model" :theme="theme" :paragraph-level="paragraphLevel" :paragraph-index="paragraphIndex" :schema="field" :model="model" :form-options="formOptions" :disabled="field.schema && field.schema.disabled" :focused="field.focused"
+          @input="onInput"
+        />
       </div>
     </fieldset>
   </div>

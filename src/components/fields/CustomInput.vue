@@ -4,7 +4,7 @@
     :theme="theme" :class="[schema.labelClasses]" :type="getType()" :model-value="_value"
     :max-length="schema.max" :min-length="schema.min" autocomplete="off" validate-on-submit :rules="[validateField]"
     :variant="getVariant()" :flat="get('flat')" :rounded="get('rounded')" :density="get('density')" :disabled="disabled" :readonly="get('readonly')"
-    persistent-placeholder hide-details @update:model-value="onChangeData"
+    persistent-placeholder hide-details @update:model-value="onChangeData" @update:focused="onFieldFocus"
   >
     <template #prepend><field-label :schema="schema" /></template>
     <template #label />

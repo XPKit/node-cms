@@ -13,7 +13,10 @@ $imag-light-dark-purple: #20263C;
 $imag-darker-purple: #1B1F2D;
 $imag-orange: #FF5C39;
 $imag-yellow: #E1E000;
-$imag-green: #8DE971;
+
+// green: 83% - #00ff1b
+// green: 62% - #7fff8c
+// green: 57% - #b2ffb9
 
 $imag-wysiwyg-background: rgba(255, 255, 255, 0.08);
 
@@ -270,7 +273,7 @@ html body {
   --date-time-active-background: #{$imag-purple};
   --date-time-hover-color: #{$imag-blue};
 
-  --level-hover-border: #{$imag-black};
+  --level-hover-border: #{$imag-purple};
 
   &.v-theme--dark {
     --layout-background: #{$imag-black};
@@ -369,7 +372,7 @@ html body {
     --date-time-active-background: #{$imag-purple};
     --date-time-hover-color: #{$imag-blue};
 
-    --level-hover-border: #{$imag-white};
+    --level-hover-border: #{$imag-purple};
 
   }
 }

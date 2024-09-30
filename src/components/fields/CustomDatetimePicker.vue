@@ -17,6 +17,8 @@
       :placeholder="placeholder"
       :locale="locale"
       model-type="timestamp"
+      tabindex="-1"
+      @focus="onFieldFocus(true)" @blur="onFieldFocus(false)"
     />
   </div>
 </template>

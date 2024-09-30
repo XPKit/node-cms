@@ -9,7 +9,7 @@
         ref="input" :rules="getRules()" prepend-icon="" flat single-line
         :accept="model.input === 'image'? 'image/*': '*'" :clearable="false" :placeholder="getPlaceholder()" :label="getPlaceholder()"
         density="compact" :variant="getVariant()" rounded persistent-placeholder :multiple="isForMultipleImages()" :disabled="isForMultipleImages() && isFieldDisabled()"
-        hide-details @change="onUploadChanged"
+        hide-details @change="onUploadChanged" @update:focused="onFieldFocus"
       >
         <template #selection />
       </v-file-input>

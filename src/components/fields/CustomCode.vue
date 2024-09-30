@@ -1,7 +1,7 @@
 <template>
   <div class="code-wrapper">
     <div class="label">{{ schema.label }}</div>
-    <codemirror v-if="isReady" ref="input" v-model:value="_value" :style="getStyle()" :options="cmOption" @input="onChangeData" />
+    <codemirror v-if="isReady" ref="input" v-model:value="_value" :style="getStyle()" :options="cmOption" tabindex="-1" @input="onChangeData" @focus="onFieldFocus(true)" @blur="onFieldFocus(false)" />
   </div>
 </template>
 

@@ -1,7 +1,7 @@
 <template>
   <div class="json-viewer-wrapper">
     <field-label :schema="schema" />
-    <json-viewer v-if="schema" ref="input" :key="schema.model" :value="getData()" :copyable="true">
+    <json-viewer v-if="schema" ref="input" :key="schema.model" :value="getData()" :copyable="true" tabindex="-1" @focus="onFieldFocus(true)" @blur="onFieldFocus(false)">
       <template #copy><v-btn icon size="small" elevation="0" variant="flat"><v-icon>mdi-content-copy</v-icon></v-btn></template>
     </json-viewer>
   </div>

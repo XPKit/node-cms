@@ -48,6 +48,12 @@ export default {
         const val = this.editor.getHTML()
         this.$emit('change', val)
         this._value = val
+      },
+      onFocus: ()=> {
+        this.onFieldFocus(true)
+      },
+      onBlur: ()=> {
+        this.onFieldFocus(false)
       }
     })
     this.loaded = true

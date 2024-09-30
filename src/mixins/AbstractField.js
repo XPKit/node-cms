@@ -1,5 +1,6 @@
 import { get as objGet, set as objSet, join, forEach, isFunction, isString, isArray, uniq as arrayUniq } from 'lodash'
 import validators from '@u/validators'
+import FieldSelectorService from '@s/FieldSelectorService'
 
 function convertValidator (validator) {
   if (isString(validator)) {
@@ -24,7 +25,7 @@ function attributesDirective (el, binding, vnode) {
 }
 
 export default {
-  props: ['model', 'schema', 'formOptions', 'disabled', 'focused', 'paragraphLevel', 'theme'],
+  props: ['model', 'schema', 'formOptions', 'disabled', 'focused', 'paragraphLevel', 'paragraphIndex', 'theme'],
   data () {
     return {
       errors: []
@@ -78,6 +79,12 @@ export default {
     }
   },
   methods: {
+    onFieldFocus(focused) {
+      if (!focused) {
+        return FieldSelectorService.highlightParagraph(-1, -1)
+      }
+      FieldSelectorService.highlightParagraph(this.paragraphLevel - 1, this.paragraphIndex)
+    },
     get (key, defaultVal = false) {
       return objGet(this.schema, key, defaultVal)
     },

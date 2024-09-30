@@ -1,7 +1,7 @@
 <template>
   <div class="custom-checkbox" :class="{disabled: schema.disabled}">
     <field-label :schema="schema" />
-    <div ref="input" class="switch" :class="{active: getValue()}" @click="onChange">
+    <div ref="input" class="switch" :class="{active: getValue()}" tabindex="-1" @click="onChange" @focus="onFieldFocus(true)" @blur="onFieldFocus(false)">
       <div class="drag" />
       <div class="labels">
         <span class="label inactive">{{ $filters.translate('TL_NO') }}</span>

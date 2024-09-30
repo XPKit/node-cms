@@ -20,7 +20,7 @@
       v-if="schema && subResourcesLoaded" :key="`${schema.model}-${key}`" :list="items"
       :class="{disabled}" draggable=".item" v-bind="dragOptions" handle=".handle" :group="`${schema.model}-${key}`" ghost-class="ghost" @end="onEndDrag" @start="dragging = true"
     >
-      <v-card v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" :theme="theme" elevation="0" :class="`item nested-level-${paragraphLevel}`">
+      <v-card v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" :theme="theme" elevation="0" :class="getClasses(paragraphLevel, idx)">
         <v-card-title class="handle paragraph-header">
           <div class="paragraph-title">{{ item.label }}</div>
           <div class="add-btn-wrapper">
@@ -40,6 +40,7 @@
 <script>
 import _ from 'lodash'
 import SchemaService from '@s/SchemaService'
+import FieldSelectorService from '@s/FieldSelectorService'
 import ResourceService from '@s/ResourceService'
 import DragList from '@m/DragList'
 import {v4 as uuid} from 'uuid'
@@ -61,6 +62,10 @@ export default {
         contentProps: {
           density: 'compact'
         }
+      },
+      highlight: {
+        level: -1,
+        index: -1
       }
     }
   },
@@ -76,8 +81,29 @@ export default {
     this.getSchemaForItems()
     await this.getSubResources()
     this.selectedType = _.first(this.types)
+    FieldSelectorService.events.on('highlight-paragraph', this.onHighlightParagraph)
+  },
+  unmounted() {
+    FieldSelectorService.events.off('highlight-paragraph', this.onHighlightParagraph)
+
   },
   methods: {
+    onHighlightParagraph(level, index) {
+      this.highlight = {level, index}
+      this.$forceUpdate()
+    },
+    isHighlighted(idx, paragraphLevel) {
+      return paragraphLevel === this.highlight.level && idx === this.highlight.index
+    },
+    getClasses(paragraphLevel, idx) {
+      const classes = ['item', `nested-level-${paragraphLevel}`]
+      if (this.isHighlighted(idx, paragraphLevel)) {
+        classes.push('highlighted')
+      } else if (this.highlight.level !== -1 && this.highlight.index !== -1) {
+        classes.push('not-highlighted')
+      }
+      return classes
+    },
     async getSubResources() {
       await pAll(_.map(this.types, type => {
         return async () => {
@@ -401,17 +427,64 @@ export default {
     flex-direction: column;
   }
   .v-card {
+    pointer-events: auto;
+    touch-action: auto;
     &.item {
-      &:has(.v-input__control:hover, .v-input__control:focus, .switch:hover, .switch:focus, .wysiwyg-wrapper:hover, .wysiwyg-wrapper:focus) {
-        border-color: $level-hover-border;
+      &.highlighted, &:hover:not(.not-highlighted) {
+        @include highlight-paragraph;
       }
-      &:has(.v-card.item .v-input__control:hover, .v-card.item .v-input__control:focus, ,.v-card.item .switch:hover, .v-card.item .switch:focus, .v-card.item .wysiwyg-wrapper:hover, .v-card.item .wysiwyg-wrapper:focus) {
-        @include nested-paragraphs;
+      &:hover {
+        &:has(.v-card.item:hover) {
+          @include nested-paragraphs;
+          .v-card.item:hover {
+            @include highlight-paragraph;
+          }
+        }
       }
+      // has sub paragraph
+      // &:has(.v-card.item) {
+      //   &:hover {
+      //     // background-color: red;
+      //     &:has(.v-card.item:hover) {
+      //       @include nested-paragraphs;
+      //       .v-card.item:hover {
+      //         @include highlight-paragraph;
+      //       }
+      //     }
+      //     &:not(:has(.v-card.item:hover)) {
+      //       @include highlight-paragraph;
+      //       .v-card {
+      //         @include nested-paragraphs;
+      //       }
+      //     }
+      //     &:not(:has(.v-card.item:hover, .v-card.item:has(.v-field--focused, .switch:focus, .ProseMirror-focused))) {
+      //       background-color: green;
+      //       @include highlight-paragraph;
+      //       .v-card.item {
+      //         @include nested-paragraphs;
+      //       }
+      //     }
+      //   }
+        // if not hovered and has a focused field
+        // &:not(:hover):has(.v-field--focused, .switch:focus, .ProseMirror-focused) {
+        //   background-color: orange;
+        //   // if focused field is not in a sub paragraph
+        //   .v-card.item:has(.v-field--focused, .switch:focus, .ProseMirror-focused) {
+        //     background-color: blue;
+        //   }
+        //   &:not(:has(.v-card.item:has(.v-field--focused, .switch:focus, .ProseMirror-focused))) {
+        //     background-color: red;
+        //   }
+        // }
+      // }
+
     }
     &:not(.editor) {
       background-color: transparent;
       margin-bottom: 0;
+      +.v-card.item {
+        margin-top: vw(16px);
+      }
     }
   }
 }

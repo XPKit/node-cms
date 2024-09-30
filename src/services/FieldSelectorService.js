@@ -9,6 +9,10 @@ class FieldSelectorService {
   select (field) {
     this.events.emit('select', field)
   }
+
+  highlightParagraph(paragraphLevel, index) {
+    this.events.emit('highlight-paragraph', paragraphLevel, index)
+  }
 }
 
 export default new FieldSelectorService()
