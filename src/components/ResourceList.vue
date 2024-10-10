@@ -13,7 +13,7 @@
           </template>
           <v-list rounded>
             <v-list-item
-              v-for="resource in resourceGroup.list" :key="resource.name" density="compact"
+              v-for="resource in orderedList(resourceGroup.list)" :key="resource.name" density="compact"
               :class="{selected: isSelected(resource)}" @click="selectResourceCallback(resource)"
             >
               <v-list-item-title>{{ getResourceTitle(resource) }}</v-list-item-title>
@@ -62,6 +62,16 @@ export default {
     },
     getResourceTitle (resource) {
       return resource.displayname ? TranslateService.get(resource.displayname) : resource.title
+    },
+    orderedList(list) {
+      const collator = new Intl.Collator('en', {
+        sensitivity: 'base',
+        caseFirst: 'upper',
+        usage: 'sort',
+        ignorePunctuation: true,
+        numeric: true
+      })
+      return list.sort((a, b) => collator.compare(this.getResourceTitle(a), this.getResourceTitle(b)))
     },
     groupSelected (resourceGroup) {
       if (!this.selectedItem) {
