@@ -67,11 +67,14 @@ export default {
       return defaultLogo
     },
     getLogo () {
-      const foundLogo = _.find(_.get(this.settingsData, '_attachments', []), {_name: 'logo'})
-      return _.isUndefined(foundLogo) ? false : _.get(foundLogo, 'url', '')
+      return _.get(this.settingsData, 'logo[0].url', false)
     },
     hasLogoOrTitle () {
-      return this.getLogo() || _.get(this.settingsData, 'title', false)
+      const title = _.get(this.settingsData, 'title', false)
+      if (title) {
+        window.document.title = title
+      }
+      return this.getLogo() || title
     },
     async getSettingsData () {
       try {
