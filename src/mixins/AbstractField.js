@@ -49,7 +49,7 @@ export default {
         return console.error('no input ref for ', this.schema)
       }
       // console.warn('elem = ', elem, this.schema.model, this.schema)
-      if (!isFunction(elem.focus)) {
+      if (!isFunction(objGet(elem, 'focus'))) {
         // console.info('Cannot focus element', elem)
         return
       }
