@@ -4,8 +4,10 @@
     <v-card v-show="showOmnibar" elevation="24">
       <v-card-title class="search">
         <v-text-field
-          ref="search" v-model="search" class="search-bar" flat variant="solo-filled" rounded hide-details prepend-inner-icon="mdi-magnify" density="compact" :placeholder="$filters.translate('TL_INSERT_KEYWORDS')"
-          type="text" autocomplete="off" name="search" :prefix="searchMode === 'all' ? '' : `${searchMode}:`"
+          ref="search"
+          v-model="search"
+          class="search-bar" flat variant="solo-filled" rounded hide-details prepend-inner-icon="mdi-magnify" density="compact" :placeholder="$filters.translate('TL_INSERT_KEYWORDS')" type="text" autocomplete="off"
+          name="search" :prefix="searchMode === 'all' ? '' : `${searchMode}:`" @keydown.prevent.ctrl.p="showHideOmnibar(false)" @keydown.prevent.escape="showHideOmnibar(false)"
         />
       </v-card-title>
       <template v-if="results && results.length > 0">

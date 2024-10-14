@@ -50,7 +50,8 @@
           </v-tooltip>
           <div class="row-handle">
             <div v-if="isImage(a)" class="image-wrapper">
-              <v-img cover :src="getImageSrc(a)" />
+              <v-img v-if="a._id" cover :src="getImageSrc(a)" @click="viewFile(a)" />
+              <v-img v-else cover :src="getImageSrc(a)" />
             </div>
             <v-btn v-else-if="a._id" :theme="theme" size="small" rounded elevation="0" @click="viewFile(a)">{{ $filters.translate('TL_VIEW') }}</v-btn>
           </div>
@@ -67,7 +68,8 @@
             <span>{{ attachment()._filename }}</span>
           </v-tooltip>
           <div class="image-wrapper">
-            <v-img class="preview" cover :src="getImageSrc()" />
+            <v-img v-if="a._id" cover :src="getImageSrc(a)" @click="viewFile(a)" />
+            <v-img v-else class="preview" cover :src="getImageSrc()" />
           </div>
         </v-card>
       </div>

@@ -4,7 +4,7 @@
       <top-bar-locale-list :locales="resource.locales" :locale="locale" :select-locale="selectLocale" :back="back" />
       <div class="buttons">
         <v-btn v-if="editingRecord._id" elevation="0" class="delete" icon @click="deleteRecord"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
-        <v-btn elevation="0" class="update" rounded @click="createUpdateClicked">{{ $filters.translate(editingRecord._id? "TL_UPDATE": "TL_CREATE") }}</v-btn>
+        <v-btn elevation="0" class="update" rounded :disabled="!canCreateUpdate" @click="createUpdateClicked">{{ $filters.translate(editingRecord._id? "TL_UPDATE": "TL_CREATE") }}</v-btn>
       </div>
     </div>
     <div class="scroll-wrapper" :class="{'scrolled-to-bottom': scrolledToBottom}" @scroll="onScroll">
@@ -56,6 +56,7 @@ export default {
   },
   data () {
     return {
+      canCreateUpdate: true,
       scrolledToBottom: false,
       randomId: Math.random(),
       formValid: false,
@@ -330,10 +331,14 @@ export default {
       return {uploadObject, allAttachments}
     },
     async createUpdateClicked () {
+      if (!this.canCreateUpdate)  {
+        return
+      }
       await this.checkFormValid()
       if (!this.formValid) {
         return this.handleFormNotValid()
       }
+      this.canCreateUpdate = false
       const { uploadObject, allAttachments } = this.getDataToUpload(this.resource, _.cloneDeep(this.record), this.editingRecord)
       // console.warn('UPLOAD OBJECT', uploadObject)
       // console.warn('All ATTACHMENTS', allAttachments)
@@ -348,11 +353,14 @@ export default {
         return this.handleFormNotValid()
       }
       if (_.isUndefined(this.editingRecord._id)) {
-        return this.createRecord(uploadObject, newAttachments)
+        await this.createRecord(uploadObject, newAttachments)
+      } else {
+        await this.updateRecord(uploadObject, newAttachments, allAttachments)
       }
-      this.updateRecord(uploadObject, newAttachments, allAttachments)
+      this.canCreateUpdate = true
     },
     async createRecord (uploadObject, newAttachments) {
+      this.$emit('loading', 'create-record', true)
       this.$loading.start('create-record')
       try {
         let data = await RequestService.post(`../api/${this.resource.title}`, uploadObject)
@@ -363,7 +371,7 @@ export default {
         console.error('Error happen during createRecord:', error)
         this.manageError(error, 'create')
       }
-      this.$loading.stop('create-record')
+      this.$emit('loading', 'create-record', false)
     },
     async handleAttachmentsUpdates(previousData, currentData, uploadObject, newAttachments, allAttachments) {
       await this.uploadAttachments(this.editingRecord._id, newAttachments)
@@ -382,7 +390,7 @@ export default {
       }
     },
     async updateRecord (uploadObject, newAttachments, allAttachments) {
-      this.$loading.start('update-record')
+      this.$emit('loading', 'update-record', true)
       try {
         let data = this.editingRecord
         const previousData = this.getDataToUpload(this.resource, {}, _.cloneDeep(this.record))
@@ -403,7 +411,7 @@ export default {
         console.error('Error happen during updateRecord:', error)
         this.manageError(error, 'update', this.editingRecord)
       }
-      this.$loading.stop('update-record')
+      this.$emit('loading', 'update-record', false)
     },
     getAttachmentModel (attachment) {
       const modelParts = []

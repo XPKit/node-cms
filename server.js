@@ -53,6 +53,8 @@ const cms = new CMS(options)
 
 const app = express()
 app.use(cms.express())
+// TODO: hugo
+// const server = require('http').createServer(app)
 const server = app.listen(pkg.config.port, async () => {
   await cms.bootstrap(server)
   logger.info('########### server started ###########')
