@@ -19,6 +19,12 @@
   -webkit-font-smoothing: antialiased !important;
 }
 
+.unclickable {
+  touch-action: none;
+  pointer-events: none;
+  user-select: none;
+}
+
 html,
 body {
   height: 100%;

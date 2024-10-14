@@ -1,10 +1,10 @@
 {
   "name": "node-cms",
-  "version": "2.1.28",
+  "version": "2.1.29",
   "description": "Content management system, written in node.js, uses leveldb as an asset and content store.",
   "main": "index.js",
   "scripts": {
-    "dev": "cross-env VITE_CJS_IGNORE_WARNING=true vite",
+    "dev": "del-cli --force ./src/plugins && cross-env VITE_CJS_IGNORE_WARNING=true vite",
     "build": "vite build --emptyOutDir",
     "preview": "vite preview",
     "serve-backend": "cross-env VITE_DEV_MODE=true node --inspect --no-deprecation server.js",
@@ -50,6 +50,7 @@
     "@tiptap/starter-kit": "^2.2.1",
     "@tiptap/vue-3": "^2.2.1",
     "@vitejs/plugin-vue": "^5.0.3",
+    "del-cli": "^5.1.0",
     "@vitejs/plugin-vue-jsx": "^3.1.0",
     "@vuepic/vue-datepicker": "^9.0.2",
     "abstract-leveldown": "^0.12.4",

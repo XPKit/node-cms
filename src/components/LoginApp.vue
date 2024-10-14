@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app :class="{'unclickable': isLoading}">
     <div v-if="loaded" class="cms-layout" :class="{displayed: showLoginForm}">
       <div class="login-canvas">
         <form @submit.prevent="login">
@@ -20,7 +20,7 @@
         </form>
       </div>
     </div>
-    <loading v-if="LoadingService.isShow" />
+    <loading v-if="isLoading" />
   </v-app>
 </template>
 
@@ -46,6 +46,7 @@ export default {
       password: null,
       activeField: false,
       loginFailed: false,
+      isLoading: false,
       loggingIn: false,
       showLoginForm: false,
       loaded: false,
@@ -53,10 +54,13 @@ export default {
       TranslateService
     }
   },
+  async unmounted () {
+    LoadingService.events.off('has-loading', this.onLoading)
+  },
   async mounted () {
+    LoadingService.events.on('has-loading', this.onLoading)
     console.warn('Login page mounted')
     this.$loading.start('init')
-
     try {
       const noLogin = _.get(window, 'noLogin', false)
       if (!noLogin) {
@@ -77,6 +81,11 @@ export default {
     this.$loading.stop('init')
   },
   methods: {
+    async onLoading(isLoading) {
+      await this.$nextTick()
+      this.isLoading = isLoading
+      this.$forceUpdate()
+    },
     async login () {
       if (this.loggingIn) {
         return
