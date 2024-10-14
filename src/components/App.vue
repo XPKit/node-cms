@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app :class="{'unclickable': isLoading}">
     <v-theme-provider :theme="getTheme()">
       <v-snackbar
         v-model="showSnackBar" transition="scroll-y-reverse-transition" multi-line
