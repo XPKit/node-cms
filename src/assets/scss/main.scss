@@ -12,6 +12,13 @@
 @import "./components/Pager.scss";
 @import "./components/Notifications.scss";
 
+* {
+  font-synthesis: none !important;
+  -webkit-synthesis: none !important;
+  font-smoothing: antialiased !important;
+  -webkit-font-smoothing: antialiased !important;
+}
+
 html,
 body {
   height: 100%;
