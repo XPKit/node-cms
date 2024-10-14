@@ -102,10 +102,6 @@ export default {
     width: 100%;
     height: $navbar-height;
     gap: 8px;
-    &:after {
-      display: block;
-      content: '';
-    }
   }
 }
 .resource, .menu-btn-wrapper {

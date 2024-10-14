@@ -48,7 +48,7 @@ exports = module.exports = {
       input: 'image',
       options: {
         accept: '.jpg,.png',
-        maxCount: 1
+        maxCount: 3
       },
       localised: true,
       required: false
