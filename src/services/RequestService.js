@@ -25,8 +25,8 @@ class RequestService {
     }
     let json = null
     json = await response.json()
-    const code = _.get(response, 'status', 0)
-    if (!response.ok) {
+    const code = _.get(json, 'code', _.get(response, 'status', 0))
+    if (code === 0 && !response.ok) {
       throw response
     } else if (code < 200 || code > 299) {
       throw json
