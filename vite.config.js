@@ -16,12 +16,34 @@ const defaultVendorsFilename = 'vendors'
 const separatedVendors = ['lodash', 'vuetify', '@json-editor', '@tiptap', 'codemirror']
 const regroupModulesStartingWith = ['vue', 'prosemirror']
 
+const cacheControl = () => ({
+  name: 'cache-control',
+  configureServer (server) {
+    server.middlewares.use((req, res, next) => {
+      const cachedPaths = [
+        '/assets/',
+        '/api/file/'
+      ]
+      for (const cachedPath of cachedPaths) {
+        if (req.originalUrl.search(cachedPath) > -1) {
+          res.setHeader('Cache-Control', 'public,max-age=31536000,immutable')
+        } else {
+          res.setHeader('Cache-Control', 'public,max-age=0')
+          res.setHeader('Pragama', 'no-cache')
+        }
+      }
+      next()
+    })
+  }
+})
+
 export default defineConfig(({ command, mode, ssrBuild }) => {
   return {
     root: mode === 'development' ? __dirname : viteUtils.nodeCmsSrcPath,
     base: './',
     publicDir: `${mode === 'development' ? '.' : '..'}/public`,
     plugins: [
+      cacheControl(),
       vue({exclude: 'os'}),
       vueJsx({}),
       vuetify({ autoImport: true }),

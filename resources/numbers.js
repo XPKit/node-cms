@@ -1,5 +1,5 @@
 exports = (module.exports = {
-  displayname: 'Number examples', // Optional, by default filename
+  displayname: '2. Number examples', // Optional, by default filename
   group: 'standards',
   schema: [
     {

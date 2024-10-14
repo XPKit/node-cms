@@ -1,5 +1,5 @@
 exports = (module.exports = {
-  displayname: 'Settings', // Optional, by default filename
+  displayname: '09. Settings', // Optional, by default filename
   group: 'standards',
   maxCount: 1, // Optional, be default is unlimited
   schema: [
