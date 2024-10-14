@@ -360,7 +360,6 @@ export default {
       this.canCreateUpdate = true
     },
     async createRecord (uploadObject, newAttachments) {
-      this.$emit('loading', 'create-record', true)
       this.$loading.start('create-record')
       try {
         let data = await RequestService.post(`../api/${this.resource.title}`, uploadObject)
@@ -371,7 +370,7 @@ export default {
         console.error('Error happen during createRecord:', error)
         this.manageError(error, 'create')
       }
-      this.$emit('loading', 'create-record', false)
+      this.$loading.stop('create-record')
     },
     async handleAttachmentsUpdates(previousData, currentData, uploadObject, newAttachments, allAttachments) {
       await this.uploadAttachments(this.editingRecord._id, newAttachments)
@@ -390,7 +389,7 @@ export default {
       }
     },
     async updateRecord (uploadObject, newAttachments, allAttachments) {
-      this.$emit('loading', 'update-record', true)
+      this.$loading.start('update-record')
       try {
         let data = this.editingRecord
         const previousData = this.getDataToUpload(this.resource, {}, _.cloneDeep(this.record))
@@ -411,7 +410,7 @@ export default {
         console.error('Error happen during updateRecord:', error)
         this.manageError(error, 'update', this.editingRecord)
       }
-      this.$emit('loading', 'update-record', false)
+      this.$loading.stop('update-record')
     },
     getAttachmentModel (attachment) {
       const modelParts = []
