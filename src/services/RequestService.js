@@ -18,9 +18,20 @@ class RequestService {
     }
     const response = await fetch(url, options)
     if (!returnJson) {
+      if (!response.ok) {
+        throw response
+      }
       return response
     }
-    return await response.json()
+    let json = null
+    json = await response.json()
+    const code = _.get(response, 'status', 0)
+    if (!response.ok) {
+      throw response
+    } else if (code < 200 || code > 299) {
+      throw json
+    }
+    return json
   }
 
   async get (url, returnJson = true) {
