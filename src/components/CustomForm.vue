@@ -37,7 +37,16 @@ export default {
     _.each(this.schema.fields, (field) => {
       const fieldType = this.getFieldType(field)
       if (!(fieldType in getCurrentInstance().appContext.components)) {
-        console.error(`${fieldType} isn't defined as a custom field type, will not render it`)
+        if (fieldType === false) {
+          const fieldName = _.get(field, 'originalModel', false)
+          if (fieldName) {
+            const fields = _.get(field, 'resource.schema', [])
+            const fieldSchema = _.find(fields, {field: fieldName})
+            console.error(`Field '${fieldName}' use an undefined field type '${fieldSchema.input}' will not render it`)
+          }
+        } else {
+          console.error('Field isn\'t defined as a custom field type, will not render it', field)
+        }
       }
       field.focused = false
     })

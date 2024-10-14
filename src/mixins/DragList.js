@@ -20,6 +20,9 @@ export default {
     },
     viewFile (attachment = false) {
       var a = attachment || this.attachment()
+      if (!a) {
+        return
+      }
       const filenameComponents = _.get(a, '_filename', '').split('.')
       const suffix = filenameComponents.length > 1 ? `.${_.last(filenameComponents)}` : ''
       const win = window.open(window.origin + a.url + suffix, '_blank')
