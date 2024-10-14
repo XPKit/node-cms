@@ -26,8 +26,8 @@
           :placeholder="$filters.translate('TL_SEARCH')" type="text" name="search"
         />
         <v-btn v-if="maxCount <= 0 || listCount < maxCount" elevation="0" icon class="new-record" :class="{active: isCreatingNewRecord()}" @click="onClickNew">
-          <v-icon v-if="selectedItem && !multiselect">mdi-note-edit-outline</v-icon>
-          <v-icon v-else>mdi-note-plus-outline</v-icon>
+          <!-- <v-icon v-if="selectedItem && !multiselect">mdi-note-edit-outline</v-icon> -->
+          <v-icon>mdi-note-plus-outline</v-icon>
         </v-btn>
       </div>
     </div>

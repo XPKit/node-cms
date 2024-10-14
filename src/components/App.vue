@@ -168,6 +168,7 @@ export default {
           others.list.push(item)
         }
       })
+      list = _.cloneDeep(list)
       groups = _.orderBy(groups, (item) => {
         if (item.name === 'CMS') {
           return String.fromCharCode(0x00)
@@ -406,6 +407,8 @@ export default {
     align-items: stretch;
     flex: 1 1 0;
     height: 100vh;
+    min-width: 1080px;
+    overflow-y: auto;
     .resources {
       display: flex;
       flex-direction: column;

@@ -3,6 +3,7 @@
     <form v-if="!disabled" enctype="multipart/form-data">
       <field-label :schema="schema" />
       <v-card
+        v-if="!isFieldDisabled()"
         :theme="theme"
         class="file-input-card" elevation="0" :class="{ 'drag-and-drop': dragover }"
         @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
@@ -57,7 +58,7 @@
       <template v-if="isForMultipleImages()">
         <div class="help-block">
           <v-icon size="small">mdi-information</v-icon>
-          <span v-if="getMaxCount() !== -1 ">{{ $filters.translate('TL_MAX_NUMBER_OF_FILES', { num: getMaxCount() }) }}</span>
+          <span v-if="getMaxCount() !== -1 ">{{ $filters.translate('TL_MAX_NUMBER_OF_FILES', null, { num: getMaxCount() }) }}</span>
           <span v-else>{{ $filters.translate('TL_UNLIMITED_NUMBER_OF_FILES') }}</span>
         </div>
       </template>

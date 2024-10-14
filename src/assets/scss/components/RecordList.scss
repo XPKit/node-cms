@@ -37,7 +37,8 @@
     color: $btn-icon-color !important;
     transition: color 0.15s;
     &.active {
-      color: $imag-purple !important;
+      color: $imag-white !important;
+      background-color: $imag-purple;
     }
   }
   .main {

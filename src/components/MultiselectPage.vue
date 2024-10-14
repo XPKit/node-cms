@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="0" class="multiselect-page">
     <div class="top-bar">
-      <h3>{{ $filters.translate('TL_NUMBER_OF_SELECTED_RECORDS', { num: size(multiselectItems) }) }}: {{ size(multiselectItems) }}</h3>
+      <h3>{{ $filters.translate('TL_NUMBER_OF_SELECTED_RECORDS', null, { num: size(multiselectItems) }) }}</h3>
       <div class="buttons">
         <v-btn elevation="0" class="delete" rounded :disabled="isEmpty(multiselectItems)" @click="onClickDelete">{{ $filters.translate('TL_DELETE') }}</v-btn>
       </div>

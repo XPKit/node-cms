@@ -106,6 +106,47 @@ class CMS {
         _.set(this._paragraphs, key, value)
         this.formatSchema(this._paragraphs, key, true)
       })
+      _.set(this._paragraphs, '_settingsLink', {
+        displayname: 'Settings link',
+        maxCount: 1,
+        schema: [
+          {
+            field: 'name',
+            localised: false,
+            input: 'string',
+            required: true
+          },
+          {
+            field: 'url',
+            localised: false,
+            input: 'url',
+            required: true
+          }
+        ]
+      })
+      this.formatSchema(this._paragraphs, '_settingsLink', true)
+      _.set(this._paragraphs, '_settingsLinkGroup', {
+        displayname: 'Link group',
+        maxCount: 1,
+        schema: [
+          {
+            label: 'Group title',
+            field: 'title',
+            localised: false,
+            input: 'string',
+            required: true
+          },
+          {
+            field: 'links',
+            input: 'paragraph',
+            localised: false,
+            options: {
+              types: ['_settingsLink']
+            }
+          }
+        ]
+      })
+      this.formatSchema(this._paragraphs, '_settingsLinkGroup', true)
     }
 
     /* create main application */

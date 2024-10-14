@@ -18,7 +18,7 @@
         </v-file-input>
       </v-card>
       <v-card
-        v-else :theme="theme"
+        v-else-if="!isFieldDisabled()" :theme="theme"
         class="file-input-card" elevation="0" :class="{ 'drag-and-drop': dragover }"
         @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
       >
@@ -92,7 +92,7 @@
       <template v-if="isForMultipleImages()">
         <div class="help-block">
           <v-icon size="small">mdi-information</v-icon>
-          <span v-if="getMaxCount() !== -1 ">{{ $filters.translate('TL_MAX_NUMBER_OF_IMAGES', { num: getMaxCount() }) }}</span>
+          <span v-if="getMaxCount() !== -1 ">{{ $filters.translate('TL_MAX_NUMBER_OF_IMAGES', null, { num: getMaxCount() }) }}</span>
           <span v-else>{{ $filters.translate('TL_UNLIMITED_NUMBER_OF_IMAGES') }}</span>
         </div>
       </template>
