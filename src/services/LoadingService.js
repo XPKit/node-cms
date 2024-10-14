@@ -1,19 +1,26 @@
 import _ from 'lodash'
+import Emitter from 'tiny-emitter'
 class LoadingService {
   constructor () {
-    this.isShow = false
+    this.events = new Emitter()
     this.list = []
   }
-  start (param) {
+  start (name) {
     this.isShow = true
-    this.list = _.union(this.list, [param])
+    this.list.push(name)
+    this.list = _.uniq(this.list)
+    this.checkLoading()
   }
 
-  stop (param) {
-    this.list = _.difference(this.list, [param])
-    if (_.isEmpty(this.list)) {
-      this.isShow = false
-    }
+  stop (name) {
+    this.list = _.filter(this.list, item => item !== name)
+    this.list = _.uniq(name)
+    this.list = _.compact(this.lsit)
+    this.checkLoading()
+  }
+
+  checkLoading() {
+    this.events.emit('has-loading', _.get(this.list, 'length', 0) > 0)
   }
 }
 

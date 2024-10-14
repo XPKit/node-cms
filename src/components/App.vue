@@ -55,7 +55,7 @@
             />
             <plugin-page v-if="selectedPlugin" :plugin="selectedPlugin" />
           </div>
-          <loading v-if="LoadingService.isShow" />
+          <loading v-if="isLoading" />
         </div>
       </div>
     </v-theme-provider>
@@ -106,7 +106,7 @@ export default {
       selectedResourceGroup: null,
       selectedRecord: null,
       selectedPlugin: null,
-      LoadingService,
+      isLoading: false,
       TranslateService,
       user: null,
       multiselect: false,
@@ -201,9 +201,11 @@ export default {
     }
   },
   unmounted () {
+    LoadingService.events.off('has-loading', this.onLoading)
     NotificationsService.events.off('notification', this.onGetNotification)
   },
   mounted () {
+    LoadingService.events.on('has-loading', this.onLoading)
     this.$loading.start('init')
     LoginService.onLogout(() => {
       console.info('User logged out')
@@ -237,6 +239,11 @@ export default {
     })
   },
   methods: {
+    async onLoading(isLoading) {
+      await this.$nextTick()
+      this.isLoading = isLoading
+      this.$forceUpdate()
+    },
     getResourcesAndPlugins() {
       return _.union(this.pluginList, this.resourceList)
     },
