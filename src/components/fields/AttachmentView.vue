@@ -34,9 +34,10 @@
           </v-tooltip>
           <div class="row-handle">
             <div v-if="isImage(a)" class="image-wrapper">
-              <v-img cover :src="getImageSrc(a)" />
+              <v-img v-if="a._id" cover :src="getImageSrc(a)" @click="viewFile(a)" />
+              <v-img v-else cover :src="getImageSrc(a)" />
             </div>
-            <v-btn v-else-if="a._id" size="small" rounded elevation="0" @click="viewFile(a)">{{ $filters.translate('TL_VIEW') }}</v-btn>
+            <v-btn v-else-if="a._id" size="small" variant="outlined" rounded elevation="0" @click="viewFile(a)">{{ $filters.translate('TL_VIEW') }}</v-btn>
           </div>
         </v-card>
       </draggable>
@@ -50,7 +51,8 @@
       </v-tooltip>
 
       <div v-if="isImage()" class="image-wrapper">
-        <v-img cover :src="getImageSrc(attachment())" />
+        <v-img v-if="a._id" cover :src="getImageSrc(a)" @click="viewFile(a)" />
+        <v-img v-else cover :src="getImageSrc(attachment())" />
       </div>
       <v-btn v-else size="small" rounded elevation="0" @click="viewFile()">{{ $filters.translate('TL_VIEW') }}</v-btn>
     </div>

@@ -1,4 +1,4 @@
-import { get as objGet, set as objSet, join, forEach, isFunction, isString, isArray, uniq as arrayUniq } from 'lodash'
+import { get as objGet, set as objSet, join, forEach, isFunction, isString, isArray, uniq as arrayUniq, includes } from 'lodash'
 import validators from '@u/validators'
 import FieldSelectorService from '@s/FieldSelectorService'
 
@@ -43,8 +43,9 @@ export default {
       if (this.focused === -1) {
         return
       }
-      let elem = objGet(this.$refs, 'input', false)
-      if (!elem && objGet(this.schema, 'type', false) !== 'Wysiwyg') {
+      const elem = objGet(this.$refs, 'input', false)
+      const fieldType = objGet(this.schema, 'type', false)
+      if (!elem && !includes(['Wysiwyg', 'ImageView', 'AttachmentView'], fieldType)) {
         return console.error('no input ref for ', this.schema)
       }
       // console.warn('elem = ', elem, this.schema.model, this.schema)

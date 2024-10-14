@@ -67,7 +67,7 @@ class ViteUtils {
   }
 
   handleProxyCall (proxyRoute, proxy) {
-    proxy.on('error', (err, _req, _res) => {
+    proxy.on('error', (err) => {
       console.error(`${proxyRoute} - Proxy error`, err)
     })
     // proxy.on('proxyReq', (proxyReq, req, _res) => {
@@ -87,17 +87,19 @@ class ViteUtils {
     })
     _.set(this.proxy, `^${this.nodeCmsMountPath}admin/(fonts)`, {
       target,
-      configure: (proxy, _options) => this.handleProxyCall(`^${this.nodeCmsMountPath}admin/(fonts)`, proxy)
+      configure: (proxy) => this.handleProxyCall(`^${this.nodeCmsMountPath}admin/(fonts)`, proxy)
     })
     _.set(this.proxy, `^${this.nodeCmsMountPath}(admin)`, {
       target,
       rewrite: (path) => path.replace(regex, ''),
-      configure: (proxy, _options) => this.handleProxyCall(`^${this.nodeCmsMountPath}(admin)`, proxy)
+      configure: (proxy) => this.handleProxyCall(`^${this.nodeCmsMountPath}(admin)`, proxy)
     })
     _.set(this.proxy, `^${this.nodeCmsMountPath}(api)`, {
+      target: `${this.baseUrl}:${this.serverPort}`
+    })
+    _.set(this.proxy, '^/(socket)', {
       target: `${this.baseUrl}:${this.serverPort}`,
-      changeOrigin: true,
-      ws: true
+      configure: (proxy) => this.handleProxyCall(`${this.baseUrl}:${this.serverPort}`, proxy)
     })
     if (this.isInNodeModules && this.nodeCmsMountPath !== '/') {
       _.set(this.proxy, '^/(api)', {

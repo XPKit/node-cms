@@ -141,7 +141,8 @@
     "vue3-shortkey": "git+ssh://github.com/Zegfault/vue3-shortkey",
     "vuetify": "^3.5.1",
     "ws": "^8.13.0",
-    "xlsx": "^0.17.3"
+    "xlsx": "^0.17.3",
+    "socket.io": "^4.8.0"
   },
   "config": {
     "port": 9990

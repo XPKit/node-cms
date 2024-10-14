@@ -50,7 +50,7 @@ export default {
       return this.$refs.input.clearValidationErrors()
     },
     onModelUpdated (value, model) {
-      console.warn('Group - onModelUpdated:', value, model)
+      // console.warn('Group - onModelUpdated:', value, model)
       this.$emit('input', value, model)
     }
   }

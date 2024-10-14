@@ -55,14 +55,14 @@
               <div v-if="item" class="main">
                 <v-tooltip location="right" eager>
                   <template #activator="{ props }">
-                    <span v-bind="props">{{ $filters.truncate(getName(item), 25) }}</span>
+                    <span v-bind="props">{{ $filters.truncate(getName(item), 40) }}</span>
                   </template>
                   <span>{{ getName(item) }}</span>
                 </v-tooltip>
               </div>
               <div class="meta">
                 <div class="ts">
-                  <template v-if="item._updatedBy"> {{ item._updatedBy }} - </template><template v-else> {{ $filters.translate('TL_UPDATED') }}</template> <span class="time-ago" @click="copyIdToClipboard(item._id)">{{ getTimeAgo(item) }}</span>
+                  <template v-if="item._updatedBy"> {{ $filters.translate('TL_UPDATED_BY') }} {{ item._updatedBy }} - </template><template v-else> {{ $filters.translate('TL_UPDATED') }} </template><span class="time-ago" @click="copyIdToClipboard(item._id)">{{ getTimeAgo(item) }}</span>
                 </div>
               </div>
             </div>
