@@ -18,6 +18,7 @@ exports = (module.exports = {
       options: {
         maxCount: 1
       },
+      required: true,
       localised: false
     },
     {

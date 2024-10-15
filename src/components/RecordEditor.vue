@@ -230,7 +230,8 @@ export default {
       let fieldValue = {}
       _.each(this.resource.locales, (locale) => {
         if (!this.formValid) {
-          return this.handleFormNotValid()
+          // return this.handleFormNotValid(`getLocalisedFieldValue - ${locale}`)
+          return
         }
         const fieldName = `${field.field}.${locale}`
         const value = this.fieldValueOrDefault(field, _.get(data, fieldName))
@@ -245,7 +246,8 @@ export default {
           this.$nextTick(async () => {
             await this.checkFormValid()
           })
-          console.warn('required field empty', field, this.formValid)
+          console.error('required field empty 1', field)
+          this.notify(TranslateService.get('TL_REQUIRED_FIELD_EMPTY', 'error'))
           return
         }
         if (_.includes(this.fileInputTypes, field.input) || !_.isEqual(value, _.get(originalData, fieldName))) {
@@ -254,8 +256,8 @@ export default {
       })
       return fieldValue
     },
-    handleFormNotValid () {
-      console.info('form not valid')
+    handleFormNotValid (msg) {
+      console.info('form not valid', msg)
     },
     getFieldValue(originalData, data, field) {
       const isLocalised = this.resource.locales && (field.localised || _.isUndefined(field.localised))
@@ -279,7 +281,8 @@ export default {
         this.$nextTick(async () => {
           await this.checkFormValid()
         })
-        console.warn('required field empty', field, this.formValid)
+        console.error('required field empty 2', field, this.formValid)
+        this.notify(TranslateService.get('TL_REQUIRED_FIELD_EMPTY', 'error'))
         return
       }
       return value
@@ -341,7 +344,7 @@ export default {
       }
       await this.checkFormValid()
       if (!this.formValid) {
-        return this.handleFormNotValid()
+        return this.handleFormNotValid('createUpdateClicked 1')
       }
       this.canCreateUpdate = false
       const { uploadObject, allAttachments } = this.getDataToUpload(this.resource, _.cloneDeep(this.record), this.editingRecord)
@@ -355,7 +358,7 @@ export default {
         console.info('New attachments ', newAttachments)
       }
       if (!this.formValid) {
-        return this.handleFormNotValid()
+        return this.handleFormNotValid('createUpdateClicked 2')
       }
       if (_.isUndefined(this.editingRecord._id)) {
         await this.createRecord(uploadObject, newAttachments)
