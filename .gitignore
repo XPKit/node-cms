@@ -18,4 +18,5 @@ logs/*
 ssl/*
 /lib/xptoolkitRequest
 stats.html
+dist
 src/plugins
