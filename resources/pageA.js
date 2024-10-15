@@ -13,7 +13,7 @@ exports = module.exports = {
     {
       label: 'Has Backdrop',
       field: 'hasBackdrop',
-      input: 'boolean',
+      input: 'checkbox',
       localised: false,
       required: false
     },

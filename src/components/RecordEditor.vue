@@ -212,6 +212,7 @@ export default {
         document.querySelector(`#${firstInvalidField.id}`).focus()
       }
       this.formValid = formValid
+      this.canCreateUpdate = true
       if (!this.formValid) {
         const notificationText = this.editingRecord._id ? TranslateService.get('TL_ERROR_CREATING_RECORD_ID', null, { id: this.editingRecord._id }) : TranslateService.get('TL_ERROR_CREATING_RECORD')
         this.notify(notificationText, 'error')
@@ -233,10 +234,13 @@ export default {
         }
         const fieldName = `${field.field}.${locale}`
         const value = this.fieldValueOrDefault(field, _.get(data, fieldName))
-        if (locale !== this.locale && field.required &&
+        if (field.required &&
         (_.isUndefined(value) || (field.input === 'string' && value.length === 0))) {
-          this.selectLocale(locale)
+          if (locale !== this.locale) {
+            this.selectLocale(locale)
+          }
           this.formValid = false
+          this.canCreateUpdate = true
           this.$forceUpdate()
           this.$nextTick(async () => {
             await this.checkFormValid()
@@ -270,6 +274,7 @@ export default {
       if (field.required &&
         (_.isUndefined(value) || (field.input === 'string' && value.length === 0))) {
         this.formValid = false
+        this.canCreateUpdate = true
         this.$forceUpdate()
         this.$nextTick(async () => {
           await this.checkFormValid()
