@@ -50,7 +50,6 @@
 import _ from 'lodash'
 import sift from 'sift'
 import JSON5 from 'json5'
-import RequestService from '@s/RequestService.js'
 
 export default {
   data () {
@@ -74,7 +73,7 @@ export default {
       errorQty: 0,
       ignoreNextScrollEvent: false,
       fakeData: [],
-      socket: false
+      eventSource: false
     }
   },
   mounted () {
@@ -88,6 +87,7 @@ export default {
   },
   async unmounted () {
     this.destroyed = true
+    this.disconnectFromLogStream()
     if (this.$refs.scroller) {
       const element = this.$refs.scroller.$el
       element.removeEventListener('scroll', this.detectScroll)
@@ -95,22 +95,29 @@ export default {
     clearTimeout(this.timer)
   },
   methods: {
-    onBroadcastSyslog(payload) {
-      this.logLines.push(payload)
-      if (this.autoscroll) {
-        this.ignoreNextScrollEvent = true
-        if (_.get(this.$refs, 'scroller', false)) {
-          this.$refs.scroller.scrollToBottom()
-        }
-      }
-      this.updateSysLog()
+    disconnectFromLogStream () {
+      this.eventSource.close()
     },
-    async connectToLogStream () {
-      // TODO: hugo - change to websocket
-      this.socket = window.io()
-      this.socket.on('broadcast-syslog', this.onBroadcastSyslog)
-      this.logLines = await RequestService.get('../api/_syslog')
-      this.updateSysLog()
+    connectToLogStream () {
+      this.eventSource = new EventSource(`${window.location.pathname}../api/_syslog`)
+      this.eventSource.onmessage = (event) => {
+        this.logLines.push(JSON.parse(event.data))
+        if (this.autoscroll) {
+          this.ignoreNextScrollEvent = true
+          if (_.get(this.$refs, 'scroller', false)) {
+            this.$refs.scroller.scrollToBottom()
+          }
+        }
+        this.updateSysLog()
+      }
+      this.eventSource.addEventListener('end', () => {
+        this.eventSource.close()
+        console.warn('Log stream ended')
+      })
+      this.eventSource.onerror = (error) => {
+        console.error('Error in SSE connection:', error)
+        this.eventSource.close()
+      }
     },
     filterLevel (level) {
       this.searchKey = `sift:{level: {$gte: ${level}}}`
