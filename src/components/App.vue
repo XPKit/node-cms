@@ -100,6 +100,7 @@ export default {
       selectedResource: null,
       localeList: [],
       recordList: [],
+      allowedPlugins: [],
       notification: {},
       showSnackBar: false,
       toolbarTitle: false,
@@ -180,7 +181,7 @@ export default {
       return _.filter(groups, (group) => group.list && group.list.length !== 0)
     },
     pluginList () {
-      return _.filter(window.plugins, (item) => {
+      const plugins =  _.filter(window.plugins, (item) => {
         if (_.isUndefined(item.allowed)) {
           return true
         }
@@ -189,6 +190,7 @@ export default {
         }
         return _.includes(item.allowed, this.user.group)
       })
+      return _.filter(plugins, (plugin)=> _.includes(this.allowedPlugins, plugin.displayname))
     }
   },
   watch: {
@@ -256,6 +258,8 @@ export default {
       LoginService.init()
       try {
         this.user = await LoginService.getStatus()
+        this.allowedPlugins = await LoginService.getPlugins()
+        console.info('Plugins available:', this.allowedPlugins)
         this.$vuetify.theme.dark = _.get(this.user, 'theme', 'light') === 'dark'
         this.$forceUpdate()
       } catch (error) {

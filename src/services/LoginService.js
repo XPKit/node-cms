@@ -16,6 +16,11 @@ class LoginService {
     }, 1000 * 15)
   }
 
+  async getPlugins() {
+    const groups = await RequestService.get(`${window.location.pathname}_groups`)
+    return _.get(_.find(groups, {name: _.get(this.user, 'group', false)}), 'plugins', [])
+  }
+
   async getStatus () {
     try {
       const data = await RequestService.get(`${window.location.pathname}login`)
