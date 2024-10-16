@@ -46,6 +46,12 @@
         justify-content: space-between;
       }
     }
+
+    &.is-dirty {
+      .v-chip__content {
+        color: $imag-orange;
+      }
+    }
   }
   .preview-multiple,
   .preview-single-attachment {

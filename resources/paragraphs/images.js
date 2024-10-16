@@ -10,7 +10,7 @@ exports = module.exports = {
         accept: '.jpg,.png',
         maxCount: 1
       },
-      localised: false,
+      localised: true,
       required: true
     },
     {
@@ -21,7 +21,7 @@ exports = module.exports = {
         accept: '.jpg,.png',
         maxCount: 1
       },
-      localised: true,
+      localised: false,
       required: true
     }
   ]
