@@ -390,6 +390,7 @@ export default {
         const data = await ResourceService.cache(this.selectedResource.title)
         this.$loading.stop('updateRecordList')
         this.recordList = []
+        this.selectedRecord = false
         this.$nextTick(()=> {
           this.recordList = _.sortBy(data, item => -item._updatedAt)
           const updatedRecord = _.find(this.recordList, { _id: _.get(record, '_id') })
