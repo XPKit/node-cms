@@ -230,7 +230,8 @@ export default {
       if (this.sortMode === '_updatedAt' || this.sortMode === '_createdAt') {
         filteredRecords = _.orderBy(filteredRecords, [this.sortMode], ['desc'])
       } else {
-        filteredRecords = _.orderBy(filteredRecords, [_.first(_.keys(_.get(filteredRecords, '[0]', false)))], ['asc'])
+        filteredRecords = this.orderedList(filteredRecords)
+        // filteredRecords = _.orderBy(filteredRecords, [_.first(_.keys(_.get(filteredRecords, '[0]', false)))], ['asc'])
       }
       // console.log(`order by ${this.sortMode}`, test)
       return filteredRecords
@@ -266,6 +267,18 @@ export default {
     NotificationsService.events.on('omnibar-display-status', this.onGetOmnibarDisplayStatus)
   },
   methods: {
+    getFirstKey(record) {
+      return _.get([_.first(_.keys(_.get(record, '[0]', false)))])
+    },
+    orderedList(list) {
+      const collator = new Intl.Collator('en', {
+        sensitivity: 'base',
+        ignorePunctuation: true
+      })
+      return list.sort((a, b) => {
+        return collator.compare(this.getName(a), this.getName(b))
+      })
+    },
     onChangeSort(value) {
       this.sortMode = value
     },
