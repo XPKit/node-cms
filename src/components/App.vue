@@ -389,8 +389,13 @@ export default {
         this.$loading.start('updateRecordList')
         const data = await ResourceService.cache(this.selectedResource.title)
         this.$loading.stop('updateRecordList')
-        this.recordList = _.sortBy(data, item => -item._updatedAt)
-        this.selectRecord(_.find(this.recordList, { _id: _.get(record, '_id') }))
+        this.recordList = []
+        this.$nextTick(()=> {
+          this.recordList = _.sortBy(data, item => -item._updatedAt)
+          const updatedRecord = _.find(this.recordList, { _id: _.get(record, '_id') })
+          console.warn('updated record:', updatedRecord)
+          this.selectRecord(updatedRecord)
+        })
       } catch (error) {
         console.error('Error happen during updateRecordList:', error)
       }

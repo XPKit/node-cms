@@ -355,7 +355,7 @@ export default {
         console.info('All attachments ', allAttachments)
       }
       if (!_.isEmpty(newAttachments)) {
-        console.info('New attachments ', newAttachments)
+        console.warn('New attachments ', newAttachments)
       }
       if (!this.formValid) {
         return this.handleFormNotValid('createUpdateClicked 2')
@@ -387,12 +387,12 @@ export default {
         return item._id && !_.includes(newAttachmentsIds, item._id) && (_.get(item, 'cropOptions.updated', false) || _.get(item, 'orderUpdated', false))
       })
       if (!_.isEmpty(updatedAttachments)) {
-        // console.warn('UPDATED ATTACHMENTS = ', _.map(updatedAttachments, a => `${a.order}-${a._filename}`))
+        console.warn('UPDATED ATTACHMENTS = ', _.map(updatedAttachments, a => `${a.order}-${a._filename}`))
         await this.updateAttachments(this.editingRecord._id, updatedAttachments)
       }
       const removedAttachments = _.filter(previousData.allAttachments, item => !_.find(currentData.allAttachments, { _id: item._id }))
       if (!_.isEmpty(removedAttachments)) {
-        // console.warn('REMOVED ATTACHMENTS = ', removedAttachments)
+        console.warn('REMOVED ATTACHMENTS = ', removedAttachments)
         await this.removeAttachments(this.editingRecord._id, removedAttachments)
       }
     },
