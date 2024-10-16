@@ -24,6 +24,7 @@
 
 <script>
 import _ from 'lodash'
+import pAll from 'p-all'
 
 import TranslateService from '@s/TranslateService'
 import FieldSelectorService from '@s/FieldSelectorService'
@@ -206,15 +207,14 @@ export default {
       const firstInvalidField = _.find(this.$refs.vfg.items, (input) => !input.isValid)
       if (!_.isUndefined(firstInvalidField)) {
         console.error('First invalid field', firstInvalidField)
-      }
-      if (!_.isUndefined(firstInvalidField)) {
         formValid = false
         document.querySelector(`#${firstInvalidField.id}`).focus()
       }
       this.formValid = formValid
       this.canCreateUpdate = true
       if (!this.formValid) {
-        const notificationText = this.editingRecord._id ? TranslateService.get('TL_ERROR_CREATING_RECORD_ID', null, { id: this.editingRecord._id }) : TranslateService.get('TL_ERROR_CREATING_RECORD')
+        // const notificationText = this.editingRecord._id ? TranslateService.get('TL_ERROR_CREATING_RECORD_ID', null, { id: this.editingRecord._id }) : TranslateService.get('TL_ERROR_CREATING_RECORD')
+        const notificationText = TranslateService.get('TL_FORM_IS_INVALID')
         this.notify(notificationText, 'error')
       }
     },
@@ -246,8 +246,8 @@ export default {
           this.$nextTick(async () => {
             await this.checkFormValid()
           })
-          console.error('required field empty 1', field)
-          this.notify(TranslateService.get('TL_REQUIRED_FIELD_EMPTY', 'error'))
+          console.error('required field empty 1', locale, field, fieldName, fieldValue, value)
+          // this.notify(TranslateService.get('TL_REQUIRED_FIELD_EMPTY', 'error'))
           return
         }
         if (_.includes(this.fileInputTypes, field.input) || !_.isEqual(value, _.get(originalData, fieldName))) {
@@ -282,7 +282,7 @@ export default {
           await this.checkFormValid()
         })
         console.error('required field empty 2', field, this.formValid)
-        this.notify(TranslateService.get('TL_REQUIRED_FIELD_EMPTY', 'error'))
+        // this.notify(TranslateService.get('TL_REQUIRED_FIELD_EMPTY', 'error'))
         return
       }
       return value
@@ -338,16 +338,33 @@ export default {
       })
       return {uploadObject, allAttachments}
     },
+    async checkFormValidForAllLocales() {
+      await pAll(_.map(this.resource.locales, locale => {
+        return async () => {
+          this.selectLocale(locale)
+          await this.$nextTick()
+          await this.checkFormValid()
+          if (!this.formValid) {
+            throw new Error(`Record is not valid for locale ${locale}`)
+          }
+        }
+      }), {concurrency: 1})
+    },
     async createUpdateClicked () {
       if (!this.canCreateUpdate)  {
         return
       }
-      await this.checkFormValid()
-      if (!this.formValid) {
-        return this.handleFormNotValid('createUpdateClicked 1')
+      try {
+        const currentLocale = this.locale
+        await this.checkFormValidForAllLocales()
+        this.selectLocale(currentLocale)
+      } catch (error) {
+        console.error(error)
+        this.formValid = false
+        return
       }
       this.canCreateUpdate = false
-      const { uploadObject, allAttachments } = this.getDataToUpload(this.resource, _.cloneDeep(this.record), this.editingRecord)
+      const { uploadObject, allAttachments } = this.getDataToUpload(this.resource, _.cloneDeep(this.record), this.editingRecord, {}, [], false, true)
       // console.warn('UPLOAD OBJECT', uploadObject)
       // console.warn('All ATTACHMENTS', allAttachments)
       const newAttachments = _.filter(allAttachments, item => !item._id)

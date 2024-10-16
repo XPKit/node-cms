@@ -40,6 +40,14 @@
         <span :class="{disabled: allRecordsSelected()}" @click="onClickSelectAll">{{ $filters.translate('TL_SELECT_ALL') }}</span>
         <span :class="{disabled: multiselectItems.length === 0}" @click="onClickDeselectAll">{{ $filters.translate('TL_DESELECT_ALL') }}</span>
       </div>
+      <div v-else class="sort-records">
+        <v-select
+          :model-value="sortMode" :items="sortOptions"
+          :ripple="false"
+          menu-icon="mdi-chevron-down" flat
+          rounded density="compact" hide-details variant="solo-filled" @update:model-value="onChangeSort"
+        />
+      </div>
     </div>
     <div v-shortkey="multiselect ? ['ctrl', 'a'] : false" class="records" @shortkey="selectAll()">
       <RecycleScroller v-slot="{ item }" class="list" :items="filteredList || []" :item-size="58" key-field="_id">
@@ -133,6 +141,21 @@ export default {
   },
   data () {
     return {
+      sortOptions: [
+        {
+          title: TranslateService.get('TL_UPDATED_AT'),
+          value: '_updatedAt'
+        },
+        // {
+        //   title: TranslateService.get('TL_CREATED_AT'),
+        //   value: '_createdAt'
+        // },
+        {
+          title: TranslateService.get('TL_ALPHABETICAL'),
+          value: 'alphabetical'
+        }
+      ],
+      sortMode: false,
       lastSelectedItem: false,
       menuOpened: false,
       search: null,
@@ -165,7 +188,7 @@ export default {
       if (this.sift.isQuery) {
         return _.forEach(this.list.filter(sift(this.query)), item => item._searchable.query = true)
       }
-      return _.filter(this.list, (item) => {
+      let filteredRecords = _.filter(this.list, (item) => {
         if (_.isEmpty(this.search)) {
           return true
         }
@@ -204,9 +227,19 @@ export default {
         }
         return found
       })
+      if (this.sortMode === '_updatedAt' || this.sortMode === '_createdAt') {
+        filteredRecords = _.orderBy(filteredRecords, [this.sortMode], ['desc'])
+      } else {
+        filteredRecords = _.orderBy(filteredRecords, [_.first(_.keys(_.get(filteredRecords, '[0]', false)))], ['asc'])
+      }
+      // console.log(`order by ${this.sortMode}`, test)
+      return filteredRecords
     }
   },
   watch: {
+    resource() {
+      this.sortMode = _.get(_.first(this.sortOptions), 'value', '_updatedAt')
+    },
     selectedResourceGroup () {
       this.search = ''
     },
@@ -229,9 +262,13 @@ export default {
     }
   },
   mounted () {
+    this.sortMode = _.get(_.first(this.sortOptions), 'value', '_updatedAt')
     NotificationsService.events.on('omnibar-display-status', this.onGetOmnibarDisplayStatus)
   },
   methods: {
+    onChangeSort(value) {
+      this.sortMode = value
+    },
     getTimeAgo (item) {
       return Dayjs().to(Dayjs(_.get(item, '_updatedAt', 0)))
     },

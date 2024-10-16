@@ -34,6 +34,8 @@
     "TL_YES": "Yes",
     "TL_NO": "No",
     "TL_UPDATED": "updated",
+    "TL_UPDATED_AT": "Updated At",
+    "TL_ALPHABETICAL": "Alphabetical",
     "TL_UPDATED_BY": "updated by",
     "TL_FILE_TYPE_MISMATCH": "file type mismatch",
     "TL_FILE_SIZE_EXCEED": "file size exceed (> <%=size%> KB)",
@@ -144,5 +146,7 @@
     "TL_NB_SELECTED_ITEMS": "Selected <%=num%> items",
     "TL_WYSIWYG_PLACEHOLDER": "Write something...",
     "TL_INSERT_KEYWORDS": "Insert Keywords...",
-    "TL_IMAGE_IS_MANDATORY": "Image is mandatory"
+    "TL_IMAGE_IS_MANDATORY": "Image is mandatory",
+    "TL_FILE_IS_MANDATORY": "File is mandatory",
+    "TL_FORM_IS_INVALID": "Form is invalid"
   }

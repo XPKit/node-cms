@@ -27,6 +27,8 @@
     "TL_YES": "是",
     "TL_NO": "否",
     "TL_UPDATED": "更改在",
+    "TL_UPDATED_AT": "更新时间",
+    "TL_ALPHABETICAL": "字母顺序",
     "TL_UPDATED_BY": "updated by",
     "TL_FILE_TYPE_MISMATCH": "文件类型不匹配",
     "TL_FILE_SIZE_EXCEED": "文件大小超过（> <%=size%> KB）",
@@ -137,5 +139,7 @@
     "TL_NB_SELECTED_ITEMS": "Selected <%=num%> items",
     "TL_WYSIWYG_PLACEHOLDER": "Write something...",
     "TL_INSERT_KEYWORDS": "Insert Keywords...",
-    "TL_IMAGE_IS_MANDATORY": "图像是强制性的"
+    "TL_IMAGE_IS_MANDATORY": "图像是强制性的",
+    "TL_FILE_IS_MANDATORY": "文件是必需的",
+    "TL_FORM_IS_INVALID": "表单无效"
   }

@@ -506,4 +506,10 @@ export default {
   opacity: 0.5;
   background: #c8ebfb;
 }
+.sort-records {
+  .v-field__input {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
 </style>
