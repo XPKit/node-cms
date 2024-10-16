@@ -19,6 +19,8 @@ const session = require('express-session')
 const UUID = require('./lib/util/uuid')
 const SyslogManager = require('./lib/SyslogManager')
 const SystemManager = require('./lib/SystemManager')
+const escapeRegExp = require('./lib/util/escapeRegExp')
+
 const Resource = require('./lib/resource')
 
 /*
@@ -89,6 +91,7 @@ class CMS {
     this._tempResources = {}
     this._resources = {}
     this._paragraphs = {}
+    this._attachmentFields = {}
     this._resourceNames = []
 
     /* keep track of available plugins */
@@ -106,6 +109,7 @@ class CMS {
         _.set(this._paragraphs, key, value)
         this.formatSchema(this._paragraphs, key, true)
       })
+
       _.set(this._paragraphs, '_settingsLink', {
         displayname: 'Settings link',
         maxCount: 1,
@@ -278,6 +282,37 @@ class CMS {
       }), {concurrency: 1})
       callback && callback()
     }
+
+    this._processAttachmentFields()
+  }
+
+  _processAttachmentFields() {
+    _.each(this._resources, (resource, resourceKey) => {
+      const schema = _.get(resource, 'options.schema', [])
+      _.each(schema, fieldItem => {
+        const rootPath = `${resourceKey}.${fieldItem.field}`
+        if (_.includes(['file', 'image'], fieldItem.input)) {
+          _.set(this._attachmentFields, `["${escapeRegExp(rootPath)}"]`, fieldItem)
+        } else if (fieldItem.input === 'paragraph') {
+          this._processAttachmentFieldsParagraph(fieldItem, rootPath)
+        }
+      })
+    })
+  }
+
+  _processAttachmentFieldsParagraph(fieldItem, rootPath) {
+    const paragraphTypes = _.get(fieldItem, 'options.types', [])
+    _.each(paragraphTypes, paragraphType => {
+      const schema = _.get(this._paragraphs, `["${paragraphType}"].schema`, [])
+      _.each(schema, paragraphFieldItem => {
+        const paragraphRootPath = `${rootPath}.{{*}}.${paragraphFieldItem.field}`
+        if (_.includes(['file', 'image'], paragraphFieldItem.input)) {
+          _.set(this._attachmentFields,  `["${escapeRegExp(paragraphRootPath)}"]`, paragraphFieldItem)
+        } else if (fieldItem.input === 'paragraph') {
+          this._processAttachmentFieldsParagraph(paragraphFieldItem, paragraphRootPath)
+        }
+      })
+    })
   }
 
   underscoreObject (list, values) {

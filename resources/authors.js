@@ -30,9 +30,9 @@ exports = (module.exports = {
     {
       field: 'paragraph',
       input: 'paragraph',
-      types: [
-        'textParagraph', 'testParagraph'
-      ]
+      options: {
+        types: ['textParagraph', 'testParagraph']
+      }
     }
 
   ],
