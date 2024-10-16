@@ -34,6 +34,8 @@
     "TL_YES": "Yes",
     "TL_NO": "No",
     "TL_UPDATED": "updated",
+    "TL_UPDATED_AT": "Updated At",
+    "TL_ALPHABETICAL": "Alphabetical",
     "TL_UPDATED_BY": "updated by",
     "TL_FILE_TYPE_MISMATCH": "file type mismatch",
     "TL_FILE_SIZE_EXCEED": "file size exceed (> <%=size%> KB)",
