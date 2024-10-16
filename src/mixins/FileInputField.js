@@ -59,7 +59,6 @@ export default {
       return _.first(this.attachments)
     },
     getAttachments () {
-      console.warn(1, this._value, this.attachments)
       return this._value || this.attachments
     },
     imageSize (attachment = false) {

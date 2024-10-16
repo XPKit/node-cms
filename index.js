@@ -292,7 +292,9 @@ class CMS {
       _.each(schema, fieldItem => {
         const rootPath = `${resourceKey}.${fieldItem.field}`
         if (_.includes(['file', 'image'], fieldItem.input)) {
-          _.set(this._attachmentFields, `["${escapeRegExp(rootPath)}"]`, fieldItem)
+          const field = _.cloneDeep(fieldItem)
+          field.path = rootPath
+          _.set(this._attachmentFields, `["${escapeRegExp(rootPath)}"]`, field)
         } else if (fieldItem.input === 'paragraph') {
           this._processAttachmentFieldsParagraph(fieldItem, rootPath)
         }
@@ -307,7 +309,9 @@ class CMS {
       _.each(schema, paragraphFieldItem => {
         const paragraphRootPath = `${rootPath}.{{*}}.${paragraphFieldItem.field}`
         if (_.includes(['file', 'image'], paragraphFieldItem.input)) {
-          _.set(this._attachmentFields,  `["${escapeRegExp(paragraphRootPath)}"]`, paragraphFieldItem)
+          const field = _.cloneDeep(paragraphFieldItem)
+          field.path = paragraphRootPath
+          _.set(this._attachmentFields,  `["${escapeRegExp(paragraphRootPath)}"]`, field)
         } else if (fieldItem.input === 'paragraph') {
           this._processAttachmentFieldsParagraph(paragraphFieldItem, paragraphRootPath)
         }
