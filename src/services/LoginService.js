@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import Emitter from 'tiny-emitter'
 import RequestService from './RequestService'
+import VueCookies from 'vue-cookies'
 
 class LoginService {
   constructor () {
@@ -25,6 +26,16 @@ class LoginService {
     try {
       const data = await RequestService.get(`${window.location.pathname}login`)
       this.user = data
+      const remoteUptime = _.get(this.user, 'uptime', +new Date())
+      const localUptime = _.parseInt(VueCookies.get('uptime') || -1)
+      if (localUptime <= -1) {
+        VueCookies.set('uptime', `${remoteUptime}`)
+        console.warn('Server uptime saved:', VueCookies.get('uptime'))
+      } else if (_.isNumber(localUptime) && remoteUptime > localUptime) {
+        console.warn('Will reload page for a new version...')
+        VueCookies.remove('uptime')
+        window.location.reload(true)
+      }
       return this.user
     } catch (error) {
       return null
