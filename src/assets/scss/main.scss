@@ -621,8 +621,12 @@ body {
     }
 
     &.notification-error {
-      p {
-        color: $notification-error-color;
+      .v-snackbar__wrapper {
+        background-color: $notification-error-color;
+        color: white;
+        p {
+          color: white;
+        }
       }
     }
 
