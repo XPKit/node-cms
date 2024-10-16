@@ -145,5 +145,6 @@
     "TL_WYSIWYG_PLACEHOLDER": "Write something...",
     "TL_INSERT_KEYWORDS": "Insert Keywords...",
     "TL_IMAGE_IS_MANDATORY": "Image is mandatory",
-    "TL_FILE_IS_MANDATORY": "File is mandatory"
+    "TL_FILE_IS_MANDATORY": "File is mandatory",
+    "TL_FORM_IS_INVALID": "Form is invalid"
   }

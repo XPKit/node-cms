@@ -138,5 +138,6 @@
     "TL_WYSIWYG_PLACEHOLDER": "Write something...",
     "TL_INSERT_KEYWORDS": "Insert Keywords...",
     "TL_IMAGE_IS_MANDATORY": "图像是强制性的",
-    "TL_FILE_IS_MANDATORY": "文件是必需的"
+    "TL_FILE_IS_MANDATORY": "文件是必需的",
+    "TL_FORM_IS_INVALID": "表单无效"
   }

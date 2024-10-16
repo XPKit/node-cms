@@ -213,7 +213,8 @@ export default {
       this.formValid = formValid
       this.canCreateUpdate = true
       if (!this.formValid) {
-        const notificationText = this.editingRecord._id ? TranslateService.get('TL_ERROR_CREATING_RECORD_ID', null, { id: this.editingRecord._id }) : TranslateService.get('TL_ERROR_CREATING_RECORD')
+        // const notificationText = this.editingRecord._id ? TranslateService.get('TL_ERROR_CREATING_RECORD_ID', null, { id: this.editingRecord._id }) : TranslateService.get('TL_ERROR_CREATING_RECORD')
+        const notificationText = TranslateService.get('TL_FORM_IS_INVALID')
         this.notify(notificationText, 'error')
       }
     },
