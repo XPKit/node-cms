@@ -107,7 +107,7 @@ export default {
       default: () => {}
     },
     selectedItem: {
-      type: Object,
+      type: [Object, Boolean],
       default: () => {}
     },
     selectResourceCallback: {
