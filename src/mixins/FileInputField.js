@@ -204,28 +204,43 @@ export default {
       return new Promise((resolve) => {
         _.each(files, (file) => {
           const reader = new FileReader()
-          const vm = this
-          reader.onload = (element) => {
-            vm.addAttachment(file, element)
-            vm.$forceUpdate()
+          if (_.get(file, 'type', false).indexOf('video/') !== -1) {
+            this.addAttachment(file, {target: {result: URL.createObjectURL(file)}})
+            this.$forceUpdate()
             nbFilesToRead--
             if (nbFilesToRead === 0) {
               if (this.isForMultipleImages()) {
-                _.each(vm._value, (a, i) => {
+                _.each(this._value, (a, i) => {
                   a.order = i + 1
                   a.orderUpdated = true
                 })
               }
-              resolve(vm.attachments)
+              resolve(this.attachments)
             }
-          }
-          try {
-            const blob = _.get(file, '[0]', file)
-            if (blob instanceof Blob) {
-              reader.readAsDataURL(blob)
+          } else {
+            const vm = this
+            reader.onload = (element) => {
+              vm.addAttachment(file, element)
+              vm.$forceUpdate()
+              nbFilesToRead--
+              if (nbFilesToRead === 0) {
+                if (this.isForMultipleImages()) {
+                  _.each(vm._value, (a, i) => {
+                    a.order = i + 1
+                    a.orderUpdated = true
+                  })
+                }
+                resolve(vm.attachments)
+              }
             }
-          } catch (error) {
-            console.error('Error while reading file:', error)
+            try {
+              const blob = _.get(file, '[0]', file)
+              if (blob instanceof Blob) {
+                reader.readAsDataURL(blob)
+              }
+            } catch (error) {
+              console.error('Error while reading file:', error)
+            }
           }
         })
       })

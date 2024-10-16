@@ -288,17 +288,6 @@ let typeMapper = {
     colorPickerOptions: {
     }
   }
-  // paragraphImage: {
-  //   type: 'paragraphAttachmentView',
-  //   overrideType: 'ParagraphAttachmentView',
-  //   fileType: 'image',
-  //   validator: customValidators.image
-  // },
-  // paragraphFile: {
-  //   type: 'paragraphAttachmentView',
-  //   overrideType: 'ParagraphAttachmentView',
-  //   validator: customValidators.file
-  // }
 }
 
 _.each(typeMapper, (type) => {
