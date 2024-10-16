@@ -342,6 +342,7 @@ export default {
       await pAll(_.map(this.resource.locales, locale => {
         return async () => {
           this.selectLocale(locale)
+          await this.$nextTick()
           await this.checkFormValid()
           if (!this.formValid) {
             throw new Error(`Record is not valid for locale ${locale}`)
@@ -354,7 +355,9 @@ export default {
         return
       }
       try {
+        const currentLocale = this.locale
         await this.checkFormValidForAllLocales()
+        this.selectLocale(currentLocale)
       } catch (error) {
         console.error(error)
         this.formValid = false
