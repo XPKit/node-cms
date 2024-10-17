@@ -37,11 +37,18 @@ const cacheControl = () => ({
   }
 })
 
-export default defineConfig(({ command, mode, ssrBuild }) => {
+export default defineConfig(({ mode }) => {
   return {
     root: mode === 'development' ? __dirname : viteUtils.nodeCmsSrcPath,
     base: './',
     publicDir: `${mode === 'development' ? '.' : '..'}/public`,
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: 'modern-compiler' // or "modern"
+        }
+      }
+    },
     plugins: [
       cacheControl(),
       vue({exclude: 'os'}),
@@ -86,7 +93,7 @@ export default defineConfig(({ command, mode, ssrBuild }) => {
           rollupNodePolyFill()
         ],
         output: {
-          manualChunks: (id, {getModuleInfo}) => {
+          manualChunks: (id) => {
             if (id.includes('node_modules') && !id.includes('node-cms/src')) {
               const moduleName = _.get(path.dirname(id).split('/node_modules/').pop().split('/'), '[0]', false)
               if (!moduleName) {
