@@ -333,7 +333,7 @@ export default {
         if (_.isString(fieldValue) && _.get(originalRecord, field.field) === fieldValue) {
           console.info(`value for field ${field.field} is the same, will not update it`)
         } else {
-          uploadObject = _.extend(uploadObject, fieldValue)
+          uploadObject = _.merge(uploadObject, fieldValue)
         }
       })
       return {uploadObject, allAttachments}
