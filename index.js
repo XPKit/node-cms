@@ -14,7 +14,6 @@ const _ = require('lodash')
 const requireDir = require('require-dir')
 const mkdirp = require('mkdirp')
 const session = require('express-session')
-// const { Server } = require('socket.io')
 
 const UUID = require('./lib/util/uuid')
 const SyslogManager = require('./lib/SyslogManager')
@@ -207,18 +206,6 @@ class CMS {
 
     // handle syslog and system
     this.bootstrapFunctions = this.bootstrapFunctions || []
-    // TODO: hugo - create websocket server with socket.io
-    // this._app.enable('trust proxy')
-    // this._app.use(compression({
-    //   level: 9,
-    //   filter: (req, res) => {
-    //     if (req.headers['x-no-compression']) {
-    //       return false
-    //     }
-    //     return compression.filter(req, res)
-    //   }
-    // }))
-
     this.bootstrapFunctions.push(async (callback) => {
       SyslogManager.init(this, options)
       SystemManager.init(this, options)
