@@ -150,6 +150,14 @@
   }
 }
 
+.image-view, .attachment-view {
+  border: 2px $paragraph-top-bar-background solid;
+  border-radius: 8px;
+  padding: 8px;
+  .v-card {
+    background-color: transparent;
+  }
+}
 .form-group.error {
   .image-view .croppa-container{
     border: 1px solid red;

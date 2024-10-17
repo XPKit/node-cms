@@ -18,7 +18,7 @@
     </div>
     <draggable
       v-if="schema && subResourcesLoaded" :key="`${schema.model}-${key}`" :list="items"
-      :class="{disabled}" draggable=".item" v-bind="dragOptions" handle=".handle" :group="`${schema.model}-${key}`" ghost-class="ghost" @end="onEndDrag" @start="dragging = true"
+      :class="{disabled}" draggable=".item" v-bind="dragOptions" handle=".handle" :group="`${schema.model}-${key}`" ghost-class="ghost" @end="onEndDrag"
     >
       <v-card v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" :theme="theme" elevation="0" :class="getClasses(paragraphLevel, idx)">
         <v-card-title class="handle paragraph-header">
@@ -249,7 +249,6 @@ export default {
       this.updateItems()
     },
     onEndDrag () {
-      this.dragging = false
       this.key = uuid()
       this.updateItems()
     },

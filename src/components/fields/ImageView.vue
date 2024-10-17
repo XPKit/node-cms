@@ -2,23 +2,9 @@
   <div class="image-view" :class="{'full-width': !(schema.width && schema.height)}">
     <form enctype="multipart/form-data">
       <field-label :schema="schema" />
-      <div class="test-info" />
       <v-card
-        v-if="schema.disabled" :theme="theme"
-        class="file-input-card" elevation="0" :class="{ 'drag-and-drop': dragover }"
-        @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
-      >
-        <v-file-input
-          ref="input" :rules="getRules()" hide-details="auto" prepend-icon="" flat single-line
-          :placeholder="getPlaceholder()" :clearable="false" :label="getPlaceholder()"
-          density="compact" :variant="getVariant()" rounded persistent-placeholder :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="true"
-          @change="onUploadChanged" @update:focused="onFieldFocus"
-        >
-          <template #selection />
-        </v-file-input>
-      </v-card>
-      <v-card
-        v-else-if="!isFieldDisabled()" :theme="theme"
+        v-if="!isFieldDisabled()"
+        :theme="theme"
         class="file-input-card" elevation="0" :class="{ 'drag-and-drop': dragover }"
         @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
       >
@@ -34,45 +20,18 @@
         </v-file-input>
       </v-card>
     </form>
-    <div v-if="isForMultipleImages()" class="preview-multiple">
-      <draggable
-        :key="`${schema.model}-${key}`"
-        :list="getAttachments()" :group="`${schema.model}-${key}`" :item-key="getKey"
-        draggable=".preview-attachment" handle=".row-handle" ghost-class="ghost"
-        v-bind="dragOptions" :class="{disabled}" class="preview-multiple" @end="onEndDrag" @start="onStartDrag"
-      >
-        <v-card v-for="(a, i) in getAttachments()" :key="getKey(a)" :theme="theme" elevation="0" class="preview-attachment" :class="{odd: i % 2 !== 0}">
-          <v-tooltip :theme="theme" location="right" eager>
-            <template #activator="{ props }">
-              <v-chip variant="outlined" class="filename" :class="{'is-dirty': a.dirty}" closable close-icon="mdi-close-circle-outline" v-bind="props" @click:close="removeImage(a, i)">#{{ i + 1 }} - {{ $filters.truncate(getAttachmentFilename(a),10) }} ({{ imageSize(a) }})</v-chip>
-            </template>
-            <span>{{ a._filename }} <template v-if="a.dirty">({{ $filters.translate('TL_DIRTY') }})</template></span>
-          </v-tooltip>
-          <div class="row-handle">
-            <div v-if="isImage(a)" class="image-wrapper">
-              <v-img v-if="a._id" cover :src="getImageSrc(a)" class="clickable" @click="viewFile(a)" />
-              <v-img v-else cover :src="getImageSrc(a)" />
-            </div>
-            <v-btn v-else-if="a._id" :theme="theme" size="small" rounded elevation="0" @click="viewFile(a)">{{ $filters.translate('TL_VIEW') }}</v-btn>
-          </div>
-        </v-card>
-      </draggable>
-    </div>
+    <preview-multiple
+      v-if="isForMultipleImages()" :attachments="getAttachments()" :schema="schema" :theme="theme" :is-image="isImage" :disabled="disabled" :on-end-drag="onEndDrag" :image-size="imageSize" :get-image-src="getImageSrc"
+      :remove-image="removeImage"
+    />
     <template v-else-if="attachment() && isImage()">
       <div v-if="!(schema.width && schema.height)" class="preview-single-attachment">
-        <v-card v-for="(a, i) in getAttachments()" :key="getKey(a)" :theme="theme" elevation="0" class="preview-attachment" :class="{odd: i % 2 !== 0}">
-          <v-tooltip :theme="theme" location="right" eager>
-            <template #activator="{ props }">
-              <v-chip variant="outlined" class="filename" :class="{'is-dirty': attachment().dirty}" closable close-icon="mdi-close-circle-outline" v-bind="props" @click:close="removeImage(attachment(), 0)">{{ $filters.truncate(getAttachmentFilename(attachment()),10) }} ({{ imageSize(attachment()) }})</v-chip>
-            </template>
-            <span>{{ attachment()._filename }} <template v-if="attachment().dirty">({{ $filters.translate('TL_DIRTY') }})</template></span>
-          </v-tooltip>
-          <div class="image-wrapper">
-            <v-img v-if="a._id" cover :src="getImageSrc(a)" class="clickable" @click="viewFile(a)" />
-            <v-img v-else class="preview" cover :src="getImageSrc()" />
-          </div>
-        </v-card>
+        <preview-attachment
+          :theme="theme" :attachment="attachment()" :image-size="imageSize" :get-image-src="getImageSrc"
+          :remove-image="removeImage" :is-image="isImage"
+        />
       </div>
+      <!-- Cropped image field -->
       <div v-else class="parent-parent">
         <div class="cropper-parent">
           <cropper
@@ -90,27 +49,7 @@
         <v-btn elevation="2" class="delete" icon :disabled="imageUrl().length === 0" @click="removeImage(attachment(), 0)"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
       </div>
     </template>
-    <template v-if="model._local && !disabled">
-      <template v-if="isForMultipleImages()">
-        <div class="help-block">
-          <v-icon size="small">mdi-information</v-icon>
-          <span v-if="getMaxCount() !== -1 ">{{ $filters.translate('TL_MAX_NUMBER_OF_IMAGES', null, { num: getMaxCount() }) }}</span>
-          <span v-else>{{ $filters.translate('TL_UNLIMITED_NUMBER_OF_IMAGES') }}</span>
-        </div>
-      </template>
-      <div v-if="(schema.width && schema.height)" class="help-block">
-        <v-icon size="small">mdi-information</v-icon>
-        <span>{{ $filters.translate('TL_THIS_FIELD_REQUIRES_THE_FOLLOWING_SIZE') }}:{{ schema.width }}x{{ schema.height }}</span>
-      </div>
-      <div v-if="(schema.limit)" class="help-block">
-        <v-icon size="small">mdi-information</v-icon>
-        <span>{{ $filters.translate('TL_THIS_FIELD_REQUIRES_A_FILE_SIZE') }}: {{ getFileSizeLimit(schema.limit) }}</span>
-      </div>
-      <div v-if="(schema.accept)" class="help-block">
-        <v-icon size="small">mdi-information</v-icon>
-        <span>{{ $filters.translate('TL_THIS_FIELD_REQUIRES') }}: {{ schema.accept }}</span>
-      </div>
-    </template>
+    <file-input-errors v-if="model._local && !disabled" field-type="image" :schema="schema" :is-for-multiple-images="isForMultipleImages" :get-max-count="getMaxCount" />
   </div>
 </template>
 
@@ -120,13 +59,15 @@ import { Cropper } from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css'
 import AbstractField from '@m/AbstractField'
 import FileInputField from '@m/FileInputField'
-import DragList from '@m/DragList'
+import PreviewMultiple from '@c/PreviewMultiple'
+import PreviewAttachment from '@c/PreviewAttachment'
+import FileInputErrors from '@c/FileInputErrors'
 
 export default {
   components: {
-    Cropper
+    Cropper, PreviewMultiple, PreviewAttachment, FileInputErrors
   },
-  mixins: [AbstractField, FileInputField, DragList],
+  mixins: [AbstractField, FileInputField],
   data () {
     return {
       firstCropUpdate: true,
@@ -200,12 +141,7 @@ export default {
 @import '@a/scss/variables.scss';
 
 .image-view {
-  border: 2px $paragraph-top-bar-background solid;
-  border-radius: 8px;
-  padding: 8px;
-  .v-card {
-    background-color: transparent;
-  }
+
   .field-label {
     padding-left: 8px;
   }
@@ -234,8 +170,5 @@ export default {
     width: 100%;
     height: 100%;
   }
-}
-.test-info {
-  max-width: 100%;
 }
 </style>

@@ -84,10 +84,11 @@ export default {
     },
     onDrop (event) {
       this.dragover = false
-      if (event.dataTransfer.files.length > 1) {
+      const files = _.get(event, 'dataTransfer.files', [])
+      if (files.length > 1) {
         return console.error('Only one file can be uploaded at a time..')
       }
-      this.onChangeXlsxFile(event, event.dataTransfer.files)
+      this.onChangeXlsxFile(event, files)
     },
     async onChangeXlsxFile (event, files = false) {
       this.uploadedXlsx = null

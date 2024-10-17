@@ -14,7 +14,6 @@ export default {
   },
   methods: {
     onEndDrag () {
-      this.dragging = false
       const attachments = _.map(this.getAttachments(), (item, i) => {
         if (item.order !== i + 1) {
           item.order = i + 1
@@ -22,7 +21,7 @@ export default {
         }
         return item
       })
-      console.warn('ON END DRAG', _.map(attachments, '_filename'))
+      // console.warn('ON END DRAG', _.map(attachments, '_filename'))
       this._value = attachments
     },
     getImageSrc (attachment = false) {
@@ -122,10 +121,6 @@ export default {
     getMaxCount () {
       return _.get(this.schema, 'options.maxCount', -1)
     },
-    getFileSizeLimit (limit) {
-      const kbLimit = limit / 1024
-      return kbLimit > 1000 ? `${kbLimit / 1000} MB` : `${kbLimit} KB`
-    },
     getAttachmentFilename(attachment) {
       return attachment._filename || (attachment._fields && attachment._fields._filename)
     },
@@ -143,18 +138,17 @@ export default {
     onDrop (event) {
       this.dragover = false
       const maxCount = this.getMaxCount()
-      if (maxCount !== -1 && maxCount <= 1 && event.dataTransfer.files.length > 1) {
-        return console.error('Only one file can be uploaded at a time..')
-      }
       let files = _.get(event, 'dataTransfer.files', [])
-      if (_.isObject(files)) {
+      if (maxCount !== -1 && maxCount <= 1 && files.length > 1) {
+        files = _.last(files)
+        console.info(`Only one file can be uploaded at a time for field '${this.schema.originalModel}', will take the last one:`, files)
+      } else if (_.isObject(files)) {
         files = _.toArray(files)
       }
-      this.onUploadChanged(files)
+      this.onUploadChanged(files, true)
     },
-    async onUploadChanged (files) {
-      const test = await this.$refs.input.validate()
-      if (_.get(test, 'length', 0) !== 0) {
+    async onUploadChanged (files, dragAndDrop = false) {
+      if (!dragAndDrop && _.get(await this.$refs.input.validate(), 'length', 0) !== 0) {
         return
       }
       files = _.isNull(files) ? [] : files
