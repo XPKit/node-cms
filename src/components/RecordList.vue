@@ -70,7 +70,7 @@
               </div>
               <div class="meta">
                 <div class="ts">
-                  <template v-if="item._updatedBy"> {{ $filters.translate('TL_UPDATED_BY') }} {{ item._updatedBy }} - </template><template v-else> {{ $filters.translate('TL_UPDATED') }} - </template><span class="time-ago" @click="copyIdToClipboard(item._id)">{{ getTimeAgo(item) }}</span>
+                  <template v-if="item._updatedBy"> {{ $filters.translate('TL_UPDATED_BY') }} {{ item._updatedBy }} - </template><template v-else> {{ $filters.translate('TL_UPDATED') }} - </template><span class="time-ago" @contextmenu.stop.prevent="copyIdToClipboard(item._id)">{{ getTimeAgo(item) }}</span>
                 </div>
               </div>
             </div>
