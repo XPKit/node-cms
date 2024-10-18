@@ -61,12 +61,13 @@
             </div>
             <div class="infos-wrapper">
               <div v-if="item" class="main">
-                <v-tooltip location="right" eager>
+                <v-tooltip v-if="getName(item) && getName(item).length > 40" location="right" eager>
                   <template #activator="{ props }">
                     <span v-bind="props" v-html="renderBaseOnSearch(getName(item))" />
                   </template>
                   <span v-html="getName(item)" />
                 </v-tooltip>
+                <span v-else v-html="renderBaseOnSearch(getName(item))" />
               </div>
               <div class="meta">
                 <div class="ts">
