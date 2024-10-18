@@ -249,7 +249,7 @@ export default {
         this.$loading.start('delete-record')
         try {
           await RequestService.delete(`../api/${this.resource.title}/${record._id}`)
-          this.notify(TranslateService.get('TL_RECORD_DELETED', null, { id: record._id }))
+          this.notify(TranslateService.get('TL_RECORD_DELETED', { id: record._id }))
           this.$emit('updateRecordList', null)
         } catch (error) {
           console.error('Error happen during deleteRecord:', error)
@@ -312,7 +312,7 @@ export default {
         try {
           const data = await RequestService.post(`../api/${this.resource.title}`, uploadObject)
           await this.uploadAttachments(data._id, newAttachments)
-          this.notify(TranslateService.get('TL_RECORD_CREATED', null, { id: data._id }))
+          this.notify(TranslateService.get('TL_RECORD_CREATED', { id: data._id }))
           this.$emit('updateRecordList', data)
         } catch (error) {
           console.error('Error happend during updateRecord/create:', error)
@@ -331,7 +331,7 @@ export default {
           await this.uploadAttachments(response.data._id, newAttachments)
           await this.removeAttachments(response.data._id, removeAttachments)
           if (!_.isEmpty(uploadObject) || !_.isEmpty(newAttachments) || !_.isEmpty(removeAttachments)) {
-            this.notify(TranslateService.get('TL_RECORD_UPDATED', null, { id: record._id }))
+            this.notify(TranslateService.get('TL_RECORD_UPDATED', { id: record._id }))
           }
           this.$emit('updateRecordList', response.data)
         } catch (error) {
@@ -350,7 +350,7 @@ export default {
           promises.push(async () => {
             this.$loading.start('delete-record')
             await RequestService.delete(`../api/${this.resource.title}/${record._id}`)
-            this.notify(TranslateService.get('TL_RECORD_DELETED', null, { id: record._id }))
+            this.notify(TranslateService.get('TL_RECORD_DELETED', { id: record._id }))
             this.$emit('updateRecordList', null)
             this.$loading.stop('delete-record')
           })

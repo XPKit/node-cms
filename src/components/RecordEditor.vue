@@ -186,7 +186,7 @@ export default {
         this.$loading.start('delete-record')
         try {
           await RequestService.delete(`../api/${this.resource.title}/${this.editingRecord._id}`)
-          this.notify(TranslateService.get('TL_RECORD_DELETED', null, { id: this.editingRecord._id }))
+          this.notify(TranslateService.get('TL_RECORD_DELETED', { id: this.editingRecord._id }))
           this.$emit('updateRecordList', null)
         } catch (error) {
           console.error('Error happen during deleteRecord:', error)
@@ -213,7 +213,7 @@ export default {
       this.formValid = formValid
       this.canCreateUpdate = true
       if (!this.formValid) {
-        // const notificationText = this.editingRecord._id ? TranslateService.get('TL_ERROR_CREATING_RECORD_ID', null, { id: this.editingRecord._id }) : TranslateService.get('TL_ERROR_CREATING_RECORD')
+        // const notificationText = this.editingRecord._id ? TranslateService.get('TL_ERROR_CREATING_RECORD_ID', { id: this.editingRecord._id }) : TranslateService.get('TL_ERROR_CREATING_RECORD')
         const notificationText = TranslateService.get('TL_FORM_IS_INVALID')
         this.notify(notificationText, 'error')
       }
@@ -389,7 +389,7 @@ export default {
       try {
         let data = await RequestService.post(`../api/${this.resource.title}`, uploadObject)
         await this.uploadAttachments(data._id, newAttachments)
-        this.notify(TranslateService.get('TL_RECORD_CREATED', null, { id: data._id }))
+        this.notify(TranslateService.get('TL_RECORD_CREATED', { id: data._id }))
         this.$emit('updateRecordList', data)
       } catch (error) {
         console.error('Error happen during createRecord:', error)
@@ -428,7 +428,7 @@ export default {
           data = await RequestService.get(url)
           // data = await RequestService.get(url)
         }
-        this.notify(TranslateService.get('TL_RECORD_UPDATED', null, { id: this.editingRecord._id }))
+        this.notify(TranslateService.get('TL_RECORD_UPDATED', { id: this.editingRecord._id }))
         this.$emit('updateRecordList', data)
         console.log('record is now: ', data)
       } catch (error) {

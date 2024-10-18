@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="0" class="multiselect-page">
     <div class="top-bar">
-      <h3>{{ $filters.translate('TL_NUMBER_OF_SELECTED_RECORDS', null, { num: size(multiselectItems) }) }}</h3>
+      <h3>{{ $filters.translate('TL_NUMBER_OF_SELECTED_RECORDS', { num: size(multiselectItems) }) }}</h3>
       <div class="buttons">
         <v-btn elevation="0" class="delete" rounded :disabled="isEmpty(multiselectItems)" @click="onClickDelete">{{ $filters.translate('TL_DELETE') }}</v-btn>
       </div>
@@ -69,7 +69,7 @@ export default {
     },
     async onClickDelete () {
       if (!window.confirm(
-        TranslateService.get('TL_ARE_YOU_SURE_TO_DELETE_RECORDS', null, {num: _.size(this.multiselectItems)}),
+        TranslateService.get('TL_ARE_YOU_SURE_TO_DELETE_RECORDS', {num: _.size(this.multiselectItems)}),
         TranslateService.get('TL_YES'),
         TranslateService.get('TL_NO')
       )) {
@@ -81,7 +81,7 @@ export default {
           return async () => {
             try {
               await RequestService.delete(`../api/${this.resource.title}/${item._id}`)
-              this.notify(TranslateService.get('TL_RECORD_DELETED', null, { id: item._id }))
+              this.notify(TranslateService.get('TL_RECORD_DELETED', { id: item._id }))
             } catch (error) {
               console.error(error)
               this.manageError(error, 'delete', item)

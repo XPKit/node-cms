@@ -41,7 +41,7 @@ class TranslateService {
       if (_.get(this.dict, `${this.locale}.${key}`, false)) {
         let result = ''
         try {
-          result = Mustache.render(this.dict[this.locale][key], params)
+          result = Mustache.render(this.dict[this.locale][key], params || {})
         } catch (error) {
           console.error(`Failed to render translation '${key}':`, error)
         }
@@ -50,7 +50,7 @@ class TranslateService {
       if (_.get(key, this.locale, false))  {
         let result = ''
         try {
-          result = Mustache.render(key[this.locale], params)
+          result = Mustache.render(key[this.locale], params || {})
         } catch (error) {
           console.error('Failed to render translation:', {error, key, locale: this.locale})
         }
