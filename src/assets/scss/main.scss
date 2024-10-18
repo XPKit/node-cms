@@ -114,7 +114,6 @@ li {
           & {
             transform: translate3d(0, 0, 0);
             display: flex;
-            padding-left: 24px;
             flex-direction: column;
             align-items: flex-start;
             gap: 8px;
@@ -129,7 +128,7 @@ li {
             border-radius: 50px !important;
             min-height: 18px;
             height: 18px;
-            padding: 0px 16px;
+            padding: 0px 12px;
             .v-list-item-title {
               @include cta-text;
               font-style: normal;
@@ -206,10 +205,9 @@ li {
       & {
         transform: translate3d(0, 0, 0);
         display: flex;
-        padding-left: 24px;
         flex-direction: column;
         align-items: flex-start;
-        gap: 16px;
+        padding: 0;
         gap: 0;
       }
 
@@ -223,7 +221,7 @@ li {
         font-style: normal;
         min-height: 18px;
         height: 18px;
-        padding: 4px;
+        padding: 0;
 
         .checkbox {
           color: $navbar-resource-group-background-selected;
