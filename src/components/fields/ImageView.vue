@@ -49,7 +49,7 @@
         <v-btn elevation="2" class="delete" icon :disabled="imageUrl().length === 0" @click="removeImage(attachment(), 0)"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
       </div>
     </template>
-    <file-input-errors v-if="model._local && !disabled" field-type="image" :schema="schema" :is-for-multiple-images="isForMultipleImages" :get-max-count="getMaxCount" />
+    <file-input-errors v-if="!disabled" field-type="image" :schema="schema" :is-for-multiple-images="isForMultipleImages" :get-max-count="getMaxCount" />
   </div>
 </template>
 
@@ -120,14 +120,14 @@ export default {
           }
         }
       })
-      const updatedAttachments = _.filter(this._value, (attachment) => {
-        // NOTE: Localized fields
-        if (_.get(attachment, '_fields.locale', false) && _.get(attachment, '_name', false) && `${attachment._fields.locale}.${attachment._name}` === this.schema.model) {
-          return true
-        }
-        return _.get(attachment, '_name', false) === this.schema.model
-      })
-      this.$emit('input', updatedAttachments, this.schema.model)
+      // const updatedAttachments = _.filter(this._value, (attachment) => {
+      //   // NOTE: Localized fields
+      //   if (_.get(attachment, '_fields.locale', false) && _.get(attachment, '_name', false) && `${attachment._fields.locale}.${attachment._name}` === this.schema.model) {
+      //     return true
+      //   }
+      //   return _.get(attachment, '_name', false) === this.schema.model
+      // })
+      this.$emit('input', this._value, this.schema.model)
     },
     imageUrl () {
       const attachment = this.attachment()

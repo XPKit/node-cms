@@ -7,7 +7,11 @@
         <span v-else>{{ unlimitedMsg }}</span>
       </div>
     </template>
-    <div v-if="(schema.width && schema.height)" class="help-block">
+    <div v-if="schema.options && schema.options.hint" class="help-block">
+      <v-icon size="small">mdi-information</v-icon>
+      <span>{{ $filters.translate(schema.options.hint) }}</span>
+    </div>
+    <div v-if="hasSizeOptions" class="help-block">
       <v-icon size="small">mdi-information</v-icon>
       <span>{{ $filters.translate('TL_THIS_FIELD_REQUIRES_THE_FOLLOWING_SIZE') }}:{{ schema.width }}x{{ schema.height }}</span>
     </div>
@@ -24,6 +28,7 @@
 
 <script>
 import TranslateService from '@s/TranslateService'
+import _ from 'lodash'
 
 export default {
   props: {
@@ -45,6 +50,9 @@ export default {
     }
   },
   computed: {
+    hasSizeOptions() {
+      return _.get(this.schema, 'options.width', false) && _.get(this.schema, 'options.height', false)
+    },
     maxCountMsg() {
       return TranslateService.get(`TL_MAX_NUMBER_OF_${this.fileType === 'image' ? 'IMAGES' : 'FILES'}`, { num: this.getMaxCount() })
     },
