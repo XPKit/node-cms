@@ -31,10 +31,23 @@ exports = module.exports = {
       required: false
     },
     {
+      label: 'File',
+      field: 'nested.file',
+      input: 'file',
+      options: {
+        hint: 'Test hint file',
+        accept: '.jpg,.png',
+        maxCount: 1
+      },
+      localised: true,
+      required: false
+    },
+    {
       label: 'Image',
       field: 'nested.image',
       input: 'image',
       options: {
+        hint: 'Test hint',
         accept: '.jpg,.png',
         maxCount: 1
       },

@@ -18,6 +18,9 @@
     color: gray;
     font-size: 12px;
     line-height: 12px;
+    i {
+      margin-right: 4px;
+    }
   }
   svg.icon-remove {
     // Seems crop plugin write css inline

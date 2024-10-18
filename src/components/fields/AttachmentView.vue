@@ -28,7 +28,7 @@
         :remove-image="removeImage" :is-image="isImage"
       />
     </div>
-    <file-input-errors v-if="model._local && !disabled" field-type="file" :schema="schema" :is-for-multiple-images="isForMultipleImages" :get-max-count="getMaxCount" />
+    <file-input-errors v-if="!disabled" field-type="file" :schema="schema" :is-for-multiple-images="isForMultipleImages" :get-max-count="getMaxCount" />
   </div>
 </template>
 

@@ -34,9 +34,11 @@ class TranslateService {
       if (_.isEmpty(key)) {
         return ''
       }
-      key = _.toUpper(key)
-      if (!_.startsWith(key, 'TL_') && !_.isObject(key)) {
+      if (!_.startsWith(_.toUpper(key), 'TL_') && !_.isObject(key)) {
         return key
+      }
+      if (_.isString(key)) {
+        key = _.toUpper(key)
       }
       if (_.get(this.dict, `${this.locale}.${key}`, false)) {
         let result = ''
