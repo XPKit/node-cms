@@ -272,7 +272,6 @@ class CMS {
 
     this._processAttachmentFields()
   }
-
   _processAttachmentFields() {
     _.each(this._resources, (resource, resourceKey) => {
       const schema = _.get(resource, 'options.schema', [])
@@ -281,15 +280,15 @@ class CMS {
         if (_.includes(['file', 'image'], fieldItem.input)) {
           const field = _.cloneDeep(fieldItem)
           field.path = rootPath
-          _.set(this._attachmentFields, `["${escapeRegExp(rootPath)}"]`, field)
+          _.set(this._attachmentFields, `${resourceKey}["${escapeRegExp(rootPath)}"]`, field)
         } else if (fieldItem.input === 'paragraph') {
-          this._processAttachmentFieldsParagraph(fieldItem, rootPath)
+          this._processAttachmentFieldsParagraph(fieldItem, resourceKey, rootPath)
         }
       })
     })
   }
 
-  _processAttachmentFieldsParagraph(fieldItem, rootPath) {
+  _processAttachmentFieldsParagraph(fieldItem, resourceKey, rootPath) {
     const paragraphTypes = _.get(fieldItem, 'options.types', [])
     _.each(paragraphTypes, paragraphType => {
       const schema = _.get(this._paragraphs, `["${paragraphType}"].schema`, [])
@@ -298,9 +297,9 @@ class CMS {
         if (_.includes(['file', 'image'], paragraphFieldItem.input)) {
           const field = _.cloneDeep(paragraphFieldItem)
           field.path = paragraphRootPath
-          _.set(this._attachmentFields,  `["${escapeRegExp(paragraphRootPath)}"]`, field)
+          _.set(this._attachmentFields,  `${resourceKey}["${escapeRegExp(paragraphRootPath)}"]`, field)
         } else if (fieldItem.input === 'paragraph') {
-          this._processAttachmentFieldsParagraph(paragraphFieldItem, paragraphRootPath)
+          this._processAttachmentFieldsParagraph(paragraphFieldItem, resourceKey, paragraphRootPath)
         }
       })
     })
