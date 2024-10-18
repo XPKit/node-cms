@@ -50,7 +50,7 @@
       </div>
     </div>
     <div v-shortkey="multiselect ? ['ctrl', 'a'] : false" class="records" @shortkey="selectAll()">
-      <RecycleScroller v-slot="{ item }" class="list" :items="filteredList || []" :item-size="58" key-field="_id">
+      <RecycleScroller v-slot="{ item }" class="list" :items="filteredList || []" :item-size="60" key-field="_id">
         <div
           class="item" :class="{selected: isItemSelected(item), frozen:!item._local}"
           @click.exact="select($event, item)" @click.shift="selectTo(item)" @click.ctrl="selectTo(item, true)"
@@ -70,7 +70,19 @@
               </div>
               <div class="meta">
                 <div class="ts">
-                  <template v-if="item._updatedBy"> {{ $filters.translate('TL_UPDATED_BY') }} {{ item._updatedBy }} - </template><template v-else> {{ $filters.translate('TL_UPDATED') }} - </template><span class="time-ago" @contextmenu.stop.prevent="copyIdToClipboard(item._id)">{{ getTimeAgo(item) }}</span>
+                  <span class="update">
+                    <template v-if="item._updatedBy">
+                      {{ $filters.translate('TL_UPDATED_BY', {user: item._updatedBy}) }}
+                    </template>
+                    <template v-else>
+                      {{ $filters.translate('TL_UPDATED') }}
+                    </template>
+                  </span>
+                  <span v-if="item._id" class="separator"> | </span>
+                  <span v-if="item._id" class="time-ago">{{ getTimeAgo(item) }}</span>
+                </div>
+                <div class="id">
+                  <span v-if="item._id" @contextmenu.stop.prevent="copyIdToClipboard(item._id)">{{ item._id }}</span>
                 </div>
               </div>
             </div>

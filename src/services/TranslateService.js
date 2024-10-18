@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import RequestService from './RequestService'
+import Mustache from 'mustache'
 
 class TranslateService {
   constructor () {
@@ -28,16 +29,47 @@ class TranslateService {
     this.locale = locale
   }
 
-  get (key, locale, params) {
+  get (key, params) {
     if (_.isString(key)) {
-      const value = this.dict[locale || this.locale] && this.dict[locale || this.locale][key]
-      if (value) {
-        const compiled = _.template(value)
-        return compiled(params)
+      if (_.isEmpty(key)) {
+        return ''
       }
+      key = _.toUpper(key)
+      if (!_.startsWith(key, 'TL_') && !_.isObject(key)) {
+        return key
+      }
+      if (_.get(this.dict, `${this.locale}.${key}`, false)) {
+        let result = ''
+        try {
+          result = Mustache.render(this.dict[this.locale][key], params)
+        } catch (error) {
+          console.error(`Failed to render translation '${key}':`, error)
+        }
+        return result
+      }
+      if (_.get(key, this.locale, false))  {
+        let result = ''
+        try {
+          result = Mustache.render(key[this.locale], params)
+        } catch (error) {
+          console.error('Failed to render translation:', {error, key, locale: this.locale})
+        }
+        return result
+      }
+      console.info(`Did not find any translation for ${key}`,
+        {
+          key: key,
+          locale: this.locale,
+          dictItem: _.get(this.dict, `${key}.${this.locale}`, false),
+          dict: this.dict
+        }
+      )
       return key
     }
-    return _.isEmpty(key) ? '' : (key[locale || this.locale] || '')
+    if (_.isString(params) && !_.isEmpty(params)) {
+      return _.get(key, `${this.locale}.${params}`, '')
+    }
+    return _.get(key, this.locale, '')
   }
 }
 

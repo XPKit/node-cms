@@ -29,7 +29,7 @@
     "TL_UPDATED": "更改在",
     "TL_UPDATED_AT": "更新时间",
     "TL_ALPHABETICAL": "字母顺序",
-    "TL_UPDATED_BY": "updated by",
+    "TL_UPDATED_BY": "由{{ user }}更新",
     "TL_FILE_TYPE_MISMATCH": "文件类型不匹配",
     "TL_FILE_SIZE_EXCEED": "文件大小超过（> <%=size%> KB）",
     "TL_RECORD_CREATED": "记录 <%= id%> 已创建",

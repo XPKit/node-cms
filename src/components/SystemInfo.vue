@@ -178,7 +178,8 @@ export default {
 <style lang="scss" scoped>
 @import '@a/scss/variables.scss';
 .system-info {
-  position: sticky;
+  position: relative;
+  display: flex;
   padding: 4px;
   box-sizing: border-box;
   font-size: 11.2px;

@@ -36,7 +36,7 @@
     "TL_UPDATED": "updated",
     "TL_UPDATED_AT": "Updated At",
     "TL_ALPHABETICAL": "Alphabetical",
-    "TL_UPDATED_BY": "updated by",
+    "TL_UPDATED_BY": "Updated by {{ user }}",
     "TL_FILE_TYPE_MISMATCH": "file type mismatch",
     "TL_FILE_SIZE_EXCEED": "file size exceed (> <%=size%> KB)",
     "TL_RECORD_CREATED": "record <%=id %> created",
