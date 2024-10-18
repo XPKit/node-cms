@@ -43,6 +43,23 @@
   }
   .infos-wrapper {
     width: 100%;
+    strong {
+      text-decoration: underline;
+    }
+    .main {
+      width: 100%;
+      overflow: hidden;
+      display: block;
+      span {
+        width: 100%;
+        overflow: hidden;
+        display: inline-block;
+        text-align: left;
+        text-decoration: none;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
   }
   .meta {
     border-top: 1px solid rgba(0, 0, 0, 0.15);
@@ -57,6 +74,7 @@
     height: 20px;
     font-size: 10px;
     line-height: 20px;
+    user-select: none;
     .id,
     .ts {
       line-height: 1;
@@ -119,6 +137,7 @@
       // margin-bottom: 8px;
       .item-info {
         flex-grow: 1;
+        width: 354px;
         display: flex;
         align-items: center;
         gap: 16px;

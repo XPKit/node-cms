@@ -63,9 +63,9 @@
               <div v-if="item" class="main">
                 <v-tooltip location="right" eager>
                   <template #activator="{ props }">
-                    <span v-bind="props">{{ $filters.truncate(getName(item), 40) }}</span>
+                    <span v-bind="props" v-html="renderBaseOnSearch(getName(item))" />
                   </template>
-                  <span>{{ getName(item) }}</span>
+                  <span v-html="getName(item)" />
                 </v-tooltip>
               </div>
               <div class="meta">
@@ -82,7 +82,7 @@
                   <span v-if="item._id" class="time-ago">{{ getTimeAgo(item) }}</span>
                 </div>
                 <div class="id">
-                  <span v-if="item._id" @contextmenu.stop.prevent="copyIdToClipboard(item._id)">{{ item._id }}</span>
+                  <span v-if="item._id" @contextmenu.stop.prevent="copyIdToClipboard(item._id)" v-html="renderBaseOnSearch(item._id)" />
                 </div>
               </div>
             </div>
@@ -279,6 +279,14 @@ export default {
     NotificationsService.events.on('omnibar-display-status', this.onGetOmnibarDisplayStatus)
   },
   methods: {
+    renderBaseOnSearch(value) {
+      let result = _.clone(value)
+      if(!_.isEmpty(this.search)) {
+        result = result.split(this.search).join(`<strong>${this.search}</strong>`)
+        console.warn(1, result, result.split(this.search))
+      }
+      return result
+    },
     getFirstKey(record) {
       return _.get([_.first(_.keys(_.get(record, '[0]', false)))])
     },
