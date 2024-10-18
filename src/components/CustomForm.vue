@@ -42,7 +42,7 @@ export default {
           if (fieldName) {
             const fields = _.get(field, 'resource.schema', [])
             const fieldSchema = _.find(fields, {field: fieldName})
-            console.error(`Field '${fieldName}' use an undefined field type '${fieldSchema.input}' will not render it`)
+            console.error(`Field '${fieldName}' use an undefined field type '${_.get(fieldSchema, 'input', 'not-found')}' will not render it`)
           }
         } else {
           console.error('Field isn\'t defined as a custom field type, will not render it', field)

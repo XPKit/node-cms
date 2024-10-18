@@ -144,7 +144,7 @@ export default {
             })
             return foundField
           }
-          console.error(`Couldn't find field ${item.field} in the paragraph's fields`, this.types)
+          console.error(`Couldn't find field ${item.field} in the paragraph's fields`, this.types, item)
         }
         return item
       })

@@ -14,7 +14,6 @@ const _ = require('lodash')
 const requireDir = require('require-dir')
 const mkdirp = require('mkdirp')
 const session = require('express-session')
-// const { Server } = require('socket.io')
 
 const UUID = require('./lib/util/uuid')
 const SyslogManager = require('./lib/SyslogManager')
@@ -207,18 +206,6 @@ class CMS {
 
     // handle syslog and system
     this.bootstrapFunctions = this.bootstrapFunctions || []
-    // TODO: hugo - create websocket server with socket.io
-    // this._app.enable('trust proxy')
-    // this._app.use(compression({
-    //   level: 9,
-    //   filter: (req, res) => {
-    //     if (req.headers['x-no-compression']) {
-    //       return false
-    //     }
-    //     return compression.filter(req, res)
-    //   }
-    // }))
-
     this.bootstrapFunctions.push(async (callback) => {
       SyslogManager.init(this, options)
       SystemManager.init(this, options)
@@ -285,7 +272,6 @@ class CMS {
 
     this._processAttachmentFields()
   }
-
   _processAttachmentFields() {
     _.each(this._resources, (resource, resourceKey) => {
       const schema = _.get(resource, 'options.schema', [])
@@ -294,15 +280,15 @@ class CMS {
         if (_.includes(['file', 'image'], fieldItem.input)) {
           const field = _.cloneDeep(fieldItem)
           field.path = rootPath
-          _.set(this._attachmentFields, `["${escapeRegExp(rootPath)}"]`, field)
+          _.set(this._attachmentFields, `${resourceKey}["${escapeRegExp(rootPath)}"]`, field)
         } else if (fieldItem.input === 'paragraph') {
-          this._processAttachmentFieldsParagraph(fieldItem, rootPath)
+          this._processAttachmentFieldsParagraph(fieldItem, resourceKey, rootPath)
         }
       })
     })
   }
 
-  _processAttachmentFieldsParagraph(fieldItem, rootPath) {
+  _processAttachmentFieldsParagraph(fieldItem, resourceKey, rootPath) {
     const paragraphTypes = _.get(fieldItem, 'options.types', [])
     _.each(paragraphTypes, paragraphType => {
       const schema = _.get(this._paragraphs, `["${paragraphType}"].schema`, [])
@@ -311,9 +297,9 @@ class CMS {
         if (_.includes(['file', 'image'], paragraphFieldItem.input)) {
           const field = _.cloneDeep(paragraphFieldItem)
           field.path = paragraphRootPath
-          _.set(this._attachmentFields,  `["${escapeRegExp(paragraphRootPath)}"]`, field)
+          _.set(this._attachmentFields,  `${resourceKey}["${escapeRegExp(paragraphRootPath)}"]`, field)
         } else if (fieldItem.input === 'paragraph') {
-          this._processAttachmentFieldsParagraph(paragraphFieldItem, paragraphRootPath)
+          this._processAttachmentFieldsParagraph(paragraphFieldItem, resourceKey, paragraphRootPath)
         }
       })
     })

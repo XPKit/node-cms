@@ -1,6 +1,6 @@
 {
   "name": "node-cms",
-  "version": "2.1.55",
+  "version": "2.1.57",
   "description": "Content management system, written in node.js, uses leveldb as an asset and content store.",
   "main": "index.js",
   "scripts": {
@@ -50,7 +50,6 @@
     "@tiptap/starter-kit": "^2.2.1",
     "@tiptap/vue-3": "^2.2.1",
     "@vitejs/plugin-vue": "^5.0.3",
-    "del-cli": "^5.1.0",
     "@vitejs/plugin-vue-jsx": "^3.1.0",
     "@vuepic/vue-datepicker": "^9.0.2",
     "abstract-leveldown": "^0.12.4",
@@ -69,6 +68,7 @@
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.9",
     "debug": "^4.3.5",
+    "del-cli": "^5.1.0",
     "digest-stream": "^1.0.1",
     "eslint": "^8.56.0",
     "eslint-plugin-node": "^11.1.0",
@@ -135,16 +135,15 @@
     "vite-plugin-vuetify": "^2.0.1",
     "vue": "^3.4.19",
     "vue-advanced-cropper": "^2.8.8",
-    "vue-draggable-next": "^2.2.1",
     "vue-cookies": "^1.8.4",
+    "vue-draggable-next": "^2.2.1",
     "vue-json-viewer": "^3.0.4",
     "vue-router": "^4.2.5",
     "vue-virtual-scroller": "^2.0.0-beta.8",
     "vue3-shortkey": "git+ssh://github.com/Zegfault/vue3-shortkey",
     "vuetify": "^3.5.1",
     "ws": "^8.13.0",
-    "xlsx": "^0.17.3",
-    "socket.io": "^4.8.0"
+    "xlsx": "^0.17.3"
   },
   "config": {
     "port": 9990

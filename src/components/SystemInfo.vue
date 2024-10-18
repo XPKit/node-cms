@@ -125,7 +125,6 @@ export default {
       this.eventSource.close()
     },
     connectToLogStream () {
-      // TODO: hugo - change to websocket
       this.eventSource = new EventSource(`${window.location.pathname}../api/system`)
       this.eventSource.onmessage = (event) => {
         try {
