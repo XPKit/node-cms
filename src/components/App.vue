@@ -21,7 +21,7 @@
           <div class="resources">
             <locale-list v-if="localeList" :locale-list="localeList" />
           </div>
-          <div class="records">
+          <div class="records" :class="{'full-width': selectedResource && selectedResource.maxCount === 1}">
             <template v-if="selectedResource && (!selectedResource.view || selectedResource.view == 'list')">
               <record-list
                 v-if="selectedResource" :list="recordList" :locale="locale" :selected-item="selectedRecord"
@@ -482,6 +482,15 @@ export default {
       display: flex;
       align-items: stretch;
       overflow-y: auto;
+      &.full-width {
+        overflow-x: hidden;
+        flex-direction: column;
+        .record-list {
+          max-width: 100vw;
+          width: 100vw;
+          height: auto;
+        }
+      }
     }
   }
 

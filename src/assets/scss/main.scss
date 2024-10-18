@@ -186,7 +186,11 @@ li {
         &.sidebar {
           left: 0 !important;
           min-width: 364px !important;
-
+        }
+        &.full-width {
+          .v-list {
+            width: calc(100vw - 24px);
+          }
         }
       }
     }

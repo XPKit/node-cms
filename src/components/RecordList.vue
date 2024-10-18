@@ -1,7 +1,7 @@
 <template>
-  <div v-if="maxCount != 1" class="record-list">
+  <div class="record-list">
     <div class="record-list-top-bar">
-      <v-menu v-if="selectedResourceGroup && groupedList" v-model="menuOpened" content-class="resources-menu sidebar" location="bottom" :close-on-content-click="true">
+      <v-menu v-if="selectedResourceGroup && groupedList" v-model="menuOpened" :content-class="`resources-menu ${maxCount === 1 ? 'full-width' : 'sidebar'}`" location="bottom" :close-on-content-click="true">
         <template #activator="{ props }">
           <div class="resource-selector" :class="{opened: menuOpened}" v-bind="props">
             <div class="resource-title">{{ getResourceTitle(resource) }}</div>
@@ -18,6 +18,7 @@
         </v-list>
       </v-menu>
       <div
+        v-if="maxCount != 1"
         v-shortkey="getShortcuts()" class="search"
         :class="{'is-query': sift.isQuery, 'is-valid': sift.isQuery && sift.isValid == true, 'is-invalid': sift.isQuery && sift.isValid == false}" @shortkey="interactiveSearch"
       >
@@ -31,61 +32,62 @@
         </v-btn>
       </div>
     </div>
-    <div v-if="hasEditableRecords()" class="records-top-bar">
-      <div class="toggle-view-mode" @click="toggleViewMode()">
-        <v-icon :class="{selected: !multiselect}">mdi-note-edit-outline</v-icon>
-        <v-icon :class="{selected: multiselect}">mdi-format-list-checks</v-icon>
+    <template v-if="maxCount != 1">
+      <div v-if="hasEditableRecords()" class="records-top-bar">
+        <div class="toggle-view-mode" @click="toggleViewMode()">
+          <v-icon :class="{selected: !multiselect}">mdi-note-edit-outline</v-icon>
+          <v-icon :class="{selected: multiselect}">mdi-format-list-checks</v-icon>
+        </div>
+        <div v-if="multiselect" class="multiselect-buttons">
+          <span :class="{disabled: allRecordsSelected()}" @click="onClickSelectAll">{{ $filters.translate('TL_SELECT_ALL') }}</span>
+          <span :class="{disabled: multiselectItems.length === 0}" @click="onClickDeselectAll">{{ $filters.translate('TL_DESELECT_ALL') }}</span>
+        </div>
+        <div v-else class="sort-records">
+          <v-select
+            :model-value="sortMode" :items="sortOptions"
+            :ripple="false"
+            menu-icon="mdi-chevron-down" flat
+            rounded density="compact" hide-details variant="solo-filled" @update:model-value="onChangeSort"
+          />
+        </div>
       </div>
-      <div v-if="multiselect" class="multiselect-buttons">
-        <span :class="{disabled: allRecordsSelected()}" @click="onClickSelectAll">{{ $filters.translate('TL_SELECT_ALL') }}</span>
-        <span :class="{disabled: multiselectItems.length === 0}" @click="onClickDeselectAll">{{ $filters.translate('TL_DESELECT_ALL') }}</span>
-      </div>
-      <div v-else class="sort-records">
-        <v-select
-          :model-value="sortMode" :items="sortOptions"
-          :ripple="false"
-          menu-icon="mdi-chevron-down" flat
-          rounded density="compact" hide-details variant="solo-filled" @update:model-value="onChangeSort"
-        />
-      </div>
-    </div>
-    <div v-shortkey="multiselect ? ['ctrl', 'a'] : false" class="records" @shortkey="selectAll()">
-      <RecycleScroller v-slot="{ item }" class="list" :items="filteredList || []" :item-size="60" key-field="_id">
-        <div
-          class="item" :class="{selected: isItemSelected(item), frozen:!item._local}"
-          @click.exact="select($event, item)" @click.shift="selectTo(item)" @click.ctrl="selectTo(item, true)"
-        >
-          <div class="item-info">
-            <div v-if="multiselect" class="checkbox" @click.exact="select($event, item, true)">
-              <v-icon v-if="item._local" :class="{displayed: isItemSelected(item)}" size="small">mdi-check-bold</v-icon>
-            </div>
-            <div class="infos-wrapper">
-              <div v-if="item" class="main">
-                <v-tooltip v-if="getName(item) && getName(item).length > 40" location="right" eager>
-                  <template #activator="{ props }">
-                    <span v-bind="props" v-html="renderBaseOnSearch(getName(item))" />
-                  </template>
-                  <span v-html="getName(item)" />
-                </v-tooltip>
-                <span v-else v-html="renderBaseOnSearch(getName(item))" />
+      <div v-shortkey="multiselect ? ['ctrl', 'a'] : false" class="records" @shortkey="selectAll()">
+        <RecycleScroller v-slot="{ item }" class="list" :items="filteredList || []" :item-size="60" key-field="_id">
+          <div
+            class="item" :class="{selected: isItemSelected(item), frozen:!item._local}"
+            @click.exact="select($event, item)" @click.shift="selectTo(item)" @click.ctrl="selectTo(item, true)"
+          >
+            <div class="item-info">
+              <div v-if="multiselect" class="checkbox" @click.exact="select($event, item, true)">
+                <v-icon v-if="item._local" :class="{displayed: isItemSelected(item)}" size="small">mdi-check-bold</v-icon>
               </div>
-              <div class="meta">
-                <div class="ts">
-                  <span class="update">
-                    {{ $filters.translate('TL_UPDATED_BY', {user: get(item, '_updatedBy', 'API')}) }}
-                  </span>
-                  <span v-if="item._id" class="separator"> | </span>
-                  <span v-if="item._id" class="time-ago">{{ getTimeAgo(item) }}</span>
+              <div class="infos-wrapper">
+                <div v-if="item" class="main">
+                  <v-tooltip location="right" eager>
+                    <template #activator="{ props }">
+                      <span v-bind="props" v-html="renderBaseOnSearch(getName(item))" />
+                    </template>
+                    <span v-html="getName(item)" />
+                  </v-tooltip>
                 </div>
-                <div class="id">
-                  <span v-if="item._id" @contextmenu.stop.prevent="copyIdToClipboard(item._id)" v-html="renderBaseOnSearch(item._id)" />
+                <div class="meta">
+                  <div class="ts">
+                    <span class="update">
+                      {{ $filters.translate('TL_UPDATED_BY', {user: get(item, '_updatedBy', 'API')}) }}
+                    </span>
+                    <span v-if="item._id" class="separator"> | </span>
+                    <span v-if="item._id" class="time-ago">{{ getTimeAgo(item) }}</span>
+                  </div>
+                  <div class="id">
+                    <span v-if="item._id" @contextmenu.stop.prevent="copyIdToClipboard(item._id)" v-html="renderBaseOnSearch(item._id)" />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </RecycleScroller>
-    </div>
+        </RecycleScroller>
+      </div>
+    </template>
   </div>
 </template>
 

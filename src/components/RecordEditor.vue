@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="record" :dark="$vuetify.theme.dark" elevation="0" class="record-editor" :class="{frozen:!record._local}">
+  <v-card v-if="record" :dark="$vuetify.theme.dark" elevation="0" class="record-editor" :class="{frozen:!record._local, 'full-width': resource && resource.maxCount === 1}">
     <div class="top-bar">
       <top-bar-locale-list :locales="resource.locales" :locale="locale" :select-locale="selectLocale" :back="back" />
       <div class="buttons">
