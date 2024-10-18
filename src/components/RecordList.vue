@@ -71,12 +71,7 @@
               <div class="meta">
                 <div class="ts">
                   <span class="update">
-                    <template v-if="item._updatedBy">
-                      {{ $filters.translate('TL_UPDATED_BY', {user: item._updatedBy}) }}
-                    </template>
-                    <template v-else>
-                      {{ $filters.translate('TL_UPDATED') }}
-                    </template>
+                    {{ $filters.translate('TL_UPDATED_BY', {user: get(item, '_updatedBy', 'API')}) }}
                   </span>
                   <span v-if="item._id" class="separator"> | </span>
                   <span v-if="item._id" class="time-ago">{{ getTimeAgo(item) }}</span>
@@ -153,6 +148,7 @@ export default {
   },
   data () {
     return {
+      get: _.get,
       sortOptions: [
         {
           title: TranslateService.get('TL_UPDATED_AT'),
