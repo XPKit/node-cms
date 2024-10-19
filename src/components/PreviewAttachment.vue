@@ -4,7 +4,7 @@
       <template #activator="{ props }">
         <v-chip variant="outlined" class="filename" :class="{'is-dirty': attachment.dirty}" closable close-icon="mdi-close-circle-outline" v-bind="props" @click:close="removeImage(attachment, index)" @contextmenu.stop.prevent="copyFilenameToClipboard()">#{{ index + 1 }} - {{ $filters.truncate(getAttachmentFilename(attachment),10) }} ({{ imageSize(attachment) }})</v-chip>
       </template>
-      <span>{{ attachment._filename }} <template v-if="attachment.dirty">({{ $filters.translate('TL_DIRTY') }})</template></span>
+      <span>{{ attachment._filename }} <template v-if="attachment.dirty">({{ $filters.translate(getDirtyReason()) }})</template></span>
     </v-tooltip>
     <div v-if="canDrag" class="row-handle">
       <div v-if="isImage(attachment)" class="image-wrapper">
@@ -66,6 +66,10 @@ export default {
     }
   },
   methods: {
+    getDirtyReason() {
+      const key = _.get(this.attachment, 'dirty', false) ? `${_.replace(_.toUpper(this.attachment.dirty),new RegExp('-','g'),'_')}` : 'DIRTY'
+      return `TL_${key}`
+    },
     copyFilenameToClipboard () {
       navigator.clipboard.writeText(this.getAttachmentFilename(this.attachment))
     },

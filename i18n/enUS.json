@@ -149,5 +149,7 @@
     "TL_IMAGE_IS_MANDATORY": "Image is mandatory",
     "TL_FILE_IS_MANDATORY": "File is mandatory",
     "TL_FORM_IS_INVALID": "Form is invalid",
-    "TL_DIRTY": "Dirty"
+    "TL_DIRTY": "Dirty",
+    "TL_FORCED_LOCALISED": "Forced localised",
+    "TL_MAX_COUNT_OVERPASSED": "Max count overpassed"
   }
