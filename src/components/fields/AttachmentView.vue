@@ -19,15 +19,9 @@
       </v-card>
     </form>
     <preview-multiple
-      v-if="isForMultipleImages()" :attachments="getAttachments()" :schema="schema" :theme="theme" :is-image="isImage" :disabled="disabled" :on-end-drag="onEndDrag" :image-size="imageSize" :get-image-src="getImageSrc"
+      :attachments="getAttachments()" :schema="schema" :theme="theme" :is-image="isImage" :disabled="disabled" :on-end-drag="onEndDrag" :image-size="imageSize" :get-image-src="getImageSrc"
       :remove-image="removeImage"
     />
-    <div v-else-if="attachment()" class="preview-single-attachment">
-      <preview-attachment
-        :theme="theme" :attachment="attachment()" :image-size="imageSize" :get-image-src="getImageSrc"
-        :remove-image="removeImage" :is-image="isImage"
-      />
-    </div>
     <file-input-errors v-if="!disabled" field-type="file" :schema="schema" :is-for-multiple-images="isForMultipleImages" :get-max-count="getMaxCount" />
   </div>
 </template>
@@ -36,11 +30,10 @@
 import AbstractField from '@m/AbstractField'
 import FileInputField from '@m/FileInputField'
 import PreviewMultiple from '@c/PreviewMultiple'
-import PreviewAttachment from '@c/PreviewAttachment'
 import FileInputErrors from '@c/FileInputErrors'
 
 export default {
-  components: {PreviewMultiple, PreviewAttachment, FileInputErrors},
+  components: {PreviewMultiple, FileInputErrors},
   mixins: [AbstractField, FileInputField]
 }
 </script>

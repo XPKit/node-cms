@@ -21,18 +21,12 @@
       </v-card>
     </form>
     <preview-multiple
-      v-if="isForMultipleImages()" :attachments="getAttachments()" :schema="schema" :theme="theme" :is-image="isImage" :disabled="disabled" :on-end-drag="onEndDrag" :image-size="imageSize" :get-image-src="getImageSrc"
+      :attachments="getAttachments()" :schema="schema" :theme="theme" :is-image="isImage" :disabled="disabled" :on-end-drag="onEndDrag" :image-size="imageSize" :get-image-src="getImageSrc"
       :remove-image="removeImage"
     />
-    <template v-else-if="attachment() && isImage()">
-      <div v-if="!(schema.width && schema.height)" class="preview-single-attachment">
-        <preview-attachment
-          :theme="theme" :attachment="attachment()" :image-size="imageSize" :get-image-src="getImageSrc"
-          :remove-image="removeImage" :is-image="isImage"
-        />
-      </div>
+    <template v-if="attachment() && isImage()">
       <!-- Cropped image field -->
-      <div v-else class="parent-parent">
+      <div v-if="(schema.width && schema.height)" class="parent-parent">
         <div class="cropper-parent">
           <cropper
             ref="cropper"
@@ -60,12 +54,11 @@ import 'vue-advanced-cropper/dist/style.css'
 import AbstractField from '@m/AbstractField'
 import FileInputField from '@m/FileInputField'
 import PreviewMultiple from '@c/PreviewMultiple'
-import PreviewAttachment from '@c/PreviewAttachment'
 import FileInputErrors from '@c/FileInputErrors'
 
 export default {
   components: {
-    Cropper, PreviewMultiple, PreviewAttachment, FileInputErrors
+    Cropper, PreviewMultiple, FileInputErrors
   },
   mixins: [AbstractField, FileInputField],
   data () {

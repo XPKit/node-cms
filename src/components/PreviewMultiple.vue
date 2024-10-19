@@ -10,7 +10,7 @@
         v-for="(a, i) in attachments"
         :key="i" :can-drag="true"
         :theme="theme" :attachment="a" :image-size="imageSize" :get-image-src="getImageSrc"
-        :remove-image="removeImage" :is-image="isImage"
+        :remove-image="removeImage" :is-image="isImage" :index="i"
       />
     </draggable>
   </div>
