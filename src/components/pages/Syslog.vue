@@ -27,17 +27,15 @@
       >
         <template #default="{ item, index, active }">
           <DynamicScrollerItem
+            :key="item.id"
             :item="item"
             :active="active"
-            :size-dependencies="[
-              calculateLineNumberSpacing(item.id),
-              item.line
-            ]"
+            :item-size="null"
             :data-index="index"
           >
             <div class="line-wrapper" :data-line-id="item.id" :data-is-active="active">
               <div class="line-number" :class="{stickId: stickyId === item.id, search: searchKey}" @click="jumpTo(item.id)">{{ item.id }}</div>
-              <div class="line-content" v-html="item.html" />
+              <div class="line-content" :class="{stickId: stickyId === item.id}" v-html="item.html" />
             </div>
           </DynamicScrollerItem>
         </template>
@@ -97,7 +95,6 @@ export default {
   methods: {
     disconnectFromLogStream () {
       try {
-        console.warn('close SSE')
         clearTimeout(this.timer)
         if (this.eventSource) {
           this.eventSource.close()
@@ -113,7 +110,12 @@ export default {
           this.$loading.stop('_syslog')
           try {
             const json = JSON.parse(event.data)
-            this.logLines.push(json)
+            if (_.get(json, 'id', false) && _.get(json, 'line', false)) {
+              json.size = _.get(`${this.calculateLineNumberSpacing(json.id)} ${json.line}`, 'length', 0)
+              if (json.size > 0) {
+                this.logLines.push(json)
+              }
+            }
           } catch (error) {
             console.error('Failed to parse SSE:', error)
           }
@@ -188,24 +190,17 @@ export default {
       return _.padStart(line, 8, '0') + ' |'
     },
     jumpTo (id) {
-      if (!this.searchKey && this.stickyId !== id) {
-        return
-      }
-      if (this.stickyId === id) {
+      if (id === this.stickyId) {
         this.stickyId = -1
+        this.updateSysLog()
         this.autoscroll = true
         return
       }
       this.ignoreNextScrollEvent = true
       this.autoscroll = false
-      this.onClickClearSearch()
-      this.$nextTick(() => {
-        const isActive = document.querySelector(`[data-line-id='${id}'][data-is-active='true']`)
-        if (!isActive) {
-          this.$refs.scroller.scrollToItem(_.findIndex(this.logLines, item => item.id === id) - 14)
-        }
-        this.stickyId = id
-      })
+      this.stickyId = id
+      this.searchKey = ''
+      this.updateSysLog()
     },
     async updateSysLog () {
       clearTimeout(this.processTimout)
@@ -225,11 +220,15 @@ export default {
               return _.includes(_.toLower(lineItem.line), _.toLower(this.searchKey))
             })
           }
+        } else if (this.stickyId > -1) {
+          lines = _.filter(lines, lineItem => {
+            return lineItem.id >= (this.stickyId - 20) && lineItem.id <= (this.stickyId + 20)
+          })
         }
         this.sysLog = lines
         this.filterOutLines = _.get(this.logLines, 'length', 0) - _.get(this.sysLog, 'length', 0)
         this.$forceUpdate()
-      }, 150)
+      }, 50)
     }
   }
 }
@@ -406,6 +405,7 @@ export default {
     font-size: 12px;
     font-family: monospace;
     position: relative;
+
     .line-number {
       display: inline-block;
       color: #666;
@@ -420,12 +420,14 @@ export default {
       left: 0;
       font-weight: bold;
       user-select: none;
+      cursor: pointer;
+      transition: all .15s linear;
+      background: transparent;
 
       &.stickId {
         color: #F29900;
         border-right: 2px solid #F29900;
         background-color: #666;
-        cursor: pointer;
       }
       &.search {
         &:hover {
@@ -441,6 +443,15 @@ export default {
       color: white;
       text-align: left;
       white-space: break-spaces;
+      transition: all .15s linear;
+      background: transparent;
+
+      &.stickId {
+        margin-left: 0px;
+        padding-left: 100px;
+        color: #F29900;
+        background-color: #666;
+      }
     }
   }
 }
