@@ -73,7 +73,8 @@ export default {
       errorQty: 0,
       ignoreNextScrollEvent: false,
       fakeData: [],
-      eventSource: false
+      eventSource: false,
+      processTimout: null
     }
   },
   mounted () {
@@ -87,37 +88,55 @@ export default {
   },
   async unmounted () {
     this.destroyed = true
-    this.disconnectFromLogStream()
     if (this.$refs.scroller) {
       const element = this.$refs.scroller.$el
       element.removeEventListener('scroll', this.detectScroll)
     }
-    clearTimeout(this.timer)
+    this.disconnectFromLogStream()
   },
   methods: {
     disconnectFromLogStream () {
-      this.eventSource.close()
+      try {
+        console.warn('close SSE')
+        clearTimeout(this.timer)
+        if (this.eventSource) {
+          this.eventSource.close()
+        }
+      } catch (error) {}
     },
     connectToLogStream () {
-      this.eventSource = new EventSource(`${window.location.pathname}../api/_syslog`)
-      this.eventSource.onmessage = (event) => {
-        this.logLines.push(JSON.parse(event.data))
-        if (this.autoscroll) {
-          this.ignoreNextScrollEvent = true
-          if (_.get(this.$refs, 'scroller', false)) {
-            this.$refs.scroller.scrollToBottom()
+      this.$loading.start('_syslog')
+      this.disconnectFromLogStream ()
+      this.timer = setTimeout(() => {
+        this.eventSource = new EventSource(`${window.location.pathname}../api/_syslog`)
+        this.eventSource.onmessage = async (event) => {
+          this.$loading.stop('_syslog')
+          try {
+            const json = JSON.parse(event.data)
+            this.logLines.push(json)
+          } catch (error) {
+            console.error('Failed to parse SSE:', error)
           }
+          if (this.autoscroll) {
+            this.ignoreNextScrollEvent = true
+            if (_.get(this.$refs, 'scroller', false)) {
+              this.$refs.scroller.scrollToBottom()
+            }
+          }
+          this.updateSysLog()
         }
-        this.updateSysLog()
-      }
-      this.eventSource.addEventListener('end', () => {
-        this.eventSource.close()
-        console.warn('Log stream ended')
-      })
-      this.eventSource.onerror = (error) => {
-        console.error('Error in SSE connection:', error)
-        this.eventSource.close()
-      }
+        this.eventSource.addEventListener('end', () => {
+          this.$loading.stop('_syslog')
+          this.eventSource.close()
+          console.warn('Log stream ended')
+        })
+        this.eventSource.onerror = (error) => {
+          this.$loading.stop('_syslog')
+          console.error('Error in SSE connection:', error)
+          this.eventSource.close()
+          this.connectToLogStream()
+        }
+      }, 1000)
     },
     filterLevel (level) {
       this.searchKey = `sift:{level: {$gte: ${level}}}`
@@ -188,25 +207,29 @@ export default {
         this.stickyId = id
       })
     },
-    updateSysLog () {
-      let lines = _.uniqBy(this.logLines, 'id')
-      const byLevel = _.groupBy(this.logLines, 'level')
-      this.warningQty = _.get(byLevel, '[1].length', 0)
-      this.errorQty = _.get(byLevel, '[2].length', 0)
-      if (!_.isEmpty(this.searchKey)) {
-        if (this.searchKey.search('sift:') === 0) {
-          try {
-            const query = JSON5.parse(this.searchKey.substr(5))
-            lines = lines.filter(sift(query))
-          } catch (e) { /* muted */ }
-        } else {
-          lines = _.filter(lines, lineItem => {
-            return _.includes(_.toLower(lineItem.line), _.toLower(this.searchKey))
-          })
+    async updateSysLog () {
+      clearTimeout(this.processTimout)
+      this.processTimout = setTimeout(()=> {
+        let lines = _.uniqBy(this.logLines, 'id')
+        const byLevel = _.groupBy(this.logLines, 'level')
+        this.warningQty = _.get(byLevel, '[1].length', 0)
+        this.errorQty = _.get(byLevel, '[2].length', 0)
+        if (!_.isEmpty(this.searchKey)) {
+          if (this.searchKey.search('sift:') === 0) {
+            try {
+              const query = JSON5.parse(this.searchKey.substr(5))
+              lines = lines.filter(sift(query))
+            } catch (e) { /* muted */ }
+          } else {
+            lines = _.filter(lines, lineItem => {
+              return _.includes(_.toLower(lineItem.line), _.toLower(this.searchKey))
+            })
+          }
         }
-      }
-      this.sysLog = lines
-      this.filterOutLines = _.get(this.logLines, 'length', 0) - _.get(this.sysLog, 'length', 0)
+        this.sysLog = lines
+        this.filterOutLines = _.get(this.logLines, 'length', 0) - _.get(this.sysLog, 'length', 0)
+        this.$forceUpdate()
+      }, 250)
     }
   }
 }

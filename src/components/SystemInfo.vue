@@ -111,37 +111,48 @@ export default {
     }
   },
   async mounted () {
-    this.connectToLogStream()
-    // this.getSystemData()
     this.$vuetify.theme.global.name = LoginService.user.theme
     document.querySelectorAll('body')[0].classList = [`v-theme--${this.$vuetify.theme.global.name}`]
+    this.connectToLogStream()
   },
   unmounted () {
+    this.$loading.stop('_syslog')
     this.destroyed = true
     clearTimeout(this.timer)
   },
   methods: {
     disconnectFromLogStream () {
-      this.eventSource.close()
+      try {
+        console.warn('close SSE')
+        clearTimeout(this.timer)
+        if (this.eventSource) {
+          this.eventSource.close()
+        }
+      } catch (error) {}
     },
     connectToLogStream () {
-      this.eventSource = new EventSource(`${window.location.pathname}../api/system`)
-      this.eventSource.onmessage = (event) => {
-        try {
-          this.system = JSON.parse(event.data)
-          this.$forceUpdate()
-        } catch (error) {
-          console.error('Failed to parse system info:', error)
+      this.disconnectFromLogStream ()
+      this.timer = setTimeout(() => {
+        this.eventSource = new EventSource(`${window.location.pathname}../api/system`)
+        this.eventSource.onmessage = (event) => {
+          try {
+            this.system = JSON.parse(event.data)
+            this.$forceUpdate()
+          } catch (error) {
+            console.error('Failed to parse system info:', error)
+          }
         }
-      }
-      this.eventSource.addEventListener('end', () => {
-        this.eventSource.close()
-        console.warn('System info stream ended')
-      })
-      this.eventSource.onerror = (error) => {
-        console.error('Error in SSE connection:', error)
-        this.eventSource.close()
-      }
+        this.eventSource.addEventListener('end', () => {
+          this.eventSource.close()
+          console.warn('System info stream ended')
+          this.connectToLogStream()
+        })
+        this.eventSource.onerror = (error) => {
+          console.error('Error in SSE connection:', error)
+          this.eventSource.close()
+          this.connectToLogStream()
+        }
+      }, 1000)
     },
     isActiveLink (url) {
       const urlA = new URL(window.location)

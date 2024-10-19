@@ -1,14 +1,6 @@
 <template>
   <div class="field-label">
-    <v-tooltip v-if="getHint().length > 0" eager location="right">
-      <template #activator="{ props }">
-        <div class="test" v-bind="props"> <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ getLabel() }}<v-icon size="x-small">mdi-help-circle-outline</v-icon></div>
-      </template>
-      <span>{{ schema.hint }}</span>
-    </v-tooltip>
-    <template v-else>
-      <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ getLabel() }}
-    </template>
+    <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ getLabel() }}
   </div>
 </template>
 

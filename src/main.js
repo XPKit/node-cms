@@ -65,7 +65,6 @@ const app = createApp({
   }
 })
 window.nodeCms = app
-
 app.config.globalProperties.$filters = {
   translate: TranslateFilter,
   truncate: TruncateFilter
