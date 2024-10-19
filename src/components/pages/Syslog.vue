@@ -3,7 +3,7 @@
     <div class="buttons">
       <button class="item autoscroll" :class="{active: autoscroll}" @click="onClickAutoscroll">
         <v-icon v-if="autoscroll">mdi-lock-outline</v-icon>
-        <v-icon v-else>mdi-unlock</v-icon>
+        <v-icon v-else>mdi-lock-open-outline</v-icon>
       </button>
       <button class="item clear" @click="onClickClear"><v-icon>mdi-trash-can-outline</v-icon></button>
       <button class="item refresh" @click="onClickRefresh"><v-icon>mdi-refresh</v-icon></button>
@@ -269,7 +269,7 @@ export default {
 
       i {
         &:before {
-          font-size: 12px;
+          font-size: 16px;
           color: white;
           margin-left: 6px;
           margin-right: 4px;
