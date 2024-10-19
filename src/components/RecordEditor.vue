@@ -4,7 +4,7 @@
       <top-bar-locale-list :locales="resource.locales" :locale="locale" :select-locale="selectLocale" :back="back" />
       <div class="buttons">
         <v-btn v-if="editingRecord._id" elevation="0" class="delete" icon @click="deleteRecord"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
-        <v-btn elevation="0" class="update" rounded :disabled="!canCreateUpdate" @click="createUpdateClicked">{{ $filters.translate(editingRecord._id? "TL_UPDATE": "TL_CREATE") }}</v-btn>
+        <v-btn elevation="0" class="update" :class="{blinking: blinkButton}" rounded :disabled="!canCreateUpdate" @click="createUpdateClicked">{{ $filters.translate(editingRecord._id? "TL_UPDATE": "TL_CREATE") }}</v-btn>
       </div>
     </div>
     <div class="scroll-wrapper" :class="{'scrolled-to-bottom': scrolledToBottom}" @scroll="onScroll">
@@ -58,6 +58,8 @@ export default {
   data () {
     return {
       canCreateUpdate: true,
+      blinkButton: false,
+      blinkButtonTimeout: false,
       scrolledToBottom: false,
       randomId: Math.random(),
       formValid: false,
@@ -216,6 +218,11 @@ export default {
         // const notificationText = this.editingRecord._id ? TranslateService.get('TL_ERROR_CREATING_RECORD_ID', { id: this.editingRecord._id }) : TranslateService.get('TL_ERROR_CREATING_RECORD')
         const notificationText = TranslateService.get('TL_FORM_IS_INVALID')
         this.notify(notificationText, 'error')
+        this.blinkButton = true
+        clearTimeout(this.blinkButtonTimeout)
+        this.blinkButtonTimeout = setTimeout(() => {
+          this.blinkButton = false
+        }, 500)
       }
     },
     fieldValueOrDefault (field, value) {

@@ -7,7 +7,7 @@
       :chips="getSelectOpt('chips')"
       :menu-props="menuProps"
       :model-value="objectValue || _value" :items="options" :closable-chips="getSelectOpt('deletableChips') || getSelectOpt('multiple')" :hide-selected="getSelectOpt('hideSelected')"
-      :disabled="disabled || schema.disabled" :placeholder="schema.placeholder" :multiple="getSelectOpt('multiple')" :ripple="false" :flat="get('flat')"
+      :disabled="disabled || schema.disabled" :placeholder="schema.placeholder" :multiple="getSelectOpt('multiple')" :ripple="false" :flat="get('flat')" :rules="[validateField]"
       :item-title="customLabel" :item-value="getValue"
       menu-icon="mdi-chevron-down" :clearable="getSelectOpt('clearable')" :variant="getVariant()" :density="get('density')" rounded hide-details
       @update:model-value="updateSelected" @search-change="onSearchChange" @tag="addTag"
@@ -54,6 +54,15 @@ export default {
     }
   },
   methods: {
+    validateField (val) {
+      if (this.schema.required && (_.isNull(val) || _.isUndefined(val) || val === '' || (_.isArray(val) && val.length === 0))) {
+        return false
+      }
+      if (this.schema.validator && _.isFunction(this.schema.validator)) {
+        return !!this.schema.validator(val, this.schema.model, this.model)
+      }
+      return true
+    },
     getValue (item) {
       const val = _.get(item, 'raw', item)
       return _.get(val, '_id', _.get(val, '_value', val))

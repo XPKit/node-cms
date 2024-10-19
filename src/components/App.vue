@@ -393,8 +393,8 @@ export default {
         this.selectedRecord = false
         this.$nextTick(()=> {
           this.recordList = _.sortBy(data, item => -item._updatedAt)
-          const updatedRecord = _.find(this.recordList, { _id: _.get(record, '_id') })
-          console.warn('updated record:', updatedRecord)
+          let updatedRecord = _.find(this.recordList, { _id: _.get(record, '_id') })
+          updatedRecord = _.isUndefined(updatedRecord) ? {_local: true} : updatedRecord
           this.selectRecord(updatedRecord)
         })
       } catch (error) {

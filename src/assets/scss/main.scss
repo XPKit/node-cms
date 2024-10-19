@@ -391,6 +391,10 @@ body {
         color: $btn-action-color;
         background-color: $btn-action-background;
         @include cta-text;
+        transition: background-color 0.3s;
+        &.blinking {
+          background-color: $imag-orange;
+        }
       }
     }
   }

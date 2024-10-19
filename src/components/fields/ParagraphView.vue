@@ -6,7 +6,7 @@
         :ripple="false" :menu-props="menuProps"
         :theme="theme" transition="none"
         :model-value="selectedType" :items="types" item-title="label" item-value="label"
-        hide-details rounded density="compact" persistent-placeholder variant="solo-filled" flat
+        hide-details rounded density="compact" persistent-placeholder variant="solo-filled" flat :rules="[validateField]"
         :disabled="disabled || schema.disabled" menu-icon="mdi-chevron-down" @update:model-value="onChangeType"
       >
         <template #prepend><field-label :schema="schema" /></template>
@@ -85,9 +85,11 @@ export default {
   },
   unmounted() {
     FieldSelectorService.events.off('highlight-paragraph', this.onHighlightParagraph)
-
   },
   methods: {
+    validateField () {
+      return this.schema.required && _.get(this.items, 'length', 0) === 0 ? false : true
+    },
     onHighlightParagraph(level, index) {
       this.highlight = {level, index}
       this.$forceUpdate()
