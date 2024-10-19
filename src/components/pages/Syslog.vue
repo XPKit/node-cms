@@ -229,7 +229,7 @@ export default {
         this.sysLog = lines
         this.filterOutLines = _.get(this.logLines, 'length', 0) - _.get(this.sysLog, 'length', 0)
         this.$forceUpdate()
-      }, 250)
+      }, 150)
     }
   }
 }
@@ -244,6 +244,9 @@ export default {
   align-items: stretch;
   position: relative;
   height: 100%;
+  .search {
+    background: transparent;
+  }
   .buttons {
     background: #292A2D;
     border-bottom: 1px solid #494C50;
@@ -257,6 +260,7 @@ export default {
 
     .item {
       color: #9AA0A6;
+      width: 30px;
       background: transparent;
       border: 0;
       border-right: 1px solid #494C50;
@@ -273,7 +277,7 @@ export default {
       }
 
       &.clear-search {
-        margin-left: -23px;
+        margin-left: -30px;
         i:before {
           margin: 0;
           font-size: 12px;
@@ -293,6 +297,7 @@ export default {
         justify-content: center;
         align-items: center;
         height: 80%;
+        width: 180px;
         i:before {
           font-size: 14px;
           color: #F29900;
@@ -313,6 +318,7 @@ export default {
         justify-content: center;
         align-items: center;
         height: 80%;
+        width: 68px;
         i:before {
           font-size: 14px;
           color: #F29900;
@@ -321,6 +327,7 @@ export default {
         }
         .flag-item {
           cursor: pointer;
+          width: 30px;
           &.flag-error {
             i:before {
               color: #fa5050;
