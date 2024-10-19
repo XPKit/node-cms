@@ -35,7 +35,7 @@
           >
             <div class="line-wrapper" :data-line-id="item.id" :data-is-active="active">
               <div class="line-number" :class="{stickId: stickyId === item.id, search: searchKey}" @click="jumpTo(item.id)">{{ item.id }}</div>
-              <div class="line-content" v-html="item.html" />
+              <div class="line-content" :class="{stickId: stickyId === item.id}" v-html="item.html" />
             </div>
           </DynamicScrollerItem>
         </template>
@@ -222,13 +222,13 @@ export default {
           }
         } else if (this.stickyId > -1) {
           lines = _.filter(lines, lineItem => {
-            return lineItem.id >= (this.stickyId - 5) && lineItem.id <= (this.stickyId + 30)
+            return lineItem.id >= (this.stickyId - 20) && lineItem.id <= (this.stickyId + 20)
           })
         }
         this.sysLog = lines
         this.filterOutLines = _.get(this.logLines, 'length', 0) - _.get(this.sysLog, 'length', 0)
         this.$forceUpdate()
-      }, 150)
+      }, 50)
     }
   }
 }
@@ -405,6 +405,7 @@ export default {
     font-size: 12px;
     font-family: monospace;
     position: relative;
+
     .line-number {
       display: inline-block;
       color: #666;
@@ -420,6 +421,8 @@ export default {
       font-weight: bold;
       user-select: none;
       cursor: pointer;
+      transition: all .15s linear;
+      background: transparent;
 
       &.stickId {
         color: #F29900;
@@ -440,6 +443,15 @@ export default {
       color: white;
       text-align: left;
       white-space: break-spaces;
+      transition: all .15s linear;
+      background: transparent;
+
+      &.stickId {
+        margin-left: 0px;
+        padding-left: 100px;
+        color: #F29900;
+        background-color: #666;
+      }
     }
   }
 }
