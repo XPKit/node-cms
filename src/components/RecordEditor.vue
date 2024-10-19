@@ -408,7 +408,9 @@ export default {
       await this.uploadAttachments(this.editingRecord._id, newAttachments)
       const newAttachmentsIds = _.map(newAttachments, '_id')
       const updatedAttachments = _.filter(allAttachments, item => {
-        return item._id && !_.includes(newAttachmentsIds, item._id) && (_.get(item, 'cropOptions.updated', false) || _.get(item, 'orderUpdated', false))
+        return item._id && !_.includes(newAttachmentsIds, item._id)
+        // TODO: orderUpdated TO BE FIXED
+        //&& (_.get(item, 'cropOptions.updated', false) || _.get(item, 'orderUpdated', false))
       })
       if (!_.isEmpty(updatedAttachments)) {
         console.warn('UPDATED ATTACHMENTS = ', _.map(updatedAttachments, a => `${a.order}-${a._filename}`))

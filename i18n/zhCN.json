@@ -144,5 +144,6 @@
     "TL_FORM_IS_INVALID": "表单无效",
     "TL_DIRTY": "脏",
     "TL_FORCED_LOCALISED": "强制本地化",
+    "TL_FORCED_UNLOCALISED": "强制不本地化",
     "TL_MAX_COUNT_OVERPASSED": "超过最大计数"
   }

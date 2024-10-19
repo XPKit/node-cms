@@ -1,7 +1,12 @@
 exports = module.exports = {
   displayname: 'Image',
   schema: [
-
+    {
+      label: 'Image title',
+      field: 'title',
+      input: 'string',
+      required: true
+    },
     {
       label: 'Image 1',
       field: 'image1',
