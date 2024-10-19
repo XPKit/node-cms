@@ -125,7 +125,7 @@ export default {
       return attachment._filename || (attachment._fields && attachment._fields._filename)
     },
     removeImage (attachment, index) {
-      // console.warn(`remove image -BEFORE ${index}`,_.cloneDeep(this.attachments[index]))
+      // console.warn(`remove image -BEFORE ${index}`, _.cloneDeep(this.attachments))
       _.remove(this.attachments, (val, i)=> i === index)
       this._value = this.attachments
       // console.warn(`remove image - ${index}`,this.attachments)
