@@ -324,7 +324,8 @@ export default {
                   }
                 }
                 attachment._name = _name
-                _.set(attachment, 'payload.index', _index)
+                // TODO: Hugo INDEX: put current index
+                _.set(attachment, '_payload.index', _index)
                 attachment = _.omit(attachment, ['_createdAt', '_updatedAt', '_md5sum'])
                 attachmentsPaths.push(_name)
               }
@@ -372,6 +373,9 @@ export default {
         if (!hasAttachment) {
           deletedAttachments.push(attachment)
         } else if (_.get(attachment, '_name', '?') !== _.get(hasAttachment, '_name', '?')) {
+          updatedAttachments.push(hasAttachment)
+          // TODO: HUGO INDEX: check if index changed
+        } else if (_.get(attachment, '_payload.index', 0) !== _.get(hasAttachment, '_payload.index', 0)) {
           updatedAttachments.push(hasAttachment)
         } else {
           untouchedAttachments.push(attachment)

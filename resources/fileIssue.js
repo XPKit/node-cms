@@ -49,7 +49,7 @@ exports = module.exports = {
       options: {
         hint: 'Test hint',
         accept: '.jpg,.png',
-        maxCount: 1
+        maxCount: 4
       },
       localised: true,
       required: false
