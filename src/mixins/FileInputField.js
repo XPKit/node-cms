@@ -101,7 +101,7 @@ export default {
           if (_.get(this.getAttachments(), 'length', 0) === 0 && _.get(v, 'length', 0) === 0) {
             return TranslateService.get(`TL_${this.getFieldType()}_IS_MANDATORY`)
           }
-          return _.get(this.getAttachments(), 'length', 0) !== 0 || TranslateService.get(`TL_${this.getFieldType()}_IS_MANDATORY`)
+          return (_.get(v, 'length', 0) !== 0 ? true : _.get(this.getAttachments(), 'length', 0) !== 0) || TranslateService.get(`TL_${this.getFieldType()}_IS_MANDATORY`)
         })
       }
       if (this.isForMultipleImages()) {
