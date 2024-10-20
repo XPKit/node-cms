@@ -24,6 +24,8 @@
 
 <script>
 import _ from 'lodash'
+import { flatten } from 'flat'
+
 import pAll from 'p-all'
 
 import TranslateService from '@s/TranslateService'
@@ -32,7 +34,6 @@ import AbstractEditorView from './AbstractEditorView'
 import Notification from '@m/Notification.vue'
 import TopBarLocaleList from '@c/TopBarLocaleList.vue'
 import RequestService from '@s/RequestService'
-import ResourceService from '@s/ResourceService'
 
 export default {
   components: {TopBarLocaleList},
@@ -294,56 +295,106 @@ export default {
       }
       return value
     },
-    getDataToUpload(resource, originalRecord, record, uploadObject = {}, allAttachments = [], isParagraph = false) {
-      const schema = _.get(resource, 'schema', [])
-      const attachmentFields = _.get(resource, '_attachments', [])
-      _.each(schema, (field) => {
-        let fieldValue = this.getFieldValue(originalRecord, record, field)
-        if (_.includes(attachmentFields, field.field)) {
-          let attachmentsArray = _.get(fieldValue, field.field, fieldValue)
-          if (field.localised) {
-            _.each(this.resource.locales, (locale)=> {
-              _.each(_.get(attachmentsArray, locale, []), (attachment)=> {
-                allAttachments.push(attachment)
-              })
+    getAttachmentsOfRecord(resource, record) {
+      let attachments = []
+      let attachmentsPaths = []
+      const fieldsRegExpressions = _.keys(_.get(resource, '_attachmentFields', {}))
+      const content = flatten(record)
+      for (const key in content) {
+        if (_.endsWith(key, '_isAttachment')) {
+          const filePath = key.slice(0, -1 * '._isAttachment'.length)
+          let attachment = _.cloneDeep(_.get(record, filePath, false))
+          if (attachment) {
+            let hasFoundAny = false
+            _.forEach(fieldsRegExpressions, fieldsRegExpression => {
+              const regex = new RegExp(fieldsRegExpression, 'g')
+              let match = regex.exec(filePath)
+              if (match !== null) {
+                hasFoundAny = true
+                const pathToCleanIndex = match.length - 1
+                const pathToClean = _.get(match, pathToCleanIndex, '')
+                let _name = filePath.slice(0, -1 * pathToClean.length)
+                let _index = 0
+                let subPath = _.split(pathToClean, '.')
+                if (subPath.length === 3) {
+                  _index = _.get(subPath, 2, 0)
+                  const locale =  _.get(subPath, 1, false)
+                  if (locale) {
+                    _name = `${_name}.${locale}`
+                  }
+                }
+                attachment._name = _name
+                _.set(attachment, 'payload.index', _index)
+                attachment = _.omit(attachment, ['_createdAt', '_updatedAt', '_md5sum'])
+                attachmentsPaths.push(_name)
+              }
+              if (hasFoundAny) {
+                return false
+              }
             })
-          } else {
-            if (isParagraph)  {
-              attachmentsArray = _.get(record, field.field, [])
+            if (!hasFoundAny) {
+              attachmentsPaths.push(filePath)
             }
-            _.each(attachmentsArray, (attachment)=> {
-              allAttachments.push(attachment)
-            })
-          }
-          return
-        } else if (field.input === 'paragraph' && !_.isUndefined(fieldValue)) {
-          const paragraphs = _.get(fieldValue, field.field, [])
-          if (!paragraphs) {
-            return
-          }
-          if (paragraphs.length !== 0) {
-            const newFieldValue = {}
-            _.each(paragraphs, (paragraph)=> {
-              const paragraphSchema = ResourceService.getParagraphSchema(paragraph._type)
-              const test = this.getDataToUpload(paragraphSchema, originalRecord, paragraph, {}, allAttachments, true)
-              const obj = test.uploadObject
-              obj._type = paragraph._type
-              const array = _.get(newFieldValue, field.field, [])
-              array.push(obj)
-              _.set(newFieldValue, field.field, array)
-            })
-            fieldValue = newFieldValue
-          } else {
-            fieldValue = undefined
+            attachments.push(attachment)
           }
         }
-        if (_.isString(fieldValue) && _.get(originalRecord, field.field) === fieldValue) {
-          console.info(`value for field ${field.field} is the same, will not update it`)
+      }
+      attachmentsPaths = _.compact(_.uniq(attachmentsPaths))
+      attachments = _.compact(attachments)
+      return {attachments, attachmentsPaths}
+    },
+    cleanAttachments(attachments, removeDuplicate = true) {
+      attachments = _.map(attachments, attachment => {
+        delete attachment._isAttachment
+        return attachment
+      })
+      if (removeDuplicate) {
+        attachments = _.compact(_.uniqBy(attachments, attachment => attachment._id))
+      }
+      return attachments
+    },
+    getDataToUpload(resource, originalRecord, record) {
+      console.log(originalRecord)
+      let originalRecordAttachments = this.getAttachmentsOfRecord(resource, originalRecord)
+      let recordAttachments = this.getAttachmentsOfRecord(resource, record)
+      const uploadObject = _.cloneDeep(record)
+      _.each(recordAttachments.attachmentsPaths, attachmentsPath => {
+        _.unset(uploadObject, attachmentsPath)
+      })
+
+      let deletedAttachments = []
+      let updatedAttachments = []
+      let untouchedAttachments = []
+      let newAttachments = _.filter(recordAttachments.attachments, attachment => !attachment._id)
+      recordAttachments.attachments = _.filter(recordAttachments.attachments, attachment => attachment._id)
+      _.each(originalRecordAttachments.attachments, attachment => {
+        const hasAttachment = _.find(recordAttachments.attachments, {_id: attachment._id})
+        if (!hasAttachment) {
+          deletedAttachments.push(attachment)
+        } else if (_.get(attachment, '_name', '?') !== _.get(hasAttachment, '_name', '?')) {
+          updatedAttachments.push(attachment)
         } else {
-          uploadObject = _.merge(uploadObject, fieldValue)
+          untouchedAttachments.push(attachment)
         }
       })
-      return {uploadObject, allAttachments}
+      deletedAttachments = this.cleanAttachments(deletedAttachments)
+      updatedAttachments = this.cleanAttachments(updatedAttachments)
+      untouchedAttachments = this.cleanAttachments(untouchedAttachments)
+      newAttachments = this.cleanAttachments(newAttachments, false)
+      console.log('originalAttachments', originalRecordAttachments.attachments)
+      console.log('deletedAttachments', deletedAttachments)
+      console.log('updatedAttachments', updatedAttachments)
+      console.log('untouchedAttachments', untouchedAttachments)
+      console.log('newAttachments', newAttachments)
+      console.log('uploadObject', uploadObject)
+      return {
+        originalAttachments: originalRecordAttachments.attachments,
+        deletedAttachments: deletedAttachments,
+        updatedAttachments: updatedAttachments,
+        untouchedAttachments: untouchedAttachments,
+        newAttachments: newAttachments,
+        uploadObject: uploadObject
+      }
     },
     async checkFormValidForAllLocales() {
       await pAll(_.map(this.resource.locales, locale => {
@@ -371,12 +422,12 @@ export default {
         return
       }
       this.canCreateUpdate = false
-      const { uploadObject, allAttachments } = this.getDataToUpload(this.resource, _.cloneDeep(this.record), this.editingRecord, {}, [], false, true)
-      // console.warn('UPLOAD OBJECT', uploadObject)
-      // console.warn('All ATTACHMENTS', allAttachments)
-      const newAttachments = _.filter(allAttachments, item => !item._id)
-      if (!_.isEmpty(allAttachments)) {
-        console.info('All attachments ', allAttachments)
+      const dataToUpload = this.getDataToUpload(this.resource, _.cloneDeep(this.record), this.editingRecord)
+      const newAttachments = dataToUpload.newAttachments
+      const updatedAttachments = dataToUpload.updatedAttachments
+      const deletedAttachments = dataToUpload.deletedAttachments
+      if (!_.isEmpty(updatedAttachments)) {
+        console.info('Updated attachments ', updatedAttachments)
       }
       if (!_.isEmpty(newAttachments)) {
         console.warn('New attachments ', newAttachments)
@@ -385,9 +436,9 @@ export default {
         return this.handleFormNotValid('createUpdateClicked 2')
       }
       if (_.isUndefined(this.editingRecord._id)) {
-        await this.createRecord(uploadObject, newAttachments)
+        await this.createRecord(dataToUpload.uploadObject, newAttachments)
       } else {
-        await this.updateRecord(uploadObject, newAttachments, allAttachments)
+        await this.updateRecord(dataToUpload.uploadObject, newAttachments, updatedAttachments, deletedAttachments)
       }
       this.canCreateUpdate = true
     },
@@ -404,38 +455,28 @@ export default {
       }
       this.$loading.stop('create-record')
     },
-    async handleAttachmentsUpdates(previousData, currentData, uploadObject, newAttachments, allAttachments) {
-      await this.uploadAttachments(this.editingRecord._id, newAttachments)
-      const newAttachmentsIds = _.map(newAttachments, '_id')
-      const updatedAttachments = _.filter(allAttachments, item => {
-        return item._id && !_.includes(newAttachmentsIds, item._id)
-        // TODO: orderUpdated TO BE FIXED
-        //&& (_.get(item, 'cropOptions.updated', false) || _.get(item, 'orderUpdated', false))
-      })
-      if (!_.isEmpty(updatedAttachments)) {
-        console.warn('UPDATED ATTACHMENTS = ', _.map(updatedAttachments, a => `${a.order}-${a._filename}`))
+    async handleAttachmentsUpdates(newAttachments, updatedAttachments, deletedAttachments) {
+      if (newAttachments.length > 0) {
+        await this.uploadAttachments(this.editingRecord._id, newAttachments)
+      }
+      if (updatedAttachments.length > 0) {
         await this.updateAttachments(this.editingRecord._id, updatedAttachments)
       }
-      const removedAttachments = _.filter(previousData.allAttachments, item => !_.find(currentData.allAttachments, { _id: item._id }))
-      if (!_.isEmpty(removedAttachments)) {
-        console.warn('REMOVED ATTACHMENTS = ', removedAttachments)
-        await this.removeAttachments(this.editingRecord._id, removedAttachments)
+      if (deletedAttachments.length > 0) {
+        await this.removeAttachments(this.editingRecord._id, deletedAttachments)
       }
     },
-    async updateRecord (uploadObject, newAttachments, allAttachments) {
+    async updateRecord (uploadObject, newAttachments, updatedAttachments, deletedAttachments) {
       this.$loading.start('update-record')
       try {
         let data = this.editingRecord
-        const previousData = this.getDataToUpload(this.resource, {}, _.cloneDeep(this.record))
-        const currentData = this.getDataToUpload(this.resource, {}, this.editingRecord)
-        await this.handleAttachmentsUpdates(previousData, currentData, uploadObject, newAttachments, allAttachments)
+        await this.handleAttachmentsUpdates(newAttachments, updatedAttachments, deletedAttachments)
         const url = `../api/${this.resource.title}/${this.editingRecord._id}`
         if (!_.isEmpty(uploadObject)) {
           console.info('Will send', uploadObject)
           data = await RequestService.put(url, uploadObject)
         } else {
           data = await RequestService.get(url)
-          // data = await RequestService.get(url)
         }
         this.notify(TranslateService.get('TL_RECORD_UPDATED', { id: this.editingRecord._id }))
         this.$emit('updateRecordList', data)

@@ -182,6 +182,7 @@ export default {
     addAttachment (file, element) {
       const { locale } = this.getKeyLocale()
       const newAttachment = {
+        _isAttachment: true,
         _filename: _.get(file, '[0].name', file.name),
         field: this.getFieldKey(),
         localised: this.schema.localised,
