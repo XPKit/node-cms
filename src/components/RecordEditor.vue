@@ -322,6 +322,8 @@ export default {
                   if (locale) {
                     _name = `${_name}.${locale}`
                   }
+                } else {
+                  _index = _.get(subPath, 1, 0)
                 }
                 attachment._name = _name
                 // TODO: Hugo INDEX: put current index

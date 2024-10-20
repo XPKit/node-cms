@@ -21,11 +21,11 @@ exports = module.exports = {
       input: 'image',
       options: {
         accept: '.jpg,.png',
+        maxCount: 4,
         hint: {
           enUS: 'enUS - File should be 400x400',
           zhCN: 'zhCN - File should be 400x400'
-        },
-        maxCount: 1
+        }
       },
       localised: false,
       required: false
