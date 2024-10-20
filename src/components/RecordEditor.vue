@@ -80,7 +80,7 @@ export default {
   watch: {
     async locale () {
       await this.updateSchema()
-      this.editingRecord = _.clone(this.editingRecord)
+      this.editingRecord = _.cloneDeep(this.editingRecord)
       this.checkDirty()
     },
     async record () {
@@ -89,7 +89,7 @@ export default {
     },
     async userLocale () {
       await this.updateSchema()
-      this.editingRecord = _.clone(this.editingRecord)
+      this.editingRecord = _.cloneDeep(this.editingRecord)
       this.checkDirty()
     }
     // model () {
@@ -170,7 +170,7 @@ export default {
           _.set(dummy, fieldName, this.cloneValue(field, value))
         }
       })
-      this.editingRecord = _.clone(dummy)
+      this.editingRecord = _.cloneDeep(dummy)
       this.editingRecord._id = this.record._id
       this.removeDirtyFlags()
     },
@@ -326,7 +326,6 @@ export default {
                   _index = _.get(subPath, 1, 0)
                 }
                 attachment._name = _name
-                // TODO: Hugo INDEX: put current index
                 _.set(attachment, '_payload.index', _index)
                 attachment = _.omit(attachment, ['_createdAt', '_updatedAt', '_md5sum'])
                 attachmentsPaths.push(_name)
@@ -376,7 +375,6 @@ export default {
           deletedAttachments.push(attachment)
         } else if (_.get(attachment, '_name', '?') !== _.get(hasAttachment, '_name', '?')) {
           updatedAttachments.push(hasAttachment)
-          // TODO: HUGO INDEX: check if index changed
         } else if (_.get(attachment, '_payload.index', 0) !== _.get(hasAttachment, '_payload.index', 0)) {
           updatedAttachments.push(hasAttachment)
         } else {
@@ -388,6 +386,7 @@ export default {
       untouchedAttachments = this.cleanAttachments(untouchedAttachments)
       newAttachments = this.cleanAttachments(newAttachments, false)
       console.log('originalAttachments', originalRecordAttachments.attachments)
+      console.log('recordAttachments', recordAttachments.attachments)
       console.log('deletedAttachments', deletedAttachments)
       console.log('updatedAttachments', updatedAttachments)
       console.log('untouchedAttachments', untouchedAttachments)
