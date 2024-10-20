@@ -372,7 +372,7 @@ export default {
         if (!hasAttachment) {
           deletedAttachments.push(attachment)
         } else if (_.get(attachment, '_name', '?') !== _.get(hasAttachment, '_name', '?')) {
-          updatedAttachments.push(attachment)
+          updatedAttachments.push(hasAttachment)
         } else {
           untouchedAttachments.push(attachment)
         }
