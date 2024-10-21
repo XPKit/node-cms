@@ -49,6 +49,9 @@
           <div class="stats uptime">
             <div class="node-cms-title"><small><b>Uptime:</b></small> <small class="text">{{ timeAgo(system.uptime) }}</small></div>
           </div>
+          <div class="stats node-cms-version">
+            <small class="text">v{{ getNodeCmsVersion() }}</small>
+          </div>
         </div>
       </div>
     </v-menu>
@@ -121,6 +124,9 @@ export default {
     clearTimeout(this.timer)
   },
   methods: {
+    getNodeCmsVersion() {
+      return _.get(this.config, 'version', 'X.X.X')
+    },
     disconnectFromLogStream () {
       try {
         console.warn('close SSE')
@@ -208,14 +214,6 @@ export default {
     }
     .node-cms-title {
       @include h6;
-    }
-  }
-  .two-by-two {
-    display: flex;
-    direction: row;
-    align-items: stretch;
-    .stats {
-      width: 50%;
     }
   }
   .v-icon {
@@ -315,6 +313,17 @@ export default {
   .v-divider {
     margin: 8px 0;
     border-color: black;
+  }
+}
+.node-cms-version {
+  text-align: right;
+}
+.stats.two-by-two {
+  display: flex;
+  direction: row;
+  align-items: stretch;
+  .stats {
+    width: 50%;
   }
 }
 </style>
