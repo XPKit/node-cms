@@ -8,9 +8,9 @@
     >
       <preview-attachment
         v-for="(a, i) in attachments"
-        :key="i" :can-drag="true"
+        :key="i" :schema="schema"
         :theme="theme" :attachment="a" :image-size="imageSize" :get-image-src="getImageSrc"
-        :remove-image="removeImage" :is-image="isImage" :index="i"
+        :remove-image="removeImage" :is-image="isImage" :index="i" :on-cropper-change="onCropperChange"
       />
     </draggable>
   </div>
@@ -60,7 +60,7 @@ export default {
       type: Function,
       default: ()=> {}
     },
-    viewFile: {
+    onCropperChange: {
       type: Function,
       default: ()=> {}
     }

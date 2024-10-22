@@ -145,5 +145,7 @@
     "TL_DIRTY": "脏",
     "TL_FORCED_LOCALISED": "强制本地化",
     "TL_FORCED_UNLOCALISED": "强制不本地化",
-    "TL_MAX_COUNT_OVERPASSED": "超过最大计数"
+    "TL_MAX_COUNT_OVERPASSED": "超过最大计数",
+    "TL_EDIT_CROP": "编辑裁剪",
+    "TL_APPLY_CROP": "应用裁剪"
   }

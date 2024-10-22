@@ -152,5 +152,7 @@
     "TL_DIRTY": "Dirty",
     "TL_FORCED_LOCALISED": "Forced localised",
     "TL_FORCED_UNLOCALISED": "Forced unlocalised",
-    "TL_MAX_COUNT_OVERPASSED": "Max count overpassed"
+    "TL_MAX_COUNT_OVERPASSED": "Max count overpassed",
+    "TL_EDIT_CROP": "Edit crop",
+    "TL_APPLY_CROP": "Apply crop"
   }

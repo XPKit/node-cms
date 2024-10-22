@@ -377,6 +377,8 @@ export default {
           updatedAttachments.push(hasAttachment)
         } else if (_.get(attachment, '_payload.index', 0) !== _.get(hasAttachment, '_payload.index', 0)) {
           updatedAttachments.push(hasAttachment)
+        } else if (_.get(hasAttachment, 'cropOptions.updated', false)) {
+          updatedAttachments.push(hasAttachment)
         } else {
           untouchedAttachments.push(attachment)
         }
@@ -461,14 +463,14 @@ export default {
       this.$loading.stop('create-record')
     },
     async handleAttachmentsUpdates(newAttachments, updatedAttachments, deletedAttachments) {
+      if (deletedAttachments.length > 0) {
+        await this.removeAttachments(this.editingRecord._id, deletedAttachments)
+      }
       if (newAttachments.length > 0) {
         await this.uploadAttachments(this.editingRecord._id, newAttachments)
       }
       if (updatedAttachments.length > 0) {
         await this.updateAttachments(this.editingRecord._id, updatedAttachments)
-      }
-      if (deletedAttachments.length > 0) {
-        await this.removeAttachments(this.editingRecord._id, deletedAttachments)
       }
     },
     async updateRecord (uploadObject, newAttachments, updatedAttachments, deletedAttachments) {

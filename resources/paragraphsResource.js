@@ -10,11 +10,6 @@ exports = (module.exports = {
       label: 'Image label',
       field: 'simpleImage',
       input: 'image',
-      // TODO: hugo - fix cropped image
-      /*
-       width: '200',
-        height: '200',
-       */
       options: {
         maxCount: 1
       },
