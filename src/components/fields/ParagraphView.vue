@@ -29,7 +29,23 @@
         </v-card-title>
         <div class="item-main-wrapper">
           <div class="item-main">
-            <custom-form :schema="getSchema(item, idx)" :model="item" :paragraph-index="idx" :paragraph-level="paragraphLevel + 1" @error="onError" @input="onModelUpdated" />
+            <div v-if="item.showConvert" class="convert-paragraph">
+              <div class="error-message">{{ $filters.translate('TL_INVALID_PARAGRAPH_WOULD_YOU_LIKE_TO_CONVERT_IT') }}</div>
+              <json-viewer :value="item" tabindex="-1" />
+              <div class="convert-action">
+                <v-select
+                  :model-value="item.showConvert"
+                  :menu-props="menuProps"
+                  :theme="theme" transition="none"
+                  :items="types" hide-details rounded density="compact" persistent-placeholder variant="solo-filled" flat
+                >
+                  <template #prepend><field-label :schema="{label: $filters.translate('TL_CONVERT_TO')}" /></template>
+                  <template #label />
+                </v-select>
+                <v-btn elevation="0" rounded @click="convertParagraph(item)">{{ $filters.translate('TL_CONVERT') }}</v-btn>
+              </div>
+            </div>
+            <custom-form v-else :schema="getSchema(item, idx)" :model="item" :paragraph-index="idx" :paragraph-level="paragraphLevel + 1" @error="onError" @input="onModelUpdated" />
           </div>
         </div>
       </v-card>
@@ -87,6 +103,11 @@ export default {
     FieldSelectorService.events.off('highlight-paragraph', this.onHighlightParagraph)
   },
   methods: {
+    convertParagraph(item) {
+      item._type = item.showConvert
+      delete item.showConvert
+      this.getSchemaForItems()
+    },
     validateField () {
       return this.schema.required && _.get(this.items, 'length', 0) === 0 ? false : true
     },
@@ -138,15 +159,16 @@ export default {
           if (this.schema.localised) {
             item.localised = true
           }
-          let foundField = _.find(this.types, {field: item._type})
-          if (!_.isUndefined(foundField)) {
+          const foundParagraphType = _.find(this.types, {field: item._type})
+          if (!_.isUndefined(foundParagraphType)) {
             // console.warn('---------- foundField', foundField, item)
-            foundField = _.extend(_.omit(foundField, ['_value', '_type']), {
+            return _.extend(_.omit(foundParagraphType, ['_value', '_type']), {
               _value: _.omit(item, '_type')
             })
-            return foundField
           }
-          console.error(`Couldn't find field ${item.field} in the paragraph's fields`, this.types, item)
+          const fieldName = _.get(this.schema, 'originalModel', _.get(this.schema, 'model', 'not-found'))
+          console.error(`Paragraph of type ${item._type} is not allowed in field '${fieldName}', will show option to convert to`,_.get(this, 'schema.types', []))
+          item.showConvert = _.first(_.get(this, 'schema.types', []))
         }
         return item
       })
@@ -390,6 +412,23 @@ export default {
 
 .item {
   @include nested-paragraphs;
+}
+.convert-paragraph {
+  .convert-action {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+  }
+  .error-message, .v-btn {
+    @include cta-text;
+  }
+  .error-message {
+    color: $imag-orange;
+  }
+  .v-btn {
+    color: $btn-action-color;
+    background-color: $btn-action-background;
+  }
 }
 
 </style>

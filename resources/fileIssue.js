@@ -16,16 +16,50 @@ exports = module.exports = {
       required: true
     },
     {
+      label: 'Localised string',
+      field: 'stringTest',
+      input: 'string',
+      localised: true
+    },
+    {
       label: 'Image',
       field: 'testHint',
       input: 'image',
       options: {
         accept: '.jpg,.png',
-        maxCount: 4,
+        maxCount: 1,
         hint: {
           enUS: 'enUS - File should be 400x400',
           zhCN: 'zhCN - File should be 400x400'
         }
+      },
+      localised: false,
+      required: false
+    },
+    {
+      label: 'Image - crop 400x400',
+      field: 'testCrop',
+      input: 'image',
+      options: {
+        accept: '.jpg,.png',
+        maxCount: 2,
+        crop: {
+          width: 400,
+          height: 400
+        }
+      },
+      localised: false,
+      required: false
+    },
+    {
+      label: 'Image - resize 400x400',
+      field: 'testResize',
+      input: 'image',
+      options: {
+        accept: '.jpg,.png',
+        maxCount: 4,
+        width: 400,
+        height: 400
       },
       localised: false,
       required: false
