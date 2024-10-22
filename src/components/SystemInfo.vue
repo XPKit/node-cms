@@ -129,9 +129,9 @@ export default {
     },
     disconnectFromLogStream () {
       try {
-        console.warn('close SSE')
         clearTimeout(this.timer)
         if (this.eventSource) {
+          console.warn('close SSE')
           this.eventSource.close()
         }
       } catch (error) {}

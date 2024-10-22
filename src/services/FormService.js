@@ -2,12 +2,7 @@
 import _ from 'lodash'
 import TranslateServiceLib from '@s/TranslateService'
 
-let TranslateService
-if (window.TranslateService) {
-  TranslateService = window.TranslateService
-} else {
-  TranslateService = TranslateServiceLib
-}
+const TranslateService = window.TranslateService || TranslateServiceLib
 const getKeyLocale = (schema) => {
   const options = {}
   const list = _.get(schema, 'model', '').split('.')
@@ -43,18 +38,23 @@ const validators = {
   email: (e) => validateEmail(e)
 }
 
-const messages = {
-  fieldIsRequired: TranslateService.get('TL_FIELD_IS_REQUIRED'),
-  invalidFormat: TranslateService.get('TL_INVALID_FORMAT')
+const fieldIsRequired = () => {
+  return TranslateService.get('TL_FIELD_IS_REQUIRED')
+}
+const invalidFormat = () => {
+  return TranslateService.get('TL_INVALID_FORMAT')
 }
 
 const checkNumber = (field, value, model, type) => {
   if (_.get(field, 'required', false) && !_.isNumber(value)) {
-    return messages.fieldIsRequired
+    return TranslateService.get('TL_FIELD_IS_REQUIRED')
   }
   const func = _.get(validators, type, false)
   if (func) {
-    return func(Number(value || 0), field, model, messages)
+    return func(Number(value || 0), field, model, {
+      fieldIsRequired: fieldIsRequired(),
+      invalidFormat: invalidFormat()
+    })
   }
   console.error(`checkNumber - No validator found for type '${type}'`)
   return false
@@ -69,7 +69,7 @@ const customValidators = {
   email: (e) => (new RegExp('/^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$/')).test(e),
   text: (value, field) => {
     if (_.get(field, 'required', false) && (!_.isString(value) || _.isEmpty(value))) {
-      return messages.fieldIsRequired
+      return fieldIsRequired()
     }
     const locale = _.head(_.get(field, 'model', '').split('.'))
     if (_.get(field, 'regex.value', false) === false && _.get(field, `regex['${locale}'].value`, false) === false) {
@@ -92,7 +92,7 @@ const customValidators = {
       const fragments = regexText.match(/\/(.*?)\/([gimy])?$/)
       const regex = new RegExp(fragments[1], fragments[2] || '')
       if (!regex.test(value)) {
-        return `${messages.invalidFormat} (${TranslateService.get(regexDescription)})`
+        return `${invalidFormat()} (${TranslateService.get(regexDescription)})`
       }
     }
     return true
@@ -114,7 +114,7 @@ const customValidators = {
       return item._name === key && (!locale || item._fields.locale === locale)
     })
     if (_.get(field, 'required', false) && !attachment) {
-      return messages.fieldIsRequired
+      return fieldIsRequired()
     }
     return true
   },
@@ -124,16 +124,16 @@ const customValidators = {
       return item._name === key && (!locale || item._fields.locale === locale)
     })
     if (_.get(field, 'required', false) && !attachment) {
-      return messages.fieldIsRequired
+      return fieldIsRequired()
     }
     return true
   },
   select: (value, field) => {
-    return _.get(field, 'required', false) && _.isEmpty(value) ? messages.fieldIsRequired : true
+    return _.get(field, 'required', false) && _.isEmpty(value) ? fieldIsRequired() : true
   },
   pillbox: (value, field) => {
     if (_.get(field, 'required', false) && (!_.isArray(value) || _.isEmpty(value))) {
-      return messages.fieldIsRequired
+      return fieldIsRequired()
     }
     return true
   }

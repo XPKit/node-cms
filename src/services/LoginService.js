@@ -11,7 +11,7 @@ class LoginService {
   }
 
   init () {
-    console.info('LoginService - init')
+    // console.info('LoginService - init')
     setInterval(async () => {
       this.checkStatus()
     }, 1000 * 15)

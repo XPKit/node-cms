@@ -259,7 +259,7 @@ export default {
       try {
         this.user = await LoginService.getStatus()
         this.allowedPlugins = await LoginService.getPlugins()
-        console.info('Plugins available:', this.allowedPlugins)
+        console.debug('Plugins available:', this.allowedPlugins)
         this.$vuetify.theme.dark = _.get(this.user, 'theme', 'light') === 'dark'
         this.$forceUpdate()
       } catch (error) {
