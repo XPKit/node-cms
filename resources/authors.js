@@ -14,7 +14,8 @@ exports = (module.exports = {
       field: 'article',
       input: 'select',
       source: 'articles',
-      unique: true
+      unique: true,
+      required: true
     },
     {
       field: 'name',
@@ -31,7 +32,7 @@ exports = (module.exports = {
       field: 'paragraph',
       input: 'paragraph',
       options: {
-        types: ['textParagraph', 'testParagraph']
+        types: ['textParagraphs', 'testParagraphs']
       }
     }
 

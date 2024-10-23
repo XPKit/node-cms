@@ -140,7 +140,7 @@ export default {
       this.subResourcesLoaded = true
     },
     getTypes() {
-      this.types = _.map(_.get(this, 'schema.types', []), (type)=> {
+      this.types = _.compact(_.map(_.get(this, 'schema.types', []), (type)=> {
         let schema = false
         schema = ResourceService.getParagraphSchema(type)
         if (schema) {
@@ -148,10 +148,10 @@ export default {
           schema.label = _.get(schema, 'displayname', schema.title)
           schema.field = schema.title
         } else {
-          console.error(`Couldnt get schema for paragraph type ${type}`)
+          console.error(`Couldn't get schema for paragraph type ${type}`)
         }
         return schema
-      })
+      }))
     },
     getSchemaForItems() {
       this.items = _.map(this.items, (item)=> {
@@ -161,7 +161,6 @@ export default {
           }
           const foundParagraphType = _.find(this.types, {field: item._type})
           if (!_.isUndefined(foundParagraphType)) {
-            // console.warn('---------- foundField', foundField, item)
             return _.extend(_.omit(foundParagraphType, ['_value', '_type']), {
               _value: _.omit(item, '_type')
             })

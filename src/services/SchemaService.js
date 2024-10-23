@@ -109,14 +109,27 @@ class SchemaService {
     }
     fields[id].values = cachedData || []
     if (fields[id].type === 'CustomMultiSelect') {
+      fields[id].source = field.source
       fields[id].selectOptions = _.clone(fields[id].selectOptions || {})
       fields[id].selectOptions.key = '_id'
       fields[id].selectOptions.customLabel = (itemId) => {
         const item = _.isString(itemId) ? _.find(cachedData, {_id: itemId}) : itemId
-        if (fields[id].customLabel) {
-          return _.isUndefined(item) ? '' : Mustache.render(fields[id].customLabel, item)
+        if (!_.get(fields[id], 'customLabel', false)) {
+          return _.get(item, `${key}.${locale}`, _.get(item, key))
+        } else if (_.isUndefined(item)) {
+          return ''
         }
-        return _.get(item, key)
+        const renderedLabel = Mustache.render(fields[id].customLabel, item)
+        if (renderedLabel !== '[object Object]') {
+          return renderedLabel
+        }
+        const fieldKey = _.get(fields[id].customLabel.match('{{(?<fieldKey>\\s*.*\\s*)}}'), 'groups.fieldKey', false)
+        if (fieldKey) {
+          return Mustache.render(_.replace(fields[id].customLabel, fieldKey, `${fieldKey}.${locale}`), item)
+        } else {
+          console.error(`Couldn't find fieldKey in customLabel '${fields[id].customLabel}'`)
+          return ''
+        }
       }
     }
   }

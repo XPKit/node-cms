@@ -54,11 +54,13 @@ export default {
     }
   },
   methods: {
+    valEmpty(val) {
+      return _.isNull(val) || _.isUndefined(val) || val === '' || (_.isArray(val) && val.length === 0)
+    },
     validateField (val) {
-      if (this.schema.required && (_.isNull(val) || _.isUndefined(val) || val === '' || (_.isArray(val) && val.length === 0))) {
-        return false
-      }
-      if (this.schema.validator && _.isFunction(this.schema.validator)) {
+      if (this.valEmpty(val)) {
+        return this.schema.required ? false : true
+      } else if (this.schema.validator && _.isFunction(this.schema.validator)) {
         return !!this.schema.validator(val, this.schema.model, this.model)
       }
       return true
@@ -69,16 +71,19 @@ export default {
     },
     customLabel (item) {
       const val = _.get(item, 'raw', item)
-      if (!_.get(this.schema, 'localised', false)) {
-        return this.schema.selectOptions.customLabel(val)
-      }
-      if (_.get(val, '_id', false)) {
-        return _.get(val, _.first(_.without(_.keys(val), '_id')), val)
-      }
-      if (!_.get(this.schema, `options.labels.${val}.${this.schema.locale}`, false)) {
+      if (_.get(this.schema, `options.labels.${val}.${this.schema.locale}`, false)) {
+        return _.get(this.schema, `options.labels.${val}.${this.schema.locale}`, val)
+      } else if (_.get(this.schema, `options.labels.${val}`, false)) {
         return _.get(val, 'text', val)
+      } else if (!_.get(this.schema, 'localised', false)) {
+        return this.schema.selectOptions.customLabel(val)
+      } else if (_.get(val, '_id', false)) {
+        const fieldKey = _.first(_.without(_.keys(val), '_id'))
+        return _.get(val, `${fieldKey}.${this.schema.locale}`, _.get(val, fieldKey, val))
+      } else if (_.get(val, 'text', false)) {
+        return val.text
       }
-      return _.get(this.schema, `options.labels.${val}.${this.schema.locale}`, val)
+      return this.schema.selectOptions.customLabel(val)
     },
     getSelectOpt (key) {
       return _.get(this.selectOptions, key, false)

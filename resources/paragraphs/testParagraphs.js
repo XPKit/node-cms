@@ -1,4 +1,5 @@
 exports = (module.exports = {
+  displayname: 'Test paragraph',
   schema: [
     {
       label: 'string label',
@@ -53,15 +54,13 @@ exports = (module.exports = {
       }
     },
     {
-      label: 'Select Paragraph author',
+      label: 'Select Paragraph author - multiple',
       input: 'multiselect',
       field: 'select4',
+      source: 'authors',
       options: {
-        // TODO: hugo - handle the case when multiselect and no customLabel
-        // TODO: hugo - handle the case when the first field of the linked resource is a localised field or when the field used in the customLabel is localised
         customLabel: '{{name}}'
-      },
-      source: 'authors'
+      }
     },
     {
       label: 'Select 2',
