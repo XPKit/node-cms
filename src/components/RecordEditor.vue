@@ -299,10 +299,11 @@ export default {
       let attachments = []
       let attachmentsPaths = []
       const fieldsRegExpressions = _.keys(_.get(resource, '_attachmentFields', {}))
+      const locales = _.get(resource, 'locales', [])
       const content = flatten(record)
       for (const key in content) {
         if (_.endsWith(key, '_isAttachment')) {
-          const filePath = key.slice(0, -1 * '._isAttachment'.length)
+          let filePath = key.slice(0, -1 * '._isAttachment'.length)
           let attachment = _.cloneDeep(_.get(record, filePath, false))
           if (attachment) {
             let hasFoundAny = false
@@ -325,9 +326,14 @@ export default {
                 } else {
                   _index = _.get(subPath, 1, 0)
                 }
-                attachment._name = _name
+                attachment._name = `${_name}`
                 _.set(attachment, '_payload.index', _index)
                 attachment = _.omit(attachment, ['_createdAt', '_updatedAt', '_md5sum'])
+                _.forEach(locales, locale => {
+                  if (_.endsWith(_name, `.${locale}`)) {
+                    _name = _name.slice(0, -1 * `.${locale}`)
+                  }
+                })
                 attachmentsPaths.push(_name)
               }
               if (hasFoundAny) {
@@ -335,6 +341,11 @@ export default {
               }
             })
             if (!hasFoundAny) {
+              _.forEach(locales, locale => {
+                if (_.endsWith(filePath, `.${locale}`)) {
+                  filePath = filePath.slice(0, -1 * `.${locale}`)
+                }
+              })
               attachmentsPaths.push(filePath)
             }
             attachments.push(attachment)
@@ -361,8 +372,11 @@ export default {
       let recordAttachments = this.getAttachmentsOfRecord(resource, record)
       const uploadObject = _.cloneDeep(record)
       _.each(recordAttachments.attachmentsPaths, attachmentsPath => {
+        console.warn(attachmentsPath)
         _.unset(uploadObject, attachmentsPath)
       })
+
+      console.warn(uploadObject)
 
       let deletedAttachments = []
       let updatedAttachments = []
