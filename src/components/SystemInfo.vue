@@ -65,7 +65,6 @@
 import _ from 'lodash'
 import Dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import TranslateService from '@s/TranslateService'
 import LoginService from '@s/LoginService'
 import ThemeSwitch from '@c/ThemeSwitch'
 
@@ -85,7 +84,7 @@ export default {
   },
   data () {
     return {
-      TranslateService,
+      isEditing: false,
       destroyed: false,
       type: null,
       timer: null,
@@ -114,16 +113,21 @@ export default {
     }
   },
   async mounted () {
+    window.DialogService.events.on('dialog', this.onGetRecordEdition)
     this.$vuetify.theme.global.name = LoginService.user.theme
     document.querySelectorAll('body')[0].classList = [`v-theme--${this.$vuetify.theme.global.name}`]
     this.connectToLogStream()
   },
   unmounted () {
+    window.DialogService.events.off('dialog', this.onGetRecordEdition)
     this.$loading.stop('_syslog')
     this.destroyed = true
     clearTimeout(this.timer)
   },
   methods: {
+    onGetRecordEdition(isEditing) {
+      this.isEditing = isEditing
+    },
     getNodeCmsVersion() {
       return _.get(this.config, 'version', 'X.X.X')
     },
@@ -166,6 +170,9 @@ export default {
       return urlA.host === urlB.host
     },
     async logout () {
+      if (this.isEditing) {
+        return window.DialogService.show({event: 'logout', callback: ()=> this.logout()})
+      }
       await LoginService.logout()
     },
     select (item) {

@@ -5,14 +5,21 @@
 </template>
 
 <script>
+// import _ from 'lodash'
+import Dialog from '../mixins/Dialog.vue'
+
 export default {
-  data () {
-    return {
-    }
-  },
+  mixins: [Dialog],
   async mounted () {
+    window.DialogService.send(true)
+    this.$nextTick(()=> {
+      window.DialogService.show({event: 'event-test', data: '', callback: ()=> this.test('test log')})
+    })
   },
   methods: {
+    test(data) {
+      console.warn('test ', data)
+    }
   }
 }
 </script>

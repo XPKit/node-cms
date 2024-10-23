@@ -50,6 +50,8 @@ import TranslateFilter from '@f/Translate'
 import TruncateFilter from '@f/Truncate'
 import TranslateService from '@s/TranslateService'
 import RequestService from '@s/RequestService.js'
+import DialogService from '@s/DialogService.js'
+
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [ { path: '/', component: App } ]
@@ -116,6 +118,7 @@ function addPlugin (title, displayName, group = 'System', allowed = ['admins', '
 }
 
 window.addEventListener('load', async function () {
+  window.DialogService = DialogService
   _.each(window.plugins, item => {
     item.type = 'plugin'
   })

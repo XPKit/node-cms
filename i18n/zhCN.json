@@ -151,6 +151,7 @@
     "TL_CONVERT_TO": "转换为",
     "TL_CONVERT": "转换",
     "TL_INVALID_PARAGRAPH_WOULD_YOU_LIKE_TO_CONVERT_IT": "无效段落，是否要转换？",
-    "TL_INVALID_PARAGRAPH_CANNOT_BE_CONVERTED": "无效段落，无法转换"
+    "TL_INVALID_PARAGRAPH_CANNOT_BE_CONVERTED": "无效段落，无法转换",
+    "TL_ARE_YOU_SURE_YOU_WANT_TO_DISCARD": "您确定要放弃您的更改吗？"
 
   }

@@ -308,7 +308,7 @@ export default {
       this.omnibarDisplayed = status
     },
     getShortcuts () {
-      return this.omnibarDisplayed ? {} : {esc: ['esc'], open: ['ctrl', '/']}
+      return this.omnibarDisplayed ? {} : {open: ['ctrl', '/']}
     },
     getSelectedRecordIds () {
       return _.map(this.localMultiselectItems, '_id')
@@ -344,10 +344,7 @@ export default {
       return _.get(_.filter(this.filteredList, (item) => _.get(item, '_local', false)), 'length', 0) !== 0
     },
     isItemSelected (item) {
-      if (this.multiselect) {
-        return _.includes(_.map(this.localMultiselectItems, '_id'), item._id)
-      }
-      return item === this.selectedItem || _.includes(_.map(this.localMultiselectItems, '_id'), item._id)
+      return (this.multiselect && _.includes(_.map(this.localMultiselectItems, '_id'), item._id)) || item === this.selectedItem
     },
     getTypePrefix (type) {
       let typePrefix = 'TL_ERROR_ON_RECORD_'
@@ -364,12 +361,7 @@ export default {
       let typePrefix = this.getTypePrefix(type)
       let errorMessage = typePrefix
       if (_.get(error, 'response.data.code', 500) === 400) {
-        const serverError = _.get(error, 'response.data')
-        if (_.get(serverError, 'message', false)) {
-          errorMessage = `${typePrefix}: ${serverError.message}`
-        } else {
-          errorMessage = `${typePrefix}: ${TranslateService.get('TL_UNKNOWN_ERROR')}`
-        }
+        errorMessage = `${typePrefix}: ${_.get(error, 'response.data.message', TranslateService.get('TL_UNKNOWN_ERROR'))}`
       }
       console.error(errorMessage, record)
       this.notify(errorMessage, 'error')
@@ -426,7 +418,7 @@ export default {
       if (!action || !elem) {
         return
       }
-      return action === 'esc' ? elem.blur() : elem.focus()
+      return elem.focus()
     },
     select (event, item, clickedCheckbox = false) {
       if (clickedCheckbox) {

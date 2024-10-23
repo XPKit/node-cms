@@ -12,6 +12,15 @@
           </v-btn>
         </template>
       </v-snackbar>
+      <v-dialog v-model="displayDialog" location="centered" max-width="500" class="discard-changes" :class="`event-${recordDialog.event}`" @keydown="cancelDialog">
+        <v-card :title="recordDialog.title || $filters.translate('TL_ARE_YOU_SURE_YOU_WANT_TO_DISCARD')">
+          <v-card-text v-if="recordDialog.message" class="message">{{ recordDialog.message }}</v-card-text>
+          <v-card-actions>
+            <v-btn variant="outlined" rounded @click="cancelDialog()">{{ recordDialog.cancel || $filters.translate('TL_CANCEL') }}</v-btn>
+            <v-btn variant="outlined" rounded class="apply" @click="confirmDialog()">{{ recordDialog.confirm || $filters.translate('TL_CONFIRM') }}</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <div v-if="user" class="cms-layout">
         <div class="cms-inner-layout">
           <nav-bar
@@ -111,7 +120,10 @@ export default {
       TranslateService,
       user: null,
       multiselect: false,
-      multiselectItems: []
+      multiselectItems: [],
+      isEditing: false,
+      recordDialog: false,
+      displayDialog: false
     }
   },
   computed: {
@@ -206,6 +218,9 @@ export default {
   unmounted () {
     LoadingService.events.off('has-loading', this.onLoading)
     NotificationsService.events.off('notification', this.onGetNotification)
+    window.DialogService.events.off('dialog', this.onGetRecordEdition)
+    window.DialogService.events.off('dialog:show', this.onGetRecordEditionShowDialog)
+    window.DialogService.events.off('dialog:confirm', this.onGetRecordEditionConfirm)
   },
   mounted () {
     LoadingService.events.on('has-loading', this.onLoading)
@@ -215,6 +230,9 @@ export default {
       window.location.reload()
     })
     NotificationsService.events.on('notification', this.onGetNotification)
+    window.DialogService.events.on('dialog', this.onGetRecordEdition)
+    window.DialogService.events.on('dialog:show', this.onGetRecordEditionShowDialog)
+    window.DialogService.events.on('dialog:confirm', this.onGetRecordEditionConfirm)
     this.$nextTick(async () => {
       await ConfigService.init()
       this.config = ConfigService.config
@@ -284,12 +302,36 @@ export default {
     getNotificationClass () {
       return `notification-${this.notification.type}`
     },
+    cancelDialog() {
+      this.recordDialog = false
+      this.displayDialog = false
+    },
+    confirmDialog() {
+      window.DialogService.confirm(this.recordDialog)
+    },
+    onGetRecordEdition (isEditing) {
+      this.isEditing = isEditing
+    },
+    async onGetRecordEditionShowDialog (data) {
+      this.recordDialog = data
+      this.displayDialog = true
+    },
+    async onGetRecordEditionConfirm (data) {
+      window.DialogService.send(false)
+      this.cancelDialog()
+      if (data.callback) {
+        return data.callback()
+      }
+    },
     async selectResourceGroup (resourceGroup) {
       this.selectedResourceGroup = resourceGroup
     },
     async selectResource (resource) {
       if (_.isUndefined(resource)) {
         return
+      }
+      if (this.isEditing) {
+        return window.DialogService.show({event: 'selectResource', callback: ()=> this.selectResource(resource)})
       }
       try {
         if (_.get(this.$router, 'history.current.query.id', false) !== resource.title) {
@@ -315,11 +357,7 @@ export default {
         this.recordList = _.sortBy(data, item => -item._updatedAt)
         if (_.get(resource, 'maxCount', 0) === 1) {
           const first = _.get(this.recordList, '[0]', false)
-          if (!first) {
-            this.selectRecord({ _local: true })
-          } else {
-            this.selectRecord(first)
-          }
+          this.selectRecord(!first ? { _local: true } : first)
         }
         this.$loading.stop('selectResource')
       } catch (error) {
@@ -373,9 +411,15 @@ export default {
       }), {concurrency: 10})
     },
     selectRecord (record) {
+      if (this.isEditing && this.selectedRecord !== record) {
+        return window.DialogService.show({event: 'selectRecord', callback: ()=> this.selectRecord(record)})
+      }
       this.selectedRecord = record
     },
     onSelectMultiselect (isMultiselect) {
+      if (this.isEditing) {
+        return window.DialogService.show({event: 'selectMultiselect', callback: ()=> this.onSelectMultiselect(isMultiselect)})
+      }
       this.multiselect = isMultiselect
       if (isMultiselect) {
         this.unsetSelectedRecord()
@@ -520,6 +564,13 @@ export default {
   .v-field__input {
     padding-top: 0;
     padding-bottom: 0;
+  }
+}
+.discard-changes {
+  .apply {
+    color: $btn-action-color;
+    background-color: $btn-action-background;
+    @include cta-text;
   }
 }
 </style>

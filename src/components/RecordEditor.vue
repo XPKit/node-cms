@@ -4,7 +4,7 @@
       <top-bar-locale-list :locales="resource.locales" :locale="locale" :select-locale="selectLocale" :back="back" />
       <div class="buttons">
         <v-btn v-if="editingRecord._id" elevation="0" class="delete" icon @click="deleteRecord"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
-        <v-btn elevation="0" class="update" :class="{blinking: blinkButton}" rounded :disabled="!canCreateUpdate" @click="createUpdateClicked">{{ $filters.translate(editingRecord._id? "TL_UPDATE": "TL_CREATE") }}</v-btn>
+        <v-btn elevation="0" class="update" :class="{blinking: blinkButton}" rounded :disabled="!canCreateUpdate" @click="createUpdateClicked">{{ getActionText() }}</v-btn>
       </div>
     </div>
     <div class="scroll-wrapper" :class="{'scrolled-to-bottom': scrolledToBottom}" @scroll="onScroll">
@@ -25,9 +25,7 @@
 <script>
 import _ from 'lodash'
 import { flatten } from 'flat'
-
 import pAll from 'p-all'
-
 import TranslateService from '@s/TranslateService'
 import FieldSelectorService from '@s/FieldSelectorService'
 import AbstractEditorView from './AbstractEditorView'
@@ -110,6 +108,9 @@ export default {
     FieldSelectorService.events.off('select', this.onFieldSelected)
   },
   methods: {
+    getActionText() {
+      return TranslateService.get(this.editingRecord._id ? 'TL_UPDATE' : 'TL_CREATE')
+    },
     onScroll ({ target: { scrollTop, clientHeight, scrollHeight } }) {
       this.scrolledToBottom = scrollTop + clientHeight >= scrollHeight - 50
     },
@@ -144,12 +145,7 @@ export default {
       this.$emit('update:locale', item)
     },
     cloneValue(field, value) {
-      if (field.input === 'pillbox') {
-        return value || []
-      }
-      if (field.input === 'json') {
-        return value || {}
-      }
+      value = this.fieldValueOrDefault(field, value)
       if (_.isPlainObject(value)) {
         value = _.cloneDeep(value)
       }
@@ -538,10 +534,15 @@ export default {
       return _.includes(this.fileInputTypes, fieldType)
     },
     checkDirty () {
+      let formIsDirty = false
       _.each(this.originalFieldList, (field) => {
-        let isEqual = _.isEqual(_.get(this.record, field.model), _.get(this.editingRecord, field.model))
+        const isEqual = _.isEqual(_.get(this.record, field.model), _.get(this.editingRecord, field.model))
         field.labelClasses = isEqual ? '' : 'dirty'
+        if (!isEqual) {
+          formIsDirty = true
+        }
       })
+      window.DialogService.send(formIsDirty)
     },
     removeDirtyFlags () {
       _.each(this.originalFieldList, (field) => {
