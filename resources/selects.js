@@ -109,8 +109,26 @@ exports = (module.exports = {
       source: [
         'one',
         'two',
-        'three'
-      ]
+        'three',
+        'four',
+        'five',
+        'six',
+        'seven',
+        'eight',
+        'nine',
+        'ten',
+        'eleven',
+        'twelve',
+        'thirteen',
+        'fourteen',
+        'fifteen',
+        'sixteen',
+        'seventeen',
+        'eighteen',
+        'nineteen',
+        'twenty'
+      ],
+      localised: false
     },
     {
       field: 'listbox',

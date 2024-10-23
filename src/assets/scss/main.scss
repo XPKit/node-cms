@@ -457,11 +457,17 @@ body {
     }
   }
   .v-input {
-    &:not(.v-autocomplete):not(.v-textarea) {
+    &:not(.v-autocomplete):not(.v-textarea):not(.v-combobox) {
       .v-field__input {
         height: 34px !important;
         min-height: 34px !important;
         max-height: 34px !important;
+      }
+    }
+    &.v-combobox, &.v-autocomplete {
+      .v-field__input {
+        padding-top: 8px;
+        padding-bottom: 8px;
       }
     }
   }
