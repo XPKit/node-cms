@@ -457,6 +457,7 @@ export default {
       } else {
         await this.updateRecord(dataToUpload.uploadObject, newAttachments, updatedAttachments, deletedAttachments)
       }
+      window.DialogService.send(false)
       this.canCreateUpdate = true
     },
     async createRecord (uploadObject, newAttachments) {
