@@ -29,21 +29,24 @@
         </v-card-title>
         <div class="item-main-wrapper">
           <div class="item-main">
-            <div v-if="item.showConvert" class="convert-paragraph">
-              <div class="error-message">{{ $filters.translate('TL_INVALID_PARAGRAPH_WOULD_YOU_LIKE_TO_CONVERT_IT') }}</div>
+            <div v-if="item.showConvert || item.cannotConvert" class="convert-paragraph">
+              <div v-if="item.cannotConvert" class="error-message">{{ $filters.translate('TL_INVALID_PARAGRAPH_CANNOT_BE_CONVERTED') }}</div>
+              <div v-else class="error-message">{{ $filters.translate('TL_INVALID_PARAGRAPH_WOULD_YOU_LIKE_TO_CONVERT_IT') }}</div>
               <json-viewer :value="item" tabindex="-1" />
-              <div class="convert-action">
-                <v-select
-                  :model-value="item.showConvert"
-                  :menu-props="menuProps"
-                  :theme="theme" transition="none"
-                  :items="types" hide-details rounded density="compact" persistent-placeholder variant="solo-filled" flat
-                >
-                  <template #prepend><field-label :schema="{label: $filters.translate('TL_CONVERT_TO')}" /></template>
-                  <template #label />
-                </v-select>
-                <v-btn elevation="0" rounded @click="convertParagraph(item)">{{ $filters.translate('TL_CONVERT') }}</v-btn>
-              </div>
+              <template v-if="item.showConvert">
+                <div class="convert-action">
+                  <v-select
+                    :model-value="item.showConvert"
+                    :menu-props="menuProps"
+                    :theme="theme" transition="none"
+                    :items="types" hide-details rounded density="compact" persistent-placeholder variant="solo-filled" flat
+                  >
+                    <template #prepend><field-label :schema="{label: $filters.translate('TL_CONVERT_TO')}" /></template>
+                    <template #label />
+                  </v-select>
+                  <v-btn elevation="0" rounded @click="convertParagraph(item)">{{ $filters.translate('TL_CONVERT') }}</v-btn>
+                </div>
+              </template>
             </div>
             <custom-form v-else :schema="getSchema(item, idx)" :model="item" :paragraph-index="idx" :paragraph-level="paragraphLevel + 1" @error="onError" @input="onModelUpdated" />
           </div>
@@ -167,7 +170,10 @@ export default {
           }
           const fieldName = _.get(this.schema, 'originalModel', _.get(this.schema, 'model', 'not-found'))
           console.error(`Paragraph of type ${item._type} is not allowed in field '${fieldName}', will show option to convert to`,_.get(this, 'schema.types', []))
-          item.showConvert = _.first(_.get(this, 'schema.types', []))
+          item.showConvert = _.get(this.types, '[0].title', false)
+          if (!item.showConvert) {
+            item.cannotConvert = true
+          }
         }
         return item
       })
