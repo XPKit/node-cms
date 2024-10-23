@@ -11,7 +11,7 @@
       :item-title="customLabel" :item-value="getValue"
       menu-icon="mdi-chevron-down" :clearable="getSelectOpt('clearable')" :variant="getVariant()" :density="get('density')" rounded hide-details
       @update:model-value="updateSelected" @search-change="onSearchChange" @tag="addTag"
-      @update:focused="onFieldFocus"
+      @update:focused="onFieldFocus" @contextmenu.stop.prevent="copyToClipboard()"
     >
       <template #prepend>
         <field-label :schema="schema" :label="getLabel()" />
@@ -56,6 +56,9 @@ export default {
   methods: {
     valEmpty(val) {
       return _.isNull(val) || _.isUndefined(val) || val === '' || (_.isArray(val) && val.length === 0)
+    },
+    copyToClipboard() {
+      navigator.clipboard.writeText(this._value)
     },
     validateField (val) {
       if (this.valEmpty(val)) {
