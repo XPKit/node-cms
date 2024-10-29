@@ -404,6 +404,8 @@ body {
   .record-table {
     background-color: $record-editor-inside-background;
     border-radius: 12px !important;
+    border-bottom-left-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
     margin: 16px;
     display: flex;
     flex-direction: column;
@@ -435,6 +437,7 @@ body {
   .scroll-wrapper {
     overflow: auto;
     height: 100%;
+    @include custom-scrollbar;
 
     &.scrolled-to-bottom {
 
