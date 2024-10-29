@@ -75,14 +75,13 @@ export default {
       processTimout: null
     }
   },
-  mounted () {
-    this.$nextTick(() => {
-      this.connectToLogStream()
-      if (this.$refs.scroller) {
-        const element = this.$refs.scroller.$el
-        element.addEventListener('scroll', this.detectScroll)
-      }
-    })
+  async mounted () {
+    await this.$nextTick()
+    this.connectToLogStream()
+    if (this.$refs.scroller) {
+      const element = this.$refs.scroller.$el
+      element.addEventListener('scroll', this.detectScroll)
+    }
   },
   async unmounted () {
     this.destroyed = true
@@ -103,7 +102,7 @@ export default {
     },
     connectToLogStream () {
       this.$loading.start('_syslog')
-      this.disconnectFromLogStream ()
+      this.disconnectFromLogStream()
       this.timer = setTimeout(() => {
         this.eventSource = new EventSource(`${window.location.pathname}../api/_syslog`)
         this.eventSource.onmessage = async (event) => {
@@ -144,7 +143,7 @@ export default {
       this.searchKey = `sift:{level: {$gte: ${level}}}`
       this.updateSysLog()
     },
-    detectScroll (event) {
+    async detectScroll (event) {
       const scrollHeight = _.get(event, 'srcElement.scrollHeight', 0)
       const scrollTop = _.get(event, 'srcElement.scrollTop', 0)
       const clientHeight = _.get(event, 'srcElement.clientHeight', 0)
@@ -152,12 +151,11 @@ export default {
         this.ignoreNextScrollEvent = false
         return
       }
-      this.$nextTick(() => {
-        if (this.autoscroll === false && scrollTop + clientHeight >= scrollHeight) {
-          this.stickyId = -1
-        }
-        this.autoscroll = scrollTop + clientHeight >= scrollHeight
-      })
+      await this.$nextTick()
+      if (this.autoscroll === false && scrollTop + clientHeight >= scrollHeight) {
+        this.stickyId = -1
+      }
+      this.autoscroll = scrollTop + clientHeight >= scrollHeight
     },
     getLogViewerHeight () {
       return _.get(this.$refs['log-viewer'], 'offsetHeight', 100)

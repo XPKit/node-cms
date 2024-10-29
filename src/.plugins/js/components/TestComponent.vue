@@ -12,9 +12,8 @@ export default {
   mixins: [Dialog],
   async mounted () {
     window.DialogService.send(true)
-    this.$nextTick(()=> {
-      window.DialogService.show({event: 'event-test', data: '', callback: ()=> this.test('test log')})
-    })
+    await this.$nextTick()
+    window.DialogService.show({event: 'event-test', data: '', callback: ()=> this.test('test log')})
   },
   methods: {
     test(data) {

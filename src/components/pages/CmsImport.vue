@@ -107,16 +107,15 @@ export default {
       this.error = null
       this.$loading.start('cms-import')
       this.type = 0
-      this.$nextTick(async () => {
-        try {
-          this.status = await RequestService.get('../import/status')
-        } catch (e) {
-          this.status = null
-          this.error = _.get(e, 'message', e)
-        }
-        this.$loading.stop('cms-import')
-        this.loading = false
-      })
+      await this.$nextTick()
+      try {
+        this.status = await RequestService.get('../import/status')
+      } catch (e) {
+        this.status = null
+        this.error = _.get(e, 'message', e)
+      }
+      this.$loading.stop('cms-import')
+      this.loading = false
     },
     async execute () {
       this.loading = true
@@ -124,16 +123,15 @@ export default {
       this.error = null
       this.type = 1
       this.$loading.start('cms-import')
-      this.$nextTick(async () => {
-        try {
-          this.status = await RequestService.get('../import/execute')
-        } catch (e) {
-          this.status = null
-          this.error = _.get(e, 'message', e)
-        }
-        this.$loading.stop('cms-import')
-        this.loading = false
-      })
+      await this.$nextTick()
+      try {
+        this.status = await RequestService.get('../import/execute')
+      } catch (e) {
+        this.status = null
+        this.error = _.get(e, 'message', e)
+      }
+      this.$loading.stop('cms-import')
+      this.loading = false
     },
     async checkXlsxStatus () {
       this.loading = true
@@ -141,18 +139,17 @@ export default {
       this.error = null
       this.$loading.start('xlsx-import')
       this.type = 0
-      this.$nextTick(async () => {
-        try {
-          const formData = new FormData()
-          formData.append('xlsx', this.uploadedXlsx)
-          this.status = await RequestService.post('../import/statusXlsx', formData)
-        } catch (e) {
-          this.status = null
-          this.error = _.get(e, 'message', e)
-        }
-        this.$loading.stop('xlsx-import')
-        this.loading = false
-      })
+      await this.$nextTick()
+      try {
+        const formData = new FormData()
+        formData.append('xlsx', this.uploadedXlsx)
+        this.status = await RequestService.post('../import/statusXlsx', formData)
+      } catch (e) {
+        this.status = null
+        this.error = _.get(e, 'message', e)
+      }
+      this.$loading.stop('xlsx-import')
+      this.loading = false
     },
     async executeXlsx () {
       this.loading = true
@@ -160,18 +157,17 @@ export default {
       this.error = null
       this.type = 1
       this.$loading.start('xlsx-import')
-      this.$nextTick(async () => {
-        try {
-          const formData = new FormData()
-          formData.append('xlsx', this.uploadedXlsx)
-          this.status = await RequestService.post('../import/statusXlsx', formData)
-        } catch (e) {
-          this.status = null
-          this.error = _.get(e, 'message', e)
-        }
-        this.$loading.stop('xlsx-import')
-        this.loading = false
-      })
+      await this.$nextTick()
+      try {
+        const formData = new FormData()
+        formData.append('xlsx', this.uploadedXlsx)
+        this.status = await RequestService.post('../import/statusXlsx', formData)
+      } catch (e) {
+        this.status = null
+        this.error = _.get(e, 'message', e)
+      }
+      this.$loading.stop('xlsx-import')
+      this.loading = false
     }
   }
 }

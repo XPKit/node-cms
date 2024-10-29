@@ -100,9 +100,8 @@ export default {
     this.isReady = true
     // console.warn('EDITING RECORD - ', this.editingRecord)
     FieldSelectorService.events.on('select', this.onFieldSelected)
-    this.$nextTick(() => {
-      this.formElem = document.getElementById(this.randomId)
-    })
+    await this.$nextTick()
+    this.formElem = document.getElementById(this.randomId)
   },
   beforeUnmount () {
     FieldSelectorService.events.off('select', this.onFieldSelected)

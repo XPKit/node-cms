@@ -222,7 +222,7 @@ export default {
     window.DialogService.events.off('dialog:show', this.onGetRecordEditionShowDialog)
     window.DialogService.events.off('dialog:confirm', this.onGetRecordEditionConfirm)
   },
-  mounted () {
+  async mounted () {
     LoadingService.events.on('has-loading', this.onLoading)
     this.$loading.start('init')
     LoginService.onLogout(() => {
@@ -233,31 +233,30 @@ export default {
     window.DialogService.events.on('dialog', this.onGetRecordEdition)
     window.DialogService.events.on('dialog:show', this.onGetRecordEditionShowDialog)
     window.DialogService.events.on('dialog:confirm', this.onGetRecordEditionConfirm)
-    this.$nextTick(async () => {
-      await ConfigService.init()
-      this.config = ConfigService.config
-      await TranslateService.init()
-      this.setToolbarTitle()
-      await this.getUser()
-      try {
-        const data = await ResourceService.getAll()
-        await ResourceService.getAllParagraphs()
-        this.$loading.stop('init')
-        const resourceList = _.sortBy(data, item => item.title)
-        this.resourceList = _.filter(resourceList, resource => {
-          return _.isUndefined(resource.allowed) ||  _.includes(resource.allowed, this.user.group)
-        })
-        ResourceService.setSchemas(this.resourceList)
-        this.localeList = TranslateService.config.locales
-        if (this.$route.query.id != null) {
-          const resource = _.find(_.union(this.pluginList, this.resourceList), {title: this.$route.query.id})
-          this.selectResource(resource)
-        }
-      } catch (error) {
-        console.error('Error while getting resources: ', error)
-        LoginService.logout()
+    await this.$nextTick()
+    await ConfigService.init()
+    this.config = ConfigService.config
+    await TranslateService.init()
+    this.setToolbarTitle()
+    await this.getUser()
+    try {
+      const data = await ResourceService.getAll()
+      await ResourceService.getAllParagraphs()
+      this.$loading.stop('init')
+      const resourceList = _.sortBy(data, item => item.title)
+      this.resourceList = _.filter(resourceList, resource => {
+        return _.isUndefined(resource.allowed) ||  _.includes(resource.allowed, this.user.group)
+      })
+      ResourceService.setSchemas(this.resourceList)
+      this.localeList = TranslateService.config.locales
+      if (this.$route.query.id != null) {
+        const resource = _.find(_.union(this.pluginList, this.resourceList), {title: this.$route.query.id})
+        this.selectResource(resource)
       }
-    })
+    } catch (error) {
+      console.error('Error while getting resources: ', error)
+      LoginService.logout()
+    }
   },
   methods: {
     async onLoading(isLoading) {
@@ -435,12 +434,11 @@ export default {
         this.$loading.stop('updateRecordList')
         this.recordList = []
         this.selectedRecord = false
-        this.$nextTick(()=> {
-          this.recordList = _.sortBy(data, item => -item._updatedAt)
-          let updatedRecord = _.find(this.recordList, { _id: _.get(record, '_id') })
-          updatedRecord = _.isUndefined(updatedRecord) ? {_local: true} : updatedRecord
-          this.selectRecord(updatedRecord)
-        })
+        await this.$nextTick()
+        this.recordList = _.sortBy(data, item => -item._updatedAt)
+        let updatedRecord = _.find(this.recordList, { _id: _.get(record, '_id') })
+        updatedRecord = _.isUndefined(updatedRecord) ? {_local: true} : updatedRecord
+        this.selectRecord(updatedRecord)
       } catch (error) {
         console.error('Error happen during updateRecordList:', error)
       }
