@@ -305,6 +305,9 @@ export default {
   }
   .scroll-wrapper {
     padding-bottom: 16px;
+    .v-list {
+      @include custom-scrollbar;
+    }
   }
 }
 </style>

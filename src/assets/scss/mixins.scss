@@ -128,7 +128,7 @@
 
 @mixin custom-scrollbar() {
   &::-webkit-scrollbar {
-    width: vw(4px);
+    width: vw(8px);
   }
 
   &::-webkit-scrollbar-track {
