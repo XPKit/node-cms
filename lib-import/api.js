@@ -19,18 +19,18 @@ exports = module.exports = (config, auth) => {
           ...auth
         }).json()
       },
-      update: (id, item, cb) => {
+      update: (id, item) => {
         return got.put(`${config.protocol}${config.host}${config.prefix}/api/${resource}/${id}`, {
           ...auth,
           json: item
         }).json()
       },
-      remove: (id, cb) => {
+      remove: (id) => {
         return got.del(`${config.protocol}${config.host}${config.prefix}/api/${resource}/${id}`, {
           ...auth
         }).json()
       },
-      createAttachment: (id, fieldname, filepath, cb) => {
+      createAttachment: (id, fieldname, filepath) => {
         let formData, message, obj
         message = `uploading ${path.relative(path.resolve('.'), path.normalize(filepath))} ... ....`
         console.log(message)
@@ -44,7 +44,7 @@ exports = module.exports = (config, auth) => {
           formData
         }).json()
       },
-      removeAttachment: async (id, aid, cb) => {
+      removeAttachment: async (id, aid) => {
         let message
         message = 'remove ' + aid + ' ... ....'
         console.log(message)
@@ -56,7 +56,7 @@ exports = module.exports = (config, auth) => {
         console.log(message + 'done')
         return body
       },
-      resources: async (cb) => {
+      resources: async () => {
         const resources = await got.get(`${config.protocol}${config.host}${config.prefix}/admin/resources`, {
           ...auth
         }).json()
