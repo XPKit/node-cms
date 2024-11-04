@@ -17,6 +17,7 @@
 <script>
 import _ from 'lodash'
 import ShowAttachment from '@c/ShowAttachment.vue'
+import NotificationsService from '@s/NotificationsService'
 
 export default {
   components: {ShowAttachment},
@@ -65,6 +66,8 @@ export default {
     },
     copyFilenameToClipboard () {
       navigator.clipboard.writeText(this.getAttachmentFilename(this.attachment))
+      NotificationsService.send('Filename has been copied.', 'success')
+
     },
     getAttachmentFilename(attachment) {
       return attachment._filename || (attachment._fields && attachment._fields._filename)

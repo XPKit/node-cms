@@ -1,20 +1,4 @@
 body {
-  .v-application {
-    .vue-notification-group {
-      .vue-notification {
-        background-color: black !important;
-        &.error {
-          background-color: red !important;
-        }
-        &.warn {
-          background-color: orange !important;
-        }
-        &.success {
-          background-color: green !important;
-        }
-      }
-    }
-  }
   .v-application--wrap {
     max-height: 100vh;
     overflow-y: hidden;

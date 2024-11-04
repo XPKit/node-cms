@@ -11,11 +11,18 @@
       :item-title="customLabel" :item-value="getValue"
       menu-icon="mdi-chevron-down" :clearable="getSelectOpt('clearable')" :variant="getVariant()" :density="get('density')" rounded hide-details
       @update:model-value="updateSelected" @search-change="onSearchChange" @tag="addTag"
-      @update:focused="onFieldFocus" @contextmenu.stop.prevent="copyToClipboard()"
+      @update:focused="onFieldFocus"
     >
       <template #prepend>
         <field-label :schema="schema" :label="getLabel()" />
         <v-btn v-if="schema.listBox" variant="tonal" size="small" rounded elevation="0" @click="onChangeSelectAll">{{ $filters.translate(allOptionsSelected() ? 'TL_DESELECT_ALL' : 'TL_SELECT_ALL') }}</v-btn>
+      </template>
+      >
+      <template #chip="{ props, item }">
+        <v-chip
+          v-bind="props"
+          @contextmenu.stop.prevent="copyToClipboard(item.value)"
+        />
       </template>
       <template #label />
       <template #append />
@@ -28,6 +35,7 @@
 <script>
 import _ from 'lodash'
 import AbstractField from '@m/AbstractField'
+import NotificationsService from '@s/NotificationsService'
 
 export default {
   mixins: [AbstractField],
@@ -57,8 +65,9 @@ export default {
     valEmpty(val) {
       return _.isNull(val) || _.isUndefined(val) || val === '' || (_.isArray(val) && val.length === 0)
     },
-    copyToClipboard() {
-      navigator.clipboard.writeText(this._value)
+    copyToClipboard(value) {
+      navigator.clipboard.writeText(value)
+      NotificationsService.send('Value has been copied.', 'success')
     },
     validateField (val) {
       if (this.valEmpty(val)) {
@@ -150,6 +159,12 @@ export default {
     // input {
     //   position: absolute;
     // }
+    .v-chip {
+      &:hover {
+        background: rgba(0,0,0,.25);
+        cursor: copy;
+      }
+    }
     &.v-select--chips {
       input {
         padding: 0;

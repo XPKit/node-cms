@@ -636,6 +636,27 @@ body {
       }
     }
 
+
+    &.notification-warn {
+      .v-snackbar__wrapper {
+        background-color: $imag-orange;
+        color: white;
+        p {
+          color: white;
+        }
+      }
+    }
+
+    &.notification-success {
+      .v-snackbar__wrapper {
+        background-color: $imag-green;
+        color: white;
+        p {
+          color: white;
+        }
+      }
+    }
+
     &.notification-error {
       .v-snackbar__wrapper {
         background-color: $notification-error-color;

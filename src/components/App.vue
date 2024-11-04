@@ -565,6 +565,9 @@ export default {
   }
 }
 .discard-changes {
+  .v-overlay__content > div {
+    padding: 15px;
+  }
   .apply {
     color: $btn-action-color;
     background-color: $btn-action-background;

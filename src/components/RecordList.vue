@@ -339,6 +339,7 @@ export default {
     },
     copyIdToClipboard (id) {
       navigator.clipboard.writeText(id)
+      NotificationsService.send('_id has been copied.', 'success')
     },
     hasEditableRecords () {
       return _.get(_.filter(this.filteredList, (item) => _.get(item, '_local', false)), 'length', 0) !== 0
