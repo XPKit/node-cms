@@ -81,3 +81,14 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.field-wrapper{
+  .v-card .v-chip {
+    &:hover {
+      background: rgba(0,0,0,.05);
+      cursor: copy;
+    }
+  }
+}
+</style>
