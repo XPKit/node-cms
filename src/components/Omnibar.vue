@@ -31,7 +31,7 @@
 import _ from 'lodash'
 import fuzzysort from 'fuzzysort'
 import FieldSelectorService from '@s/FieldSelectorService'
-import Notification from '@m/Notification.vue'
+import Notification from '@m/Notification'
 
 export default {
   mixins: [Notification],
@@ -96,7 +96,6 @@ export default {
         result.obj.score = result.score
         return result.obj
       }))
-      // console.warn('RESULTS =', _.map(this.results, (result) => `${result.displayname} - ${result.score}`))
     }
   },
   mounted () {
@@ -191,18 +190,10 @@ export default {
       if (action === 'esc' || action === 'open') {
         this.showHideOmnibar(false)
       } else if (action === 'arrow-up') {
-        if (this.highlightedItem - 1 >= 0) {
-          this.highlightedItem -= 1
-        } else {
-          this.highlightedItem = 0
-        }
+        this.highlightedItem = this.highlightedItem > 0 ? this.highlightedItem - 1 : 0
         this.scrollToResult()
       } else if (action === 'arrow-down') {
-        if (this.highlightedItem + 1 <= this.results.length - 1) {
-          this.highlightedItem += 1
-        } else {
-          this.highlightedItem = this.results.length - 1
-        }
+        this.highlightedItem = this.highlightedItem < this.results.length ? this.highlightedItem + 1 : this.results.length - 1
         this.scrollToResult()
       } else if (action === 'enter') {
         this.selectResult()
@@ -210,7 +201,6 @@ export default {
         this.setSearchMode(action)
       }
     }
-
   }
 }
 </script>

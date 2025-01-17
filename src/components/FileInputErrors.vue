@@ -54,10 +54,10 @@ export default {
       return _.get(this.schema, 'options.width', false) && _.get(this.schema, 'options.height', false)
     },
     maxCountMsg() {
-      return TranslateService.get(`TL_MAX_NUMBER_OF_${this.fileType === 'image' ? 'IMAGES' : 'FILES'}`, { num: this.getMaxCount() })
+      return TranslateService.get(`TL_MAX_NUMBER_OF_${_.toUpper(this.fileType)}S`, { num: this.getMaxCount() })
     },
     unlimitedMsg() {
-      return TranslateService.get(`TL_UNLIMITED_NUMBER_OF_${this.fileType === 'image' ? 'IMAGES' : 'FILES'}`)
+      return TranslateService.get(`TL_UNLIMITED_NUMBER_OF_${_.toUpper(this.fileType)}S`)
     }
   },
   methods: {

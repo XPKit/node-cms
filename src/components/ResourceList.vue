@@ -79,10 +79,7 @@ export default {
       }
       const selectedItemGroup = _.get(this.selectedItem, 'group.enUS', _.get(this.selectedItem, 'group', false))
       const groupName = _.get(resourceGroup, 'name.enUS', resourceGroup.name)
-      if (groupName === 'TL_OTHERS' && !selectedItemGroup) {
-        return true
-      }
-      return groupName === selectedItemGroup
+      return groupName === 'TL_OTHERS' && !selectedItemGroup ? true : groupName === selectedItemGroup
     }
   }
 }

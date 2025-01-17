@@ -147,9 +147,7 @@ export default {
       // cancelled
       if (url === null) {
         return
-      }
-      // empty
-      if (url === '') {
+      } else if (url === '') { // empty
         this.editor.chain().focus().extendMarkRange('link').unsetLink().run()
         return
       }

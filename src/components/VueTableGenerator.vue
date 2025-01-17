@@ -50,9 +50,9 @@ export default {
     schemaFields () {
       let fields = this.schema.fields
       let newFields = []
-      _.forEach(fields, (field) => {
+      _.each(fields, (field) => {
         if (_.get(field, 'options.breakdown', false)) {
-          _.forEach(this.resource.locales, (locale, localeIndex) => {
+          _.each(this.resource.locales, (locale, localeIndex) => {
             if (field.model === `${field.originalModel}.${locale}`) {
               field.localised = false
               field.options.localeIndex = localeIndex + 1
@@ -76,7 +76,6 @@ export default {
       }
       return _.sortBy(list, (i) => `${i.options.index}${_.get(i, 'options.localeIndex', 0)}`)
     }
-
   },
   watch: {
     items () {
@@ -115,7 +114,6 @@ export default {
     resetRecordsFiltering () {
       this.sourceData = this.orderedItem
       this.tableData = this.sourceData.slice(0)
-      // console.warn('tableData = ', this.tableData)
     },
     createTableColumns () {
       const columns = _.map(this.schemaFields, (field) => {
@@ -169,7 +167,7 @@ export default {
       )
     },
     editRow (row) {
-      console.warn('editRow', row)
+      console.info('editRow', row)
     },
     getFieldType (field) {
       return _.get(field, 'overrideType', _.get(field, 'type', false))

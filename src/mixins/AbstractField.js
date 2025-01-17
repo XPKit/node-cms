@@ -48,26 +48,19 @@ export default {
       if (!elem && !includes(['Wysiwyg', 'ImageView', 'AttachmentView'], fieldType)) {
         return console.error('no input ref for ', this.schema)
       }
-      // console.warn('elem = ', elem, this.schema.model, this.schema)
       if (!isFunction(objGet(elem, 'focus'))) {
-        // console.info('Cannot focus element', elem)
         return
       }
       if (this.focused) {
         elem.focus()
       }
-      // console.warn(`focused changed ${this.focused}`, this.schema, elem)
-      // return this.focused ? elem.focus() : elem.blur()
     }
   },
   computed: {
     _value: {
       cache: false,
       get () {
-        if (isFunction(objGet(this.schema, 'get'))) {
-          return this.schema.get(this.model)
-        }
-        return objGet(this.model, this.schema.model)
+        return isFunction(objGet(this.schema, 'get')) ? this.schema.get(this.model) : objGet(this.model, this.schema.model)
       },
       set (newValue) {
         let oldValue = this._value

@@ -15,7 +15,7 @@
           :schema="schema" :form-id="randomId"
           :form-options="formOptions"
           :paragraph-level="1"
-          @error="onError" @input="onModelUpdated"
+          @input="onModelUpdated"
         />
       </v-form>
     </div>
@@ -29,7 +29,7 @@ import pAll from 'p-all'
 import TranslateService from '@s/TranslateService'
 import FieldSelectorService from '@s/FieldSelectorService'
 import AbstractEditorView from './AbstractEditorView'
-import Notification from '@m/Notification.vue'
+import Notification from '@m/Notification'
 import TopBarLocaleList from '@c/TopBarLocaleList.vue'
 import RequestService from '@s/RequestService'
 
@@ -90,15 +90,12 @@ export default {
       this.editingRecord = _.cloneDeep(this.editingRecord)
       this.checkDirty()
     }
-    // model () {
-    //   console.warn('MODEL CHANGED: ', this.model)
-    // }
   },
   async mounted () {
     await this.updateSchema()
     this.cloneEditingRecord()
     this.isReady = true
-    // console.warn('EDITING RECORD - ', this.editingRecord)
+    // console.info('EDITING RECORD - ', this.editingRecord)
     FieldSelectorService.events.on('select', this.onFieldSelected)
     await this.$nextTick()
     this.formElem = document.getElementById(this.randomId)
@@ -136,9 +133,6 @@ export default {
     },
     back () {
       this.$emit('back')
-    },
-    onError (error) {
-      console.log(999, 'error', error)
     },
     selectLocale (item) {
       this.$emit('update:locale', item)
@@ -273,7 +267,6 @@ export default {
       if (!_.isEqual(value, originalValue)) {
         const obj = {}
         _.set(obj, fieldName, _.isUndefined(value) ? null : value)
-        // console.warn(`${field.field} NOT EQUAL`, obj)
         return obj
       }
       if (field.required &&
@@ -285,7 +278,6 @@ export default {
           await this.checkFormValid()
         })
         console.error('required field empty 2', field, this.formValid)
-        // this.notify(TranslateService.get('TL_REQUIRED_FIELD_EMPTY', 'error'))
         return
       }
       return value
@@ -302,7 +294,7 @@ export default {
           let attachment = _.cloneDeep(_.get(record, filePath, false))
           if (attachment) {
             let hasFoundAny = false
-            _.forEach(fieldsRegExpressions, fieldsRegExpression => {
+            _.each(fieldsRegExpressions, fieldsRegExpression => {
               const regex = new RegExp(fieldsRegExpression, 'g')
               let match = regex.exec(filePath)
               if (match !== null) {
@@ -324,7 +316,7 @@ export default {
                 attachment._name = `${_name}`
                 _.set(attachment, '_payload.index', _index)
                 attachment = _.omit(attachment, ['_createdAt', '_updatedAt', '_md5sum'])
-                _.forEach(locales, locale => {
+                _.each(locales, locale => {
                   if (_.endsWith(_name, `.${locale}`)) {
                     _name = _name.slice(0, -1 * `.${locale}`)
                   }
@@ -336,7 +328,7 @@ export default {
               }
             })
             if (!hasFoundAny) {
-              _.forEach(locales, locale => {
+              _.each(locales, locale => {
                 if (_.endsWith(filePath, `.${locale}`)) {
                   filePath = filePath.slice(0, -1 * `.${locale}`)
                 }
@@ -361,18 +353,23 @@ export default {
       }
       return attachments
     },
+
+    attachmentWasUpdated(oldA, newA) {
+      if (_.get(newA, '_name', '?') !== _.get(oldA, '_name', '?') ||
+        _.get(newA, '_payload.index', 0) !== _.get(oldA, '_payload.index', 0) ||
+        _.get(newA, 'cropOptions.updated', false)) {
+        return true
+      }
+      return false
+    },
     getDataToUpload(resource, originalRecord, record) {
-      console.log(originalRecord)
+      // console.log(originalRecord)
       let originalRecordAttachments = this.getAttachmentsOfRecord(resource, originalRecord)
       let recordAttachments = this.getAttachmentsOfRecord(resource, record)
       const uploadObject = _.cloneDeep(record)
       _.each(recordAttachments.attachmentsPaths, attachmentsPath => {
-        console.warn(attachmentsPath)
         _.unset(uploadObject, attachmentsPath)
       })
-
-      console.warn(uploadObject)
-
       let deletedAttachments = []
       let updatedAttachments = []
       let untouchedAttachments = []
@@ -382,11 +379,7 @@ export default {
         const hasAttachment = _.find(recordAttachments.attachments, {_id: attachment._id})
         if (!hasAttachment) {
           deletedAttachments.push(attachment)
-        } else if (_.get(attachment, '_name', '?') !== _.get(hasAttachment, '_name', '?')) {
-          updatedAttachments.push(hasAttachment)
-        } else if (_.get(attachment, '_payload.index', 0) !== _.get(hasAttachment, '_payload.index', 0)) {
-          updatedAttachments.push(hasAttachment)
-        } else if (_.get(hasAttachment, 'cropOptions.updated', false)) {
+        } else if (this.attachmentWasUpdated(attachment, hasAttachment)) {
           updatedAttachments.push(hasAttachment)
         } else {
           untouchedAttachments.push(attachment)
@@ -396,13 +389,6 @@ export default {
       updatedAttachments = this.cleanAttachments(updatedAttachments)
       untouchedAttachments = this.cleanAttachments(untouchedAttachments)
       newAttachments = this.cleanAttachments(newAttachments, false)
-      console.log('originalAttachments', originalRecordAttachments.attachments)
-      console.log('recordAttachments', recordAttachments.attachments)
-      console.log('deletedAttachments', deletedAttachments)
-      console.log('updatedAttachments', updatedAttachments)
-      console.log('untouchedAttachments', untouchedAttachments)
-      console.log('newAttachments', newAttachments)
-      console.log('uploadObject', uploadObject)
       return {
         originalAttachments: originalRecordAttachments.attachments,
         deletedAttachments: deletedAttachments,
@@ -442,12 +428,6 @@ export default {
       const newAttachments = dataToUpload.newAttachments
       const updatedAttachments = dataToUpload.updatedAttachments
       const deletedAttachments = dataToUpload.deletedAttachments
-      if (!_.isEmpty(updatedAttachments)) {
-        console.info('Updated attachments ', updatedAttachments)
-      }
-      if (!_.isEmpty(newAttachments)) {
-        console.warn('New attachments ', newAttachments)
-      }
       if (!this.formValid) {
         return this.handleFormNotValid('createUpdateClicked 2')
       }
@@ -490,14 +470,12 @@ export default {
         await this.handleAttachmentsUpdates(newAttachments, updatedAttachments, deletedAttachments)
         const url = `../api/${this.resource.title}/${this.editingRecord._id}`
         if (!_.isEmpty(uploadObject)) {
-          console.info('Will send', uploadObject)
           data = await RequestService.put(url, uploadObject)
         } else {
           data = await RequestService.get(url)
         }
         this.notify(TranslateService.get('TL_RECORD_UPDATED', { id: this.editingRecord._id }))
         this.$emit('updateRecordList', data)
-        console.log('record is now: ', data)
       } catch (error) {
         console.error('Error happen during updateRecord:', error)
         this.manageError(error, 'update', this.editingRecord)
@@ -517,14 +495,11 @@ export default {
     },
     updateFields (value, model) {
       if (!model || _.isUndefined(model)) {
-        // console.info('No model found for value', value)
         return
       }
       _.set(this.editingRecord, model, value)
-      // console.warn(`Updated ${model} in record`, value, _.cloneDeep(this.editingRecord))
     },
     onModelUpdated (value, model) {
-      // console.warn('ON MODEL UPDATED', model, value, _.cloneDeep(this.editingRecord))
       this.updateFields(value, model)
       this.checkDirty()
     },

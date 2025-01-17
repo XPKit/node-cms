@@ -16,7 +16,7 @@ class TranslateService {
       try {
         this.dict[locale] = await RequestService.get(`${window.location.pathname}i18n/${locale}.json`)
       } catch (error) {
-        console.warn(`TranslateService wasn't able to pull ${locale}: `, error)
+        console.error(`TranslateService wasn't able to pull ${locale}: `, error)
       }
     }
   }
@@ -29,43 +29,42 @@ class TranslateService {
     this.locale = locale
   }
 
+  renderTranslation(translation, params, locale = false) {
+    try {
+      return Mustache.render(translation, params || {})
+    } catch (error) {
+      console.error('Failed to render translation:', locale ? {error, locale} : {error})
+    }
+    return ''
+  }
+
+  translationNotFound(key) {
+    console.info(`Did not find any translation for ${key}`,
+      {
+        key,
+        locale: this.locale,
+        dictItem: _.get(this.dict, `${key}.${this.locale}`, false),
+        dict: this.dict
+      }
+    )
+  }
+
   get (key, params) {
     if (_.isString(key)) {
       if (_.isEmpty(key)) {
         return ''
-      }
-      if (!_.startsWith(_.toUpper(key), 'TL_') && !_.isObject(key)) {
+      } else if (!_.startsWith(_.toUpper(key), 'TL_') && !_.isObject(key)) {
         return key
       }
       if (_.isString(key)) {
         key = _.toUpper(key)
       }
       if (_.get(this.dict, `${this.locale}.${key}`, false)) {
-        let result = ''
-        try {
-          result = Mustache.render(this.dict[this.locale][key], params || {})
-        } catch (error) {
-          console.error(`Failed to render translation '${key}':`, error)
-        }
-        return result
+        return this.renderTranslation(this.dict[this.locale][key], params)
+      } else if (_.get(key, this.locale, false))  {
+        return this.renderTranslation(key[this.locale], params, this.locale)
       }
-      if (_.get(key, this.locale, false))  {
-        let result = ''
-        try {
-          result = Mustache.render(key[this.locale], params || {})
-        } catch (error) {
-          console.error('Failed to render translation:', {error, key, locale: this.locale})
-        }
-        return result
-      }
-      console.info(`Did not find any translation for ${key}`,
-        {
-          key: key,
-          locale: this.locale,
-          dictItem: _.get(this.dict, `${key}.${this.locale}`, false),
-          dict: this.dict
-        }
-      )
+      this.translationNotFound(key)
       return key
     }
     if (_.isString(params) && !_.isEmpty(params)) {

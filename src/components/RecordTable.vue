@@ -68,7 +68,7 @@ import TopBarLocaleList from '@c/TopBarLocaleList.vue'
 
 import RecordEditor from '@c/RecordEditor.vue'
 import AbstractEditorView from '@c/AbstractEditorView'
-import Notification from '@m/Notification.vue'
+import Notification from '@m/Notification'
 import FieldTheme from '@m/FieldTheme'
 
 export default {
@@ -146,7 +146,7 @@ export default {
       }
       return _.filter(this.clonedRecordList, (item) => {
         const values = []
-        _.forEach(fields, (field) => {
+        _.each(fields, (field) => {
           values.push(this.getValue(item, field))
         })
         return this.doesMatch(this.search, values) || new RegExp(this.search, 'i').test(item._id)
@@ -260,14 +260,7 @@ export default {
       this.clonedRecordList = _.filter(this.clonedRecordList, (item) => record !== item)
     },
     doesMatch (search, values) {
-      let found = false
-      _.forEach(values, (value) => {
-        found = new RegExp(this.search, 'i').test(value)
-        if (found) {
-          return false // Exit loop
-        }
-      })
-      return found
+      return _.find(values, (v)=> new RegExp(this.search, 'i').test(v))
     },
     getFieldValue (record, fieldName, field) {
       const value = _.get(record, fieldName)
@@ -279,29 +272,23 @@ export default {
     async updateRecord (record) {
       const uploadObject = {}
       let oldRecord = _.find(this.recordList, {_id: record._id})
-      _.each(this.resource.schema, (field) => {
-        if (_.includes(['file', 'image'], field.input)) {
-          return
-        }
+      const fields = _.filter(this.resource.schema, (field)=> !_.includes(['file', 'image'], field.input))
+      _.each(fields, (field) => {
         const isLocalised = this.resource.locales && (field.localised || _.isUndefined(field.localised))
         if (isLocalised) {
           _.each(this.resource.locales, (locale) => {
             const fieldName = `${field.field}.${locale}`
             const value = this.getFieldValue(record, fieldName, field)
-            if (_.isEqual(value, _.get(oldRecord, fieldName))) {
-              return
+            if (!_.isEqual(value, _.get(oldRecord, fieldName))) {
+              _.set(uploadObject, fieldName, value)
             }
-            // if (field.input == "multiselect" && _.isString(field.source)) value = _.map(value, "_id");
-            _.set(uploadObject, fieldName, value)
           })
         } else {
           const fieldName = field.field
           const value = this.getFieldValue(record, fieldName, field)
-          if (_.isEqual(value, _.get(oldRecord, fieldName))) {
-            return
+          if (!_.isEqual(value, _.get(oldRecord, fieldName))) {
+            _.set(uploadObject, fieldName, value)
           }
-          // if (field.input == "multiselect" && _.isString(field.source)) value = _.map(value, "_id");
-          _.set(uploadObject, fieldName, value)
         }
       })
       const newAttachments = _.filter(record._attachments, item => !item._id)
@@ -319,27 +306,27 @@ export default {
           this.manageError(error, 'create')
         }
         this.$loading.stop('create-record')
-      } else {
-        this.$loading.start('update-record')
-        try {
-          let response
-          if (!_.isEmpty(uploadObject)) {
-            response.data = await RequestService.put(`../api/${this.resource.title}/${record._id}`, uploadObject)
-          } else {
-            response = { data: record }
-          }
-          await this.uploadAttachments(response.data._id, newAttachments)
-          await this.removeAttachments(response.data._id, removeAttachments)
-          if (!_.isEmpty(uploadObject) || !_.isEmpty(newAttachments) || !_.isEmpty(removeAttachments)) {
-            this.notify(TranslateService.get('TL_RECORD_UPDATED', { id: record._id }))
-          }
-          this.$emit('updateRecordList', response.data)
-        } catch (error) {
-          console.error('Error happend during updateRecord/create:', error)
-          this.manageError(error, 'update', record)
-        }
-        this.$loading.stop('update-record')
+        return
       }
+      this.$loading.start('update-record')
+      try {
+        let response
+        if (!_.isEmpty(uploadObject)) {
+          response.data = await RequestService.put(`../api/${this.resource.title}/${record._id}`, uploadObject)
+        } else {
+          response = { data: record }
+        }
+        await this.uploadAttachments(response.data._id, newAttachments)
+        await this.removeAttachments(response.data._id, removeAttachments)
+        if (!_.isEmpty(uploadObject) || !_.isEmpty(newAttachments) || !_.isEmpty(removeAttachments)) {
+          this.notify(TranslateService.get('TL_RECORD_UPDATED', { id: record._id }))
+        }
+        this.$emit('updateRecordList', response.data)
+      } catch (error) {
+        console.error('Error happend during updateRecord/create:', error)
+        this.manageError(error, 'update', record)
+      }
+      this.$loading.stop('update-record')
     },
     async updateRecords () {
       try {

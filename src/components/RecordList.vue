@@ -94,7 +94,7 @@
 <script>
 import _ from 'lodash'
 import TranslateService from '@s/TranslateService'
-import Notification from '@m/Notification.vue'
+import Notification from '@m/Notification'
 import NotificationsService from '@s/NotificationsService'
 
 import RecordNameHelper from './RecordNameHelper'
@@ -195,16 +195,16 @@ export default {
       if (fields.length === 0) {
         fields = [_.first(this.resource.schema)]
       }
-      _.forEach(this.list, item => item._searchable = { id: false, keyFields: false, query: false })
+      _.each(this.list, item => item._searchable = { id: false, keyFields: false, query: false })
       if (this.sift.isQuery) {
-        return _.forEach(this.list.filter(sift(this.query)), item => item._searchable.query = true)
+        return _.each(this.list.filter(sift(this.query)), item => item._searchable.query = true)
       }
       let filteredRecords = _.filter(this.list, (item) => {
         if (_.isEmpty(this.search)) {
           return true
         }
         const values = []
-        _.forEach(fields, (field) => {
+        _.each(fields, (field) => {
           values.push(this.getValue(item, field, this.resource.displayItem))
         })
         let qItems = 0
@@ -213,16 +213,8 @@ export default {
           const queryValue = this.query[queryKey]
           qItems = qItems + 1
           let value = _.get(item, queryKey)
-          if (_.isUndefined(value) === false) {
-            if (_.isArray(value)) {
-              if (_.includes(value, queryValue)) {
-                qValues = qValues + 1
-              }
-            } else {
-              if (value === queryValue) {
-                qValues = qValues + 1
-              }
-            }
+          if (_.isUndefined(value) === false && (_.isArray(value) && _.includes(value, queryValue)) || (!_.isArray(value) && value === queryValue)) {
+            qValues = qValues + 1
           }
         }
         let found = false
@@ -238,13 +230,11 @@ export default {
         }
         return found
       })
-      if (this.sortMode === '_updatedAt' || this.sortMode === '_createdAt') {
+      if (_.includes(['_updatedAt', '_createdAt'], this.sortMode)) {
         filteredRecords = _.orderBy(filteredRecords, [this.sortMode], ['desc'])
       } else {
         filteredRecords = this.orderedList(filteredRecords)
-        // filteredRecords = _.orderBy(filteredRecords, [_.first(_.keys(_.get(filteredRecords, '[0]', false)))], ['asc'])
       }
-      // console.log(`order by ${this.sortMode}`, test)
       return filteredRecords
     }
   },
@@ -279,12 +269,8 @@ export default {
   },
   methods: {
     renderBaseOnSearch(value) {
-      let result = _.clone(value)
-      if(!_.isEmpty(this.search)) {
-        result = result.split(this.search).join(`<strong>${this.search}</strong>`)
-        console.warn(1, result, result.split(this.search))
-      }
-      return result
+      const result = _.clone(value)
+      return _.isEmpty(this.search) ? result : result.split(this.search).join(`<strong>${this.search}</strong>`)
     },
     getFirstKey(record) {
       return _.get([_.first(_.keys(_.get(record, '[0]', false)))])
@@ -339,7 +325,7 @@ export default {
     },
     copyIdToClipboard (id) {
       navigator.clipboard.writeText(id)
-      NotificationsService.send('_id has been copied.', 'success')
+      NotificationsService.send('_id has been copied.')
     },
     hasEditableRecords () {
       return _.get(_.filter(this.filteredList, (item) => _.get(item, '_local', false)), 'length', 0) !== 0
@@ -348,15 +334,7 @@ export default {
       return (this.multiselect && _.includes(_.map(this.localMultiselectItems, '_id'), item._id)) || item === this.selectedItem
     },
     getTypePrefix (type) {
-      let typePrefix = 'TL_ERROR_ON_RECORD_'
-      if (type === 'create') {
-        typePrefix += 'CREATION'
-      } else if (type === 'update') {
-        typePrefix += 'UPDATE'
-      } else if (type === 'delete') {
-        typePrefix += 'DELETE'
-      }
-      return typePrefix ? TranslateService.get(typePrefix) : 'Error'
+      return TranslateService.get(`TL_ERROR_ON_RECORD_${_.toUpper(type)}`)
     },
     manageError (error, type, record) {
       let typePrefix = this.getTypePrefix(type)

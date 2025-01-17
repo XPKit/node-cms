@@ -27,7 +27,6 @@ class ResourceService {
     _.each(paragraphs, (paragraph)=> {
       _.set(this.paragraphs, paragraph.title, paragraph)
     })
-    // console.warn('ResourceService - getAllParagraphs', this.paragraphs)
   }
 
   get (resource) {
@@ -35,7 +34,6 @@ class ResourceService {
     if (_.isUndefined(data)) {
       console.info(`resource (${resource}) is not cached`)
     }
-    // return _.cloneDeep(data)
     return data
   }
 

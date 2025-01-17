@@ -104,7 +104,6 @@ export default {
         icon.style.padding = '.25rem'
         icon.style.position = 'relative'
         icon.style.display = 'inline-block'
-
         const tooltip = document.createElement('span')
         tooltip.style['font-family'] = 'sans-serif'
         tooltip.style.visibility = 'hidden'
@@ -123,9 +122,7 @@ export default {
         icon.onmouseleave = function () {
           tooltip.style.visibility = 'hidden'
         }
-
         icon.appendChild(tooltip)
-
         return icon
       }
       getFormInputDescription (text) {
@@ -137,10 +134,8 @@ export default {
       getFormControl (label, input, description, infoText) {
         const ret = document.createElement('div')
         ret.className = 'control-group'
-
         const controls = document.createElement('div')
         controls.className = 'controls'
-
         if (label && input.getAttribute('type') === 'checkbox') {
           ret.appendChild(controls)
           label.className += ' checkbox'
@@ -161,11 +156,9 @@ export default {
           controls.appendChild(input)
           ret.appendChild(controls)
         }
-
         if (description) {
           controls.appendChild(description)
         }
-
         return ret
       }
       getHeaderButtonHolder () {

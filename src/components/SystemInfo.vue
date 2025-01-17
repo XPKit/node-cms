@@ -185,8 +185,7 @@ export default {
       const sizes = ['MB', 'GB', 'TB']
       if (megaBytes === 0) {
         return '0 MB'
-      }
-      if (Math.log(megaBytes) <= 0) {
+      } else if (Math.log(megaBytes) <= 0) {
         return `${megaBytes.toFixed(1)} MB`
       }
       const i = parseInt(Math.floor(Math.log(megaBytes) / Math.log(1024)))

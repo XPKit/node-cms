@@ -1,6 +1,6 @@
 <template>
   <div v-if="localeList && localeList.length > 1" class="locale-list">
-    <div v-for="(locale, index) in localeList" :key="index" class="locale" :class="{active: TranslateService.locale == locale }" @click="select(locale)">
+    <div v-for="(locale, index) in localeList" :key="index" class="locale" :class="{active: TranslateService.locale == locale }" @click="TranslateService.setLocale(locale)">
       {{ $filters.translate('TL_' + locale.toUpperCase()) }}
     </div>
   </div>
@@ -20,11 +20,6 @@ export default {
   data () {
     return {
       TranslateService
-    }
-  },
-  methods: {
-    select (item) {
-      TranslateService.setLocale(item)
     }
   }
 }

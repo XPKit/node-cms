@@ -17,7 +17,7 @@ export default {
   },
   methods: {
     test(data) {
-      console.warn('test ', data)
+      console.log('test ', data)
     }
   }
 }

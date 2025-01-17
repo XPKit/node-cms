@@ -32,14 +32,12 @@ import LoadingService from '@s/LoadingService'
 import ConfigService from '@s/ConfigService'
 import TranslateService from '@s/TranslateService'
 import LoginService from '@s/LoginService'
-import Notification from '@m/Notification.vue'
 import RequestService from '@s/RequestService'
 
 export default {
   components: {
     Loading
   },
-  mixins: [Notification],
   data () {
     return {
       username: null,
@@ -59,7 +57,6 @@ export default {
   },
   async mounted () {
     LoadingService.events.on('has-loading', this.onLoading)
-    console.warn('Login page mounted')
     this.$loading.start('init')
     try {
       const noLogin = _.get(window, 'noLogin', false)

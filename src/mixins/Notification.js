@@ -1,14 +1,6 @@
-
-<script>
 import _ from 'lodash'
 import NotificationsService from '@s/NotificationsService'
 export default {
-  data () {
-    return {
-    }
-  },
-  mounted () {
-  },
   methods: {
     notify (message, type = 'success') {
       const logFunc = _.get(console, type, console.info)
@@ -20,4 +12,3 @@ export default {
     }
   }
 }
-</script>

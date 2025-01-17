@@ -10,7 +10,6 @@ export default {
   },
   mounted () {
     this.attachments = _.cloneDeep(this._value) || []
-    // console.warn('file input mounted', this.schema.model, this.schema.paragraphKey, this.attachments)
   },
   methods: {
     onEndDrag () {
@@ -21,7 +20,6 @@ export default {
         }
         return item
       })
-      // console.warn('ON END DRAG', _.map(attachments, '_filename'))
       this._value = attachments
     },
     getImageSrc (attachment = false) {
@@ -30,16 +28,9 @@ export default {
     },
     isImage (attachment = false) {
       const a = attachment || this.attachment()
-      // console.warn('isImage', a)
-      let isAnImage = false
       const attachmentFilename = this.getAttachmentFilename(a)
       if (attachmentFilename) {
-        _.each(['jpg', 'jpeg', 'png', 'svg'], (type)=> {
-          if (_.endsWith(attachmentFilename, type)) {
-            isAnImage = true
-            return false
-          }
-        })
+        const isAnImage = _.find(['jpg', 'jpeg', 'png', 'svg'], (type)=> _.endsWith(attachmentFilename, type))
         if (isAnImage) {
           return true
         }
@@ -84,8 +75,7 @@ export default {
       const maxCount = this.getMaxCount()
       if (maxCount === -1) {
         return false
-      }
-      if (this.getAttachments().length >= maxCount) {
+      } else if (this.getAttachments().length >= maxCount) {
         return true
       }
       return this.disabled || _.get(this.schema, 'disabled', false)
@@ -96,7 +86,6 @@ export default {
     getRules () {
       const rules = []
       if (this.schema.required) {
-        // rules.push(v => !!v || _.get(this.getAttachments(), 'length', 0) !== 0 || TranslateService.get(`TL_${this.getFieldType()}_IS_MANDATORY`))
         rules.push(v => {
           if (_.get(this.getAttachments(), 'length', 0) === 0 && _.get(v, 'length', 0) === 0) {
             return TranslateService.get(`TL_${this.getFieldType()}_IS_MANDATORY`)
@@ -128,10 +117,8 @@ export default {
       return attachment._filename || (attachment._fields && attachment._fields._filename)
     },
     removeImage (attachment, index) {
-      // console.warn(`remove image -BEFORE ${index}`, _.cloneDeep(this.attachments))
       _.remove(this.attachments, (val, i)=> i === index)
       this._value = this.attachments
-      // console.warn(`remove image - ${index}`,this.attachments)
       this.$forceUpdate()
       // work around to force label update
       const dummy = this.schema.label

@@ -6,10 +6,7 @@ export default {
   methods: {
     getName (item) {
       const name = this.getValue(item, _.first(this.resource.schema), this.resource.displayItem)
-      if (!_.isString(name)) {
-        return _.get(item, '_id', false)
-      }
-      return name
+      return !_.isString(name) ? _.get(item, '_id', false) : name
     },
     getValue (item, field, template) {
       let displayname = ''

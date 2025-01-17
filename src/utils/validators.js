@@ -79,8 +79,7 @@ const validators = {
     let res = checkEmpty(value, field.required, messages)
     if (res != null) {
       return res
-    }
-    if (!isNumber(value) || isNaN(value)) {
+    } else if (!isNumber(value) || isNaN(value)) {
       return [msg(messages.invalidNumber)]
     }
   },
@@ -106,16 +105,14 @@ const validators = {
     if (field.required) {
       if (!isArray(value)) {
         return [msg(messages.thisNotArray)]
-      }
-      if (value.length === 0) {
+      } else if (value.length === 0) {
         return [msg(messages.fieldIsRequired)]
       }
     }
     if (!isNil(value)) {
       if (!isNil(field.min) && value.length < field.min) {
         return [msg(messages.selectMinItems, field.min)]
-      }
-      if (!isNil(field.max) && value.length > field.max) {
+      } else if (!isNil(field.max) && value.length > field.max) {
         return [msg(messages.selectMaxItems, field.max)]
       }
     }
@@ -146,8 +143,7 @@ const validators = {
     let res = checkEmpty(value, field.required, messages)
     if (res != null) {
       return res
-    }
-    if (!isNil(field.pattern)) {
+    } else if (!isNil(field.pattern)) {
       let re = new RegExp(field.pattern)
       if (!re.test(value)) {
         return [msg(messages.invalidFormat)]
@@ -193,11 +189,7 @@ const validators = {
       tmpNum = parseInt(digit, 10)
       if (shouldDouble) {
         tmpNum *= 2
-        if (tmpNum >= 10) {
-          sum += tmpNum % 10 + 1
-        } else {
-          sum += tmpNum
-        }
+        sum += tmpNum >= 10 ? (tmpNum % 10 + 1) : tmpNum
       } else {
         sum += tmpNum
       }
@@ -209,7 +201,9 @@ const validators = {
   },
   alpha (value, field, model, messages = resources) {
     let res = checkEmpty(value, field.required, messages)
-    if (res != null) return res
+    if (res != null) {
+      return res
+    }
     let re = /^[a-zA-Z]*$/
     if (!re.test(value)) {
       return [msg(messages.invalidTextContainNumber)]
@@ -217,7 +211,9 @@ const validators = {
   },
   alphaNumeric (value, field, model, messages = resources) {
     let res = checkEmpty(value, field.required, messages)
-    if (res != null) return res
+    if (res != null) {
+      return res
+    }
     let re = /^[a-zA-Z0-9]*$/
     if (!re.test(value)) {
       return [msg(messages.invalidTextContainSpec)]

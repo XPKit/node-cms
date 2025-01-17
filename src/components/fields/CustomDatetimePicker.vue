@@ -36,7 +36,7 @@ export default {
     placeholder() {
       const placeholder = _.get(this.schema, 'customDatetimePickerOptions.placeholder', false)
       if (!placeholder) {
-        console.warning(`No placeholder found in customDatetimePickerOptions for field ${this.schema.model}, will default to 'YYYY-MM-DD'`)
+        console.warn(`No placeholder found in customDatetimePickerOptions for field ${this.schema.model}, will default to 'YYYY-MM-DD'`)
         return 'YYYY-MM-DD'
       }
       return placeholder

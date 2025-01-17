@@ -15,6 +15,7 @@ class ViteUtils {
     this.serverPort = _.get(pkg, 'config.port', 9990)
     this.devPort = 10000 + this.serverPort
     this.baseUrl = 'http://localhost'
+    this.websocketBaseUrl = 'ws://localhost'
     this.nodeCmsMountPath = _.get(pkg, 'config.mountPath', '/')
     console.log(`Node-cms mount path is: ${this.nodeCmsMountPath}`)
     this.nodeCmsSrcPath = path.resolve(__dirname, 'src')
@@ -101,6 +102,10 @@ class ViteUtils {
       target: `${this.baseUrl}:${this.serverPort}`,
       configure: (proxy) => this.handleProxyCall(`${this.baseUrl}:${this.serverPort}`, proxy)
     })
+    _.set(this.proxy, '^/(_updates)', {
+      target: `${this.websocketBaseUrl}:${this.serverPort}`,
+      configure: (proxy) => this.handleProxyCall(`${this.baseUrl}:${this.serverPort}`, proxy)
+    })
     if (this.isInNodeModules && this.nodeCmsMountPath !== '/') {
       _.set(this.proxy, '^/(api)', {
         target: `${this.baseUrl}:${this.serverPort}`
@@ -110,7 +115,7 @@ class ViteUtils {
       route.ws = true
       route.changeOrigin = true
     })
-    // console.warn('Proxy is', this.proxy)
+    // console.info('Proxy is', this.proxy)
     return this.proxy
   }
 }

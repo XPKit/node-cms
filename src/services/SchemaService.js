@@ -50,7 +50,7 @@ class SchemaService {
       } else if (field.input === 'multiselect' && _.get(schema, 'labels', false)) {
         if (!_.isObject(_.first(field.source))) {
           const values = []
-          _.forEach(field.source, (value) => {
+          _.each(field.source, (value) => {
             values.push({
               text: _.get(schema, `labels.${value}`, value),
               value
@@ -66,10 +66,10 @@ class SchemaService {
         schema.selectOptions.deselectLabel = TranslateService.get('TL_MULTISELECT_DESELECT_LABEL')
         schema.selectOptions.deselectGroupLabel = TranslateService.get('TL_MULTISELECT_DESELECT_GROUP_LABEL')
         schema.selectOptions.tagPlaceholder = TranslateService.get('TL_MULTISELECT_TAG_PLACEHOLDER')
-      }
-      if (field.input === 'pillbox') {
-        schema.selectOptions.min = field.min
-        schema.selectOptions.max = field.max
+        if (field.input === 'pillbox') {
+          schema.selectOptions.min = field.min
+          schema.selectOptions.max = field.max
+        }
       }
       return schema
     })
@@ -155,15 +155,9 @@ class SchemaService {
         }
         return value
       }
-      let currentPath = `${path}.${key}`
-      if (_.isUndefined(path)) {
-        currentPath = key
-      }
-      let label = _.get(resource, `groups.${currentPath}.label`, key)
-      label = TranslateService.get(label)
-      // console.warn(`Will get fields for group ${label}`)
+      const currentPath = _.isUndefined(path) ? key : `${path}.${key}`
       return _.extend({}, this.typeMapper.group, {
-        label,
+        label: TranslateService.get(_.get(resource, `groups.${currentPath}.label`, key)),
         key,
         path,
         groupOptions: {

@@ -84,10 +84,8 @@ export default {
       }
     },
     getSelectedItemName () {
-      if (_.get(this.selectedItem, 'displayname', false)) {
-        return TranslateService.get(this.selectedItem.displayname)
-      }
-      return _.get(this.selectedItem, 'name', false)
+      const displayname = _.get(this.selectedItem, 'displayname', false)
+      return displayname ? TranslateService.get(displayname) : _.get(this.selectedItem, 'name', false)
     }
   }
 }

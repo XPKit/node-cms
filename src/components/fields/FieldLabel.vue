@@ -1,6 +1,6 @@
 <template>
   <div class="field-label">
-    <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ getLabel() }}
+    <span v-if="schema.required" class="text-red"><strong>* </strong></span>{{ schema.label }}
   </div>
 </template>
 
@@ -17,10 +17,6 @@ export default {
   methods: {
     getHint () {
       return _.get(this.schema, 'hint', '')
-    },
-    getLabel () {
-      // console.warn(`Field-label - ${this.schema.label}`, this.schema)
-      return this.schema.label
     }
   }
 }

@@ -27,7 +27,7 @@ import _ from 'lodash'
 import RecordNameHelper from './RecordNameHelper'
 import AbstractEditorView from './AbstractEditorView'
 import TranslateService from '@s/TranslateService'
-import Notification from '@m/Notification.vue'
+import Notification from '@m/Notification'
 import RequestService from '@s/RequestService'
 
 export default {

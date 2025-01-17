@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import TranslateServiceLib from '@s/TranslateService'
 import SchemaService from '@s/SchemaService'
-import Notification from '@m/Notification.vue'
+import Notification from '@m/Notification'
 import RequestService from '@s/RequestService'
 import pAll from 'p-all'
 
@@ -13,7 +13,6 @@ export default {
     async uploadAttachments (id, attachments) {
       this.$loading.start('uploadAttachments')
       const url = `../api/${this.resource.title}/${id}/attachments`
-      // console.warn('uploadAttachments', id, attachments)
       try {
         await pAll(_.map(attachments, attachment => {
           return async () => {
@@ -26,14 +25,13 @@ export default {
               data.append('_filename', attachment._filename)
             }
             if (_.get(attachment, 'cropOptions', false)) {
-              console.warn('detected cropOptions, will add it to the request')
+              console.info('detected cropOptions, will add it to the request')
               data.append('cropOptions', JSON.stringify(attachment.cropOptions))
             }
             if (_.get(attachment, 'orderUpdated', false) && _.get(attachment, 'order', false)) {
-              console.warn('detected orderUpdated, will add it to the request')
+              console.info('detected orderUpdated, will add it to the request')
               data.append('order', attachment.order)
             }
-            // console.warn('Will upload attachment', attachment)
             await RequestService.post(url, data)
           }}), {concurrency: 5})
       } catch (error) {
@@ -63,25 +61,16 @@ export default {
       this.$loading.stop('remove-attachments')
     },
     getTypePrexix (type) {
-      let typePrefix = 'TL_ERROR_ON_RECORD_'
-      if (type === 'create') {
-        typePrefix += 'CREATION'
-      } else if (type === 'update') {
-        typePrefix += 'UPDATE'
-      } else if (type === 'delete') {
-        typePrefix += 'DELETE'
-      }
-      return typePrefix ? TranslateService.get(typePrefix) : 'Error'
+      return TranslateService.get(`TL_ERROR_ON_RECORD_${_.toUpper(type)}`)
     },
     manageError (error, type, record) {
-      let typePrefix = this.getTypePrexix(type)
-      let errorMessage = typePrefix
+      let errorMessage = this.getTypePrexix(type)
       if (_.get(error, 'response.data.code', 500) === 400) {
         const serverError = _.get(error, 'response.data')
         if (_.get(serverError, 'message', false)) {
-          errorMessage = `${typePrefix}: ${serverError.message}`
+          errorMessage += `: ${serverError.message}`
         } else {
-          errorMessage = `${typePrefix}: ${TranslateService.get('TL_UNKNOWN_ERROR')}`
+          errorMessage += `: ${TranslateService.get('TL_UNKNOWN_ERROR')}`
         }
       }
       console.error(errorMessage, record)

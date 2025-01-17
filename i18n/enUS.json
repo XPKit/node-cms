@@ -44,7 +44,7 @@
     "TL_RECORD_DELETED": "record {{ id }} deleted",
     "TL_ERROR_CREATING_RECORD": "Error on creating record, invalid input",
     "TL_ERROR_CREATING_RECORD_ID": "Error on updating record {{ id }}, invalid input",
-    "TL_ERROR_ON_RECORD_CREATION": "Error on record creation",
+    "TL_ERROR_ON_RECORD_CREATE": "Error on record creation",
     "TL_ERROR_ON_RECORD_UPDATE": "Error on record update",
     "TL_ERROR_ON_RECORD_DELETE": "Error on record delete",
     "TL_UNKNOWN_ERROR": "unknown error",
@@ -159,5 +159,11 @@
     "TL_CONVERT": "Convert",
     "TL_INVALID_PARAGRAPH_WOULD_YOU_LIKE_TO_CONVERT_IT": "Invalid paragraph, would you like to convert it?",
     "TL_INVALID_PARAGRAPH_CANNOT_BE_CONVERTED": "Invalid paragraph, cannot be converted",
-    "TL_ARE_YOU_SURE_YOU_WANT_TO_DISCARD": "Are you sure you want to discard your changes?"
+    "TL_ARE_YOU_SURE_YOU_WANT_TO_DISCARD": "Are you sure you want to discard your changes?",
+    "TL_WS_UPDATES_RESOURCE_TITLE": "Resouce update",
+    "TL_WS_UPDATES_RECORD_TITLE": "Record update",
+    "TL_WS_UPDATES_RESOURCE_DESCRIPTION": "Resource {{ resourceName }} was updated by another user,<br>do you wish to reload?",
+    "TL_WS_UPDATES_RECORD_DESCRIPTION": "Record was updated by another user,<br>do you wish to reload?",
+    "TL_WS_UPDATES_RELOAD": "Reload",
+    "TL_WS_UPDATES_CLOSE": "Close"
   }

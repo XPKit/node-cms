@@ -17,10 +17,11 @@
 <script>
 import _ from 'lodash'
 import ShowAttachment from '@c/ShowAttachment.vue'
-import NotificationsService from '@s/NotificationsService'
+import Notification from '@m/Notification'
 
 export default {
   components: {ShowAttachment},
+  mixins: [Notification],
   props: {
     index: {
       type: Number,
@@ -66,8 +67,7 @@ export default {
     },
     copyFilenameToClipboard () {
       navigator.clipboard.writeText(this.getAttachmentFilename(this.attachment))
-      NotificationsService.send('Filename has been copied.', 'success')
-
+      this.notify('Filename has been copied.')
     },
     getAttachmentFilename(attachment) {
       return attachment._filename || (attachment._fields && attachment._fields._filename)

@@ -58,10 +58,9 @@ class LoginService {
   async changeTheme () {
     try {
       const newTheme = _.get(this.user, 'theme', 'dark') === 'dark' ? 'light' : 'dark'
-      // console.warn('changeTheme ', this.user, newTheme)
       this.events.emit('changed-theme', newTheme)
       await RequestService.get(`${window.location.pathname}changeTheme/${newTheme}`)
-      console.warn('Successfully changed the theme for user')
+      console.info(`Successfully changed the theme for user: ${newTheme}`)
       _.set(this.user, 'theme', newTheme)
       document.querySelectorAll('body')[0].classList = [`v-theme--${newTheme}`]
       return newTheme

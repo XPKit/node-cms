@@ -20,10 +20,10 @@
 <script>
 import _ from 'lodash'
 import AbstractField from '@m/AbstractField'
-import NotificationsService from '@s/NotificationsService'
+import Notification from '@m/Notification'
 
 export default {
-  mixins: [AbstractField],
+  mixins: [AbstractField, Notification],
   methods: {
     getType () {
       return _.get(this.schema, 'inputFieldType', 'text')
@@ -39,7 +39,7 @@ export default {
     },
     copyToClipboard(value) {
       navigator.clipboard.writeText(value)
-      NotificationsService.send('Value has been copied.', 'success')
+      this.notify('Value has been copied.')
     }
   }
 }

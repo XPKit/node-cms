@@ -41,8 +41,7 @@ export default {
   methods: {
     onCropperChange (index, data) {
       const attachments = this.getAttachments()
-      _.set(attachments, `[${index}].cropOptions`, data.coordinates)
-      _.set(attachments, `[${index}].cropOptions.updated`, true)
+      _.set(attachments, `[${index}].cropOptions`, {data: {coordinates: data.coordinates}, updated: true})
       this.attachments = attachments
       this._value = attachments
     }

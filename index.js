@@ -18,6 +18,7 @@ const session = require('express-session')
 const UUID = require('./lib/util/uuid')
 const SyslogManager = require('./lib/SyslogManager')
 const SystemManager = require('./lib/SystemManager')
+const UpdatesManager = require('./lib/UpdatesManager')
 const escapeRegExp = require('./lib/util/escapeRegExp')
 
 const Resource = require('./lib/resource')
@@ -69,38 +70,27 @@ class CMS {
     if (options) {
       delete options.config
     }
-
     /* create a default config, if not exist */
-
     if (!fs.existsSync(configPath)) {
       const cfg = _.extend(defaultConfig(), options)
       fs.writeFileSync(configPath, JSON.stringify(cfg, null, 2))
     }
-
     /* aggregate options */
-
     this.options = (options = (this._options = _.extend({}, defaultConfig(), require(configPath), options)))
-
     /* ensure required folders are in place */
-
     mkdirp.sync(path.resolve(options.resources))
     mkdirp.sync(path.resolve(options.data))
-
     /* keep track of available resources */
     this._tempResources = {}
     this._resources = {}
     this._paragraphs = {}
     this._attachmentFields = {}
     this._resourceNames = []
-
     /* keep track of available plugins */
     this._plugins = {}
-
     /* Use prefixed UUID */
     options.uuid = new UUID(options.mid)
-
     /* automaticly populate CMS resources, if specified */
-
     if (this._options.autoload) {
       _.each(requireDir(options.resources), (value, key) => this.resource(key, value))
       const paragraphsDir = _.get(options, 'paragraphs', `${options.resources}/paragraphs`)
@@ -108,7 +98,6 @@ class CMS {
         _.set(this._paragraphs, key, value)
         this.formatSchema(this._paragraphs, key, true)
       })
-
       _.set(this._paragraphs, '_settingsLink', {
         displayname: 'Settings link',
         maxCount: 1,
@@ -151,7 +140,6 @@ class CMS {
       })
       this.formatSchema(this._paragraphs, '_settingsLinkGroup', true)
     }
-
     /* create main application */
     this._app = express()
     this._app.use(helmet.dnsPrefetchControl())
@@ -163,7 +151,6 @@ class CMS {
     this._app.use(helmet.noSniff())
     this._app.use(helmet.permittedCrossDomainPolicies())
     this._app.use(helmet.referrerPolicy())
-
     /* Enable compression */
     this._app.use(compression({
       filter (req, res) {
@@ -203,57 +190,48 @@ class CMS {
       })
     }
     this.use(require('./lib/plugins/authentication')(options))
-
     // handle syslog and system
     this.bootstrapFunctions = this.bootstrapFunctions || []
     this.bootstrapFunctions.push(async (callback) => {
       SyslogManager.init(this, options)
       SystemManager.init(this, options)
+      UpdatesManager.init(this)
       callback()
     })
     this._app.use(SyslogManager.express())
     this._app.use(SystemManager.express())
-
     /* REST API */
     if (!options.disableREST) {
       this.use(require('./lib/plugins/rest')())
     }
-
     /* import API */
     if (options.import) {
       this.use(require('./lib/plugins/import')(options))
     }
-
     /* Admin API */
     if (!options.disableAdmin) {
       this.use(require('./lib/plugins/admin')(options))
     }
-
     /* Replication API */
     if (!options.disableReplication) {
       this.use(require('./lib/plugins/replicator')())
     }
-
     /* Migration API */
     if (options.migration) {
       this.use(require('./lib/plugins/migration')(options))
     }
-
     /* Sync API */
     if (options.sync) {
       this.use(require('./lib/plugins/sync')(options))
     }
-
     /* xlsx API */
     if (options.xlsx) {
       this.use(require('./lib/plugins/xlsx')(options))
     }
-
     /* anonymousRead */
     if (options.anonymousRead) {
       this.use(require('./lib/plugins/anonymousRead')(options))
     }
-
     // handle bootstrap
     this.bootstrap = async (server, callback) => {
       if (_.isFunction(server) && _.isUndefined(callback)) {
@@ -269,7 +247,6 @@ class CMS {
       }), {concurrency: 1})
       callback && callback()
     }
-
     this._processAttachmentFields()
   }
   _processAttachmentFields() {
@@ -292,7 +269,6 @@ class CMS {
       })
     })
   }
-
   _processAttachmentFieldsParagraph(fieldItem, resourceKey, rootPath) {
     const paragraphTypes = _.get(fieldItem, 'options.types', [])
     _.each(paragraphTypes, paragraphType => {
@@ -314,7 +290,6 @@ class CMS {
       })
     })
   }
-
   underscoreObject (list, values) {
     let result = {}
     for (let i = 0, length = _.get(list, 'length', 0); i < length; i++) {
@@ -327,12 +302,15 @@ class CMS {
     return result
   }
 
+  getKeyFor(name, key, forParagraph = false) {
+    return `[${name}]${!forParagraph ? 'options' : ''}.${key}`
+  }
+
   formatSchema(resourcesList, name, forParagraph = false) {
-    const schemaKey = forParagraph ? `[${name}].schema` : `[${name}]options.schema`
-    const localesKey = forParagraph ? `[${name}].locales` : `[${name}]options.locales`
-    const attachmentsKey = forParagraph ? `[${name}]._attachments` : `[${name}]options._attachments`
+    const schemaKey = this.getKeyFor(name, 'schema', forParagraph)
     const schema = _.get(resourcesList, schemaKey, [])
     const attachmentFields = []
+    const localesKey = this.getKeyFor(name, 'locales', forParagraph)
     const resourceIsLocalised = _.get(resourcesList, `${localesKey}.length`, 0) !== 0
     _.each(schema, (field)=> {
       field.localised = _.get(field, 'localised', resourceIsLocalised)
@@ -341,6 +319,7 @@ class CMS {
       }
     })
     _.set(resourcesList, schemaKey, schema)
+    const attachmentsKey = this.getKeyFor(name, '_attachments', forParagraph)
     _.set(resourcesList, attachmentsKey, attachmentFields)
   }
 
@@ -384,29 +363,19 @@ class CMS {
    *  api('articles').attachments.read(['abc123xz','lmnop123'])
    *    .pipe(fs.createWriteStream('./image.png'));
    */
-
   api () {
     return (name, ...rest) => this.resource(name, null, rest)
   }
 
-  /*
-   * Install a plugin
-   */
-
+  // Install a plugin
   use (plugin) {
     return plugin.apply(this)
   }
 
-  /*
-   * Get main application
-   */
+  // Get main application
   express () {
     return this._app
   }
 }
-
-/*
- * Expose
- */
 
 exports = module.exports = CMS

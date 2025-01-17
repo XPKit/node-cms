@@ -22,6 +22,7 @@
         </v-card>
       </v-dialog>
       <div v-if="user" class="cms-layout">
+        <updates-notifier v-if="selectedResource" :selected-resource="selectedResource" :selected-record="selectedRecord" @reloadResource="reloadResource" />
         <div class="cms-inner-layout">
           <nav-bar
             v-if="resourceList.length > 0" :config="config" :toolbar-title="toolbarTitle" :locale-class="{locale:localeList && localeList.length > 1}" :select-resource-group-callback="selectResourceGroup" :select-resource-callback="selectResource" :grouped-list="groupedList" :selected-resource-group="selectedResourceGroup"
@@ -81,7 +82,7 @@ import LoginService from '@s/LoginService'
 import ConfigService from '@s/ConfigService'
 import TranslateService from '@s/TranslateService'
 import ResourceService from '@s/ResourceService'
-import Notification from '@m/Notification.vue'
+import Notification from '@m/Notification'
 import Loading from '@c/Loading.vue'
 import LocaleList from '@c/LocaleList.vue'
 import NavBar from '@c/NavBar.vue'
@@ -89,6 +90,7 @@ import RecordList from '@c/RecordList.vue'
 import MultiselectPage from '@c/MultiselectPage.vue'
 import RecordEditor from '@c/RecordEditor.vue'
 import RecordTable from '@c/RecordTable.vue'
+import UpdatesNotifier from '@c/UpdatesNotifier.vue'
 
 export default {
   components: {
@@ -98,7 +100,8 @@ export default {
     RecordEditor,
     Loading,
     LocaleList,
-    RecordTable
+    RecordTable,
+    UpdatesNotifier
   },
   mixins: [Notification],
   data () {
@@ -197,10 +200,7 @@ export default {
         if (_.isUndefined(item.allowed)) {
           return true
         }
-        if (_.isEmpty(this.user)) {
-          return false
-        }
-        return _.includes(item.allowed, this.user.group)
+        return _.isEmpty(this.user) ? false : _.includes(item.allowed, this.user.group)
       })
       return _.filter(plugins, (plugin)=> _.includes(this.allowedPlugins, plugin.displayname))
     }
@@ -259,6 +259,12 @@ export default {
     }
   },
   methods: {
+    async reloadResource(id = false) {
+      console.warn(`Will reload resource:${this.selectedResource.name} - id: ${id}`)
+      await this.selectResource(this.selectedResource, true)
+      const record = id ? _.find(this.recordList, {_id: id}) : this.selectedRecord
+      await this.selectRecord(record, true)
+    },
     async onLoading(isLoading) {
       await this.$nextTick()
       this.isLoading = isLoading
@@ -276,7 +282,7 @@ export default {
       try {
         this.user = await LoginService.getStatus()
         this.allowedPlugins = await LoginService.getPlugins()
-        console.debug('Plugins available:', this.allowedPlugins)
+        console.info('Plugins available:', this.allowedPlugins)
         this.$vuetify.theme.dark = _.get(this.user, 'theme', 'light') === 'dark'
         this.$forceUpdate()
       } catch (error) {
@@ -325,11 +331,11 @@ export default {
     async selectResourceGroup (resourceGroup) {
       this.selectedResourceGroup = resourceGroup
     },
-    async selectResource (resource) {
+    async selectResource (resource, force = false) {
       if (_.isUndefined(resource)) {
         return
       }
-      if (this.isEditing) {
+      if (!force && this.isEditing) {
         return window.DialogService.show({event: 'selectResource', callback: ()=> this.selectResource(resource)})
       }
       try {
@@ -409,8 +415,8 @@ export default {
         }
       }), {concurrency: 10})
     },
-    selectRecord (record) {
-      if (this.isEditing && this.selectedRecord !== record) {
+    selectRecord (record, force = false) {
+      if (!force && this.isEditing && this.selectedRecord !== record) {
         return window.DialogService.show({event: 'selectRecord', callback: ()=> this.selectRecord(record)})
       }
       this.selectedRecord = record

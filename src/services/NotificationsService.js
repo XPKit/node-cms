@@ -7,7 +7,7 @@ class NotificationsService {
   }
 
   send (message, type = 'success') {
-    // console.warn('sendNotification', {message, type})
+    // console.info('sendNotification', {message, type})
     this.events.emit('notification', {message, type})
   }
 
