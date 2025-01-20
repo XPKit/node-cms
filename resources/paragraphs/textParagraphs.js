@@ -10,6 +10,11 @@ exports = (module.exports = {
       label: 'Wysiwyg',
       field: 'wysiwyg',
       input: 'wysiwyg'
+    },
+    {
+      field: 'comment',
+      input: 'select',
+      source: 'comments'
     }
   ]
 })

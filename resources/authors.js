@@ -33,9 +33,9 @@ exports = (module.exports = {
       input: 'paragraph',
       options: {
         types: ['textParagraphs', 'testParagraphs']
-      }
+      },
+      localised: false
     }
-
   ],
   locales: [
     'enUS',

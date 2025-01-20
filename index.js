@@ -75,6 +75,7 @@ class CMS {
     this._resources = {}
     this._paragraphs = {}
     this._attachmentFields = {}
+    this._relations = {}
     this._resourceNames = []
     /* keep track of available plugins */
     this._plugins = {}
@@ -238,6 +239,7 @@ class CMS {
       callback && callback()
     }
     this._processAttachmentFields()
+    this._processSourceFields()
   }
   _processAttachmentFields() {
     _.each(this._resources, (resource, resourceKey) => {
@@ -247,11 +249,7 @@ class CMS {
         if (_.includes(['file', 'image'], fieldItem.input)) {
           const field = _.cloneDeep(fieldItem)
           field.path = rootPath
-          _.set(
-            this._resources,
-            `["${resourceKey}"].options._attachmentFields["${escapeRegExp(rootPath)}"]`,
-            field
-          )
+          _.set(this._resources, `["${resourceKey}"].options._attachmentFields["${escapeRegExp(rootPath)}"]`, field)
           _.set(this._attachmentFields, `${resourceKey}["${escapeRegExp(rootPath)}"]`, field)
         } else if (fieldItem.input === 'paragraph') {
           this._processAttachmentFieldsParagraph(fieldItem, resourceKey, rootPath)
@@ -268,12 +266,44 @@ class CMS {
         if (_.includes(['file', 'image'], paragraphFieldItem.input)) {
           const field = _.cloneDeep(paragraphFieldItem)
           field.path = paragraphRootPath
-          _.set(
-            this._resources,
-            `["${resourceKey}"].options._attachmentFields["${escapeRegExp(paragraphRootPath)}"]`,
-            field
-          )
+          _.set(this._resources, `["${resourceKey}"].options._attachmentFields["${escapeRegExp(paragraphRootPath)}"]`, field)
           _.set(this._attachmentFields,  `${resourceKey}["${escapeRegExp(paragraphRootPath)}"]`, field)
+        } else if (fieldItem.input === 'paragraph') {
+          this._processAttachmentFieldsParagraph(paragraphFieldItem, resourceKey, paragraphRootPath)
+        }
+      })
+    })
+  }
+  isValidRelation(field) {
+    return _.includes(['select', 'multiselect'], field.input) && _.includes(this._resourceNames, field.source)
+  }
+  _processSourceFields() {
+    _.each(this._resources, (resource, resourceKey) => {
+      const schema = _.get(resource, 'options.schema', [])
+      _.each(schema, fieldItem => {
+        const rootPath = `${fieldItem.field}`
+        if (this.isValidRelation(fieldItem)) {
+          const field = _.cloneDeep(fieldItem)
+          field.path = rootPath
+          _.set(this._resources, `["${resourceKey}"].options._relations["${escapeRegExp(rootPath)}"]`, field)
+          _.set(this._relations, `${resourceKey}["${escapeRegExp(rootPath)}"]`, field)
+        } else if (fieldItem.input === 'paragraph') {
+          this._processSourceFieldsParagraph(fieldItem, resourceKey, rootPath)
+        }
+      })
+    })
+  }
+  _processSourceFieldsParagraph(fieldItem, resourceKey, rootPath) {
+    const paragraphTypes = _.get(fieldItem, 'options.types', [])
+    _.each(paragraphTypes, paragraphType => {
+      const schema = _.get(this._paragraphs, `["${paragraphType}"].schema`, [])
+      _.each(schema, paragraphFieldItem => {
+        const paragraphRootPath = `${rootPath}.{{*}}.${paragraphFieldItem.field}`
+        if (this.isValidRelation(paragraphFieldItem)) {
+          const field = _.cloneDeep(paragraphFieldItem)
+          field.path = paragraphRootPath
+          _.set(this._resources, `["${resourceKey}"].options._relations["${escapeRegExp(paragraphRootPath)}"]`, field)
+          _.set(this._relations,  `${resourceKey}["${escapeRegExp(paragraphRootPath)}"]`, field)
         } else if (fieldItem.input === 'paragraph') {
           this._processAttachmentFieldsParagraph(paragraphFieldItem, resourceKey, paragraphRootPath)
         }

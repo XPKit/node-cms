@@ -115,7 +115,8 @@ export default {
         return this.pong()
       } else if (msg.action === 'update') {
         if (this.isFromSelf(msg)) {
-          return console.warn('msg from self', msg, LoginService.user)
+          // console.warn('msg from self', msg, LoginService.user)
+          return
         }
         console.warn('received msg', msg)
         if (_.get(msg, 'data.resource', false) && msg.data.resource === this.selectedResource.name) {
