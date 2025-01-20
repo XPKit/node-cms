@@ -25,7 +25,7 @@ program.on('--help', () => {
   console.log('')
   console.log('  Examples:')
   console.log('')
-  console.log('    $ cms-import ./dev.json username:passwor')
+  console.log('    $ cms-import ./dev.json username:password')
   console.log('')
 })
 

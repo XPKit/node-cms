@@ -25,6 +25,7 @@
 
 <script>
 import _ from 'lodash'
+import LoginService from '@s/LoginService'
 
 export default {
   props: {
@@ -39,7 +40,7 @@ export default {
   },
   data() {
     return {
-      debug: true,
+      debug: false,
       client: null,
       connecting: null,
       heatbeat: null,
@@ -57,7 +58,8 @@ export default {
   methods: {
     reloadResource() {
       this.$emit('reloadResource', _.get(this.receivedUpdate, 'data._id', false))
-      this.receivedUpdate = []
+      this.receivedUpdate = false
+      this.$forceUpdate()
     },
     recordOrResource() {
       return this.isSameRecord() ? 'RECORD' : 'RESOURCE'
@@ -83,12 +85,10 @@ export default {
       const url = `${window.location.origin.replace(/^(http)/, 'ws')}/_updates`
       // console.warn(`Will connect to ${url}`)
       this.client = new WebSocket(url)
-      this.client.onopen = this.onOpen
-      this.client.onclose = this.onClose
-      this.client.onmessage = this.onMessage
+      _.each(['onopen', 'onclose', 'onmessage'], (key)=> this.client[key] = this[key])
     },
-    onClose () {
-      // console.info('Websocket - onClose')
+    onclose () {
+      // console.info('Websocket - onclose')
       this.isConnecting = false
       this.isConnected = false
       clearTimeout(this.heatbeat)
@@ -97,26 +97,29 @@ export default {
         await this.connectToWebsocketServer()
       }, this.reconnectAfter)
     },
-    onOpen () {
-      // console.info('Websocket - onOpen')
+    onopen () {
+      // console.info('Websocket - onopen')
       this.onHeartbeat()
       this.isConnecting = false
       this.isConnected = true
     },
-    onMessage (event) {
+    isFromSelf(msg) {
+      const user = _.get(LoginService, 'user', {})
+      return _.get(msg, 'data._updatedBy', false) === `${user.group}~${user.username}`
+    },
+    onmessage (event) {
       const msg = JSON.parse(event.data)
       if (!_.get(msg, 'action', false)) {
-        console.info('ws msg received without action:', msg)
+        return console.info('ws msg received without action:', msg)
       } else if (msg.action === 'ping') {
         return this.pong()
       } else if (msg.action === 'update') {
+        if (this.isFromSelf(msg)) {
+          return console.warn('msg from self', msg, LoginService.user)
+        }
         console.warn('received msg', msg)
         if (_.get(msg, 'data.resource', false) && msg.data.resource === this.selectedResource.name) {
-          if (this.isSameRecord(msg)) {
-            console.warn('same record was edited')
-          } else {
-            console.warn('same resource was edited')
-          }
+          console.warn(`same ${this.isSameRecord(msg) ? 'record' : 'resource'} was edited`)
           this.receivedUpdate = msg
         }
       }

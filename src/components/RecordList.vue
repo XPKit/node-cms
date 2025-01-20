@@ -73,7 +73,7 @@
                 <div class="meta">
                   <div class="ts">
                     <span class="update">
-                      {{ $filters.translate('TL_UPDATED_BY', {user: get(item, '_updatedBy', 'API')}) }}
+                      {{ $filters.translate('TL_UPDATED_BY', {user: getUpdatedBy(item)}) }}
                     </span>
                     <span v-if="item._id" class="separator"> | </span>
                     <span v-if="item._id" class="time-ago">{{ getTimeAgo(item) }}</span>
@@ -268,6 +268,9 @@ export default {
     NotificationsService.events.on('omnibar-display-status', this.onGetOmnibarDisplayStatus)
   },
   methods: {
+    getUpdatedBy(item) {
+      return _.last(_.get(item, '_updatedBy', '~API').split('~'))
+    },
     renderBaseOnSearch(value) {
       const result = _.clone(value)
       return _.isEmpty(this.search) ? result : result.split(this.search).join(`<strong>${this.search}</strong>`)

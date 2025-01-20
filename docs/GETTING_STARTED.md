@@ -61,7 +61,7 @@ curl -XPOST localhost:3000/api/articles?locale=enUS -H 'Content-type: applicatio
 
     { "_id": "hrk8q651hrk8q5wly7tjryp9",
       "_createdAt": 1392187894165,
-      "_updatedBy": "localAdmin",
+      "_updatedBy": "admins~localAdmin",
       "_updatedAt": 1392187894165,
       "_doc": {
         "enUS": {

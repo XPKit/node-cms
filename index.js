@@ -23,10 +23,7 @@ const escapeRegExp = require('./lib/util/escapeRegExp')
 
 const Resource = require('./lib/resource')
 
-/*
- * Default CMS configration
- */
-
+// Default CMS configration
 const defaultConfig = () =>
   ({
     ns: [],
@@ -40,6 +37,7 @@ const defaultConfig = () =>
     disableJwtLogin: true,
     disableReplication: false,
     disableAuthentication: false,
+    wsRecordUpdates: true,
     disableAnonymous: false,
     apiVersion: 1,
     session: {
@@ -48,14 +46,6 @@ const defaultConfig = () =>
       saveUninitialized: true
     }
   })
-
-/*
- * Define a new resource if not present
- */
-
-/*
- * Constructor
- */
 
 class CMS {
   constructor (options) {
@@ -195,7 +185,7 @@ class CMS {
     this.bootstrapFunctions.push(async (callback) => {
       SyslogManager.init(this, options)
       SystemManager.init(this, options)
-      UpdatesManager.init(this)
+      UpdatesManager.init(this, options)
       callback()
     })
     this._app.use(SyslogManager.express())
@@ -321,6 +311,12 @@ class CMS {
     _.set(resourcesList, schemaKey, schema)
     const attachmentsKey = this.getKeyFor(name, '_attachments', forParagraph)
     _.set(resourcesList, attachmentsKey, attachmentFields)
+  }
+
+  broadcast(msg) {
+    if (_.get(this.options, 'wsRecordUpdates', false)) {
+      UpdatesManager.broadcast(msg)
+    }
   }
 
   resource (name, config, resolves) {
