@@ -1,0 +1,24 @@
+{
+  "local": {
+    "protocol": "http://",
+    "host": "localhost:9990",
+    "prefix": "",
+    "username": "localAdmin",
+    "password": "localAdmin"
+  },
+  "remote": {
+    "protocol": "https://",
+    "host": "crm.qa.fgedst.ford.com",
+    "prefix": "/cms",
+    "username": "localAdmin",
+    "password": "kxVt7Hs8ZPpWEbQPyEuh"
+  },
+  "resources": [
+    "cities",
+    "provinces",
+    "regions",
+    "countries",
+    "markets",
+    "cctImages"
+  ]
+}

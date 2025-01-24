@@ -16,7 +16,7 @@ let startProcess = function () {
     totalTime = done()
     totalTimeStr = ''
     totalTimeStr = util.format('(%s.%s)', numeral(totalTime / 1000).format('hh:mm:ss'), totalTime % 1000)
-    return logger.info(label, util.format.apply(util, arguments), totalTimeStr)
+    return logger.info(`${label} - ${util.format.apply(util, arguments)} - ${totalTimeStr}`)
   }
 }
 
@@ -46,26 +46,7 @@ let convertData = function (value, type) {
   return _.trim(value)
 }
 
-const findRecordByUniqueKey = function (errors, records, uniqueKey, name, value) {
-  const v = _.find(records, {[uniqueKey]: value})
-  if (!v && errors != null) {
-    errors.push('record (' + value + ') not found in resource ' + name)
-  }
-  return v != null ? v._id : void 0
-}
-
-let convertKeyToId = function (value, type, records, name, uniqueKeys, errors) {
-  const uniqueKey = _.first(uniqueKeys)
-  if (type === 'select') {
-    return findRecordByUniqueKey(errors, records, uniqueKey, name, value)
-  } else if (type === 'multiselect') {
-    return _.compact(_.map(value, (key)=> findRecordByUniqueKey(errors, records, uniqueKey, key)))
-  }
-  return value
-}
-
 exports = module.exports = {
   startProcess: startProcess,
-  convertData: convertData,
-  convertKeyToId: convertKeyToId
+  convertData: convertData
 }
