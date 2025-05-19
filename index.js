@@ -38,6 +38,7 @@ const defaultConfig = () =>
     disableReplication: false,
     disableAuthentication: false,
     wsRecordUpdates: true,
+    importFromRemote: true,
     disableAnonymous: false,
     apiVersion: 1,
     session: {

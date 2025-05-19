@@ -24,6 +24,7 @@ import CustomForm from '@c/CustomForm.vue'
 import PluginPage from '@c/pages/PluginPage.vue'
 import Syslog from '@c/pages/Syslog.vue'
 import CmsImport from '@c/pages/CmsImport.vue'
+import ImportFromRemote from '@c/pages/ImportFromRemote.vue'
 import SyncResource from '@c/pages/SyncResource.vue'
 
 // Field components
@@ -95,6 +96,7 @@ app.use(router)
   .component('PluginPage', PluginPage)
   .component('Syslog', Syslog)
   .component('CmsImport', CmsImport)
+  .component('ImportFromRemote', ImportFromRemote)
   .component('SyncResource', SyncResource)
   .component('Draggable', VueDraggableNext)
   .component('date-picker', VueDatePicker)
@@ -106,6 +108,7 @@ app.use(router)
 
 function addPlugin (title, displayName, group = 'System', allowed = ['admins', 'imagination']) {
   window.plugins = window.plugins || []
+  console.warn('adding plugin', displayName)
   window.plugins.push({
     title,
     displayname: displayName,
@@ -123,10 +126,13 @@ window.addEventListener('load', async function () {
     item.type = 'plugin'
   })
   window.TranslateService = TranslateService
-  const config = RequestService.get(`${window.location.pathname}config`)
+  const config = await RequestService.get(`${window.location.pathname}config`)
   addPlugin('Syslog', 'Syslog')
   if (config.import) {
     addPlugin('CmsImport', 'Cms Import')
+  }
+  if (config.importFromRemote) {
+    addPlugin('ImportFromRemote', 'Import from remote')
   }
   if (config.sync && !config.sync.disablePlugin) {
     addPlugin('SyncResource', 'Sync Resource')
