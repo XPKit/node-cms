@@ -8,7 +8,6 @@ const path = require('path')
 const fs = require('fs-extra')
 const logger = new (require(path.join(__dirname, '../lib/logger')))()
 const md5File = require('md5-file')
-const got = require('got')
 const prompt = require('prompt')
 const Q = require('q')
 const pAll = require('p-all')
@@ -51,9 +50,7 @@ class ImportManager {
     this.remoteRecords = {}
     this.data = {}
     this.attachmentsToIgnore = ['.DS_Store', 'desktop.ini', 'Icon\r']
-    /*
-      NOTE: For paragraphs to work, '/admin/paragraphs' should be in config.cms.routesToAuth for both local & remote CMS
-    */
+    //  NOTE: For paragraphs to work, '/admin/paragraphs' should be in config.cms.routesToAuth for both local & remote CMS
     this.init()
   }
 
@@ -84,7 +81,7 @@ class ImportManager {
       }
       logger.info(`Import took ${Date.now() - importStartedAt}ms`)
     } catch (error) {
-      logger.error(_.get(error, 'response.body', error.message || error))
+      logger.error(_.get(error, 'response.body', _.get(error, 'message', error)))
     }
   }
 
@@ -96,15 +93,8 @@ class ImportManager {
       }
       return this.remoteSchemaMap[resource]
     })
-    const paragraphsToSync = _.filter(this.config.paragraphs, (paragraph)=> {
-      if (!this.localParagraphMap[paragraph]) {
-        logger.error(`paragraph ${paragraph} not defined in local node-cms, will not import it`)
-        return false
-      }
-      return this.remoteParagraphMap[paragraph]
-    })
     await this.downloadDataFromResourceList(resourcesToSync)
-    await this.loadDataFromCachedJson(resourcesToSync, paragraphsToSync)
+    await this.loadDataFromCachedJson(resourcesToSync)
   }
 
   async downloadDataFromResourceList(resourcesToSync) {
@@ -159,7 +149,7 @@ class ImportManager {
     return results
   }
 
-  async loadDataFromCachedJson (resourceList, paragraphList) {
+  async loadDataFromCachedJson (resourceList) {
     return await pAll(_.map(resourceList, resource => {
       return async () => {
         let endProcess = h.startProcess(`Get Data from cached json ${resource} ...`)
@@ -172,26 +162,21 @@ class ImportManager {
         const uniqueKeys = this.remoteApi(resource).getUniqueKeys()
         const schema = _.filter(_.get(this.remoteSchemaMap[resource], 'schema', []), (field)=> !_.includes(['file', 'image'], field.input))
         const locales = _.get(this.remoteSchemaMap[resource], 'locales', [])
-        // console.warn(`LOCALES ${resource}`, locales)
         const attachmentFields = this.getAttachmentFields(resource)
-        // console.warn(`attachments fields for ${resource} = `, attachmentFields)
         let list = []
         let binaryList = []
         _.each(records, record => {
           let binaryObj = {}
           let obj = {}
           _.each(attachmentFields, (attachmentField, key)=> {
-            // const test = _.get(attachmentField, 'path', _.get(attachmentField, 'field'))
             if (_.isString(key)) {
               const testRegexp = new RegExp(key)
               const matches = this.findMatches(record, testRegexp, attachmentField.field)
-              // console.warn('MATCHES -----------', matches)
               _.each(matches, (match)=> {
                 const newAttachment = _.omit(record, ['_id', '_createdAt', '_updatedAt'])
                 if (attachmentField.localised && locales.length > 0) {
                   _.each(locales, (locale)=> {
                     binaryObj[`${match.path}.${locale}`] = this.getAttachments(newAttachment, `${match.path}.${locale}`)
-                    // console.warn(`localised attachment field ${locale}`, attachmentField, _.get(binaryObj, `${match.path}.${locale}`))
                   })
                 } else {
                   const attachments = this.getAttachments(newAttachment, match.path)
@@ -209,7 +194,6 @@ class ImportManager {
             }
           })
           _.each(schema, field => {
-            // console.warn('field ', field.field)
             if (field.input === 'paragraph') {
               _.set(obj, field.field, _.get(record, field.field))
             } else if (field.locales) {
@@ -548,7 +532,7 @@ class ImportManager {
                 toUpdate = _.omit(toUpdate, _.map(matches, (match)=> match.path))
               }
             })
-            console.warn('will update record ----', record._id, toUpdate)
+            // console.warn('will update record ----', record._id, toUpdate)
             return await this.localApi(resource).update(record._id, toUpdate)
           }
         }
@@ -578,34 +562,33 @@ class ImportManager {
     logger.info('### load attachments data ###')
     const seedDataPath = path.resolve('./cached')
     let list = fs.readdirSync(seedDataPath)
-    list = _.map(list, name => {
-      return {name, stat: fs.statSync(path.join(seedDataPath, name))}
-    })
-    list = _.filter(list, (item) => item.stat.isDirectory() && !_.isEmpty(this.localSchemaMap[item.name]))
-    _.each(list, item => {
-      const uniqueKey = _.first(this.localApi(item.name).getUniqueKeys())
-      this.attachmentMap[item.name] = []
-      const keyList = this.filterAttachments(fs.readdirSync(path.join(seedDataPath, item.name)))
+    _.each(list, name => {
+      if (_.isEmpty(this.localSchemaMap[name]) || !fs.statSync(path.join(seedDataPath, name)).isDirectory()) {
+        return
+      }
+      const uniqueKey = _.first(this.localApi(name).getUniqueKeys())
+      this.attachmentMap[name] = []
+      const keyList = this.filterAttachments(fs.readdirSync(path.join(seedDataPath, name)))
       _.each(keyList, key => {
-        let folderPath = path.join(seedDataPath, item.name, key)
+        let folderPath = path.join(seedDataPath, name, key)
         if (!fs.lstatSync(folderPath).isDirectory()) {
           return
         }
         const fieldList = this.filterAttachments(fs.readdirSync(folderPath))
         _.each(fieldList, field => {
-          folderPath = path.join(seedDataPath, item.name, key, field)
+          folderPath = path.join(seedDataPath, name, key, field)
           if (!fs.lstatSync(folderPath).isDirectory()) {
             return
           }
           const fileList = this.filterAttachments(fs.readdirSync(folderPath))
           _.each(fileList, file => {
-            let filePath = path.join(seedDataPath, item.name, key, field, file)
+            let filePath = path.join(seedDataPath, name, key, field, file)
             if (!fs.lstatSync(filePath).isFile()) {
               return
             }
             let attachment
-            this.attachmentMap[item.name].push(attachment = {
-              resource: item.name,
+            this.attachmentMap[name].push(attachment = {
+              resource: name,
               [uniqueKey]: key,
               file: filePath,
               _name: field,
@@ -623,7 +606,7 @@ class ImportManager {
       return async () => {
         att._md5sum = await md5File(att.file)
       }
-    }), {concurrency: 1})
+    }), {concurrency: 20})
   }
 
   async createCmsRecordAttachments (createdRecordsMap) {
@@ -634,7 +617,6 @@ class ImportManager {
         const uniqueKeys = this.localApi(resource).getUniqueKeys()
         let list = this.attachmentMap[resource]
         let cmsRecordList = this.cmsRecordsMap[resource]
-        console.warn('TODO: hugo - debug -----', list, JSON.stringify(_.first(cmsRecordList)))
         list = _.filter(list, item => {
           let obj = _.find(cmsRecordList, _.pick(item, uniqueKeys))
           if (!obj) {
@@ -642,9 +624,7 @@ class ImportManager {
           }
           item._id = obj._id
           const toFind = _.pick(item, ['_name', '_md5sum', '_filename', '_fields', 'cropOptions'])
-          // TODO: hugo - doesn't work for paragraph attachments since they're not in _attachments
-          // causes the paragraph attachments to be created every time
-          return !_.find(obj._attachments, toFind)
+          return !_.find(obj._attachments, toFind) && !_.get(obj, item._name, false)
         })
         await pAll(_.map(list, (item) => {
           return async () => {

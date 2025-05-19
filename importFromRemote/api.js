@@ -82,7 +82,6 @@ exports = module.exports = (config) => {
           console.error('Couldn\'t get paragraphs from:', url)
         }
         return paragraphs
-
       },
       getUniqueKeys () {
         const uniqueKeyField = _.filter(schemaMap[resource], item => item.unique || item.xlsxKey)
