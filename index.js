@@ -85,9 +85,16 @@ class CMS {
     if (this._options.autoload) {
       _.each(requireDir(options.resources), (value, key) => this.resource(key, value))
       const paragraphsDir = _.get(options, 'paragraphs', `${options.resources}/paragraphs`)
-      _.each(requireDir(paragraphsDir), (value, key) => {
-        _.set(this._paragraphs, key, value)
-        this.formatSchema(this._paragraphs, key, true)
+      _.each(paragraphsDir, (dir)=> {
+        try {
+          const results = requireDir(paragraphsDir)
+          _.each(results, (value, key)=> {
+            _.set(this._paragraphs, key, value)
+            this.formatSchema(this._paragraphs, key, true)
+          })
+        } catch (error) {
+          console.warn('No folder found for ', dir)
+        }
       })
       _.set(this._paragraphs, '_settingsLink', {
         displayname: 'Settings link',
