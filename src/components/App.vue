@@ -22,7 +22,7 @@
         </v-card>
       </v-dialog>
       <div v-if="user" class="cms-layout">
-        <updates-notifier v-if="selectedResource" :selected-resource="selectedResource" :selected-record="selectedRecord" @reloadResource="reloadResource" />
+        <updates-notifier v-if="selectedResource && config && config.wsRecordUpdates" :selected-resource="selectedResource" :selected-record="selectedRecord" @reloadResource="reloadResource" />
         <div class="cms-inner-layout">
           <nav-bar
             v-if="resourceList.length > 0" :config="config" :toolbar-title="toolbarTitle" :locale-class="{locale:localeList && localeList.length > 1}" :select-resource-group-callback="selectResourceGroup" :select-resource-callback="selectResource" :grouped-list="groupedList" :selected-resource-group="selectedResourceGroup"
@@ -91,6 +91,7 @@ import MultiselectPage from '@c/MultiselectPage.vue'
 import RecordEditor from '@c/RecordEditor.vue'
 import RecordTable from '@c/RecordTable.vue'
 import UpdatesNotifier from '@c/UpdatesNotifier.vue'
+import { config } from 'chai'
 
 export default {
   components: {
