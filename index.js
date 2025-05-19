@@ -84,7 +84,8 @@ class CMS {
     /* automaticly populate CMS resources, if specified */
     if (this._options.autoload) {
       _.each(requireDir(options.resources), (value, key) => this.resource(key, value))
-      const paragraphsDir = _.get(options, 'paragraphs', `${options.resources}/paragraphs`)
+      const paragraphsDir = path.join(_.get(options, 'paragraphs', options.resources), 'paragraphs')
+      console.info(`Paragraphs dir: ${paragraphsDir}`)
       try {
         const results = requireDir(paragraphsDir)
         _.each(results, (value, key)=> {
