@@ -37,7 +37,7 @@
   "bin": {
     "cms": "./server.js",
     "cms-import": "./import.js",
-    "cms-import-remote": "./importFromRemote/importFromRemote.js"
+    "cms-import-remote": "./importFromRemote.js"
   },
   "author": "Kong Yim <kong.yim@imagination.com>",
   "license": "ISC",

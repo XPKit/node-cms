@@ -205,6 +205,10 @@ class CMS {
     if (options.import) {
       this.use(require('./lib/plugins/import')(options))
     }
+    /* import from remote API */
+    if (options.importFromRemote) {
+      this.use(require('./lib/plugins/importFromRemote')(options))
+    }
     /* Admin API */
     if (!options.disableAdmin) {
       this.use(require('./lib/plugins/admin')(options))

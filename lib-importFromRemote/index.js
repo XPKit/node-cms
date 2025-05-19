@@ -1,43 +1,29 @@
-#!/usr/bin/env node
-
-'use strict'
-
-const program = require('commander')
-const _ = require('lodash')
 const path = require('path')
+const _ = require('lodash')
 const fs = require('fs-extra')
-const logger = new (require(path.join(__dirname, '../lib/logger')))()
+const autoBind = require('auto-bind')
 const md5File = require('md5-file')
-const prompt = require('prompt')
-const Q = require('q')
-const pAll = require('p-all')
-
 const h = require('./helper')
 const Api = require('./api')
-const pkg = require('../package.json')
+const logger = new (require(path.join(__dirname, '..', 'lib', 'logger')))()
+const pAll = require('p-all')
 
-program.on('--help', () => {
-  console.log('')
-  console.log('  Example:')
-  console.log('    $ import-from-remote ./dev.json')
-  console.log('')
-})
+class ImportWrapper {
+  constructor () {
+    autoBind(this)
+    this.progressCallback = null
+    this.ongoingImport = false
+  }
 
-program
-  .version(pkg.version)
-  .usage('<config json>')
-  .option('-y, --yes', 'Assume Yes to all queries and do not prompt')
-  .option('-o, --createOnly', 'create only')
-  .parse(process.argv)
+  init (progressCallback) {
+    this.progressCallback = progressCallback
+  }
 
-if (!program.args[0]) {
-  program.help()
-  process.exit(1)
-}
-
-class ImportManager {
-  constructor (config) {
+  prepareImport(config, noPrompt, createOnly, askConfirmation) {
     this.config = config
+    this.noPrompt = noPrompt
+    this.createOnly = createOnly
+    this.askConfirmation = askConfirmation
     this.localApi = Api(this.config.local)
     this.remoteApi = Api(this.config.remote)
     this.binaryMap = {}
@@ -51,14 +37,18 @@ class ImportManager {
     this.data = {}
     this.attachmentsToIgnore = ['.DS_Store', 'desktop.ini', 'Icon\r']
     //  NOTE: For paragraphs to work, '/admin/paragraphs' should be in config.cms.routesToAuth for both local & remote CMS
-    this.init()
   }
 
-  async init () {
+  async startImport(config, noPrompt, createOnly, askConfirmation) {
+    if (this.ongoingImport) {
+      return logger.warn('Ongoing import, will cancel')
+    }
+    this.ongoingImport = true
+    this.prepareImport(config, noPrompt, createOnly, askConfirmation)
     logger.info('Starting import...')
     const importStartedAt = Date.now()
     try {
-      if (!program.createFolders) {
+      if (!noPrompt) {
         await this.askConfirmation()
       }
       await pAll(_.map(['local', 'remote'], (key)=> {
@@ -69,15 +59,15 @@ class ImportManager {
       }), {concurrency: 2})
       await this.loadData()
       await this.checkDuplicatedRecord()
-      if (program.createFolders) {
+      if (this.createFolders) {
         await this.createDummyFolders()
       } else {
         await this.downloadBinaries()
         const createdRecordsMap = await this.createDummyRecords()
-        if (!program.createOnly) {
+        if (!this.createOnly) {
           await this.deleteUnusedRecords()
         }
-        await this.updateRecords(program.createOnly ? createdRecordsMap : null)
+        await this.updateRecords(this.createOnly ? createdRecordsMap : null)
       }
       logger.info(`Import took ${Date.now() - importStartedAt}ms`)
     } catch (error) {
@@ -327,18 +317,23 @@ class ImportManager {
           return async () => {
             let createObject = {}
             _.each(schema, field => {
-              let value = _.get(key, field.field)
-              if (!_.isUndefined(value)) {
-                if (_.isString(field.source)) {
-                  const relationList = relationMap[field.source]
-                  const uniqueKeys = this.remoteApi(field.source).getUniqueKeys()
-                  const uniqueKey = _.first(uniqueKeys)
-                  const item = _.find(relationList, {[uniqueKey]: value})
-                  if (item) {
-                    value = item._id
+              try {
+
+                let value = _.get(key, field.field)
+                if (!_.isUndefined(value)) {
+                  if (_.isString(field.source) ) {
+                    const relationList = relationMap[field.source]
+                    const uniqueKeys = this.remoteApi(field.source).getUniqueKeys()
+                    const uniqueKey = _.first(uniqueKeys)
+                    const item = _.find(relationList, {[uniqueKey]: value})
+                    if (item) {
+                      value = item._id
+                    }
                   }
+                  _.set(createObject, field.field, value)
                 }
-                _.set(createObject, field.field, value)
+              } catch (error) {
+                logger.error('ERROR: ', error)
               }
             })
             return await this.localApi(resource).create(createObject)
@@ -347,13 +342,18 @@ class ImportManager {
         endProcess(`${newKeys.length} records created`)
       }
     }), {concurrency: 1})
+    logger.info('### All dummy records created ###')
     return createdListMap
   }
 
   async getRelationMap (resource) {
     let schema = this.remoteSchemaMap[resource]
     const relationMap = {}
-    const relationResources = _.uniq(_.compact(_.map(schema, item => _.isString(item.source) && item.source)))
+    const relationResources = _.uniq(_.compact(_.map(schema, item => {
+      if (_.isString(_.get(item, 'source', false))) {
+        return item.source
+      }
+    })))
     await pAll(_.map(relationResources, resource => {
       return async () => {
         relationMap[resource] = await this.remoteApi(resource).list()
@@ -363,7 +363,7 @@ class ImportManager {
   }
 
   async getNormalizedRecords (resource, relationMap) {
-    let schema = this.remoteSchemaMap[resource]
+    let schema = _.compact(this.remoteSchemaMap[resource])
     let list = await this.localApi(resource).list()
     list = _.map(list, item => {
       _.each(schema, field => {
@@ -420,7 +420,11 @@ class ImportManager {
     logger.info('### cache cms records ###')
     let cachingList = _.keys(this.data)
     _.each(cachingList, resource => {
-      let list = _.compact(_.map(this.remoteSchemaMap[resource], (item) => _.isString(item.source) && item.source))
+      let list = _.compact(_.map(this.remoteSchemaMap[resource], (item) => {
+        if (_.isString(_.get(item, 'source', false))) {
+          return item.source
+        }
+      }))
       cachingList = _.union(cachingList, list)
     })
     await pAll(_.map(cachingList, resource => {
@@ -698,30 +702,6 @@ class ImportManager {
   buildUrl(config, withPrefix = true) {
     return `${config.protocol}${config.host}${withPrefix ? config.prefix : ''}`
   }
-
-  async askConfirmation () {
-    if (program.yes) {
-      return
-    }
-    let schema = {
-      name: 'confirm',
-      description: `Are you sure you want to import data from ${this.buildUrl(config.remote)} to ${this.buildUrl(config.local)} ? [yes/no]`,
-      type: 'string',
-      pattern: /^(yes|no)$/i,
-      message: 'yes / no',
-      required: true
-    }
-    let answer =  {confirm: 'no'}
-    try {
-      answer = await Q.ninvoke(prompt, 'get', schema)
-    } catch (error) {}
-    if (answer.confirm.toLowerCase() !== 'yes') {
-      console.log(answer.confirm)
-      process.exit(1)
-    }
-  }
 }
 
-let config = require(path.resolve(program.args[0]))
-
-exports = new ImportManager(config)
+module.exports = ImportWrapper

@@ -14,5 +14,5 @@ ssl/*
 stats.html
 dist
 src/plugins
-importFromRemote/logs
-importFromRemote/cached
+lib-importFromRemote/logs
+lib-importFromRemote/cached
