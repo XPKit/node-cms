@@ -91,7 +91,6 @@ import MultiselectPage from '@c/MultiselectPage.vue'
 import RecordEditor from '@c/RecordEditor.vue'
 import RecordTable from '@c/RecordTable.vue'
 import UpdatesNotifier from '@c/UpdatesNotifier.vue'
-import { config } from 'chai'
 
 export default {
   components: {
