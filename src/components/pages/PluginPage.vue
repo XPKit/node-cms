@@ -11,14 +11,16 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '@a/scss/variables.scss';
+@use '@a/scss/variables.scss' as *;
+@use '@a/scss/mixins.scss' as *;
 .plugin-page {
   background-color: $layout-background;
 }
 </style>
 
 <style lang="scss">
-@import '@a/scss/variables.scss';
+@use '@a/scss/variables.scss' as *;
+@use '@a/scss/mixins.scss' as *;
 .plugin-page {
   .plugin-title {
     background-color: $plugin-title-background;

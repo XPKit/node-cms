@@ -92,7 +92,7 @@ export default {
 }
 </script>
 <style lang="scss">
-@import '@a/scss/variables.scss';
+@use '@a/scss/variables.scss' as *;
 
 .wysiwyg-wrapper {
   position: relative;

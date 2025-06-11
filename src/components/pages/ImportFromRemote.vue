@@ -45,7 +45,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@a/scss/variables.scss';
+@use '@a/scss/variables.scss' as *;
 .import-from-remote {
   .main-container {
     display: flex;

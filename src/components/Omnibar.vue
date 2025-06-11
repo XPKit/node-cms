@@ -205,7 +205,8 @@ export default {
 }
 </script>
 <style lang="scss">
-@import '@a/scss/variables.scss';
+@use '@a/scss/variables.scss' as *;
+@use '@a/scss/mixins.scss' as *;
 
 #omnibar, #omnibar-backdrop {
   position: fixed;

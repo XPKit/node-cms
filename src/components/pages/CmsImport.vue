@@ -174,7 +174,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@a/scss/variables.scss';
+@use '@a/scss/variables.scss' as *;
+@use '@a/scss/mixins.scss' as *;
 .cms-import {
   margin: 16px;
   padding: 16px;
@@ -266,7 +267,8 @@ export default {
 </style>
 
 <style lang="scss">
-@import '@a/scss/variables.scss';
+@use '@a/scss/variables.scss' as *;
+@use '@a/scss/mixins.scss' as *;
 
 .cms-import {
   .v-btn__content {

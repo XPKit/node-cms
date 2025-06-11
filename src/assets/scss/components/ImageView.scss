@@ -1,4 +1,7 @@
 
+@use "../variables.scss" as *;
+@use "../mixins.scss" as *;
+
 .image-view, .attachment-view, .paragraph-attachment-view {
   overflow: hidden;
   img.preview {

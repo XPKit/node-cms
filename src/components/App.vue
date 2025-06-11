@@ -460,7 +460,8 @@ export default {
 }
 </script>
 <style lang="scss">
-@import '@a/scss/variables.scss';
+@use '@a/scss/variables.scss' as *;
+@use '@a/scss/mixins.scss' as *;
 .cms-layout {
   display: flex;
   flex-direction: column;

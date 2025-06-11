@@ -1,3 +1,6 @@
+@use "../variables.scss" as *;
+@use "../mixins.scss" as *;
+
 .record-list {
   min-width: 364px;
   max-width: 364px;

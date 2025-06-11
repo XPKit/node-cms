@@ -1,16 +1,17 @@
-@import "./variables.scss";
-@import "./components/LocaleList";
-@import "./components/RecordList";
-@import "./components/RecordEditor";
-@import "./components/RecordTable";
-@import "./components/ImageView";
-@import "./components/Loading";
-@import "./components/JsonEditor";
-@import "./components/PluginPage.scss";
-@import "./components/MultiselectPage.scss";
-@import "./components/LoginApp.scss";
-@import "./components/Pager.scss";
-@import "./components/Notifications.scss";
+@use "./variables.scss" as *;
+@use "./mixins.scss" as *;
+@use "./components/LocaleList.scss" as *;
+@use "./components/RecordList.scss" as *;
+@use "./components/RecordEditor.scss" as *;
+@use "./components/RecordTable.scss" as *;
+@use "./components/ImageView.scss" as *;
+@use "./components/Loading.scss" as *;
+@use "./components/JsonEditor.scss" as *;
+@use "./components/PluginPage.scss" as *;
+@use "./components/MultiselectPage.scss" as *;
+@use "./components/LoginApp.scss" as *;
+@use "./components/Pager.scss" as *;
+@use "./components/Notifications.scss" as *;
 
 * {
   font-synthesis: none !important;

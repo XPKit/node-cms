@@ -54,7 +54,8 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@a/scss/variables.scss';
+@use '@a/scss/variables.scss' as *;
+@use '@a/scss/mixins.scss' as *;
 .top-bar-locale-list {
   display: flex;
   align-items: center;

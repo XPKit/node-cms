@@ -79,7 +79,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@a/scss/variables.scss';
+@use '@a/scss/variables.scss' as *;
 
 .date-picker {
   border-radius: 8px;

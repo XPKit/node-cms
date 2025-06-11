@@ -374,7 +374,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@a/scss/variables.scss';
+@use '@a/scss/variables.scss' as *;
+@use '@a/scss/mixins.scss' as *;
 .paragraph-view {
   width: 100%;
   border: 2px $paragraph-top-bar-background solid;
@@ -510,7 +511,8 @@ export default {
 
 </style>
 <style lang="scss">
-@import '@a/scss/variables.scss';
+@use '@a/scss/variables.scss' as *;
+@use '@a/scss/mixins.scss' as *;
 .paragraph-view {
   .item-main-wrapper {
     display: flex;

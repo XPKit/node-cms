@@ -25,7 +25,8 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@a/scss/variables.scss';
+@use '@a/scss/variables.scss' as *;
+@use '@a/scss/mixins.scss' as *;
   .custom-textarea {
     .v-field__input {
       padding-top: 8px;

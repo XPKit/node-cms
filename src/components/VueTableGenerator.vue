@@ -177,7 +177,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@a/scss/variables.scss';
+@use '@a/scss/variables.scss' as *;
+@use '@a/scss/mixins.scss' as *;
 .vue-table-generator {
   display: block;
   overflow: hidden;

@@ -147,8 +147,6 @@ $date-time-active-color: var(--date-time-active-color);
 $date-time-active-background: var(--date-time-active-background);
 $date-time-hover-color: var(--date-time-hover-color);
 
-@import "./mixins.scss";
-
 @font-face {
   font-family: Source Sans Pro;
   src: url('@a/fonts/SourceSans3-Regular.ttf');

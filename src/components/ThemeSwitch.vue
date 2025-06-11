@@ -19,7 +19,7 @@ async function toggleTheme () {
 </script>
 
 <style lang="scss" scoped>
-@import '@a/scss/variables.scss';
+@use '@a/scss/variables.scss' as *;
 
 .theme-switch {
   cursor: pointer;

@@ -1,3 +1,6 @@
+@use "sass:list";
+@use "./variables.scss" as vars;
+
 @function vw($px-vw, $base-vw: 1440px) {
   @return calc(($px-vw * 100vw) / $base-vw);
 }
@@ -93,12 +96,12 @@
 }
 
 @mixin nested-paragraph-levels-border($index) {
-  border-color: nth($levelBackgrounds, $index);
+  border-color: list.nth(vars.$levelBackgrounds, $index);
 }
 
 @mixin nested-paragraph-levels($index) {
-  color: nth($levelColors, $index) !important;
-  background-color: nth($levelBackgrounds, $index);
+  color: list.nth(vars.$levelColors, $index) !important;
+  background-color: list.nth(vars.$levelBackgrounds, $index);
 }
 
 
@@ -112,7 +115,7 @@
       }
       .add-btn-wrapper {
         .remove-item {
-          color: nth($levelColors, $valIndex) !important;
+          color: list.nth(vars.$levelColors, $valIndex) !important;
         }
       }
     }
@@ -120,9 +123,9 @@
 }
 
 @mixin highlight-paragraph() {
-  border-color: $level-hover-border;
+  border-color: vars.$level-hover-border;
   > .v-card-title {
-    background-color: $level-hover-border;
+    background-color: vars.$level-hover-border;
   }
 }
 
@@ -134,17 +137,17 @@
   &::-webkit-scrollbar-track {
     // box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
     border-radius: 10px;
-    background-color: $imag-pale-grey;
+    background-color: vars.$imag-pale-grey;
   }
 
   &::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background-color: $imag-purple;
+    background-color: vars.$imag-purple;
     &:hover{
-      background-color: $imag-light-purple;
+      background-color: vars.$imag-light-purple;
     }
     &:active {
-      background-color: $imag-blue;
+      background-color: vars.$imag-blue;
     }
   }
 }

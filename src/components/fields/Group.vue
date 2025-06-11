@@ -54,7 +54,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@a/scss/variables.scss';
+@use '@a/scss/variables.scss' as *;
+@use '@a/scss/mixins.scss' as *;
 .header {
   display: flex;
   flex-direction: row;

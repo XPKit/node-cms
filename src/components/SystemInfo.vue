@@ -198,7 +198,8 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '@a/scss/variables.scss';
+@use '@a/scss/variables.scss' as *;
+@use '@a/scss/mixins.scss' as *;
 .system-info {
   position: relative;
   display: flex;
@@ -279,7 +280,8 @@ export default {
 </style>
 
 <style lang="scss">
-@import '@a/scss/variables.scss';
+@use '@a/scss/variables.scss' as *;
+@use '@a/scss/mixins.scss' as *;
 
 .system-info-wrapper {
   color: $system-info-color;
