@@ -18,9 +18,9 @@
     </div>
     <draggable
       v-if="schema && subResourcesLoaded" :key="`${schema.model}-${key}`" :list="items"
-      :class="{disabled}" draggable=".item" v-bind="dragOptions" handle=".handle" :group="`${schema.model}-${key}`" ghost-class="ghost" @end="onEndDrag"
+      :class="{disabled, 'dynamic-layout-container': isDynamicLayoutContainer}" draggable=".item" v-bind="dragOptions" handle=".handle" :group="`${schema.model}-${key}`" ghost-class="ghost" @end="onEndDrag"
     >
-      <v-card v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" :theme="theme" elevation="0" :class="getClasses(paragraphLevel, idx)">
+      <v-card v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" :theme="theme" elevation="0" :class="getItemClasses(paragraphLevel, idx, item)" :style="getItemStyles(item)" :data-slots="getItemSlots(item)">
         <v-card-title class="handle paragraph-header">
           <div class="paragraph-title">{{ item.label }}</div>
           <div class="add-btn-wrapper">
@@ -88,6 +88,26 @@ export default {
       }
     }
   },
+  computed: {
+    isDynamicLayoutContainer() {
+      // Enable dynamic layout in two ways:
+      // 1. Explicitly set options.dynamicLayout: true in paragraph field config
+      // 2. Automatically detect when any items have slots properties
+      // This makes dynamic layout work for ANY paragraph type, not just reportItems
+      return this.schema && (
+        _.get(this.schema, 'options.dynamicLayout', false) ||
+        _.some(this.items, item => _.has(item, '_value.slots') || _.has(item, 'slots'))
+      )
+    },
+    parentSlots() {
+      if (!this.isDynamicLayoutContainer) {
+        return 12
+      }
+      // Get slots from parent model (e.g., from a container paragraph with slots field)
+      // Default to 12 if not specified (like Bootstrap's 12-column grid)
+      return _.get(this.model, 'slots') || _.get(this.vfg, 'model.slots') || 12
+    }
+  },
   watch: {
     'schema.model': function () {
       this.items = _.cloneDeep(_.get(this.model, this.schema.model, []))
@@ -106,6 +126,67 @@ export default {
     FieldSelectorService.events.off('highlight-paragraph', this.onHighlightParagraph)
   },
   methods: {
+    getItemClasses(paragraphLevel, idx, item) {
+      const classes = ['item', `nested-level-${paragraphLevel}`]
+      if (this.isHighlighted(idx, paragraphLevel)) {
+        classes.push('highlighted')
+      } else if (this.highlight.level !== -1 && this.highlight.index !== -1) {
+        classes.push('not-highlighted')
+      }
+      if (this.isDynamicLayoutContainer) {
+        const slots = _.get(item, '_value.slots') || _.get(item, 'slots')
+        if (slots) {
+          classes.push('dynamic-layout-item')
+          classes.push(`slots-${slots}`)
+        }
+      }
+      return classes
+    },
+    getItemStyles(item) {
+      // Apply flex-basis style for dynamic layout items
+      if (this.isDynamicLayoutContainer) {
+        const slots = _.get(item, '_value.slots') || _.get(item, 'slots')
+        if (slots) {
+          const percentage = (slots / this.parentSlots) * 100
+          // Calculate gap adjustment
+          // For a 12-column grid with 16px gaps:
+          // - 2 items of 6 columns each need: calc(50% - 8px) each (total gap: 16px split between 2 items)
+          // - 3 items of 4 columns each need: calc(33.333% - 10.667px) each (total gap: 32px split between 3 items)
+          // - 4 items of 3 columns each need: calc(25% - 12px) each (total gap: 48px split between 4 items)
+          // Number of items that would fit in one row with this slots count
+          const itemsPerRow = Math.floor(this.parentSlots / slots)
+          // Total gap space in one row (n-1 gaps for n items)
+          const totalGapInRow = Math.max(0, (itemsPerRow - 1) * 16)
+          // Gap space to subtract from each item
+          const gapPerItem = itemsPerRow > 1 ? totalGapInRow / itemsPerRow : 0
+          const adjustedWidth = `calc(${percentage}% - ${gapPerItem}px)`
+          // Debug logging (remove in production)
+          console.log('🎨 Dynamic layout calculation:', {
+            item: _.get(item, '_value.name') || _.get(item, 'name') || _.get(item, '_value.title') || _.get(item, 'title'),
+            slots,
+            parentSlots: this.parentSlots,
+            percentage: `${percentage}%`,
+            itemsPerRow,
+            totalGapInRow,
+            gapPerItem,
+            adjustedWidth
+          })
+          return {
+            flexBasis: adjustedWidth,
+            maxWidth: adjustedWidth,
+            width: adjustedWidth
+          }
+        }
+      }
+      return {}
+    },
+    getItemSlots(item) {
+      if (!this.isDynamicLayoutContainer) {
+        return ''
+      }
+      const slots = _.get(item, '_value.slots') || _.get(item, 'slots')
+      return slots ? `${slots}/${this.parentSlots}` : ''
+    },
     convertParagraph(item) {
       item._type = item.showConvert
       delete item.showConvert
@@ -120,15 +201,6 @@ export default {
     },
     isHighlighted(idx, paragraphLevel) {
       return paragraphLevel === this.highlight.level && idx === this.highlight.index
-    },
-    getClasses(paragraphLevel, idx) {
-      const classes = ['item', `nested-level-${paragraphLevel}`]
-      if (this.isHighlighted(idx, paragraphLevel)) {
-        classes.push('highlighted')
-      } else if (this.highlight.level !== -1 && this.highlight.index !== -1) {
-        classes.push('not-highlighted')
-      }
-      return classes
     },
     async getSubResources() {
       await pAll(_.map(this.types, type => {
@@ -529,6 +601,72 @@ export default {
       margin-bottom: 0;
       +.v-card.item {
         margin-top: vw(16px);
+      }
+    }
+  }
+}
+
+// Dynamic layout styles
+.paragraph-view {
+  .dynamic-layout-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: stretch; // Make all items same height
+
+    // Remove the default margin-bottom from items in dynamic layout
+    .item {
+      margin-bottom: 0 !important;
+    }
+    // Override the default +.v-card.item margin
+    .v-card.item + .v-card.item {
+      margin-top: 0 !important;
+    }
+    .dynamic-layout-item {
+      flex-shrink: 0;
+      flex-grow: 0;
+      box-sizing: border-box;
+      min-width: 0; // Prevent overflow
+      // Ensure the item content doesn't break the layout
+      .item-main {
+        overflow: hidden;
+      }
+      // Add some visual indication for development
+      &::before {
+        content: attr(data-slots);
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        background: rgba(0, 0, 0, 0.1);
+        font-size: 10px;
+        padding: 2px 4px;
+        border-radius: 2px;
+        color: #666;
+        font-family: monospace;
+        z-index: 10;
+        pointer-events: none;
+      }
+    }
+
+    // Responsive behavior for smaller screens
+    @media (max-width: 768px) {
+      .dynamic-layout-item {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex-basis: 100% !important;
+      }
+    }
+
+    @media (max-width: 1024px) and (min-width: 769px) {
+      .dynamic-layout-item {
+        // On tablets, ensure items don't get too small
+        &[style*="flex-basis: calc(8.33%"], // 1/12
+        &[style*="flex-basis: calc(16.67%"], // 2/12
+        &[style*="flex-basis: calc(25%"] { // 3/12
+          width: calc(33.33% - 10.667px) !important;
+          max-width: calc(33.33% - 10.667px) !important;
+          flex-basis: calc(33.33% - 10.667px) !important;
+        }
       }
     }
   }

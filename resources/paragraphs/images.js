@@ -8,6 +8,18 @@ exports = module.exports = {
       required: true
     },
     {
+      label: 'Slots (Column Width)',
+      field: 'slots',
+      input: 'integer',
+      localised: false,
+      required: false,
+      options: {
+        min: 1,
+        max: 12,
+        hint: 'Leave empty for auto width, or set 1-12 for specific column slots in dynamic layouts'
+      }
+    },
+    {
       label: 'Image 1',
       field: 'image1',
       input: 'image',
