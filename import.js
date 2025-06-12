@@ -10,9 +10,7 @@ const logger = new (require(path.join(__dirname, 'lib/logger')))()
 const { GoogleSpreadsheet } = require('google-spreadsheet')
 const md5File = require('md5-file')
 const prompt = require('prompt')
-const Q = require('q')
 const pAll = require('p-all')
-const got = require('got')
 const {setTimeout} = require('node:timers/promises')
 const { JWT } = require('google-auth-library')
 
@@ -207,7 +205,8 @@ class ImportManager {
         authorization: `Bearer ${jwtClient.credentials.access_token}`
       }
     }
-    const data = await got.get(`https://www.googleapis.com/drive/v3/files/${gsheetId}?fields=modifiedTime`, options).json()
+    const response = await fetch(`https://www.googleapis.com/drive/v3/files/${gsheetId}?fields=modifiedTime`, options)
+    const data = await response.json()
     return new Date(data.modifiedTime)
   }
 
@@ -367,14 +366,14 @@ class ImportManager {
                 try {
                   if (!fs.existsSync(filePath)) {
                     endSubProcess = h.startProcess(`downloading binary file ${link} ... ...`)
-                    const response = await got.get(link, {
-                      retry: 10,
+                    const response = await fetch(link, {
                       headers: {
                         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36'
                       }
                     })
+                    const buffer = await response.arrayBuffer()
                     await fs.ensureDir(path.dirname(filePath))
-                    await fs.writeFile(filePath, response.rawBody, 'binary')
+                    await fs.writeFile(filePath, Buffer.from(buffer))
                     endSubProcess('done')
                     await setTimeout(200)
                   }

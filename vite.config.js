@@ -8,7 +8,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import ViteUtils from './vite.utils.js'
 import vuetify from 'vite-plugin-vuetify'
 import rollupNodePolyFill from 'rollup-plugin-node-polyfills'
-import visualizer from 'rollup-plugin-visualizer'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 const viteUtils = ViteUtils.getInstance()
 

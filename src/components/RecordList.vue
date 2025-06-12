@@ -98,7 +98,6 @@ import Notification from '@m/Notification'
 import NotificationsService from '@s/NotificationsService'
 
 import RecordNameHelper from './RecordNameHelper'
-import qs from 'qs'
 import sift from 'sift'
 import JSON5 from 'json5'
 import Dayjs from 'dayjs'
@@ -246,7 +245,13 @@ export default {
       this.search = ''
     },
     search () {
-      this.query = this.flatten(qs.parse(this.search))
+      // Parse query string using native URLSearchParams instead of qs
+      const params = new URLSearchParams(this.search)
+      const parsedQuery = {}
+      for (const [key, value] of params) {
+        parsedQuery[key] = value
+      }
+      this.query = this.flatten(parsedQuery)
       this.sift.isQuery = false
       try {
         if (this.search.search('sift:') === 0) {

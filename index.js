@@ -5,7 +5,6 @@
 const path = require('path')
 const fs = require('fs')
 const pAll = require('p-all')
-const Q = require('q')
 const compression = require('compression')
 const cookieParser = require('cookie-parser')
 const express = require('express')
@@ -244,7 +243,12 @@ class CMS {
       // this.io = new Server(this.server)
       await pAll(_.map(this.bootstrapFunctions, bootstrap => {
         return async () => {
-          await Q.nfcall(bootstrap)
+          await new Promise((resolve, reject) => {
+            bootstrap((err) => {
+              if (err) reject(err)
+              else resolve()
+            })
+          })
         }
       }), {concurrency: 1})
       callback && callback()

@@ -27,7 +27,6 @@
 import _ from 'lodash'
 import AbstractField from '@m/AbstractField'
 import Dayjs from 'dayjs'
-import { addDays, isEqual, set } from 'date-fns'
 
 export default {
   mixins: [AbstractField],
@@ -67,7 +66,8 @@ export default {
       return this.schema.format.indexOf(toFind) !== -1
     },
     getDayClass (date) {
-      if (isEqual(date, addDays(set(new Date(), { hours: 0, minutes: 0, seconds: 0, milliseconds: 0 }), 1)))
+      const tomorrow = Dayjs().startOf('day').add(1, 'day')
+      if (Dayjs(date).isSame(tomorrow, 'day'))
         return 'marked-cell'
       return ''
     },
