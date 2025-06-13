@@ -7,9 +7,14 @@ const path = require('path')
 // const md5File = require('md5-file')
 chai.should()
 const fs = require('fs-extra')
-const Q = require('q')
+const { promisify } = require('util')
 const {setTimeout} = require('node:timers/promises')
 const assert = require('assert')
+
+// Helper function to promisify methods
+function promisifyMethod(obj, method) {
+  return promisify(obj[method].bind(obj))
+}
 
 const MASTER_HTTP_PORT = 8850
 const SLAVE_HTTP_PORT = 9850
@@ -106,9 +111,9 @@ before(async () => {
   }
   cms.resource('articles', articleSchema)
   await cms.bootstrap()
-  await Q.ninvoke(cms, 'allow', 'anonymous', 'articles')
-  await Q.ninvoke(cms, 'allow', 'anonymous', '_sync')
-  await Q.ninvoke(cms.express(), 'listen', MASTER_HTTP_PORT)
+  await promisifyMethod(cms, 'allow')('anonymous', 'articles')
+  await promisifyMethod(cms, 'allow')('anonymous', '_sync')
+  await promisifyMethod(cms.express(), 'listen')(MASTER_HTTP_PORT)
 })
 
 // create slave node
@@ -135,9 +140,9 @@ before(async () => {
   }
   cms.resource('articles', articleSchema)
   await cms.bootstrap()
-  await Q.ninvoke(cms, 'allow', 'anonymous', 'articles')
-  await Q.ninvoke(cms, 'allow', 'anonymous', '_sync')
-  await Q.ninvoke(cms.express(), 'listen', SLAVE_HTTP_PORT)
+  await promisifyMethod(cms, 'allow')('anonymous', 'articles')
+  await promisifyMethod(cms, 'allow')('anonymous', '_sync')
+  await promisifyMethod(cms.express(), 'listen')(SLAVE_HTTP_PORT)
 })
 
 // populate master with content

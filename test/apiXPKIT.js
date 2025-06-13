@@ -3,10 +3,15 @@
 const CMS = require('..')
 const chai = require('chai')
 const _ = require('lodash')
-const Q = require('q')
+const { promisify } = require('util')
 const request = require('supertest')
 const path = require('path')
 const Helper = require('./helper')
+
+// Helper function to promisify methods
+function promisifyMethod(obj, method) {
+  return promisify(obj[method].bind(obj))
+}
 
 const should = chai.should()
 const helper = Helper.getInstance(8004, true)
@@ -76,12 +81,12 @@ before(async () => {
   })
   cms.resource('querytest')
 
-  await Q.ninvoke(cms.express(), 'listen', helper.port)
+  await promisifyMethod(cms.express(), 'listen')(helper.port)
   await cms.bootstrap()
 })
 
 before(() => {
-  return Q.ninvoke(cms, 'allow', 'anonymous', ['pages', 'querytest'])
+  return promisifyMethod(cms, 'allow')('anonymous', ['pages', 'querytest'])
 })
 
 before(async () => {

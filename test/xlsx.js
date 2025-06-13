@@ -3,12 +3,17 @@ const CMS = require('../')
 const chai = require('chai')
 const _ = require('lodash')
 const fs = require('fs-extra')
-const Q = require('q')
+const { promisify } = require('util')
 const request = require('supertest')
 const path = require('path')
 const xlsx = require('xlsx')
 const assert = require('assert')
 const {setTimeout} = require('node:timers/promises')
+
+// Helper function to promisify methods
+function promisifyMethod(obj, method) {
+  return promisify(obj[method].bind(obj))
+}
 
 chai.should()
 
@@ -102,9 +107,9 @@ describe('xlsx', () => {
       ]
     })
 
-    await Q.ninvoke(cms.express(), 'listen', MASTER_HTTP_PORT)
+    await promisifyMethod(cms.express(), 'listen')(MASTER_HTTP_PORT)
     await cms.bootstrap()
-    await Q.ninvoke(cms, 'allow', 'anonymous', ['xlsxRecords'])
+    await promisifyMethod(cms, 'allow')('anonymous', ['xlsxRecords'])
   })
 
   it('should create cities', async () => {

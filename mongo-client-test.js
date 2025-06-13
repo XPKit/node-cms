@@ -1,10 +1,9 @@
 const { MongoClient } = require('mongodb')
-const Q = require('q')
 
 const host = 'mongodb://127.0.0.1'
 
 async function run () {
-  const client = await Q.ninvoke(MongoClient, 'connect', host, {
+  const client = await MongoClient.connect(host, {
     tls: true,
     tlsCertificateKeyFile: './ssl/client.pem',
     tlsCAFile: './ssl/ca.pem'

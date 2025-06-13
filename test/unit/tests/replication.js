@@ -2,8 +2,13 @@ const chai = require('chai')
 const should = chai.should()
 const _ = require('lodash')
 const path = require('path')
-const Q = require('q')
+const { promisify } = require('util')
 const Helper = require('../../helper')
+
+// Helper function to promisify methods
+function promisifyMethod(obj, method) {
+  return promisify(obj[method].bind(obj))
+}
 let helper
 
 exports.suite = () => {
@@ -43,7 +48,7 @@ exports.suite = () => {
   })
 
   it('should replicate from master to slaves', async () => {
-    await Q.ninvoke(helper.slave.cms, 'replicate', 'localhost', helper.MASTER_NET_PORT, `${helper.MASTER_URL}/api/`, 'articles')
+    await promisifyMethod(helper.slave.cms, 'replicate')('localhost', helper.MASTER_NET_PORT, `${helper.MASTER_URL}/api/`, 'articles')
     // await helper.slave.cms.replicate('localhost', helper.MASTER_NET_PORT, `${helper.MASTER_URL}/api/`, 'articles')
   })
 
@@ -102,10 +107,10 @@ exports.suite = () => {
       helper.slave.cms.resource('upstream-collection',
         { acl: {'*': '1111'}, type: 'upstream' })
     })
-    before(() => Q.ninvoke(helper.master.cms, 'allow', 'anonymous', 'downstream-collection'))
-    before(() => Q.ninvoke(helper.slave.cms, 'allow', 'anonymous', 'downstream-collection'))
-    before(() => Q.ninvoke(helper.master.cms, 'allow', 'anonymous', 'upstream-collection'))
-    before(() => Q.ninvoke(helper.slave.cms, 'allow', 'anonymous', 'upstream-collection'))
+    before(() => promisifyMethod(helper.master.cms, 'allow')('anonymous', 'downstream-collection'))
+    before(() => promisifyMethod(helper.slave.cms, 'allow')('anonymous', 'downstream-collection'))
+    before(() => promisifyMethod(helper.master.cms, 'allow')('anonymous', 'upstream-collection'))
+    before(() => promisifyMethod(helper.slave.cms, 'allow')('anonymous', 'upstream-collection'))
 
     before(async () => {
       let {body} = await helper.master.request
@@ -144,34 +149,34 @@ exports.suite = () => {
     })
 
     before(async () => {
-      await Q.ninvoke(helper.slave.cms, 'replicate', 'localhost', helper.MASTER_NET_PORT, `${helper.MASTER_URL}/api/`, 'downstream-collection')
-      await Q.ninvoke(helper.slave.cms, 'replicate', 'localhost', helper.MASTER_NET_PORT, `${helper.MASTER_URL}/api/`, 'upstream-collection')
+      await promisifyMethod(helper.slave.cms, 'replicate')('localhost', helper.MASTER_NET_PORT, `${helper.MASTER_URL}/api/`, 'downstream-collection')
+      await promisifyMethod(helper.slave.cms, 'replicate')('localhost', helper.MASTER_NET_PORT, `${helper.MASTER_URL}/api/`, 'upstream-collection')
     })
 
     it('should only pull changes from master (downstream)', async () => {
       let slaveApi = helper.slave.cms.resource('downstream-collection').json
       let masterApi = helper.master.cms.resource('downstream-collection').json
-      let result = await Q.ninvoke(slaveApi, 'find', slaveRecord._id)
+      let result = await promisifyMethod(slaveApi, 'find')(slaveRecord._id)
       should.exist(result)
-      result = await Q.ninvoke(slaveApi, 'find', masterRecord._id)
+      result = await promisifyMethod(slaveApi, 'find')(masterRecord._id)
       should.exist(result)
-      result = await Q.ninvoke(masterApi, 'find', masterRecord._id)
+      result = await promisifyMethod(masterApi, 'find')(masterRecord._id)
       should.exist(result)
-      result = await Q.ninvoke(masterApi, 'find', masterRecord._id)
+      result = await promisifyMethod(masterApi, 'find')(masterRecord._id)
       should.exist(result)
     })
 
     return it('should only pull changes from slave (upstream)', async () => {
       let masterApi = helper.master.cms.resource('upstream-collection').json
       let slaveApi = helper.slave.cms.resource('upstream-collection').json
-      let result = await Q.ninvoke(masterApi, 'find', masterRecordUp._id)
+      let result = await promisifyMethod(masterApi, 'find')(masterRecordUp._id)
       should.exist(result)
-      result = await Q.ninvoke(masterApi, 'find', slaveRecordUp._id)
+      result = await promisifyMethod(masterApi, 'find')(slaveRecordUp._id)
       should.exist(result)
-      result = await Q.ninvoke(slaveApi, 'find', slaveRecordUp._id)
+      result = await promisifyMethod(slaveApi, 'find')(slaveRecordUp._id)
       should.exist(result)
       try {
-        await Q.ninvoke(slaveApi, 'find', masterRecordUp._id)
+        await promisifyMethod(slaveApi, 'find')(masterRecordUp._id)
         throw new Error('should return error')
       } catch (error) {
         should.exist(error)

@@ -1,7 +1,12 @@
-const Q = require('q')
 const assert = require('assert')
 const Driver = require('../../lib/util/driver')
 const chai = require('chai')
+const { promisify } = require('util')
+
+// Helper function to promisify methods
+function promisifyMethod(obj, method) {
+  return promisify(obj[method].bind(obj))
+}
 
 chai.should()
 
@@ -39,7 +44,7 @@ describe('Driver', () => {
     const driver = new Driver('math')
     driver.define('summ', ['a', 'b'], context => context.result(context.params.a + context.params.b))
     const math = driver.build()
-    let result = await Q.ninvoke(math, 'summ', 2, 2)
+    let result = await promisifyMethod(math, 'summ')(2, 2)
     assert.equal(result, 4)
   })
 
@@ -48,7 +53,7 @@ describe('Driver', () => {
     driver.define('summ', ['a', 'b'], context => context.result(context.params.a + context.params.b))
     const math = driver.build()
     try {
-      await Q.ninvoke(math, 'summ', 2)
+      await promisifyMethod(math, 'summ')(2)
       throw new Error('should return error')
     } catch (error) {
       error.should.equal('Parameter [b] is missing')
@@ -59,9 +64,9 @@ describe('Driver', () => {
     const driver = new Driver('math')
     driver.define('power', ['x', 'power?'], context => context.result(Math.pow(context.params.x, context.params.power || 2)))
     const math = driver.build()
-    let result = await Q.ninvoke(math, 'power', 2, 3)
+    let result = await promisifyMethod(math, 'power')(2, 3)
     assert.equal(result, 8)
-    result = await Q.ninvoke(math, 'power', 2)
+    result = await promisifyMethod(math, 'power')(2)
     assert.equal(result, 4)
   })
 
@@ -74,7 +79,7 @@ describe('Driver', () => {
     })
     driver.define('sqrt', ['num'], context => context.result(Math.sqrt(context.params.num)))
     const math = driver.build()
-    let result = await Q.ninvoke(math, 'sqrt', 4)
+    let result = await promisifyMethod(math, 'sqrt')(4)
     assert(trigger)
     assert.equal(result, 2)
   })
@@ -89,7 +94,7 @@ describe('Driver', () => {
     })
     driver.define('summInc', ['a', 'b'], context => context.result(context.params.a + context.params.b))
     const math = driver.build()
-    let result = await Q.ninvoke(math, 'summInc', 2, 7)
+    let result = await promisifyMethod(math, 'summInc')(2, 7)
     assert(trigger)
     assert.equal(result, 10)
   })
@@ -105,10 +110,10 @@ describe('Driver', () => {
     driver.define('summ', ['a', 'b'], context => context.result(context.params.a + context.params.b))
     driver.define('summInc', ['a', 'b'], context => context.result(context.params.a + context.params.b))
     const math = driver.build()
-    let result = await Q.ninvoke(math, 'summ', 2, 7)
+    let result = await promisifyMethod(math, 'summ')(2, 7)
     assert(!trigger)
     assert.equal(result, 9)
-    result = await Q.ninvoke(math, 'summInc', 2, 7)
+    result = await promisifyMethod(math, 'summInc')(2, 7)
     assert(trigger)
     assert.equal(result, 10)
   })
@@ -122,7 +127,7 @@ describe('Driver', () => {
     })
     driver.define('summInc', ['a', 'b'], context => context.result(context.params.a + context.params.b))
     const math = driver.build()
-    let result = await Q.ninvoke(math, 'summInc', 2, 7)
+    let result = await promisifyMethod(math, 'summInc')(2, 7)
     assert(trigger)
     assert.equal(result, 10)
   })
@@ -137,10 +142,10 @@ describe('Driver', () => {
     driver.define('hi', context => context.result('hi'))
     driver.define('hello', context => context.result('hello'))
     const greet = driver.build()
-    let result = await Q.ninvoke(greet, 'hi')
+    let result = await promisifyMethod(greet, 'hi')()
     assert.equal(result, 'hi!')
     assert.equal(trigger, 1)
-    result = await Q.ninvoke(greet, 'hello')
+    result = await promisifyMethod(greet, 'hello')()
     assert.equal(result, 'hello!')
     assert.equal(trigger, 2)
   })
@@ -154,7 +159,7 @@ describe('Driver', () => {
       trigger = true
       context.next()
     })
-    let result = await Q.ninvoke(resource, 'find', '123')
+    let result = await promisifyMethod(resource, 'find')('123')
     assert(result.id === '123')
     assert(trigger)
   })
@@ -283,7 +288,7 @@ describe('Driver', () => {
       context.next()
     })
 
-    await Q.ninvoke(api, 'sayHi')
+    await promisifyMethod(api, 'sayHi')()
     assert.deepEqual(stack, out)
   })
 })
