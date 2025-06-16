@@ -259,7 +259,7 @@ export default {
           this.query = JSON5.parse(this.search.substr(5))
           this.sift.isValid = true
         }
-      } catch (error) {
+      } catch {
         this.sift.isValid = false
         this.query = {}
       }

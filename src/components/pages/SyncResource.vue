@@ -107,7 +107,7 @@ export default {
               }
             }
           }))
-        } catch (error) {}
+        } catch { /* empty */ }
 
         const result = _.find(this.syncStatus, {status: 'syncing'})
         if (!result && this.syncingEnvironment) {

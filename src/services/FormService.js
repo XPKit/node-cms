@@ -26,7 +26,7 @@ const validators = {
     try {
       const validUrl = new URL(u)
       return !!validUrl
-    } catch (error) {
+    } catch {
       return false
     }
   },

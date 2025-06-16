@@ -1,6 +1,4 @@
 <script>
-import _ from 'lodash';
-
 export default {
   async mounted () {
     window.DialogService.events.on('dialog', this.onGetRecordEdition)

@@ -6,9 +6,6 @@
     "source.fixAll.eslint": "explicit"
   },
   "eslint.enable": true,
-  "eslint.options": {
-    "overrideConfigFile": "./.eslintrc.js"
-  },
   "eslint.run": "onSave",
   "eslint.validate": [
     "vue",

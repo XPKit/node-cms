@@ -5,7 +5,7 @@
       v-model="localSelectedRecords"
       :theme="theme" :sort-by="sortBy"
       height="73vh" density="compact" multi-sort show-select sticky :no-data-text="$filters.translate('TL_NO_DATA_FOUND')" :item-value="item => item._id" fixed-header :items="tableData" :headers="columns"
-      @update:sortBy="onChangeSortBy"
+      @update:sort-by="onChangeSortBy"
     >
       <template v-for="field in getFields('switch')" :key="field.model" #[`item.${field.model}`]="{item}">
         <div class="checkbox">

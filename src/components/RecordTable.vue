@@ -48,7 +48,7 @@
         v-model:locale="localLocale"
         :resource="resource"
         :user-locale="TranslateService.locale"
-        @updateRecordList="updateRecordList"
+        @update-record-list="updateRecordList"
         @back="back"
       />
     </v-card>

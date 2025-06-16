@@ -3,7 +3,7 @@
     <v-theme-provider :theme="getTheme()">
       <v-snackbar
         v-model="showSnackBar" transition="scroll-y-reverse-transition" multi-line
-        location="centered" class="notification elevation-10" :timeout="notification.type === 'error' ? -1 : 1000" :class="getNotificationClass()" @update:modelValue="resetNotification()"
+        location="centered" class="notification elevation-10" :timeout="notification.type === 'error' ? -1 : 1000" :class="getNotificationClass()" @update:model-value="resetNotification()"
       >
         <p>{{ notification.message }}</p>
         <template #actions>
@@ -22,7 +22,7 @@
         </v-card>
       </v-dialog>
       <div v-if="user" class="cms-layout">
-        <updates-notifier v-if="selectedResource && config && config.wsRecordUpdates" :selected-resource="selectedResource" :selected-record="selectedRecord" @reloadResource="reloadResource" />
+        <updates-notifier v-if="selectedResource && config && config.wsRecordUpdates" :selected-resource="selectedResource" :selected-record="selectedRecord" @reload-resource="reloadResource" />
         <div class="cms-inner-layout">
           <nav-bar
             v-if="resourceList.length > 0" :config="config" :toolbar-title="toolbarTitle" :locale-class="{locale:localeList && localeList.length > 1}" :select-resource-group-callback="selectResourceGroup" :select-resource-callback="selectResource" :grouped-list="groupedList" :selected-resource-group="selectedResourceGroup"
@@ -38,14 +38,14 @@
                 :grouped-list="groupedList"
                 :resource-group="selectedResourceGroup" :resource="selectedResource" :select-resource-callback="selectResource"
                 :multiselect="multiselect" :multiselect-items="multiselectItems"
-                @selectItem="selectRecord"
-                @changeMultiselectItems="onChangeMultiselectItems"
-                @selectMultiselect="onSelectMultiselect"
-                @updateRecordList="updateRecordList"
+                @select-item="selectRecord"
+                @change-multiselect-items="onChangeMultiselectItems"
+                @select-multiselect="onSelectMultiselect"
+                @update-record-list="updateRecordList"
               />
               <record-editor
                 v-if="selectedRecord && !multiselect" :key="selectedRecord._id" v-model:record="selectedRecord" v-model:locale="locale" :resource="selectedResource"
-                :user-locale="TranslateService.locale" @updateRecordList="updateRecordList"
+                :user-locale="TranslateService.locale" @update-record-list="updateRecordList"
               />
               <multiselect-page
                 v-if="selectedResource && multiselect"
@@ -54,14 +54,14 @@
                 :resource="selectedResource"
                 :record-list="recordList"
                 @cancel="onCancelMultiselectPage"
-                @changeMultiselectItems="onChangeMultiselectItems"
-                @updateRecordList="updateRecordList"
+                @change-multiselect-items="onChangeMultiselectItems"
+                @update-record-list="updateRecordList"
               />
             </template>
             <record-table
               v-if="selectedResource && selectedResource.view == 'table'"
               v-model:record="selectedRecord" v-model:locale="locale" :grouped-list="groupedList" :resource-group="selectedResourceGroup" :select-resource-callback="selectResource" :record-list="recordList" :resource="selectedResource" :user-locale="TranslateService.locale"
-              @unsetRecord="unsetSelectedRecord" @updateRecordList="updateRecordList"
+              @unset-record="unsetSelectedRecord" @update-record-list="updateRecordList"
             />
             <plugin-page v-if="selectedPlugin" :plugin="selectedPlugin" />
           </div>

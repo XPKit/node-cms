@@ -98,7 +98,7 @@ export default {
         if (this.eventSource) {
           this.eventSource.close()
         }
-      } catch (error) {}
+      } catch { /* empty */ }
     },
     connectToLogStream () {
       this.$loading.start('_syslog')
@@ -212,7 +212,7 @@ export default {
             try {
               const query = JSON5.parse(this.searchKey.substr(5))
               lines = lines.filter(sift(query))
-            } catch (e) { /* muted */ }
+            } catch { /* muted */ }
           } else {
             lines = _.filter(lines, lineItem => {
               return _.includes(_.toLower(lineItem.line), _.toLower(this.searchKey))

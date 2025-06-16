@@ -138,7 +138,7 @@ export default {
           console.warn('close SSE')
           this.eventSource.close()
         }
-      } catch (error) {}
+      } catch { /* empty */ }
     },
     connectToLogStream () {
       this.disconnectFromLogStream ()

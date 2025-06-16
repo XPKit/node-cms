@@ -37,7 +37,7 @@ class LoginService {
         window.location.reload(true)
       }
       return this.user
-    } catch (error) {
+    } catch {
       return null
     }
   }
@@ -47,7 +47,7 @@ class LoginService {
     const userBefore = _.cloneDeep(this.user)
     try {
       status = await this.getStatus()
-    } catch (error) {
+    } catch {
     }
     if (_.isEmpty(status) && !_.isEmpty(userBefore)) {
       console.info('will logout')
