@@ -1,8 +1,7 @@
 const util = require('util')
 const measure = require('measure')
 const numeral = require('numeral')
-const path = require('path')
-const logger = new (require(path.join(__dirname, '..', 'lib', 'logger')))()
+const logger = new (require('img-sh-logger'))()
 const Dayjs = require('dayjs')
 const _ = require('lodash')
 
@@ -50,3 +49,4 @@ exports = module.exports = {
   startProcess: startProcess,
   convertData: convertData
 }
+

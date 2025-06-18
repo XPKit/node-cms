@@ -6,7 +6,7 @@ const program = require('commander')
 const _ = require('lodash')
 const path = require('path')
 const fs = require('fs-extra')
-const logger = new (require(path.join(__dirname, 'lib/logger')))()
+const logger = new (require('img-sh-logger'))()
 const { GoogleSpreadsheet } = require('google-spreadsheet')
 const md5File = require('md5-file')
 const prompt = require('prompt')
@@ -102,7 +102,7 @@ class ImportManager {
     let ans =  {confirm: 'no'}
     try {
       ans = await promisifyMethod(prompt, 'get')(schema)
-    } catch (error) {}
+    } catch { /* ignore */ }
     if (ans.confirm.toLowerCase() !== 'yes') {
       console.log(ans.confirm)
       process.exit(1)

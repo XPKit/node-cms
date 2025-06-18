@@ -6,9 +6,7 @@ const express = require('express')
 
 const CMS = require('./')
 const pkg = require('./package.json')
-
-const path = require('path')
-const logger = new (require(path.join(__dirname, 'lib/logger')))()
+const logger = new (require('img-sh-logger'))()
 
 // start with leveldb
 // let options = {

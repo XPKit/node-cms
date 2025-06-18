@@ -5,7 +5,7 @@ const autoBind = require('auto-bind')
 const md5File = require('md5-file')
 const h = require('./helper')
 const Api = require('./api')
-const logger = new (require(path.join(__dirname, '..', 'lib', 'logger')))()
+const logger = new (require('img-sh-logger'))()
 const pAll = require('p-all')
 
 class ImportWrapper {
@@ -705,3 +705,4 @@ class ImportWrapper {
 }
 
 module.exports = ImportWrapper
+
