@@ -23,6 +23,7 @@ import CustomForm from '@c/CustomForm.vue'
 // Pages
 import PluginPage from '@c/pages/PluginPage.vue'
 import Syslog from '@c/pages/Syslog.vue'
+import CmsConfig from '@c/pages/CmsConfig.vue'
 import CmsImport from '@c/pages/CmsImport.vue'
 import ImportFromRemote from '@c/pages/ImportFromRemote.vue'
 import SyncResource from '@c/pages/SyncResource.vue'
@@ -95,6 +96,7 @@ app.use(router)
   .component('CustomMultiSelect', CustomMultiSelect)
   .component('PluginPage', PluginPage)
   .component('Syslog', Syslog)
+  .component('CmsConfig', CmsConfig)
   .component('CmsImport', CmsImport)
   .component('ImportFromRemote', ImportFromRemote)
   .component('SyncResource', SyncResource)
@@ -128,6 +130,7 @@ window.addEventListener('load', async function () {
   window.TranslateService = TranslateService
   const config = await RequestService.get(`${window.location.pathname}config`)
   addPlugin('Syslog', 'Syslog')
+  addPlugin('CmsConfig', 'Cms Config')
   if (config.import) {
     addPlugin('CmsImport', 'Cms Import')
   }

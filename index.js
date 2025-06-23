@@ -92,6 +92,7 @@ class CMS {
           _.set(this._paragraphs, key, value)
           this.formatSchema(this._paragraphs, key, true)
         })
+      // eslint-disable-next-line no-unused-vars
       } catch (error) {
         console.warn('No folder found for ', paragraphsDir)
       }
@@ -211,7 +212,7 @@ class CMS {
     }
     /* Admin API */
     if (!options.disableAdmin) {
-      this.use(require('./lib/plugins/admin')(options))
+      this.use(require('./lib/plugins/admin')(options, configPath))
     }
     /* Replication API */
     if (!options.disableReplication) {

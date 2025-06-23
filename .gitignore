@@ -16,3 +16,4 @@ dist
 src/plugins
 lib-importFromRemote/logs
 lib-importFromRemote/cached
+cms.json.backup*
