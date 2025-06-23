@@ -432,6 +432,10 @@ export default {
         this.canCreateUpdate = true
         return this.handleFormNotValid('createUpdateClicked 2')
       }
+      _.each(newAttachments, (attachment) => {
+        console.info(`Will clean field ${attachment.field} from uploadObject`)
+        _.set(dataToUpload.uploadObject, attachment.field, undefined)
+      })
       if (_.isUndefined(this.editingRecord._id)) {
         await this.createRecord(dataToUpload.uploadObject, newAttachments)
       } else {
