@@ -13,12 +13,7 @@ const prompt = require('prompt')
 const pAll = require('p-all')
 const {setTimeout} = require('node:timers/promises')
 const { JWT } = require('google-auth-library')
-const { promisify } = require('util')
-
-// Helper function to promisify methods
-function promisifyMethod(obj, method) {
-  return promisify(obj[method].bind(obj))
-}
+const Q = require('q')
 
 const h = require('./lib-import/helper')
 const Api = require('./lib-import/api')
@@ -101,8 +96,8 @@ class ImportManager {
     }
     let ans =  {confirm: 'no'}
     try {
-      ans = await promisifyMethod(prompt, 'get')(schema)
-    } catch { /* ignore */ }
+      ans = await Q.ninvoke(prompt, 'get', schema)
+    } catch (error) {}
     if (ans.confirm.toLowerCase() !== 'yes') {
       console.log(ans.confirm)
       process.exit(1)

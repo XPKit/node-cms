@@ -332,8 +332,13 @@ export default {
       return this.selectedItem && !_.get(this.selectedItem, '_id', false)
     },
     copyIdToClipboard (id) {
-      navigator.clipboard.writeText(id)
-      NotificationsService.send('_id has been copied.')
+      try {
+        navigator.clipboard.writeText(id)
+        NotificationsService.send('_id has been copied.')
+      } catch (error) {
+        console.error('Failed to copy ID to clipboard:', error)
+        this.notify(TranslateService.get('TL_COPY_ID_FAILED'), 'error')
+      }
     },
     hasEditableRecords () {
       return _.get(_.filter(this.filteredList, (item) => _.get(item, '_local', false)), 'length', 0) !== 0

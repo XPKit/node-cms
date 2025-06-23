@@ -1,14 +1,9 @@
 const CMS = require('../')
 const express = require('express')
 const request = require('supertest')
-const { promisify } = require('util')
+const Q = require('q')
 const path = require('path')
 const Helper = require('./helper')
-
-// Helper function to promisify methods
-function promisifyMethod(obj, method) {
-  return promisify(obj[method].bind(obj))
-}
 const MASTER_HTTP_PORT = 4000
 let helper = Helper.getInstance()
 
@@ -48,8 +43,8 @@ before(async () => {
   }
   cms.resource('articles', { type: 'normal' })
   await cms.bootstrap()
-  await promisifyMethod(cms, 'allow')('anonymous', 'articles')
-  await promisifyMethod(cms.express(), 'listen')(MASTER_HTTP_PORT)
+  await Q.ninvoke(cms, 'allow', 'anonymous', 'articles')
+  await Q.ninvoke(cms.express(), 'listen', MASTER_HTTP_PORT)
 })
 
 // create slave node
@@ -71,9 +66,9 @@ before(async () => {
   }
   helper.slave.cms.resource('articles', { type: 'normal' })
   await helper.slave.cms.bootstrap()
-  await promisifyMethod(helper.slave.cms, 'allow')('anonymous', 'articles')
+  await Q.ninvoke(helper.slave.cms, 'allow', 'anonymous', 'articles')
 
-  await promisifyMethod(cms.express(), 'listen')(helper.SLAVE_HTTP_PORT)
+  await Q.ninvoke(cms.express(), 'listen', helper.SLAVE_HTTP_PORT)
 })
 
 // populate master with content

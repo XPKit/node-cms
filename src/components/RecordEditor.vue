@@ -429,6 +429,7 @@ export default {
       const updatedAttachments = dataToUpload.updatedAttachments
       const deletedAttachments = dataToUpload.deletedAttachments
       if (!this.formValid) {
+        this.canCreateUpdate = true
         return this.handleFormNotValid('createUpdateClicked 2')
       }
       if (_.isUndefined(this.editingRecord._id)) {

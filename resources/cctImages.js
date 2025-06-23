@@ -20,7 +20,8 @@ exports = (module.exports = {
       localised: false,
       required: true,
       options: {
-        maxCount: 1
+        maxCount: 3,
+        accept: '.jpg,.png,.mp4,.webm'
       },
       input: 'image'
     }

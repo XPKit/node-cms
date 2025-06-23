@@ -6,13 +6,8 @@ const program = require('commander')
 // const _ = require('lodash')
 const path = require('path')
 const prompt = require('prompt')
-const { promisify } = require('util')
+const Q = require('q')
 const autoBind = require('auto-bind')
-
-// Helper function to promisify methods
-function promisifyMethod(obj, method) {
-  return promisify(obj[method].bind(obj))
-}
 
 const ImportWrapper = require('./lib-importFromRemote')
 
@@ -59,7 +54,7 @@ class ImportManager {
     }
     let answer =  {confirm: 'no'}
     try {
-      answer = await promisifyMethod(prompt, 'get')(schema)
+      answer = await Q.ninvoke(prompt, 'get', schema)
     } catch (error) {}
     if (answer.confirm.toLowerCase() !== 'yes') {
       console.log(answer.confirm)

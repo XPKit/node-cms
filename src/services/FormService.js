@@ -113,7 +113,7 @@ const customValidators = {
     const attachment = _.find(_.get(model, '_attachments', []), (item) => {
       return item._name === key && (!locale || item._fields.locale === locale)
     })
-    if (_.get(field, 'required', false) && !attachment) {
+    if (_.get(field, 'required', false) && !attachment && _.get(value, 'length', 0) === 0) {
       return fieldIsRequired()
     }
     return true

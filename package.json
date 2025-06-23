@@ -1,6 +1,6 @@
 {
   "name": "node-cms",
-  "version": "2.1.80",
+  "version": "2.1.81",
   "description": "Content management system, written in node.js, uses leveldb as an asset and content store.",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "serve-backend": "cross-env VITE_DEV_MODE=true node --inspect --no-deprecation server.js",
     "lint": "eslint --fix lib src",
     "knip": "knip",
-    "clean": "knip && npm run lint",
+    "knip-lint": "knip && npm run lint",
     "test": "mocha --exit -R spec -b -t 40000 test/spec.js",
     "unit": "mocha -R spec -b -w -t 10000 test/unit",
     "mongodb": "ulimit -n 1000 && mongod --ipv6 --dbpath=../node-cms-mongodb-data",
@@ -116,6 +116,7 @@
     "numeral": "^2.0.6",
     "p-all": "^3.0.0",
     "prompt": "^1.0.0",
+    "q": "^2.0.3",
     "queue-async": "^1.2.1",
     "require-dir": "^0.3.0",
     "rollup-plugin-node-polyfills": "^0.2.1",

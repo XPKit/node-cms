@@ -87,10 +87,20 @@ export default {
       const rules = []
       if (this.schema.required) {
         rules.push(v => {
-          if (_.get(this.getAttachments(), 'length', 0) === 0 && _.get(v, 'length', 0) === 0) {
+          if (_.isUndefined(v)) {
+            return true
+          }
+          const attachmentsLength = _.get(this.getAttachments(), 'length', 0)
+          const valueLength = _.get(v, 'length', 0)
+          if ((v instanceof Object || v instanceof File) && _.get(v, 'name', false)) {
+            return true
+          } else if (attachmentsLength === 0 && valueLength === 0) {
             return TranslateService.get(`TL_${this.getFieldType()}_IS_MANDATORY`)
           }
-          return (_.get(v, 'length', 0) !== 0 ? true : _.get(this.getAttachments(), 'length', 0) !== 0) || TranslateService.get(`TL_${this.getFieldType()}_IS_MANDATORY`)
+          if ((valueLength !== 0 || v instanceof FileList) || attachmentsLength !== 0) {
+            return true
+          }
+          return TranslateService.get(`TL_${this.getFieldType()}_IS_MANDATORY`)
         })
       }
       if (this.isForMultipleImages()) {
@@ -104,6 +114,29 @@ export default {
       }
       if (_.get(this.schema, 'options.limit', false)) {
         rules.push(files => !files || !files.some(file => file.size > this.schema.limit) || TranslateService.get(`TL_${this.getFieldType()}_IS_TOO_BIG`))
+      }
+      if (_.get(this.schema, 'options.accept', false)) {
+        const acceptedTypes = this.schema.options.accept.split(',')
+        rules.push(files => {
+          if (!files) {
+            return true
+          }
+          let isValid = true
+          if (!_.isArray(files)) {
+            files = [files]
+          }
+          _.each(files, (file) => {
+            const fileType = `.${_.toLower(_.last(_.split(file.name, '.')))}`
+            if (!_.includes(acceptedTypes, fileType)) {
+              // console.warn(`FILE NOT VALID: ${file.name} (${file.type})`, fileType)
+              isValid = false
+              return false
+            // } else {
+              // console.warn(`FILE VALID: ${file.name} (${file.type})`)
+            }
+          })
+          return isValid || TranslateService.get(`TL_INVALID_${this.getFieldType()}_TYPE`)
+        })
       }
       return rules
     },
@@ -138,8 +171,16 @@ export default {
       this.onUploadChanged(files, true)
     },
     async onUploadChanged (files, dragAndDrop = false) {
-      if (!dragAndDrop && _.get(await this.$refs.input.validate(), 'length', 0) !== 0) {
-        return
+      let maxCount = this.getMaxCount()
+      if (_.get(event, 'target.files.length', 0) !== 0) {
+        files = event.target.files
+        dragAndDrop = true
+        if (maxCount !== -1 && maxCount <= 1 && files.length > 1) {
+          files = _.last(files)
+          console.info(`Only one file can be uploaded at a time for field '${this.schema.originalModel}', will take the last one:`, files)
+        } else if (_.isObject(files)) {
+          files = _.toArray(files)
+        }
       }
       files = _.isNull(files) ? [] : files
       if (_.get(files, 'target.files', false)) {
@@ -151,7 +192,6 @@ export default {
       if (!files.length) {
         return
       }
-      let maxCount = this.getMaxCount()
       if (_.get(this.schema, 'width', false) && _.get(this.schema, 'height', false)) {
         maxCount = 1
       }
@@ -159,6 +199,14 @@ export default {
       if (maxCount >= 1 && totalNbFiles > maxCount) {
         console.info(`Reached max number of files for ${this.schema.paragraphKey || this.schema.model}`, totalNbFiles, maxCount)
         files = _.take(files, files.length - (totalNbFiles - maxCount))
+      }
+      if (_.get(this.$refs, 'input', false)) {
+        console.warn('WILL VALIDATE', files)
+        const test = await this.$refs.input.validate()
+        if (_.get(test, 'length', 0) !== 0) {
+          console.error('validation error, will not upload files:', test)
+          return
+        }
       }
       this.attachments = await this.readAllFiles(files)
       this._value = this.attachments

@@ -2,14 +2,9 @@
 
 const CMS = require('../')
 const request = require('supertest')
-const { promisify } = require('util')
+const Q = require('q')
 const path = require('path')
 const Helper = require('./helper')
-
-// Helper function to promisify methods
-function promisifyMethod(obj, method) {
-  return promisify(obj[method].bind(obj))
-}
 
 const helper = Helper.getInstance(8002, true)
 let cms = null
@@ -72,11 +67,11 @@ before(async () => {
     ]
   })
   cms.resource('querytest')
-  await promisifyMethod(cms.express(), 'listen')(helper.port)
+  await Q.ninvoke(cms.express(), 'listen', helper.port)
   await cms.bootstrap()
 })
 
-before(() => promisifyMethod(cms, 'allow')('anonymous', ['pages', 'querytest']))
+before(() => Q.ninvoke(cms, 'allow', 'anonymous', ['pages', 'querytest']))
 
 before(async () => {
   helper.cms = cms
