@@ -168,13 +168,13 @@ export default {
       } else if (_.isObject(files)) {
         files = _.toArray(files)
       }
-      this.onUploadChanged(files, true)
+      this.onUploadChanged(files)
     },
-    async onUploadChanged (files, dragAndDrop = false) {
+    async onUploadChanged (files) {
       let maxCount = this.getMaxCount()
       if (_.get(event, 'target.files.length', 0) !== 0) {
         files = event.target.files
-        dragAndDrop = true
+        // dragAndDrop = true
         if (maxCount !== -1 && maxCount <= 1 && files.length > 1) {
           files = _.last(files)
           console.info(`Only one file can be uploaded at a time for field '${this.schema.originalModel}', will take the last one:`, files)

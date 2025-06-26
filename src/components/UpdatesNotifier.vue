@@ -113,14 +113,10 @@ export default {
         return console.info('ws msg received without action:', msg)
       } else if (msg.action === 'ping') {
         return this.pong()
-      } else if (msg.action === 'update') {
-        if (this.isFromSelf(msg)) {
-          // console.warn('msg from self', msg, LoginService.user)
-          return
-        }
-        console.warn('received msg', msg)
+      } else if (msg.action === 'update' && !this.isFromSelf(msg)) {
+        console.info('received WS msg', msg)
         if (_.get(msg, 'data.resource', false) && msg.data.resource === this.selectedResource.name) {
-          console.warn(`same ${this.isSameRecord(msg) ? 'record' : 'resource'} was edited`)
+          console.info(`same ${this.isSameRecord(msg) ? 'record' : 'resource'} was edited`)
           this.receivedUpdate = msg
         }
       }

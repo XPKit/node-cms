@@ -215,14 +215,14 @@ export default {
         input.controlgroup.className = input.controlgroup.className.replace(/\s?error/g, '')
       }
       getTabHolder (propertyName) {
-        const pName = (typeof propertyName === 'undefined') ? '' : propertyName
+        const pName = _.isUndefined(propertyName) ? '' : propertyName
         const el = document.createElement('div')
         el.className = 'tabbable tabs-left'
         el.innerHTML = `<ul class='nav nav-tabs'  id='${pName}'></ul><div class='tab-content well well-small' id='${pName}'></div>`
         return el
       }
       getTopTabHolder (propertyName) {
-        const pName = (typeof propertyName === 'undefined') ? '' : propertyName
+        const pName = _.isUndefined(propertyName) ? '' : propertyName
         const el = document.createElement('div')
         el.className = 'tabbable tabs-over'
         el.innerHTML = `<ul class='nav nav-tabs' id='${pName}'></ul><div class='tab-content well well-small'  id='${pName}'></div>`

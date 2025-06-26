@@ -118,7 +118,7 @@ class ImportWrapper {
   findMatches(obj, regex, field) {
     const results = []
     function traverse(current, path = '') {
-      if (current && typeof current === 'object') {
+      if (current && _.isObject(current)) {
         if (regex.test(path) && _.endsWith(path, field)) {
           results.push({
             path: path,
@@ -127,7 +127,7 @@ class ImportWrapper {
         }
         for (let key in current) {
           const newPath = path ? `${path}.${key}` : key
-          if (Array.isArray(current)) {
+          if (_.isArray(current)) {
             traverse(current[key], `${path}[${key}]`)
           } else {
             traverse(current[key], newPath)
@@ -484,9 +484,9 @@ class ImportWrapper {
   removeAttachments (obj, attachmentsRegExps) {
     const regexPatterns = _.map(attachmentsRegExps, (pattern)=> new RegExp(pattern))
     const processObject = (object) => {
-      if (!object || typeof object !== 'object') {
+      if (!object || !_.isObject(object)) {
         return object
-      } else if (Array.isArray(object)) {
+      } else if (_.isArray(object)) {
         return object.map(item => processObject(item))
       }
       return Object.fromEntries(

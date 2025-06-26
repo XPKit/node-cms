@@ -5,6 +5,9 @@
     "baseUrl": "./",
     "jsx": "preserve",
     "moduleResolution": "node",
+    "allowJs": true,
+    "checkJs": false,
+    "declaration": false,
     "paths": {
       "@/*": [
         "src/*",
@@ -27,6 +30,20 @@
       "dom",
       "dom.iterable",
       "scripthost"
+    ],
+    "typeRoots": [
+      "./types",
+      "./node_modules/@types"
     ]
-  }
+  },
+  "include": [
+    "**/*.js",
+    "**/*.d.ts",
+    "types/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build"
+  ]
 }

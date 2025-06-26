@@ -1,5 +1,15 @@
 
 
+/**
+ * @fileoverview Node CMS - A flexible content management system
+ * @author Node CMS Team
+ * @see {@link ./lib/jsdoc-types.js} For complete type definitions
+ */
+
+/**
+ * @typedef {import('./lib/ResourceAPIWrapper.js')} ResourceAPIWrapper
+ */
+
 const path = require('path')
 const fs = require('fs')
 const pAll = require('p-all')
@@ -19,6 +29,7 @@ const UpdatesManager = require('./lib/UpdatesManager')
 const escapeRegExp = require('./lib/util/escapeRegExp')
 
 const Resource = require('./lib/resource')
+const ResourceAPIWrapper = require('./lib/ResourceAPIWrapper')
 const autoBind = require('auto-bind')
 
 // Default CMS configration
@@ -39,6 +50,9 @@ const defaultConfig = () =>
     importFromRemote: true,
     disableAnonymous: false,
     apiVersion: 1,
+    auth: {
+      secret: 'MdjIwFRi9ezT1234567890abcdef'
+    },
     session: {
       secret: 'MdjIwFRi9ezT',
       resave: true,
@@ -47,6 +61,40 @@ const defaultConfig = () =>
   })
 
 class CMS {
+  /**
+   * Creates a new CMS instance
+   * @param {Object} [options] - CMS configuration options
+   * @param {string[]} [options.ns] - Namespace array
+   * @param {string} [options.resources] - Resources directory path
+   * @param {string} [options.data] - Data directory path
+   * @param {boolean} [options.autoload] - Auto-load resources
+   * @param {string} [options.mode] - CMS mode
+   * @param {string} [options.mid] - Machine ID
+   * @param {boolean} [options.disableREST] - Disable REST API
+   * @param {boolean} [options.disableAdmin] - Disable admin interface
+   * @param {boolean} [options.disableJwtLogin] - Disable JWT login
+   * @param {boolean} [options.disableReplication] - Disable replication
+   * @param {boolean} [options.disableAuthentication] - Disable authentication
+   * @param {boolean} [options.wsRecordUpdates] - Enable WebSocket record updates
+   * @param {boolean} [options.importFromRemote] - Enable import from remote
+   * @param {boolean} [options.disableAnonymous] - Disable anonymous access
+   * @param {number} [options.apiVersion] - API version
+   * @param {Object} [options.session] - Session configuration
+   * @param {Object} [options.auth] - Authentication configuration
+   *
+   * @example
+   * const CMS = require('node-cms')
+   * const cms = new CMS({
+   *   resources: './resources',
+   *   data: './data',
+   *   disableREST: false
+   * })
+   *
+   * // Get API to work with resources
+   * const api = cms.api()
+   * const groups = await api('_groups').list()
+   * const user = await api('_users').find('user-id')
+   */
   constructor (options) {
     autoBind(this)
     // NOTE: Min auth key length
@@ -56,32 +104,32 @@ class CMS {
     if (options) {
       delete options.config
     }
-    /* create a default config, if not exist */
+    // create a default config, if not exist
     if (!fs.existsSync(configPath)) {
       const cfg = _.extend(defaultConfig(), options)
       fs.writeFileSync(configPath, JSON.stringify(cfg, null, 2))
     }
-    /* aggregate options */
+    // aggregate options
     this.options = (options = (this._options = _.extend({}, defaultConfig(), require(configPath), options)))
-    /* ensure required folders are in place */
+    // ensure required folders are in place
     mkdirp.sync(path.resolve(options.resources))
     mkdirp.sync(path.resolve(options.data))
-    /* keep track of available resources */
+    // keep track of available resources
     this._tempResources = {}
     this._resources = {}
     this._paragraphs = {}
     this._attachmentFields = {}
     this._relations = {}
     this._resourceNames = []
-    /* keep track of available plugins */
+    // keep track of available plugins
     this._plugins = {}
-    /* Use prefixed UUID */
+    // Use prefixed UUID
     options.uuid = new UUID(options.mid)
-    /* automaticly populate CMS resources, if specified */
+    // automaticly populate CMS resources, if specified
     if (this._options.autoload) {
       _.each(requireDir(options.resources), (value, key) => this.resource(key, value))
       const paragraphsDir = path.join(_.get(options, 'paragraphs', options.resources), 'paragraphs')
-      console.info(`Paragraphs dir: ${paragraphsDir}`)
+      // console.info(`Paragraphs dir: ${paragraphsDir}`)
       try {
         const results = requireDir(paragraphsDir)
         _.each(results, (value, key)=> {
@@ -134,7 +182,7 @@ class CMS {
       })
       this.formatSchema(this._paragraphs, '_settingsLinkGroup', true)
     }
-    /* create main application */
+    // create main application
     this._app = express()
     this._app.use(helmet.dnsPrefetchControl())
     this._app.use(helmet.expectCt())
@@ -145,7 +193,7 @@ class CMS {
     this._app.use(helmet.noSniff())
     this._app.use(helmet.permittedCrossDomainPolicies())
     this._app.use(helmet.referrerPolicy())
-    /* Enable compression */
+    // Enable compression
     this._app.use(compression({
       filter (req, res) {
         return req.headers['x-no-compression'] ? false : compression.filter(req, res)
@@ -161,7 +209,7 @@ class CMS {
       this._app.use(session(_.extend({cookie: {}}, this.options.session)))
     }
     if (!options.disableAuthentication) {
-      /* Enables session with basic auth */
+      // Enables session with basic auth
       this._app.use((req, res, next) => {
         if (req.session.user && !req.headers.authorization) {
           req.headers.authorization = 'Basic ' + Buffer.from(req.session.user.username + ':' + req.session.user.password).toString('base64')
@@ -169,7 +217,7 @@ class CMS {
         next()
       })
     } else if (!options.disableJwtLogin) {
-      /* Enables session with jwt token auth */
+      // Enables session with jwt token auth
       this._app.use(cookieParser())
       this._app.use((req, res, next) => {
         if (!req.headers.authorization) {
@@ -222,9 +270,8 @@ class CMS {
     if (options.anonymousRead) {
       this.usedPlugins.push('anonymousRead')
     }
-    console.warn(`Using plugins: ${this.usedPlugins.join(', ')}`)
+    // console.info(`Will use plugins: ${this.usedPlugins.join(', ')}`)
     _.each(this.usedPlugins, (plugin)=> {
-      console.warn(`Will use plugin: ${plugin}`)
       this.use(require(`./lib/plugins/${plugin}`), options, configPath)
     })
     // handle bootstrap
@@ -386,8 +433,84 @@ class CMS {
    *  api('articles').attachments.read(['abc123xz','lmnop123'])
    *    .pipe(fs.createWriteStream('./image.png'));
    */
+  /**
+   * Get API access to CMS resources
+   * @returns {function(string, ...string): ResourceAPI} A function that returns resource API for the given resource name
+   *
+   * @example
+   * const api = cms.api()
+   *
+   * // List all records
+   * const articles = await api('articles').list()
+   *
+   * // Find a specific record
+   * const article = await api('articles').find('article-id')
+   *
+   * // Find with query
+   * const publishedArticles = await api('articles').find({ published: true })
+   *
+   * // Create a new record
+   * const newArticle = await api('articles').create({ title: 'New Article', content: 'Content...' })
+   *
+   * // Update a record
+   * await api('articles').update('article-id', { title: 'Updated Title' })
+   *
+   * // Remove a record
+   * await api('articles').remove('article-id')
+   *
+   * // Check if record exists
+   * const exists = await api('articles').exists('article-id')
+   *
+   * // Work with attachments
+   * const attachment = await api('articles').createAttachment('article-id', {
+   *   name: 'photo',
+   *   stream: fileStream,
+   *   fields: { filename: 'photo.jpg' }
+   * })
+   *
+   * // Find attachment
+   * const foundAttachment = await api('articles').findAttachment('article-id', 'attachment-id')
+   *
+   * // Remove attachment
+   * await api('articles').removeAttachment('article-id', 'attachment-id')
+   */
+  /**
+   * Get API access to CMS resources
+   * @returns {function(string, ...string): ResourceAPIWrapper} Function that returns resource API wrapper for the given resource name
+   * @memberof CMS
+   *
+   * @example
+   * const api = cms.api()
+   *
+   * // All these calls return ResourceAPIWrapper objects with full method availability
+   * const groupsAPI = api('_groups')
+   * const usersAPI = api('_users')
+   *
+   * // Use the ResourceAPI methods with full IDE support
+   * const groups = await groupsAPI.list()
+   * const group = await groupsAPI.find('group-id')
+   * const newGroup = await groupsAPI.create({ name: 'New Group' })
+   * const updated = await groupsAPI.update('group-id', { name: 'Updated' })
+   * await groupsAPI.remove('group-id')
+   */
   api () {
-    return (name, ...rest) => this.resource(name, null, rest)
+    const self = this
+    /**
+     * Create a resource API wrapper for the specified resource
+     * @param {string} name - The resource name (e.g., '_groups', 'articles', '_users')
+     * @param {...*} rest - Additional arguments passed to resource()
+     * @returns {ResourceAPIWrapper} A wrapper providing list, find, create, update, remove and attachment methods
+     */
+    function createResourceAPI (name, ...rest) {
+      const resource = self.resource(name, null, rest)
+      return new ResourceAPIWrapper(resource)
+    }
+
+    // Add explicit type annotation for better IDE support
+    /** @type {function(string, ...string): ResourceAPIWrapper} */
+    createResourceAPI.signature = createResourceAPI
+
+    return createResourceAPI
   }
 
   // Install a plugin
@@ -401,4 +524,50 @@ class CMS {
   }
 }
 
+/**
+ * @module node-cms
+ * @description Node CMS - A flexible content management system
+ *
+ * @example
+ * const CMS = require('node-cms')
+ * const cms = new CMS(config)
+ * const api = cms.api()
+ *
+ * // Use the API to work with resources
+ * const groups = await api('_groups').list()
+ * const group = await api('_groups').find('group-id')
+ * const newGroup = await api('_groups').create({ name: 'New Group' })
+ */
+
+/**
+ * @typedef {Object} module:node-cms.ResourceAPI
+ * @description Complete Resource API interface available through api('resourceName')
+ * @property {function(Object=, Object=): Promise<Array<Object>>} list - List all records matching query
+ * @property {function(string|Object, Object=): Promise<Object>} find - Find a single record by ID or query
+ * @property {function(string|Object): Promise<boolean>} exists - Check if a record exists
+ * @property {function(Object, Object=): Promise<Object>} create - Create a new record
+ * @property {function(string, Object, Object=): Promise<Object>} update - Update an existing record
+ * @property {function(string): Promise<boolean>} remove - Remove a record
+ * @property {function(string, Object): Promise<Object>} createAttachment - Create an attachment for a record
+ * @property {function(string, string, Object): Promise<Object>} updateAttachment - Update an attachment
+ * @property {function(string, string): Promise<Object>} findAttachment - Find an attachment with its stream
+ * @property {function(string): Promise<ReadableStream>} findFile - Find a file stream by attachment ID
+ * @property {function(string, string): Promise<boolean>} removeAttachment - Remove an attachment from a record
+ * @property {function(): Promise<boolean>} cleanAttachment - Clean orphaned attachments
+ * @property {function(Array<Object>, Object=, boolean=): Promise<Object>} getImportMap - Get import mapping for bulk operations
+ * @property {function(): Array<string>} getUniqueKeys - Get unique key fields for this resource
+ */
+
+/**
+ * Node CMS Constructor
+ * @class
+ * @name CMS
+ * @memberof module:node-cms
+ */
 exports = module.exports = CMS
+
+/**
+ * Export ResourceAPIWrapper for advanced IDE support
+ * @type {ResourceAPIWrapper}
+ */
+CMS.ResourceAPIWrapper = ResourceAPIWrapper

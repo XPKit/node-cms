@@ -55,6 +55,7 @@ class ImportManager {
     let answer =  {confirm: 'no'}
     try {
       answer = await Q.ninvoke(prompt, 'get', schema)
+    // eslint-disable-next-line no-unused-vars
     } catch (error) {}
     if (answer.confirm.toLowerCase() !== 'yes') {
       console.log(answer.confirm)

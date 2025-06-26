@@ -3,6 +3,7 @@
   "version": "2.1.84",
   "description": "Content management system, written in node.js, uses leveldb as an asset and content store.",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "dev": "del-cli --force ./src/plugins && cross-env VITE_CJS_IGNORE_WARNING=true vite",
     "build": "vite build --emptyOutDir",

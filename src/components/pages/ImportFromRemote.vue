@@ -27,8 +27,8 @@
 </template>
 
 <script>
-import RequestService from '@s/RequestService'
-import _ from 'lodash'
+// import RequestService from '@s/RequestService'
+// import _ from 'lodash'
 export default {
   data () {
     return {

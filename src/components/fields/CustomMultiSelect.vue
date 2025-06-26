@@ -133,13 +133,13 @@ export default {
     },
     addTag (newTag, id) {
       const onNewTag = this.selectOptions.onNewTag
-      if (typeof onNewTag === 'function') {
+      if (_.isFunction(onNewTag)) {
         onNewTag(newTag, id, this.options, this.objectValue)
       }
     },
     onSearchChange (searchQuery, id) {
       const onSearch = this.selectOptions.onSearch
-      if (typeof onSearch === 'function') {
+      if (_.isFunction(onSearch)) {
         onSearch(searchQuery, id, this.options)
       }
     }

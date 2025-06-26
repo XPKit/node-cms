@@ -391,7 +391,7 @@ export default {
           if (currentKey.length > 0) {
             newKey = currentKey + '.' + i
           }
-          if (typeof newVal === 'object') {
+          if (_.isObject(newVal)) {
             this.dive(newKey, newVal, target)
           } else {
             target[newKey] = newVal
