@@ -1,6 +1,4 @@
-/*
- * Module dependencies
- */
+
 
 const path = require('path')
 const fs = require('fs')
@@ -21,6 +19,7 @@ const UpdatesManager = require('./lib/UpdatesManager')
 const escapeRegExp = require('./lib/util/escapeRegExp')
 
 const Resource = require('./lib/resource')
+const autoBind = require('auto-bind')
 
 // Default CMS configration
 const defaultConfig = () =>
@@ -49,10 +48,7 @@ const defaultConfig = () =>
 
 class CMS {
   constructor (options) {
-    this.resource = this.resource.bind(this)
-    this.api = this.api.bind(this)
-    this.use = this.use.bind(this)
-    this.express = this.express.bind(this)
+    autoBind(this)
     // NOTE: Min auth key length
     this.requiredKeyLength = 16
     this.fieldFileTypes = ['file', 'img', 'image', 'imageView', 'attachmentView']
@@ -187,7 +183,7 @@ class CMS {
         next()
       })
     }
-    this.use(require('./lib/plugins/authentication')(options))
+    this.use(require('./lib/plugins/authentication'), options, configPath)
     // handle syslog and system
     this.bootstrapFunctions = this.bootstrapFunctions || []
     this.bootstrapFunctions.push(async (callback) => {
@@ -198,42 +194,39 @@ class CMS {
     })
     this._app.use(SyslogManager.express())
     this._app.use(SystemManager.express())
-    /* REST API */
+    this.usedPlugins = []
     if (!options.disableREST) {
-      this.use(require('./lib/plugins/rest')())
+      this.usedPlugins.push('rest')
     }
-    /* import API */
     if (options.import) {
-      this.use(require('./lib/plugins/import')(options))
+      this.usedPlugins.push('import')
     }
-    /* import from remote API */
     if (options.importFromRemote) {
-      this.use(require('./lib/plugins/importFromRemote')(options))
+      this.usedPlugins.push('importFromRemote')
     }
-    /* Admin API */
     if (!options.disableAdmin) {
-      this.use(require('./lib/plugins/admin')(options, configPath))
+      this.usedPlugins.push('admin')
     }
-    /* Replication API */
     if (!options.disableReplication) {
-      this.use(require('./lib/plugins/replicator')())
+      this.usedPlugins.push('replicator')
     }
-    /* Migration API */
     if (options.migration) {
-      this.use(require('./lib/plugins/migration')(options))
+      this.usedPlugins.push('migration')
     }
-    /* Sync API */
     if (options.sync) {
-      this.use(require('./lib/plugins/sync')(options))
+      this.usedPlugins.push('sync')
     }
-    /* xlsx API */
     if (options.xlsx) {
-      this.use(require('./lib/plugins/xlsx')(options))
+      this.usedPlugins.push('xlsx')
     }
-    /* anonymousRead */
     if (options.anonymousRead) {
-      this.use(require('./lib/plugins/anonymousRead')(options))
+      this.usedPlugins.push('anonymousRead')
     }
+    console.warn(`Using plugins: ${this.usedPlugins.join(', ')}`)
+    _.each(this.usedPlugins, (plugin)=> {
+      console.warn(`Will use plugin: ${plugin}`)
+      this.use(require(`./lib/plugins/${plugin}`), options, configPath)
+    })
     // handle bootstrap
     this.bootstrap = async (server, callback) => {
       if (_.isFunction(server) && _.isUndefined(callback)) {
@@ -326,18 +319,6 @@ class CMS {
       })
     })
   }
-  underscoreObject (list, values) {
-    let result = {}
-    for (let i = 0, length = _.get(list, 'length', 0); i < length; i++) {
-      if (values) {
-        result[list[i]] = values[i]
-      } else {
-        result[list[i][0]] = list[i][1]
-      }
-    }
-    return result
-  }
-
   getKeyFor(name, key, forParagraph = false) {
     return `[${name}]${!forParagraph ? 'options' : ''}.${key}`
   }
@@ -410,8 +391,8 @@ class CMS {
   }
 
   // Install a plugin
-  use (plugin) {
-    return plugin.apply(this)
+  use (plugin, options, configPath) {
+    return new plugin(this, options, configPath)
   }
 
   // Get main application

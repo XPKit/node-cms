@@ -110,7 +110,7 @@ app.use(router)
 
 function addPlugin (title, displayName, group = 'System', allowed = ['admins', 'imagination']) {
   window.plugins = window.plugins || []
-  console.warn('adding plugin', displayName)
+  console.info('adding plugin', displayName)
   window.plugins.push({
     title,
     displayname: displayName,
