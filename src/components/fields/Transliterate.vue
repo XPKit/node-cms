@@ -60,13 +60,16 @@ export default {
         // 2. Field is editable but user hasn't edited it yet, OR
         // 3. Field is editable but currently empty
         if (this.isReadonly || !this.userHasEdited || this.isFieldEmpty) {
-          if (newValue) {
+          if (newValue && newValue.trim() !== '') {
             // Use transliteration to create a slug
             const slugified = slugify(newValue, {
               lowercase: true,
               separator: '-',
             })
             this.updateModelValue(slugified)
+          } else {
+            // If source field is empty, clear the transliterate field too
+            this.updateModelValue('')
           }
         }
       },
