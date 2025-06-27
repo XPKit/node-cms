@@ -145,6 +145,11 @@ let typeMapper = {
     overrideType: 'CustomInput',
     validator: customValidators.text
   },
+  transliterate: {
+    type: 'input',
+    overrideType: 'Transliterate',
+    validator: customValidators.text
+  },
   text: {
     type: 'textarea',
     overrideType: 'CustomTextarea',

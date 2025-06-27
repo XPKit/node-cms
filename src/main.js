@@ -44,6 +44,7 @@ import CustomInput from '@c/fields/CustomInput.vue'
 import CustomTextarea from '@c/fields/CustomTextarea.vue'
 import CustomCheckbox from '@c/fields/CustomCheckbox.vue'
 import CustomInputTag from '@c/fields/CustomInputTag.vue'
+import Transliterate from '@c/fields/Transliterate.vue'
 import Group from '@c/fields/Group.vue'
 
 import Loading from './modules/Loading'
@@ -93,6 +94,7 @@ app.use(router)
   .component('CustomDatetimePicker', CustomDatetimePicker)
   .component('Group', Group)
   .component('CustomInputTag', CustomInputTag)
+  .component('Transliterate', Transliterate)
   .component('CustomMultiSelect', CustomMultiSelect)
   .component('PluginPage', PluginPage)
   .component('Syslog', Syslog)

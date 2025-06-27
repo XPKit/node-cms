@@ -1,0 +1,99 @@
+Stream and console capture setup complete. All terminal output will be written to: ./syslog.log
+  node-cms:server:info 2025/06/27 16:54:19.343S 📟  processTicksAndRejections ########### server started ########### +0ms
+  node-cms:server:info 2025/06/27 16:54:19.344S 📟  processTicksAndRejections node-cms started at http://localhost:9990/admin +0ms
+  node-cms:index:warn 2025/06/27 16:54:34.466S ⚠️  getUserFromToken getUserFromToken - No token found +0ms
+  node-cms:index:warn 2025/06/27 16:54:34.467S ⚠️  getUserFromToken getUserFromToken - No token found +1ms
+User not logged in /admin?id=9bd1a562-c302-4f7d-86d6-69065a84f5fd&vscodeBrowserReqId=1751014474452/
+User not logged in /admin?id=9bd1a562-c302-4f7d-86d6-69065a84f5fd&vscodeBrowserReqId=1751014474452/
+  node-cms:index:warn 2025/06/27 16:54:34.468S ⚠️  serveDevMode serveDevMode - http://localhost:19990/admin/index.html +15s
+  node-cms:server:error 2025/06/27 16:54:34.478S 🔥  emit
+  node-cms:server:error AggregateError [ECONNREFUSED]: 
+  node-cms:server:error     at internalConnectMultiple (node:net:1118:18)
+  node-cms:server:error     at afterConnectMultiple (node:net:1685:7) {
+  node-cms:server:error   code: 'ECONNREFUSED',
+  node-cms:server:error   [errors]: [
+  node-cms:server:error     Error: connect ECONNREFUSED ::1:19990
+  node-cms:server:error         at createConnectionError (node:net:1648:14)
+  node-cms:server:error         at afterConnectMultiple (node:net:1678:16) {
+  node-cms:server:error       errno: -4078,
+  node-cms:server:error       code: 'ECONNREFUSED',
+  node-cms:server:error       syscall: 'connect',
+  node-cms:server:error       address: '::1',
+  node-cms:server:error       port: 19990
+  node-cms:server:error     },
+  node-cms:server:error     Error: connect ECONNREFUSED 127.0.0.1:19990
+  node-cms:server:error         at createConnectionError (node:net:1648:14)
+  node-cms:server:error         at afterConnectMultiple (node:net:1678:16) {
+  node-cms:server:error       errno: -4078,
+  node-cms:server:error       code: 'ECONNREFUSED',
+  node-cms:server:error       syscall: 'connect',
+  node-cms:server:error       address: '127.0.0.1',
+  node-cms:server:error       port: 19990
+  node-cms:server:error     }
+  node-cms:server:error   ]
+  node-cms:server:error } +0ms
+Stream and console capture setup complete. All terminal output will be written to: ./syslog.log
+  node-cms:server:info 2025/06/27 17:19:49.058S 📟  processTicksAndRejections ########### server started ########### +0ms
+  node-cms:server:info 2025/06/27 17:19:49.058S 📟  processTicksAndRejections node-cms started at http://localhost:9990/admin +0ms
+  node-cms:index:warn 2025/06/27 17:20:00.605S ⚠️  getUserFromToken getUserFromToken - No token found +0ms
+  node-cms:index:warn 2025/06/27 17:20:00.606S ⚠️  getUserFromToken getUserFromToken - No token found +1ms
+User not logged in /admin?id=b3e46439-8993-48cb-a8b8-3cda36ae3822&vscodeBrowserReqId=1751016000585/
+User not logged in /admin?id=b3e46439-8993-48cb-a8b8-3cda36ae3822&vscodeBrowserReqId=1751016000585/
+  node-cms:index:warn 2025/06/27 17:20:00.608S ⚠️  serveDevMode serveDevMode - http://localhost:19990/admin/index.html +12s
+  node-cms:server:error 2025/06/27 17:20:00.619S 🔥  emit
+  node-cms:server:error AggregateError [ECONNREFUSED]: 
+  node-cms:server:error     at internalConnectMultiple (node:net:1118:18)
+  node-cms:server:error     at afterConnectMultiple (node:net:1685:7) {
+  node-cms:server:error   code: 'ECONNREFUSED',
+  node-cms:server:error   [errors]: [
+  node-cms:server:error     Error: connect ECONNREFUSED ::1:19990
+  node-cms:server:error         at createConnectionError (node:net:1648:14)
+  node-cms:server:error         at afterConnectMultiple (node:net:1678:16) {
+  node-cms:server:error       errno: -4078,
+  node-cms:server:error       code: 'ECONNREFUSED',
+  node-cms:server:error       syscall: 'connect',
+  node-cms:server:error       address: '::1',
+  node-cms:server:error       port: 19990
+  node-cms:server:error     },
+  node-cms:server:error     Error: connect ECONNREFUSED 127.0.0.1:19990
+  node-cms:server:error         at createConnectionError (node:net:1648:14)
+  node-cms:server:error         at afterConnectMultiple (node:net:1678:16) {
+  node-cms:server:error       errno: -4078,
+  node-cms:server:error       code: 'ECONNREFUSED',
+  node-cms:server:error       syscall: 'connect',
+  node-cms:server:error       address: '127.0.0.1',
+  node-cms:server:error       port: 19990
+  node-cms:server:error     }
+  node-cms:server:error   ]
+  node-cms:server:error } +0ms
+Stream and console capture setup complete. All terminal output will be written to: ./syslog.log
+  node-cms:server:info 2025/06/27 17:21:57.529S 📟  processTicksAndRejections ########### server started ########### +0ms
+  node-cms:server:info 2025/06/27 17:21:57.530S 📟  processTicksAndRejections node-cms started at http://localhost:9990/admin +1ms
+WebSocket::onConnection: Client connected
+WebSocket::onClose: Client disconnected
+Stream and console capture setup complete. All terminal output will be written to: ./syslog.log
+  node-cms:server:info 2025/06/27 17:24:09.035S 📟  processTicksAndRejections ########### server started ########### +0ms
+  node-cms:server:info 2025/06/27 17:24:09.035S 📟  processTicksAndRejections node-cms started at http://localhost:9990/admin +0ms
+WebSocket::onConnection: Client connected
+WebSocket::onClose: Client disconnected
+Stream and console capture setup complete. All terminal output will be written to: ./syslog.log
+  node-cms:server:info 2025/06/27 17:30:45.413S 📟  processTicksAndRejections ########### server started ########### +0ms
+  node-cms:server:info 2025/06/27 17:30:45.414S 📟  processTicksAndRejections node-cms started at http://localhost:9990/admin +1ms
+Stream and console capture setup complete. All terminal output will be written to: ./syslog.log
+  node-cms:server:info 2025/06/27 17:31:24.036S 📟  processTicksAndRejections ########### server started ########### +0ms
+  node-cms:server:info 2025/06/27 17:31:24.037S 📟  processTicksAndRejections node-cms started at http://localhost:9990/admin +0ms
+WebSocket::onConnection: Client connected
+  node-cms:index:warn 2025/06/27 17:31:55.102S ⚠️  getUserFromToken getUserFromToken - No token found +0ms
+  node-cms:index:warn 2025/06/27 17:31:55.103S ⚠️  getUserFromToken getUserFromToken - No token found +1ms
+User not logged in /admin?id=a8d1062e-b64d-43f1-bada-0b4a50faff40&vscodeBrowserReqId=1751016715088/
+User not logged in /admin?id=a8d1062e-b64d-43f1-bada-0b4a50faff40&vscodeBrowserReqId=1751016715088/
+  node-cms:index:warn 2025/06/27 17:31:55.104S ⚠️  serveDevMode serveDevMode - http://localhost:19990/admin/index.html +31s
+WebSocket::onClose: Client disconnected
+WebSocket::onConnection: Client connected
+WebSocket::onClose: Client disconnected
+WebSocket::onConnection: Client connected
+WebSocket::onClose: Client disconnected
+Stream and console capture setup complete. All terminal output will be written to: ./syslog.log
+  node-cms:server:info 2025/06/27 17:37:55.190S 📟  processTicksAndRejections ########### server started ########### +0ms
+  node-cms:server:info 2025/06/27 17:37:55.190S 📟  processTicksAndRejections node-cms started at http://localhost:9990/admin +0ms
+WebSocket::onConnection: Client connected
