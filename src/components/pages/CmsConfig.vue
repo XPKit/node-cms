@@ -105,7 +105,7 @@ export default {
     async loadConfig() {
       this.loading = true
       try {
-        const response = await fetch('/admin/cms-config')
+        const response = await fetch(`${window.location.pathname}/cms-config`)
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
