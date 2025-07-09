@@ -24,7 +24,8 @@ exports = module.exports = {
       required: false,
       localised: false,
       options: {
-        maxCount: 1,
+        maxCount: 4,
+        dynamicLayout: true,
         types: [
           'sequence_item_standard_actions',
           'sequence_item_timer_actions',

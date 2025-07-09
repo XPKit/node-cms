@@ -110,7 +110,7 @@ export default {
     border: 2px solid $wysiwyg-toolbar-border;
   }
   .editor-content {
-    padding: 16px;
+    margin: 16px;
     font-size: 14px;
     font-style: normal;
     font-weight: 300;
@@ -137,10 +137,17 @@ export default {
     outline: none;
   }
   .editor-content {
-    .tiptap p {
-      margin-bottom: 8px;
-      &:last-child {
-        margin-bottom: 0;
+    .tiptap {
+      p {
+        margin-bottom: 8px;
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+      ul, ol {
+        padding-left: 16px;
+        position: relative;
+        list-style-position: inside;
       }
     }
   }

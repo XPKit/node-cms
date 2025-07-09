@@ -1,4 +1,7 @@
 exports = module.exports = {
+  layout: {
+    slots: 6
+  },
   schema: [
     {
       label: 'Title',
@@ -51,7 +54,7 @@ exports = module.exports = {
       required: true,
       localised: false,
       options: {
-        maxCount: 1,
+        maxCount: 4,
         types: ['sequence_item_skip']
       }
     }

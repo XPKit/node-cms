@@ -95,6 +95,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.vue-form-generator {
+  /* Ensure sticky positioning works for nested paragraph headers */
+  position: relative;
+  z-index: auto;
+}
+
 .field-wrapper {
   box-shadow: 0px 0px 10px 0px transparent;
   &.focused {

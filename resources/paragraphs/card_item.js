@@ -43,6 +43,17 @@ exports = module.exports = {
       input: 'url',
       localised: false,
       required: false
+    },
+    {
+      label: 'Gallery Items (Explicit Dynamic Layout)',
+      field: 'gallery',
+      input: 'paragraph',
+      options: {
+        dynamicLayout: true,  // Explicitly enable dynamic layout
+        types: ['images'],    // Even existing paragraph types without width work
+      },
+      localised: false,
+      required: false
     }
   ]
 }

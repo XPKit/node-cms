@@ -1,6 +1,7 @@
 <template>
-  <div class="paragraph-view">
-    <div class="paragraph-footer">
+  <div class="paragraph-view" :style="{ '--paragraph-level': Math.max(0, (paragraphLevel || 1) - 1) }" :data-debug-level="paragraphLevel">
+    <!-- Sticky header with add button -->
+    <div v-if="!disabled && !schema.disabled && (maxCount === -1 || items.length < maxCount)" class="paragraph-header-bar" :data-paragraph-level="paragraphLevel" :data-css-level="Math.max(0, (paragraphLevel || 1) - 1)">
       <v-autocomplete
         ref="input"
         :ripple="false" :menu-props="menuProps"
@@ -16,43 +17,79 @@
         <v-btn elevation="0" class="add-new-item" rounded :disabled="blockMoreItems()" @click="onClickAddNewItem"><span>{{ $filters.translate('TL_ADD') }}</span></v-btn>
       </div>
     </div>
-    <draggable
-      v-if="schema && subResourcesLoaded" :key="`${schema.model}-${key}`" :list="items"
-      :class="{disabled, 'dynamic-layout-container': isDynamicLayoutContainer}" draggable=".item" v-bind="dragOptions" handle=".handle" :group="`${schema.model}-${key}`" ghost-class="ghost" @end="onEndDrag"
-    >
-      <v-card v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" :theme="theme" elevation="0" :class="getItemClasses(paragraphLevel, idx, item)" :style="getItemStyles(item)" :data-slots="getItemSlots(item)">
-        <v-card-title class="handle paragraph-header">
-          <div class="paragraph-title">{{ item.label }}</div>
-          <div class="add-btn-wrapper">
-            <v-btn class="remove-item" :disabled="disabled || schema.disabled" variant="text" icon rounded size="small" @click="onClickRemoveItem(item)"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
-          </div>
-        </v-card-title>
-        <div class="item-main-wrapper">
-          <div class="item-main">
-            <div v-if="item.showConvert || item.cannotConvert" class="convert-paragraph">
-              <div v-if="item.cannotConvert" class="error-message">{{ $filters.translate('TL_INVALID_PARAGRAPH_CANNOT_BE_CONVERTED') }}</div>
-              <div v-else class="error-message">{{ $filters.translate('TL_INVALID_PARAGRAPH_WOULD_YOU_LIKE_TO_CONVERT_IT') }}</div>
-              <json-viewer :value="item" tabindex="-1" />
-              <template v-if="item.showConvert">
-                <div class="convert-action">
-                  <v-select
-                    :model-value="item.showConvert"
-                    :menu-props="menuProps"
-                    :theme="theme" transition="none"
-                    :items="types" hide-details rounded density="compact" persistent-placeholder variant="solo-filled" flat
-                  >
-                    <template #prepend><field-label :schema="{label: $filters.translate('TL_CONVERT_TO')}" /></template>
-                    <template #label />
-                  </v-select>
-                  <v-btn elevation="0" rounded @click="convertParagraph(item)">{{ $filters.translate('TL_CONVERT') }}</v-btn>
-                </div>
-              </template>
+
+    <div class="paragraph-content">
+      <draggable
+        v-if="schema && subResourcesLoaded"
+        :key="`${schema.model}-${key}`"
+        :list="items"
+        :class="{disabled, 'dynamic-layout-container': isDynamicLayoutContainer}"
+        draggable=".item"
+        v-bind="dragOptions"
+        handle=".handle"
+        :group="`${schema.model}-${key}`"
+        ghost-class="ghost"
+        @end="onEndDrag"
+      >
+        <v-card
+          v-for="(item, idx) in items"
+          :key="`paragraph-item-${idx}`"
+          :theme="theme"
+          elevation="0"
+          :class="getItemClasses(paragraphLevel, idx, item)"
+          :style="getItemStyles(item)"
+          :data-slots="getItemSlots(item)"
+        >
+          <v-card-title class="handle paragraph-header">
+            <div class="paragraph-title">{{ item.label }}</div>
+            <div class="add-btn-wrapper">
+              <v-btn
+                class="remove-item"
+                :disabled="disabled || schema.disabled"
+                variant="text"
+                icon
+                rounded
+                size="small"
+                @click="onClickRemoveItem(item)"
+              >
+                <v-icon>mdi-trash-can-outline</v-icon>
+              </v-btn>
             </div>
-            <custom-form v-else :schema="getSchema(item, idx)" :model="item" :paragraph-index="idx" :paragraph-level="paragraphLevel + 1" @error="onError" @input="onModelUpdated" />
+          </v-card-title>
+          <div class="item-main-wrapper">
+            <div class="item-main">
+              <div v-if="item.showConvert || item.cannotConvert" class="convert-paragraph">
+                <div v-if="item.cannotConvert" class="error-message">{{ $filters.translate('TL_INVALID_PARAGRAPH_CANNOT_BE_CONVERTED') }}</div>
+                <div v-else class="error-message">{{ $filters.translate('TL_INVALID_PARAGRAPH_WOULD_YOU_LIKE_TO_CONVERT_IT') }}</div>
+                <json-viewer :value="item" tabindex="-1" />
+                <template v-if="item.showConvert">
+                  <div class="convert-action">
+                    <v-select
+                      :model-value="item.showConvert"
+                      :menu-props="menuProps"
+                      :theme="theme"
+                      transition="none"
+                      :items="types"
+                      hide-details
+                      rounded
+                      density="compact"
+                      persistent-placeholder
+                      variant="solo-filled"
+                      flat
+                    >
+                      <template #prepend><field-label :schema="{label: $filters.translate('TL_CONVERT_TO')}" /></template>
+                      <template #label />
+                    </v-select>
+                    <v-btn elevation="0" rounded @click="convertParagraph(item)">{{ $filters.translate('TL_CONVERT') }}</v-btn>
+                  </div>
+                </template>
+              </div>
+              <custom-form v-else :schema="getSchema(item, idx)" :model="item" :paragraph-index="idx" :paragraph-level="paragraphLevel + 1" @error="onError" @input="onModelUpdated" />
+            </div>
           </div>
-        </div>
-      </v-card>
-    </draggable>
+        </v-card>
+      </draggable>
+    </div>
   </div>
 </template>
 
@@ -90,21 +127,14 @@ export default {
   },
   computed: {
     isDynamicLayoutContainer() {
-      // Enable dynamic layout in two ways:
-      // 1. Explicitly set options.dynamicLayout: true in paragraph field config
-      // 2. Automatically detect when any items have slots properties
-      // This makes dynamic layout work for ANY paragraph type, not just reportItems
       return this.schema && (
         _.get(this.schema, 'options.dynamicLayout', false) ||
         _.some(this.items, item => _.has(item, '_value.slots') || _.has(item, 'slots'))
       )
-    },
-    parentSlots() {
+    },    parentSlots() {
       if (!this.isDynamicLayoutContainer) {
         return 12
       }
-      // Get slots from parent model (e.g., from a container paragraph with slots field)
-      // Default to 12 if not specified (like Bootstrap's 12-column grid)
       return _.get(this.model, 'slots') || _.get(this.vfg, 'model.slots') || 12
     }
   },
@@ -116,6 +146,7 @@ export default {
   created () {
   },
   async mounted () {
+    console.log('🔧 ParagraphView mounted with paragraphLevel:', this.paragraphLevel)
     this.getTypes()
     this.getSchemaForItems()
     await this.getSubResources()
@@ -134,48 +165,59 @@ export default {
         classes.push('not-highlighted')
       }
       if (this.isDynamicLayoutContainer) {
-        const slots = _.get(item, '_value.slots') || _.get(item, 'slots')
-        if (slots) {
-          classes.push('dynamic-layout-item')
-          classes.push(`slots-${slots}`)
+        let slots = _.get(item, '_value.slots') || _.get(item, 'slots')
+        if (!slots) {
+          try {
+            const paragraphType = _.get(item, '_type') || _.get(item, 'title')
+            if (paragraphType) {
+              const paragraphSchema = ResourceService.getParagraphSchema(paragraphType)
+              const layoutSlots = _.get(paragraphSchema, 'layout.slots')
+              if (layoutSlots) {
+                slots = layoutSlots
+              }
+            }
+          } catch {
+            // Silent fallback
+          }
         }
+        if (!slots) {
+          slots = 2
+        }
+        classes.push('dynamic-layout-item')
+        classes.push(`slots-${slots}`)
       }
       return classes
     },
     getItemStyles(item) {
-      // Apply flex-basis style for dynamic layout items
       if (this.isDynamicLayoutContainer) {
-        const slots = _.get(item, '_value.slots') || _.get(item, 'slots')
-        if (slots) {
-          const percentage = (slots / this.parentSlots) * 100
-          // Calculate gap adjustment
-          // For a 12-column grid with 16px gaps:
-          // - 2 items of 6 columns each need: calc(50% - 8px) each (total gap: 16px split between 2 items)
-          // - 3 items of 4 columns each need: calc(33.333% - 10.667px) each (total gap: 32px split between 3 items)
-          // - 4 items of 3 columns each need: calc(25% - 12px) each (total gap: 48px split between 4 items)
-          // Number of items that would fit in one row with this slots count
-          const itemsPerRow = Math.floor(this.parentSlots / slots)
-          // Total gap space in one row (n-1 gaps for n items)
-          const totalGapInRow = Math.max(0, (itemsPerRow - 1) * 16)
-          // Gap space to subtract from each item
-          const gapPerItem = itemsPerRow > 1 ? totalGapInRow / itemsPerRow : 0
-          const adjustedWidth = `calc(${percentage}% - ${gapPerItem}px)`
-          // Debug logging (remove in production)
-          console.log('🎨 Dynamic layout calculation:', {
-            item: _.get(item, '_value.name') || _.get(item, 'name') || _.get(item, '_value.title') || _.get(item, 'title'),
-            slots,
-            parentSlots: this.parentSlots,
-            percentage: `${percentage}%`,
-            itemsPerRow,
-            totalGapInRow,
-            gapPerItem,
-            adjustedWidth
-          })
-          return {
-            flexBasis: adjustedWidth,
-            maxWidth: adjustedWidth,
-            width: adjustedWidth
+        let slots = _.get(item, '_value.slots') || _.get(item, 'slots')
+        if (!slots) {
+          try {
+            const paragraphType = _.get(item, '_type') || _.get(item, 'title')
+            if (paragraphType) {
+              const paragraphSchema = ResourceService.getParagraphSchema(paragraphType)
+              const layoutSlots = _.get(paragraphSchema, 'layout.slots')
+              if (layoutSlots) {
+                slots = layoutSlots
+                console.log('🎨 Using layout.slots from paragraph type:', paragraphType, 'slots:', layoutSlots)
+              }
+            }
+          } catch (error) {
+            console.warn('Could not get paragraph schema for slots:', _.get(item, '_type'), error)
           }
+        }
+        if (!slots) {
+          slots = 2
+        }
+        const percentage = (slots / this.parentSlots) * 100
+        const itemsPerRow = Math.floor(this.parentSlots / slots)
+        const totalGapInRow = Math.max(0, (itemsPerRow - 1) * 16)
+        const gapPerItem = itemsPerRow > 1 ? totalGapInRow / itemsPerRow : 0
+        const adjustedWidth = `calc(${percentage}% - ${gapPerItem}px)`
+        return {
+          flexBasis: adjustedWidth,
+          maxWidth: adjustedWidth,
+          width: adjustedWidth
         }
       }
       return {}
@@ -184,8 +226,25 @@ export default {
       if (!this.isDynamicLayoutContainer) {
         return ''
       }
-      const slots = _.get(item, '_value.slots') || _.get(item, 'slots')
-      return slots ? `${slots}/${this.parentSlots}` : ''
+      let slots = _.get(item, '_value.slots') || _.get(item, 'slots')
+      if (!slots) {
+        try {
+          const paragraphType = _.get(item, '_type') || _.get(item, 'title')
+          if (paragraphType) {
+            const paragraphSchema = ResourceService.getParagraphSchema(paragraphType)
+            const layoutSlots = _.get(paragraphSchema, 'layout.slots')
+            if (layoutSlots) {
+              slots = layoutSlots
+            }
+          }
+        } catch {
+          // Silent fallback
+        }
+      }
+      if (!slots) {
+        slots = 2
+      }
+      return `${slots}/${this.parentSlots}`
     },
     convertParagraph(item) {
       item._type = item.showConvert
@@ -381,6 +440,26 @@ export default {
   border: 2px $paragraph-top-bar-background solid;
   border-radius: 8px;
   padding: 8px;
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  /* Ensure sticky positioning context */
+  overflow: visible;
+
+  /* Create a stacking context for nested sticky elements */
+  isolation: isolate;
+
+  .paragraph-header-bar + .paragraph-content {
+    padding-top: 16px;
+  }
+  .paragraph-content {
+    flex: 1;
+    /* Don't use overflow-y: auto here as it breaks sticky positioning for nested elements */
+    /* Allow sticky elements to stick within this container */
+    position: relative;
+    /* Conditional padding-top: only when sticky header is displayed */
+  }
 }
 .item {
   display: flex;
@@ -389,6 +468,9 @@ export default {
   align-items: stretch;
   border: 2px $paragraph-top-bar-background solid;
   border-radius: 8px;
+  /* Ensure nested paragraph sticky headers work */
+  overflow: visible;
+
   .handle, .file-item-handle {
     cursor: pointer;
   }
@@ -461,7 +543,7 @@ export default {
     background-color: $btn-action-background !important;
   }
 }
-.paragraph-footer, .paragraph-header {
+.paragraph-footer, .paragraph-header, .paragraph-header-bar {
   display: flex;
   flex-direction: row;
   align-items: flex-end;
@@ -469,8 +551,40 @@ export default {
   justify-content: flex-start;
   gap: 16px;
 }
-.paragraph-footer {
-  margin-bottom: 16px;
+.paragraph-header-bar {
+  position: -webkit-sticky;
+  position: sticky;
+  top: calc(var(--paragraph-level, 0) * 80px); /* Stack headers based on nesting level */
+  background-color: var(--v-theme-surface, white);
+  border-bottom: 1px solid var(--v-theme-outline, #e0e0e0);
+  padding: 16px 8px;
+  margin-top: 0;
+  z-index: calc(5000 - var(--paragraph-level, 0)) !important; /* Higher level headers appear on top, above other components */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px 8px 0 0;
+  backdrop-filter: blur(8px);
+
+  /* Ensure sticky positioning works in nested contexts */
+  align-self: flex-start;
+  width: 100%;
+
+  /* Force sticky positioning to work */
+  contain: layout style paint;
+
+  /* Debug styles - remove after testing */
+  &::before {
+    content: "Level: " attr(data-paragraph-level) " CSS: " attr(data-css-level);
+    position: absolute;
+    top: -20px;
+    left: 0;
+    background: red;
+    color: white;
+    padding: 2px 4px;
+    font-size: 10px;
+    font-family: monospace;
+    z-index: 9999;
+    pointer-events: none;
+  }
 }
 .paragraph-header {
   background-color: $paragraph-top-bar-background;
@@ -519,6 +633,9 @@ export default {
     align-items: stretch;
     justify-content: stretch;
     flex: 1 0;
+    /* Ensure nested sticky headers work */
+    overflow: visible;
+
     > .v-btn {
       margin: 10px;
     }
@@ -526,9 +643,32 @@ export default {
       margin-bottom: 0;
     }
   }
-  .paragraph-footer {
+  .paragraph-header-bar {
     .field-label {
       padding-left: 8px;
+    }
+
+    /* Make sure header items are properly aligned */
+    .add-btn-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+
+      .add-new-item {
+        margin: 0;
+        white-space: nowrap;
+      }
+    }
+
+    /* Responsive layout for header */
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 8px;
+
+      .add-btn-wrapper {
+        width: 100%;
+        justify-content: center;
+      }
     }
   }
   .custom-checkbox {
@@ -548,6 +688,9 @@ export default {
   .v-card {
     pointer-events: auto;
     touch-action: auto;
+    /* Ensure nested sticky headers work */
+    overflow: visible;
+
     &.item {
       &.highlighted, &:hover:not(.not-highlighted) {
         @include highlight-paragraph;
@@ -671,6 +814,11 @@ export default {
         }
       }
     }
+  }
+
+  // Conditional padding for stacked sticky headers
+  &:has(.paragraph-header-bar) .paragraph-content {
+    padding-top: calc(80px * (var(--paragraph-level, 0) + 1)); /* Reserve space for all parent sticky headers */
   }
 }
 </style>
