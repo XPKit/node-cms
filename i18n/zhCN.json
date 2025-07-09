@@ -148,6 +148,8 @@
     "TL_MAX_COUNT_OVERPASSED": "超过最大计数",
     "TL_EDIT_CROP": "编辑裁剪",
     "TL_APPLY_CROP": "应用裁剪",
+    "TL_WIDTH": "宽度",
+    "TL_HEIGHT": "高度",
     "TL_CONVERT_TO": "转换为",
     "TL_CONVERT": "转换",
     "TL_INVALID_PARAGRAPH_WOULD_YOU_LIKE_TO_CONVERT_IT": "无效段落，是否要转换？",

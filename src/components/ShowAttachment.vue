@@ -14,19 +14,57 @@
           <v-card :title="$filters.translate(schema.label)">
             <div class="parent-parent">
               <div class="cropper-parent">
+                {{ !schema.crop.width || !schema.crop.height ? 'stencil' : 'fit-area' }}
                 <cropper
                   ref="cropper"
                   :src="imageUrl()" :transitions="true"
-                  image-restriction="fit-area" default-boundaries="fill" class="cropper"
+                  :image-restriction="!schema.crop.width || !schema.crop.height ? 'stencil' : 'fit-area'" default-boundaries="fill" class="cropper"
                   :default-size="getDefaultCropSize()" :default-position="getDefaultCropPosition"
-                  :min-width="schema.crop.width" :max-width="schema.crop.width" :min-height="schema.crop.height " :max-height="schema.crop.height"
                   :move-image="hasOpt('moveImage')" :resize-image="hasOpt('resizeImage')"
                   :stencil-props="stencilProps"
+                  v-bind="{
+                    ...(schema.crop.width ? {
+                      'min-width': getCurrentWidth(),
+                      'max-width': getCurrentWidth()
+                    } : {}),
+                    ...(schema.crop.height ? {
+                      'min-height': getCurrentHeight(),
+                      'max-height': getCurrentHeight()
+                    } : {})
+                  }"
                   @change="onCropperChangeForAttachment"
                 />
               </div>
             </div>
             <v-card-actions>
+              <!-- Crop size controls when dimensions aren't fixed -->
+              <div v-if="!schema.crop.width || !schema.crop.height" class="crop-size-controls">
+                <v-text-field
+                  v-if="!schema.crop.width"
+                  v-model.number="customWidth"
+                  type="number"
+                  :label="$filters.translate('TL_WIDTH')"
+                  density="compact"
+                  variant="outlined"
+                  hide-details
+                  min="1"
+                  @update:model-value="updateCropSize"
+                />
+                <v-text-field
+                  v-if="!schema.crop.height"
+                  v-model.number="customHeight"
+                  type="number"
+                  :label="$filters.translate('TL_HEIGHT')"
+                  density="compact"
+                  variant="outlined"
+                  hide-details
+                  min="1"
+                  @update:model-value="updateCropSize"
+                />
+              </div>
+
+              <!-- Action buttons -->
+              <v-spacer />
               <v-btn variant="outlined" rounded @click="isActive.value = false">
                 {{ $filters.translate('TL_CLOSE') }}
               </v-btn>
@@ -83,6 +121,8 @@ export default {
     return {
       cropData: false,
       firstCropUpdate: true,
+      customWidth: null,
+      customHeight: null,
       stencilProps: {
         class: 'cropper-stencil',
         previewClass: 'cropper-stencil__preview',
@@ -96,6 +136,11 @@ export default {
         }
       }
     }
+  },
+  mounted() {
+    // Initialize custom dimensions if not defined in schema
+    this.customWidth = this.schema.crop?.width || 500
+    this.customHeight = this.schema.crop?.height || 500
   },
   methods: {
     viewFile () {
@@ -128,14 +173,38 @@ export default {
     },
     getDefaultCropSize () {
       return {
-        width: _.get(this.schema, 'crop.width', 500),
-        height: _.get(this.schema, 'crop.height', 500)
+        width: this.getCurrentWidth(),
+        height: this.getCurrentHeight()
       }
+    },
+    getCurrentWidth() {
+      return this.schema.crop?.width || this.customWidth || 500
+    },
+    getCurrentHeight() {
+      return this.schema.crop?.height || this.customHeight || 500
+    },
+    updateCropSize() {
+      // Force cropper to update with new dimensions
+      this.$nextTick(() => {
+        if (this.$refs.cropper) {
+          this.$refs.cropper.refresh()
+        }
+      })
     },
     onCropperChangeForAttachment(data) {
       this.cropData = data
       if (this.firstCropUpdate) {
         return this.firstCropUpdate = false
+      }
+      // Update custom dimensions based on cropper changes if not fixed in schema
+      if (data && data.coordinates) {
+        if (!this.schema.crop?.width) {
+          this.customWidth = Math.round(data.coordinates.width)
+        }
+        if (!this.schema.crop?.height) {
+          this.customHeight = Math.round(data.coordinates.height)
+        }
+        this.$forceUpdate()
       }
     },
     apply(isActive) {
@@ -172,6 +241,21 @@ export default {
     max-height: 70vh;
   }
   .v-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    .crop-size-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+
+      .v-text-field {
+        width: 100px;
+        flex-shrink: 0;
+      }
+    }
+
     .v-btn {
       @include cta-text;
       &.apply {

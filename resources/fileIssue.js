@@ -37,15 +37,14 @@ exports = module.exports = {
       required: false
     },
     {
-      label: 'Image - crop 400x400',
+      label: 'Image - crop free',
       field: 'testCrop',
       input: 'image',
       options: {
         accept: '.jpg,.png',
         maxCount: 2,
         crop: {
-          width: 400,
-          height: 400
+          width: 250
         }
       },
       localised: false,

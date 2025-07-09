@@ -155,6 +155,8 @@
     "TL_MAX_COUNT_OVERPASSED": "Max count overpassed",
     "TL_EDIT_CROP": "Edit crop",
     "TL_APPLY_CROP": "Apply crop",
+    "TL_WIDTH": "Width",
+    "TL_HEIGHT": "Height",
     "TL_CONVERT_TO": "Convert to",
     "TL_CONVERT": "Convert",
     "TL_INVALID_PARAGRAPH_WOULD_YOU_LIKE_TO_CONVERT_IT": "Invalid paragraph, would you like to convert it?",
