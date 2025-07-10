@@ -64,6 +64,6 @@ export default {
       type: Function,
       default: ()=> {}
     }
-  }
+  },
 }
 </script>

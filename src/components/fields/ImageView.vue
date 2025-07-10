@@ -13,7 +13,7 @@
           :theme="theme"
           variant="solo-filled" :rules="getRules()" hide-details="auto" prepend-icon="" flat single-line
           :placeholder="getPlaceholder()" :clearable="false" :label="getPlaceholder()"
-          density="compact" rounded persistent-placeholder :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
+          density="compact" rounded persistent-placeholder :multiple="isForMultipleImages()" :accept="schema.accept"
           @change="onUploadChanged" @update:focused="onFieldFocus"
         >
           <template #selection />

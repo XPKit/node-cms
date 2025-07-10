@@ -88,6 +88,10 @@ import 'vue-advanced-cropper/dist/style.css'
 export default {
   components: {Cropper},
   props: {
+    theme: {
+      type: String,
+      default: 'light'
+    },
     attachment: {
       type: Object,
       default: () => {}

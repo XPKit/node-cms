@@ -11,7 +11,7 @@
         <v-file-input
           ref="input"
           :theme="theme" flat :rules="getRules()" prepend-icon="" :label="getPlaceholder()" :placeholder="getPlaceholder()" :clearable="false" hide-details="auto"
-          density="compact" :variant="getVariant()" rounded persistent-placeholder single-line :multiple="isForMultipleImages()" :accept="schema.accept" :disabled="isForMultipleImages() && isFieldDisabled()"
+          density="compact" :variant="getVariant()" rounded persistent-placeholder single-line :multiple="isForMultipleImages()" :accept="schema.accept"
           @change="onUploadChanged" @update:focused="onFieldFocus"
         >
           <template #selection />

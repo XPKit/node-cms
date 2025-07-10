@@ -201,7 +201,7 @@ export default {
         files = _.take(files, files.length - (totalNbFiles - maxCount))
       }
       if (_.get(this.$refs, 'input', false)) {
-        console.warn('WILL VALIDATE', files)
+        // console.warn('WILL VALIDATE', files)
         const test = await this.$refs.input.validate()
         if (_.get(test, 'length', 0) !== 0) {
           console.error('validation error, will not upload files:', test)

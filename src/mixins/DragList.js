@@ -14,7 +14,7 @@ export default {
   },
   methods: {
     getKey (elem) {
-      return `${elem._filename}-${Math.random()}`
+      return `${elem._filename}-${elem._id || elem._createdAt || elem._md5sum || elem._size}`
     }
   }
 }

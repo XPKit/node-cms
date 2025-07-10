@@ -73,7 +73,7 @@ export default {
       return attachment._filename || (attachment._fields && attachment._fields._filename)
     },
     getKey (elem) {
-      return `${elem._filename}-${Math.random()}`
+      return `${elem._filename}-${elem._id || elem._createdAt || this.index}`
     },
     onCropperChangeForAttachment(data) {
       this.onCropperChange(this.index, _.pick(data, ['coordinates']))

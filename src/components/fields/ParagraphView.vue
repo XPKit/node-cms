@@ -15,9 +15,35 @@
       </v-autocomplete>
       <div class="add-btn-wrapper">
         <v-btn elevation="0" class="add-new-item" rounded :disabled="blockMoreItems()" @click="onClickAddNewItem"><span>{{ $filters.translate('TL_ADD') }}</span></v-btn>
+        <v-btn v-if="hasFileOrImageTypes" elevation="0" class="add-multiple-items" rounded :disabled="blockMoreItems()" @click="toggleMultipleDropZone">
+          <span>{{ $filters.translate('TL_ADD_MULTIPLE') }}</span>
+        </v-btn>
       </div>
     </div>
 
+    <!-- Multiple files drop zone -->
+    <div
+      v-if="showMultipleDropZone"
+      class="multiple-drop-zone"
+      :class="{ 'drag-over': isDragOver }"
+      @click="$refs.fileInput.click()"
+      @drop="onDropFiles"
+      @dragover.prevent="onDragOver"
+      @dragenter.prevent="onDragEnter"
+      @dragleave.prevent="onDragLeave"
+    >
+      <div class="drop-zone-content">
+        <v-icon size="48" color="primary">mdi-cloud-upload</v-icon>
+        <div class="drop-zone-text">
+          <div class="primary-text">{{ $filters.translate('TL_DRAG_AND_DROP_FILES_HERE') }}</div>
+          <div class="secondary-text">{{ $filters.translate('TL_OR_CLICK_TO_SELECT_FILES') }}</div>
+          <div class="supported-types">
+            {{ $filters.translate('TL_SUPPORTED_TYPES') }}: {{ getSupportedExtensions() }}
+          </div>
+        </div>
+        <input ref="fileInput" type="file" multiple style="display: none" :accept="getAllAcceptedTypes()" @change="onSelectFiles">
+      </div>
+    </div>
     <div class="paragraph-content">
       <draggable
         v-if="schema && subResourcesLoaded"
@@ -36,7 +62,7 @@
           :key="`paragraph-item-${idx}`"
           :theme="theme"
           elevation="0"
-          :class="getItemClasses(paragraphLevel, idx, item)"
+          :class="getItemClasses(idx, item)"
           :style="getItemStyles(item)"
           :data-slots="getItemSlots(item)"
         >
@@ -122,7 +148,9 @@ export default {
       highlight: {
         level: -1,
         index: -1
-      }
+      },
+      showMultipleDropZone: false,
+      isDragOver: false
     }
   },
   computed: {
@@ -131,11 +159,36 @@ export default {
         _.get(this.schema, 'options.dynamicLayout', false) ||
         _.some(this.items, item => _.has(item, '_value.slots') || _.has(item, 'slots'))
       )
-    },    parentSlots() {
-      if (!this.isDynamicLayoutContainer) {
-        return 12
-      }
-      return _.get(this.model, 'slots') || _.get(this.vfg, 'model.slots') || 12
+    },
+    parentSlots() {
+      return this.isDynamicLayoutContainer ? _.get(this.model, 'slots', _.get(this.vfg, 'model.slots', 12)) : 12
+    },
+    hasFileOrImageTypes() {
+      // Check if there's a mapping configuration for file types
+      const mapping = _.get(this.schema, 'options.mapping', {})
+      return _.has(mapping, 'default') || _.some(_.keys(mapping), key => key !== 'default')
+    },
+    fileImageTypesMap() {
+      const map = {}
+      const mapping = _.get(this.schema, 'options.mapping', {})
+      // Process each mapping entry
+      _.each(mapping, (config, key) => {
+        if (key === 'default') {
+          return
+        }
+        const extensions = key.split(',').map(ext => ext.trim().toLowerCase())
+        _.each(extensions, ext => {
+          const normalizedExt = ext.startsWith('.') ? ext : '.' + ext
+          if (!map[normalizedExt]) {
+            map[normalizedExt] = []
+          }
+          map[normalizedExt].push({
+            type: config._type,
+            field: config.field
+          })
+        })
+      })
+      return map
     }
   },
   watch: {
@@ -143,10 +196,7 @@ export default {
       this.items = _.cloneDeep(_.get(this.model, this.schema.model, []))
     }
   },
-  created () {
-  },
   async mounted () {
-    console.log('🔧 ParagraphView mounted with paragraphLevel:', this.paragraphLevel)
     this.getTypes()
     this.getSchemaForItems()
     await this.getSubResources()
@@ -157,9 +207,9 @@ export default {
     FieldSelectorService.events.off('highlight-paragraph', this.onHighlightParagraph)
   },
   methods: {
-    getItemClasses(paragraphLevel, idx, item) {
-      const classes = ['item', `nested-level-${paragraphLevel}`]
-      if (this.isHighlighted(idx, paragraphLevel)) {
+    getItemClasses(idx, item) {
+      const classes = ['item', `nested-level-${this.paragraphLevel}`]
+      if (this.isHighlighted(idx)) {
         classes.push('highlighted')
       } else if (this.highlight.level !== -1 && this.highlight.index !== -1) {
         classes.push('not-highlighted')
@@ -176,8 +226,8 @@ export default {
                 slots = layoutSlots
               }
             }
-          } catch {
-            // Silent fallback
+          } catch (error) {
+            console.error(`Error: `, error)
           }
         }
         if (!slots) {
@@ -199,7 +249,6 @@ export default {
               const layoutSlots = _.get(paragraphSchema, 'layout.slots')
               if (layoutSlots) {
                 slots = layoutSlots
-                console.log('🎨 Using layout.slots from paragraph type:', paragraphType, 'slots:', layoutSlots)
               }
             }
           } catch (error) {
@@ -255,11 +304,11 @@ export default {
       return this.schema.required && _.get(this.items, 'length', 0) === 0 ? false : true
     },
     onHighlightParagraph(level, index) {
-      this.highlight = {level, index}
-      this.$forceUpdate()
+      this.highlight.level = level
+      this.highlight.index = index
     },
-    isHighlighted(idx, paragraphLevel) {
-      return paragraphLevel === this.highlight.level && idx === this.highlight.index
+    isHighlighted(idx) {
+      return this.paragraphLevel === this.highlight.level && idx === this.highlight.index
     },
     async getSubResources() {
       await pAll(_.map(this.types, type => {
@@ -427,6 +476,340 @@ export default {
         return obj
       })
       this.$emit('input', items, this.schema.model)
+    },
+    toggleMultipleDropZone() {
+      this.showMultipleDropZone = !this.showMultipleDropZone
+    },
+    onDragEnter(event) {
+      event.preventDefault()
+      this.isDragOver = true
+    },
+    onDragOver(event) {
+      event.preventDefault()
+      this.isDragOver = true
+    },
+    onDragLeave(event) {
+      event.preventDefault()
+      this.isDragOver = false
+    },
+    onDropFiles(event) {
+      event.preventDefault()
+      this.isDragOver = false
+      const files = Array.from(event.dataTransfer.files)
+      this.processFiles(files)
+    },
+    onSelectFiles(event) {
+      const files = Array.from(event.target.files)
+      this.processFiles(files)
+      // Clear the input so the same file can be selected again
+      event.target.value = ''
+    },
+    async processFiles(files) {
+      // Process files sequentially to avoid race conditions
+      for (const file of files) {
+        await this.processSingleFile(file)
+        // Small delay to ensure DOM updates are complete
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
+    },
+    async processSingleFile(file) {
+      const extension = '.' + file.name.split('.').pop().toLowerCase()
+      const matchingTypes = this.fileImageTypesMap[extension]
+      const mapping = _.get(this.schema, 'options.mapping', {})
+      let paragraphConfig = null
+      if (matchingTypes && matchingTypes.length > 0) {
+        // Use the first matching type from mapping
+        paragraphConfig = matchingTypes[0]
+      } else if (_.has(mapping, 'default')) {
+        // Use default mapping if no specific extension mapping found
+        paragraphConfig = {
+          type: mapping.default._type,
+          field: mapping.default.field
+        }
+      }
+      if (paragraphConfig) {
+        // Find the paragraph type in our available types
+        const paragraphType = _.find(this.types, { title: paragraphConfig.type })
+        if (paragraphType) {
+          console.warn(`Processing file ${file.name} for field ${paragraphConfig.field}`)
+          await this.createParagraphWithFile(paragraphType, file, paragraphConfig.field)
+        } else {
+          console.warn(`Paragraph type ${paragraphConfig.type} is not an existing paragraph resource type, ignoring file: ${file.name}`)
+          this.$emit('notify', `Paragraph type ${paragraphConfig.type} is not available for file: ${file.name}`)
+        }
+      } else {
+        console.warn(`No paragraph type found for file extension: ${extension}`)
+        this.$emit('notify', `No paragraph type supports files with extension: ${extension}`)
+      }
+    },
+    async createParagraphWithFile(paragraphType, file, targetField) {
+      const newItem = _.cloneDeep(paragraphType)
+      // Only set title if we're NOT setting an image field (to avoid overwriting the image field)
+      const titleField = _.find(newItem.schema, field => field.field === 'title')
+      if (titleField && targetField !== 'image') {
+        const fileName = file.name.split('.').slice(0, -1).join('.')
+        _.set(newItem, '_value.title', fileName)
+      }
+      await this.requestResourcesForParagraph(newItem)
+      this.items.push(newItem)
+      this.updateItems()
+      // Wait for the component to be fully rendered
+      await this.$nextTick()
+      // Trigger file processing on the target field
+      // Use the current index of the newly added item (length - 1)
+      const currentItemIndex = this.items.length - 1
+      console.warn(`Creating paragraph with file ${file.name} at index ${currentItemIndex}`)
+      this.triggerFileUpload(targetField, file, currentItemIndex)
+    },
+    triggerFileUpload(targetField, file, itemIndex) {
+      // console.warn(`Triggering file upload for field: ${targetField} in item ${itemIndex}`)
+      // Use a more targeted approach with setTimeout to ensure components are mounted
+      setTimeout(() => {
+        const success = this.findAndTriggerFileValidation(targetField, file, itemIndex)
+        if (!success) {
+          console.warn(`Could not trigger file validation for field: ${targetField}. Trying alternative method...`)
+          const altSuccess = this.findAndTriggerFileValidationByRef(targetField, file, itemIndex)
+          if (!altSuccess) {
+            console.warn(`Alternative method also failed. Trying synthetic file input...`)
+            this.triggerSyntheticFileInput(targetField, file, itemIndex)
+          }
+        }
+      }, 200) // Increased delay to ensure components are fully mounted and rendered
+    },
+    findAndTriggerFileValidation(targetField, file, itemIndex) {
+      try {
+        const paragraphItems = this.$el.querySelectorAll('.v-card.item')
+        if (paragraphItems && paragraphItems[itemIndex]) {
+          const paragraphElement = paragraphItems[itemIndex]
+          const fieldWrappers = paragraphElement.querySelectorAll('.field-wrapper')
+          for (let wrapper of fieldWrappers) {
+            const labels = wrapper.querySelectorAll('label, .field-label')
+            const fieldMatches = _.some(labels, label => {
+              const labelText = label.textContent || label.innerText || ''
+              return labelText.toLowerCase().includes(targetField.toLowerCase())
+            })
+            if (fieldMatches) {
+              const filesToPass = [file]
+              const refInputElements = wrapper.querySelectorAll('*')
+              for (let element of refInputElements) {
+                if (element.__vueParentComponent || element.__vue__ || element._vnode) {
+                  const vueInstance = element.__vueParentComponent || element.__vue__ || element._vnode?.component
+                  if (vueInstance) {
+                    if (_.get(vueInstance, 'ctx.onUploadChanged', false)) {
+                      vueInstance.ctx.onUploadChanged(filesToPass)
+                    return true
+                    } else if (_.get(vueInstance, 'exposed.onUploadChanged', false)) {
+                      vueInstance.exposed.onUploadChanged(filesToPass)
+                      return true
+                    } else if (_.get(vueInstance, 'setupState.onUploadChanged', false)) {
+                      vueInstance.setupState.onUploadChanged(filesToPass)
+                      return true
+                    }
+                  }
+                }
+              }
+              // Alternative approach: look for the v-file-input component specifically
+              const fileInputComponents = wrapper.querySelectorAll('.v-file-input')
+              for (let fileInputEl of fileInputComponents) {
+                const vueComponent = this.findVueComponent(fileInputEl)
+                if (vueComponent && vueComponent.onUploadChanged) {
+                  // console.warn(`Found v-file-input component with onUploadChanged method for field: ${targetField}`)
+                  vueComponent.onUploadChanged(filesToPass)
+                  return true
+                }
+              }
+            }
+          }
+          // Fallback: try to find by field name or data attributes
+          const allInputs = paragraphElement.querySelectorAll('input[type="file"]')
+          for (let input of allInputs) {
+            if (input.name && input.name.includes(targetField)) {
+              const vueComponent = this.findVueComponent(input)
+              if (_.get(vueComponent, 'onUploadChanged', false)) {
+                // console.warn(`Fallback: triggering onUploadChanged for field: ${targetField}`)
+                const filesToPass = [file]
+                vueComponent.onUploadChanged(filesToPass)
+                return true
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Could not find and trigger file validation:', error)
+      }
+      return false
+    },
+    findVueComponentForField(fieldWrapper, targetField) {
+      const elements = fieldWrapper.querySelectorAll('*')
+      for (let element of elements) {
+        if (element.__vueParentComponent) {
+          const component = element.__vueParentComponent
+          if (_.isFunction(_.get(component, 'ctx.onUploadChanged', false)) && _.get(component, 'ctx.schema.field', []).includes(targetField)) {
+            return component.ctx
+          } else if (_.isFunction(_.get(component, 'exposed.onUploadChanged', false)) && _.get(component, 'exposed.schema.field', []).includes(targetField)) {
+            return component.exposed
+          } else if (_.isFunction(_.get(component, 'setupState.onUploadChanged', false)) && _.get(component, 'setupState.schema.field', []).includes(targetField)) {
+            return component.setupState
+          }
+        }
+        if (element.__vue__) {
+          const component = element.__vue__
+          if (_.isFunction(_.get(component, 'onUploadChanged', false)) && _.get(component, 'schema.field', []).includes(targetField)) {
+            return component
+          }
+        }
+      }
+      return null
+    },
+    findAndTriggerFileValidationByRef(targetField, file, itemIndex) {
+      try {
+        const paragraphItems = this.$el.querySelectorAll('.v-card.item')
+        if (paragraphItems && paragraphItems[itemIndex]) {
+          const paragraphElement = paragraphItems[itemIndex]
+          console.warn(`Alternative method: Found paragraph element at index ${itemIndex}`)
+          const fieldWrappers = paragraphElement.querySelectorAll('.field-wrapper')
+          for (let wrapper of fieldWrappers) {
+            const labels = wrapper.querySelectorAll('label, .field-label')
+            const fieldMatches = _.some(labels, label => {
+              const labelText = label.textContent || label.innerText || ''
+              return labelText.toLowerCase().includes(targetField.toLowerCase())
+            })
+            if (fieldMatches) {
+              console.warn(`Alternative method: Found matching field wrapper for ${targetField}`)
+              const filesToPass = [file]
+              const parentComponent = this.findVueComponent(wrapper)
+              if (parentComponent) {
+                console.warn(`Alternative method: Found parent Vue component`, parentComponent)
+                if (parentComponent.$refs && parentComponent.$refs.input) {
+                  const inputRef = parentComponent.$refs.input
+                  console.warn(`Alternative method: Found input ref`, inputRef)
+                  if (inputRef.onUploadChanged) {
+                    console.warn(`Alternative method: Triggering onUploadChanged via input ref`)
+                    inputRef.onUploadChanged(filesToPass)
+                    return true
+                  }
+                  if (parentComponent.onUploadChanged) {
+                    console.warn(`Alternative method: Triggering onUploadChanged via parent component`)
+                    parentComponent.onUploadChanged(filesToPass)
+                    return true
+                  }
+                }
+                if (parentComponent.onUploadChanged) {
+                  console.warn(`Alternative method: Directly triggering onUploadChanged on parent`)
+                  parentComponent.onUploadChanged(filesToPass)
+                  return true
+                }
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.warn('Alternative method failed:', error)
+      }
+      return false
+    },
+    triggerSyntheticFileInput(targetField, file, itemIndex) {
+      try {
+        // Look for the specific paragraph item by index
+        const paragraphItems = this.$el.querySelectorAll('.v-card.item')
+        if (paragraphItems && paragraphItems[itemIndex]) {
+          const paragraphElement = paragraphItems[itemIndex]
+          console.warn(`Synthetic method: Found paragraph element at index ${itemIndex}`)
+          // Look for all field wrappers within this specific paragraph
+          const fieldWrappers = paragraphElement.querySelectorAll('.field-wrapper')
+          for (let wrapper of fieldWrappers) {
+            // Check for field labels or other identifiers to match our target field
+            const labels = wrapper.querySelectorAll('label, .field-label')
+            const fieldMatches = _.some(labels, label => {
+              const labelText = label.textContent || label.innerText || ''
+              return labelText.toLowerCase().includes(targetField.toLowerCase())
+            })
+            if (fieldMatches) {
+              console.warn(`Synthetic method: Found matching field wrapper for ${targetField}`)
+              // Find the actual file input element
+              const fileInput = wrapper.querySelector('input[type="file"]')
+              if (fileInput) {
+                console.warn(`Synthetic method: Found file input element`)
+                // Create a synthetic file list with only one file
+                const dataTransfer = new DataTransfer()
+                dataTransfer.items.add(file)  // Always add only one file per call
+                // Set the files property
+                fileInput.files = dataTransfer.files
+                // Create and dispatch a change event
+                const changeEvent = new Event('change', {
+                  bubbles: true,
+                  cancelable: true
+                })
+                // Add the files to the event
+                Object.defineProperty(changeEvent, 'target', {
+                  value: fileInput,
+                  enumerable: true
+                })
+                console.warn(`Synthetic method: Dispatching change event on file input with ${fileInput.files.length} file(s)`)
+                fileInput.dispatchEvent(changeEvent)
+
+                return true
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.warn('Synthetic method failed:', error)
+      }
+      return false
+    },
+    findVueComponent(element) {
+      // Traverse up the DOM tree to find the Vue component
+      let currentElement = element
+      while (currentElement && currentElement.parentNode) {
+        // Check for Vue 3 component instance
+        if (currentElement.__vueParentComponent) {
+          const component = currentElement.__vueParentComponent
+          if (component.ctx && component.ctx.onUploadChanged) {
+            return component.ctx
+          }
+          if (component.exposed && component.exposed.onUploadChanged) {
+            return component.exposed
+          }
+          if (component.setupState && component.setupState.onUploadChanged) {
+            return component.setupState
+          }
+        }
+        // Check for Vue 2 component instance (fallback)
+        if (currentElement.__vue__) {
+          return currentElement.__vue__
+        }
+        currentElement = currentElement.parentNode
+      }
+      return null
+    },
+    getAllAcceptedTypes() {
+      const mapping = _.get(this.schema, 'options.mapping', {})
+      const extensions = []
+      _.each(mapping, (config, key) => {
+        if (key === 'default') return
+        // Handle comma-separated extensions
+        const keyExtensions = key.split(',').map(ext => {
+          const trimmed = ext.trim().toLowerCase()
+          return trimmed.startsWith('.') ? trimmed : '.' + trimmed
+        })
+        extensions.push(...keyExtensions)
+      })
+      return extensions.join(',')
+    },
+    getSupportedExtensions() {
+      const mapping = _.get(this.schema, 'options.mapping', {})
+      const extensions = []
+      _.each(mapping, (config, key) => {
+        if (key === 'default') return
+        // Handle comma-separated extensions
+        const keyExtensions = key.split(',').map(ext => {
+          const trimmed = ext.trim().toLowerCase()
+          return trimmed.startsWith('.') ? trimmed : '.' + trimmed
+        })
+        extensions.push(...keyExtensions)
+      })
+      return extensions.join(', ')
     }
   }
 }
@@ -461,6 +844,53 @@ export default {
     /* Conditional padding-top: only when sticky header is displayed */
   }
 }
+
+.multiple-drop-zone {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 32px;
+  margin: 16px 0;
+  text-align: center;
+  background-color: #fafafa;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover, &.drag-over {
+    border-color: var(--v-theme-primary, #1976d2);
+    background-color: rgba(var(--v-theme-primary-rgb, 25, 118, 210), 0.04);
+  }
+
+  .drop-zone-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .drop-zone-text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .primary-text {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--v-theme-on-surface, #212121);
+    }
+
+    .secondary-text {
+      font-size: 14px;
+      color: var(--v-theme-on-surface-variant, #757575);
+    }
+
+    .supported-types {
+      font-size: 12px;
+      color: var(--v-theme-on-surface-variant, #757575);
+      font-style: italic;
+    }
+  }
+}
+
 .item {
   display: flex;
   flex-direction: column;
@@ -523,7 +953,7 @@ export default {
 .disabled {
   pointer-events: none;
 }
-.add-new-item, .remove-item {
+.add-new-item, .remove-item, .add-multiple-items {
   color: $btn-action-color !important;
   max-height: 34px;
   button {
@@ -539,7 +969,10 @@ export default {
   }
 }
 .add-btn-wrapper {
-  .add-new-item {
+  display: flex;
+  gap: 8px;
+
+  .add-new-item, .add-multiple-items {
     background-color: $btn-action-background !important;
   }
 }
@@ -677,7 +1110,13 @@ export default {
   .add-btn-wrapper {
     display: flex;
     justify-content: flex-end;
+    gap: 8px;
+
     .add-new-item {
+      margin: 0;
+    }
+
+    .add-multiple-items {
       margin: 0;
     }
   }
@@ -703,43 +1142,6 @@ export default {
           }
         }
       }
-      // has sub paragraph
-      // &:has(.v-card.item) {
-      //   &:hover {
-      //     // background-color: red;
-      //     &:has(.v-card.item:hover) {
-      //       @include nested-paragraphs;
-      //       .v-card.item:hover {
-      //         @include highlight-paragraph;
-      //       }
-      //     }
-      //     &:not(:has(.v-card.item:hover)) {
-      //       @include highlight-paragraph;
-      //       .v-card {
-      //         @include nested-paragraphs;
-      //       }
-      //     }
-      //     &:not(:has(.v-card.item:hover, .v-card.item:has(.v-field--focused, .switch:focus, .ProseMirror-focused))) {
-      //       background-color: green;
-      //       @include highlight-paragraph;
-      //       .v-card.item {
-      //         @include nested-paragraphs;
-      //       }
-      //     }
-      //   }
-        // if not hovered and has a focused field
-        // &:not(:hover):has(.v-field--focused, .switch:focus, .ProseMirror-focused) {
-        //   background-color: orange;
-        //   // if focused field is not in a sub paragraph
-        //   .v-card.item:has(.v-field--focused, .switch:focus, .ProseMirror-focused) {
-        //     background-color: blue;
-        //   }
-        //   &:not(:has(.v-card.item:has(.v-field--focused, .switch:focus, .ProseMirror-focused))) {
-        //     background-color: red;
-        //   }
-        // }
-      // }
-
     }
     &:not(.editor) {
       background-color: transparent;
