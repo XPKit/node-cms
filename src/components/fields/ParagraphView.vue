@@ -33,13 +33,14 @@
       @dragleave.prevent="onDragLeave"
     >
       <div class="drop-zone-content">
-        <v-icon size="48" color="primary">mdi-cloud-upload</v-icon>
+        <v-icon size="48">mdi-cloud-upload</v-icon>
         <div class="drop-zone-text">
           <div class="primary-text">{{ $filters.translate('TL_DRAG_AND_DROP_FILES_HERE') }}</div>
           <div class="secondary-text">{{ $filters.translate('TL_OR_CLICK_TO_SELECT_FILES') }}</div>
           <div class="supported-types">
             {{ $filters.translate('TL_SUPPORTED_TYPES') }}: {{ getSupportedExtensions() }}
           </div>
+          <div v-if="getDefaultParagraph()" class="default">{{ $filters.translate('TL_DRAG_AND_DROP_DEFAULT') }}: {{ getDefaultParagraph() }}</div>
         </div>
         <input ref="fileInput" type="file" multiple style="display: none" :accept="getAllAcceptedTypes()" @change="onSelectFiles">
       </div>
@@ -207,6 +208,9 @@ export default {
     FieldSelectorService.events.off('highlight-paragraph', this.onHighlightParagraph)
   },
   methods: {
+    getDefaultParagraph() {
+      return _.get(ResourceService.getParagraphSchema(_.get(this.schema, 'mapping.default', false)), 'displayname', false)
+    },
     getItemClasses(idx, item) {
       const classes = ['item', `nested-level-${this.paragraphLevel}`]
       if (this.isHighlighted(idx)) {
@@ -871,22 +875,20 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 8px;
-
     .primary-text {
       font-size: 18px;
       font-weight: 500;
       color: var(--v-theme-on-surface, #212121);
     }
-
-    .secondary-text {
-      font-size: 14px;
+    .secondary-text, .supported-types, .default {
       color: var(--v-theme-on-surface-variant, #757575);
     }
-
-    .supported-types {
-      font-size: 12px;
-      color: var(--v-theme-on-surface-variant, #757575);
+    .secondary-text {
+      font-size: 14px;
+    }
+    .supported-types, .default {
       font-style: italic;
+      font-size: 12px;
     }
   }
 }
@@ -1004,20 +1006,6 @@ export default {
   /* Force sticky positioning to work */
   contain: layout style paint;
 
-  /* Debug styles - remove after testing */
-  &::before {
-    content: "Level: " attr(data-paragraph-level) " CSS: " attr(data-css-level);
-    position: absolute;
-    top: -20px;
-    left: 0;
-    background: red;
-    color: white;
-    padding: 2px 4px;
-    font-size: 10px;
-    font-family: monospace;
-    z-index: 9999;
-    pointer-events: none;
-  }
 }
 .paragraph-header {
   background-color: $paragraph-top-bar-background;
@@ -1027,7 +1015,7 @@ export default {
   align-content: center;
   justify-content: space-between;
   height: 34px;
-  padding: 8px;
+  padding-right: 0;
   padding-left: 16px;
   .paragraph-title {
     height: 100%;
@@ -1178,20 +1166,19 @@ export default {
       .item-main {
         overflow: hidden;
       }
-      // Add some visual indication for development
       &::before {
         content: attr(data-slots);
         position: absolute;
         top: 2px;
-        right: 2px;
+        left: 50%;
         background: rgba(0, 0, 0, 0.1);
         font-size: 10px;
         padding: 2px 4px;
         border-radius: 2px;
         color: #666;
-        font-family: monospace;
         z-index: 10;
         pointer-events: none;
+        transform: translate(-50%, 0);
       }
     }
 

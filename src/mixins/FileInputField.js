@@ -202,9 +202,9 @@ export default {
       }
       if (_.get(this.$refs, 'input', false)) {
         // console.warn('WILL VALIDATE', files)
-        const test = await this.$refs.input.validate()
-        if (_.get(test, 'length', 0) !== 0) {
-          console.error('validation error, will not upload files:', test)
+        const errorMessage = await this.$refs.input.validate()
+        if (_.get(errorMessage, 'length', 0) !== 0) {
+          console.error('validation error, will not upload files:', errorMessage)
           return
         }
       }

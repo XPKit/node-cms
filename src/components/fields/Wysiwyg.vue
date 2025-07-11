@@ -116,6 +116,12 @@ export default {
     font-weight: 300;
     line-height: normal;
     cursor: text;
+    * {
+      font-synthesis: initial !important;
+      -webkit-synthesis: initial !important;
+      font-smooth: antialiased !important;
+      -webkit-font-smooth: antialiased !important;
+    }
     strong {
       font-weight: 700;
     }
