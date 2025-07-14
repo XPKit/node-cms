@@ -79,7 +79,7 @@ exports = module.exports = (config) => {
             paragraphMap[paragraph.title] = paragraph.schema
           })
         } catch (error) {
-          console.error('Couldn\'t get paragraphs from:', url)
+          console.error(`Couldn't get paragraphs from: ${url}`, error)
         }
         return paragraphs
       },

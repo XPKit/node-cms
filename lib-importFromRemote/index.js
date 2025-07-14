@@ -318,7 +318,6 @@ class ImportWrapper {
             let createObject = {}
             _.each(schema, field => {
               try {
-
                 let value = _.get(key, field.field)
                 if (!_.isUndefined(value)) {
                   if (_.isString(field.source) ) {

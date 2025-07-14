@@ -42,8 +42,8 @@ const logger = new (require('img-sh-logger'))()
 let options = {
   apiVersion: 2,
   dbEngine: {
-    type: ''
-    // url: `${process.env.XPKIT_HOST || '127.0.0.1'}/node-cms`
+    type: 'mongodb',
+    url: `${process.env.XPKIT_HOST || '127.0.0.1'}/node-cms`
   }
 }
 

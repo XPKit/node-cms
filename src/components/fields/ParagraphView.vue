@@ -65,7 +65,7 @@
           elevation="0"
           :class="getItemClasses(idx, item)"
           :style="getItemStyles(item)"
-          :data-slots="getItemSlots(item)"
+          :data-index="`${idx + 1}/${items.length}`"
         >
           <v-card-title class="handle paragraph-header">
             <div class="paragraph-title">{{ item.label }}</div>
@@ -274,30 +274,6 @@ export default {
         }
       }
       return {}
-    },
-    getItemSlots(item) {
-      if (!this.isDynamicLayoutContainer) {
-        return ''
-      }
-      let slots = _.get(item, '_value.slots') || _.get(item, 'slots')
-      if (!slots) {
-        try {
-          const paragraphType = _.get(item, '_type') || _.get(item, 'title')
-          if (paragraphType) {
-            const paragraphSchema = ResourceService.getParagraphSchema(paragraphType)
-            const layoutSlots = _.get(paragraphSchema, 'layout.slots')
-            if (layoutSlots) {
-              slots = layoutSlots
-            }
-          }
-        } catch {
-          // Silent fallback
-        }
-      }
-      if (!slots) {
-        slots = 2
-      }
-      return `${slots}/${this.parentSlots}`
     },
     convertParagraph(item) {
       item._type = item.showConvert
@@ -791,7 +767,9 @@ export default {
       const mapping = _.get(this.schema, 'options.mapping', {})
       const extensions = []
       _.each(mapping, (config, key) => {
-        if (key === 'default') return
+        if (key === 'default') {
+          return
+        }
         // Handle comma-separated extensions
         const keyExtensions = key.split(',').map(ext => {
           const trimmed = ext.trim().toLowerCase()
@@ -805,7 +783,9 @@ export default {
       const mapping = _.get(this.schema, 'options.mapping', {})
       const extensions = []
       _.each(mapping, (config, key) => {
-        if (key === 'default') return
+        if (key === 'default') {
+          return
+        }
         // Handle comma-separated extensions
         const keyExtensions = key.split(',').map(ext => {
           const trimmed = ext.trim().toLowerCase()
@@ -1167,7 +1147,7 @@ export default {
         overflow: hidden;
       }
       &::before {
-        content: attr(data-slots);
+        content: attr(data-index);
         position: absolute;
         top: 2px;
         left: 50%;

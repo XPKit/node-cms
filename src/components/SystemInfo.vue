@@ -114,7 +114,7 @@ export default {
   },
   async mounted () {
     window.DialogService.events.on('dialog', this.onGetRecordEdition)
-    this.$vuetify.theme.global.name = LoginService.user.theme
+    this.$vuetify.theme.change(LoginService.user.theme)
     document.querySelectorAll('body')[0].classList = [`v-theme--${this.$vuetify.theme.global.name}`]
     this.connectToLogStream()
   },

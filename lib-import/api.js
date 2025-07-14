@@ -50,10 +50,8 @@ exports = module.exports = (config, auth) => {
         let message
         message = `uploading ${path.relative(path.resolve('.'), path.normalize(filepath))} ... ....`
         console.log(message)
-
         const formData = new FormData()
         formData.append(fieldname, fs.createReadStream(filepath))
-
         const response = await fetch(`${config.protocol}${config.host}${config.prefix}/api/${resource}/${id}/attachments`, {
           method: 'POST',
           headers: {
@@ -67,7 +65,6 @@ exports = module.exports = (config, auth) => {
         let message
         message = 'remove ' + aid + ' ... ....'
         console.log(message)
-
         const response = await fetch(`${config.protocol}${config.host}${config.prefix}/api/${resource}/${id}/attachments/${aid}`, {
           method: 'DELETE',
           headers: {
@@ -75,7 +72,6 @@ exports = module.exports = (config, auth) => {
           }
         })
         const body = await response.json()
-
         console.log(message + 'done')
         return body
       },

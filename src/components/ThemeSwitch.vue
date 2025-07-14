@@ -14,7 +14,7 @@ function isDark () {
 }
 
 async function toggleTheme () {
-  theme.global.name.value = await LoginService.changeTheme()
+  theme.change(await LoginService.changeTheme())
 }
 </script>
 
