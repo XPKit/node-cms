@@ -240,6 +240,17 @@ class CMS {
       UpdatesManager.init(this, options)
       callback()
     })
+    // Initialize SmartCrop if enabled
+    this.bootstrapFunctions.push(async (callback) => {
+      try {
+        const smartCrop = require('./lib/util/smartcrop')
+        await smartCrop.initialize(options)
+        console.info('SmartCrop initialization completed during CMS bootstrap')
+      } catch (error) {
+        console.warn('SmartCrop initialization failed during CMS bootstrap:', error.message)
+      }
+      callback()
+    })
     this._app.use(SyslogManager.express())
     this._app.use(SystemManager.express())
     this.usedPlugins = []

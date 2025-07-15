@@ -19,3 +19,6 @@ lib-importFromRemote/cached
 cms.json.backup*
 syslog.log
 storage
+test-data-simple
+test/man*.jpg
+test-*.js
