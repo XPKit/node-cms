@@ -15,7 +15,9 @@ import AbstractField from '@m/AbstractField'
 
 export default {
   mixins: [AbstractField],
-  props: ['locale'],
+  props: {
+    locale: { type: String, default: 'enUS' }
+  },
   data () {
     return {
       acceptedModes: ['hexa', 'rgba', 'hsla', 'hex', 'rgb'],

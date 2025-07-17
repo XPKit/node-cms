@@ -24,46 +24,16 @@ export default {
   components: {PreviewAttachment},
   mixins: [DragList],
   props: {
-    attachments: {
-      type: Array,
-      default: () => []
-    },
-    schema: {
-      type: Object,
-      default: () => {}
-    },
-    theme: {
-      type: String,
-      default: 'light'
-    },
-    isImage: {
-      type: Function,
-      default: ()=> {}
-    },
-    getImageSrc: {
-      type: Function,
-      default: ()=> {}
-    },
-    disabled: {
-      type: Boolean,
-      default: false
-    },
-    onEndDrag: {
-      type: Function,
-      default: ()=> {}
-    },
-    imageSize: {
-      type: Function,
-      default: ()=> {}
-    },
-    removeImage: {
-      type: Function,
-      default: ()=> {}
-    },
-    onCropperChange: {
-      type: Function,
-      default: ()=> {}
-    }
+    attachments: { type: Array, default: () => [] },
+    schema: { type: Object, default: () => {} },
+    theme: { type: String, default: 'light' },
+    isImage: { type: Function, default: () => {} },
+    getImageSrc: { type: Function, default: () => {} },
+    disabled: { type: Boolean, default: false },
+    onEndDrag: { type: Function, default: () => {} },
+    imageSize: { type: Function, default: () => {} },
+    removeImage: { type: Function, default: () => {} },
+    onCropperChange: { type: Function, default: () => {} }
   },
 }
 </script>

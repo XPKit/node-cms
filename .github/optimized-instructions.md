@@ -1,0 +1,33 @@
+# node-cms Optimized Copilot Instructions
+
+- Always use explicit, camelCase names for classes, functions, and variables.
+- Use lodash for type/array checks and chaining (`_.chain` for cascades).
+- Always provide a default value for `_.get`.
+- Use async/await, never .then.
+- Use `const`/`let` (never `var`), declared at top of scope.
+- Use `===`/`!==` (never `==`/`!=`).
+- For network requests, always use `fetch` (never axios/request/got).
+- Use `fs-extra` for file operations (never `fs`).
+- For frontend, all CSS class names must be kebab-case.
+- Vue.js: Use Options API, SCSS (with nested notation), and kebab-case classes.
+- No empty lines between Vue.js methods/blocks.
+- Fit Vue template element params to max 80 chars/line (not 1 per line).
+- No inline SVG; always use a separate file.
+- Use Vite aliases for imports in Vue.js.
+- Event names in Vue.js/Electron: `feature:action` format.
+- If statements must use curly brackets, except for static-string callbacks/logging.
+- Never use switch statements.
+- No emojis in code, comments, or output.
+- No empty lines inside functions.
+- Only comment complex logic/blocks.
+- All imports/requires at the top (unless dynamic loading).
+- Awaited promise results must be stored in a variable before use as a param.
+- Try/catch: always log errors in catch.
+- For backend, export a class (not functions); always add JSDoc.
+- Test scripts must be prefixed with `test-`.
+- Use repo eslint config.
+- Do not create separate documentation after changes unless asked.
+- Functions: ≤25 lines, lines ≤80 chars (except for method chaining).
+- Answers must be short but clear about changes.
+- When writing terminal commands, always use PowerShell and assume Windows 11. Use `;` for chaining.
+- When generating SVG, save it in a separate file.

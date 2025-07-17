@@ -12,11 +12,8 @@ import TranslateService from '@s/TranslateService'
 
 export default {
   props: {
-    localeList: {
-      type: Array,
-      default: () => []
-    }
-  },
+    localeList: { type: Array, default: () => [] }
+   },
   data () {
     return {
       TranslateService

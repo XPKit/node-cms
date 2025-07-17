@@ -79,30 +79,12 @@ export default {
   },
   mixins: [AbstractEditorView, Notification, FieldTheme],
   props: {
-    groupedList: {
-      type: Array,
-      default: () => []
-    },
-    recordList: {
-      type: Array,
-      default: () => []
-    },
-    locale: {
-      type: String,
-      default: 'enUS'
-    },
-    selectedResourceCallback: {
-      type: Function,
-      default: () => {}
-    },
-    resource: {
-      type: Object,
-      default: () => {}
-    },
-    record: {
-      type: Object,
-      default: () => {}
-    }
+    groupedList: { type: Array, default: () => [] },
+    recordList: { type: Array, default: () => [] },
+    locale: { type: String, default: 'enUS' },
+    selectedResourceCallback: { type: Function, default: () => {} },
+    resource: { type: Object, default: () => {} },
+    record: { type: Object, default: () => {} }
   },
   data () {
     return {

@@ -11,7 +11,6 @@ const logger = new (require('img-sh-logger'))()
 // start with leveldb
 // let options = {
 //   // debug: true,
-//   apiVersion: 2,
 //   xlsx: true,
 //   import: {
 //     oauth: {
@@ -31,7 +30,6 @@ const logger = new (require('img-sh-logger'))()
 
 // // start with dbEngine
 // let options = {
-//   apiVersion: 1
 //   // dbEngine: {
 //   //   type: 'xpkit',
 //   //   url: `${process.env.XPKIT_HOST || 'localhost'}/node-cms`
@@ -40,10 +38,9 @@ const logger = new (require('img-sh-logger'))()
 
 // start with mongo dbEngine
 let options = {
-  apiVersion: 2,
   dbEngine: {
-    type: 'mongodb',
-    url: `${process.env.XPKIT_HOST || '127.0.0.1'}/node-cms`
+    // type: 'mongodb',
+    // url: `${process.env.XPKIT_HOST || '127.0.0.1'}/node-cms`
   }
 }
 

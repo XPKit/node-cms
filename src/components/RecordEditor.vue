@@ -37,22 +37,10 @@ export default {
   components: {TopBarLocaleList},
   mixins: [AbstractEditorView, Notification],
   props: {
-    resource: {
-      type: Object,
-      default: () => {}
-    },
-    record: {
-      type: Object,
-      default: () => {}
-    },
-    locale: {
-      type: String,
-      default: () => 'enUS'
-    },
-    userLocale: {
-      type: String,
-      default: () => 'enUS'
-    }
+    resource: { type: Object, default: () => ({}) },
+    record: { type: Object, default: () => ({}) },
+    locale: { type: String, default: () => 'enUS' },
+    userLocale: { type: String, default: () => 'enUS' }
   },
   data () {
     return {
@@ -117,8 +105,7 @@ export default {
       return TranslateService.get('TL_' + locale.toUpperCase())
     },
     getFieldRealOffset (elem) {
-      // NOTE: Minus the navbar height
-      return _.get(elem, '$el.offsetTop', elem.offsetTop) - 50
+      return _.get(elem, '$el.offsetTop', elem.offsetTop, 0) - 50
     },
     onFieldSelected (field) {
       this.schema.fields = _.map(this.schema.fields, (f) => {

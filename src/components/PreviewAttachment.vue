@@ -23,57 +23,30 @@ export default {
   components: {ShowAttachment},
   mixins: [Notification],
   props: {
-    index: {
-      type: Number,
-      default: 0
-    },
-    theme: {
-      type: String,
-      default: 'light'
-    },
-    attachment: {
-      type: Object,
-      default: () => {}
-    },
-    schema: {
-      type: Object,
-      default: () => {}
-    },
-    getImageSrc: {
-      type: Function,
-      default: ()=> {}
-    },
-    imageSize: {
-      type: Function,
-      default: ()=> {}
-    },
-    removeImage: {
-      type: Function,
-      default: ()=> {}
-    },
-    isImage: {
-      type: Function,
-      default: ()=> {}
-    },
-    onCropperChange: {
-      type: Function,
-      default: ()=> {}
-    }
+    index: { type: Number, default: 0 },
+    theme: { type: String, default: 'light' },
+    attachment: { type: Object, default: () => ({}) },
+    schema: { type: Object, default: () => ({}) },
+    getImageSrc: { type: Function, default: () => {} },
+    imageSize: { type: Function, default: () => {} },
+    removeImage: { type: Function, default: () => {} },
+    isImage: { type: Function, default: () => {} },
+    onCropperChange: { type: Function, default: () => {} }
   },
   methods: {
     getDirtyReason() {
-      const key = _.get(this.attachment, 'dirty', false) ? `${_.replace(_.toUpper(this.attachment.dirty),new RegExp('-','g'),'_')}` : 'DIRTY'
+      const key = _.get(this.attachment, 'dirty', false) ? `${_.replace(_.toUpper(this.attachment.dirty), /-/g, '_')}` : 'DIRTY'
       return `TL_${key}`
     },
-    copyFilenameToClipboard () {
+    copyFilenameToClipboard() {
       navigator.clipboard.writeText(this.getAttachmentFilename(this.attachment))
       this.notify('Filename has been copied.')
     },
     getAttachmentFilename(attachment) {
-      return attachment._filename || (attachment._fields && attachment._fields._filename)
+      return _.get(attachment, '_filename', _.get(attachment, '_fields._filename', ''))
     },
-    getKey (elem) {
-      return `${elem._filename}-${elem._id || elem._createdAt || this.index}`
+    getKey(elem) {
+      return `${_.get(elem, '_filename', '')}-${_.get(elem, '_id', _.get(elem, '_createdAt', this.index))}`
     },
     onCropperChangeForAttachment(data) {
       this.onCropperChange(this.index, _.pick(data, ['coordinates']))

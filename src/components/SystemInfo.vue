@@ -15,7 +15,7 @@
       </div>
     </v-menu>
 
-    <v-menu content-class="system-info-menu" :theme="$vuetify.theme.dark ? 'dark' : 'light'" location="bottom" :close-on-content-click="false" transition="slide-y-transition">
+    <v-menu content-class="system-info-menu" location="bottom" :close-on-content-click="false" transition="slide-y-transition">
       <template #activator="{ props }">
         <v-btn icon v-bind="props">
           <v-icon>mdi-cog-outline</v-icon>
@@ -61,141 +61,140 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted, onUnmounted, defineProps, getCurrentInstance } from 'vue'
 import _ from 'lodash'
 import Dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import LoginService from '@s/LoginService'
 import ThemeSwitch from '@c/ThemeSwitch'
+import { useTheme } from 'vuetify'
 
 Dayjs.extend(relativeTime)
+const theme = useTheme()
 
-export default {
-  components: {ThemeSwitch},
-  props: {
-    config: {
-      type: [Object, Boolean],
-      default: false
-    },
-    settingsData: {
-      type: [Object, Boolean],
-      default: false
+const props = defineProps({
+  config: { type: [Object, Boolean], default: false },
+  settingsData: { type: [Object, Boolean], default: false }
+})
+
+const isEditing = ref(false)
+const destroyed = ref(false)
+const timer = ref(null)
+const eventSource = ref(false)
+const firstMessage = ref(true)
+const system = ref({
+  cpu: { count: 0, usage: 0, model: 'Unknown' },
+  memory: { totalMemMb: 0, usedMemMb: 0, freeMemMb: 0, freeMemPercentage: 0 },
+  network: 'not supported',
+  drive: 'not supported',
+  uptime: 0
+})
+
+const showLogoutButton = computed(() => !_.get(window, 'disableJwtLogin', false))
+
+function onGetRecordEdition(editing) {
+  isEditing.value = editing
+}
+
+function getNodeCmsVersion() {
+  return _.get(props.config, 'version', 'X.X.X')
+}
+
+function disconnectFromLogStream() {
+  try {
+    clearTimeout(timer.value)
+    if (eventSource.value) {
+      console.warn('close SSE')
+      eventSource.value.close()
     }
-  },
-  data () {
-    return {
-      isEditing: false,
-      destroyed: false,
-      type: null,
-      timer: null,
-      system: {
-        cpu: {
-          count: 0,
-          usage: 0,
-          model: 'Unknown'
-        },
-        memory: {
-          totalMemMb: 0,
-          usedMemMb: 0,
-          freeMemMb: 0,
-          freeMemPercentage: 0
-        },
-        network: 'not supported',
-        drive: 'not supported',
-        uptime: 0
-      },
-      eventSource: false
-    }
-  },
-  computed: {
-    showLogoutButton () {
-      return !_.get(window, 'disableJwtLogin', false)
-    }
-  },
-  async mounted () {
-    window.DialogService.events.on('dialog', this.onGetRecordEdition)
-    this.$vuetify.theme.change(LoginService.user.theme)
-    document.querySelectorAll('body')[0].classList = [`v-theme--${this.$vuetify.theme.global.name}`]
-    this.connectToLogStream()
-  },
-  unmounted () {
-    window.DialogService.events.off('dialog', this.onGetRecordEdition)
-    this.$loading.stop('_syslog')
-    this.destroyed = true
-    clearTimeout(this.timer)
-  },
-  methods: {
-    onGetRecordEdition(isEditing) {
-      this.isEditing = isEditing
-    },
-    getNodeCmsVersion() {
-      return _.get(this.config, 'version', 'X.X.X')
-    },
-    disconnectFromLogStream () {
+  } catch { /* empty */ }
+}
+
+function connectToLogStream() {
+  disconnectFromLogStream()
+  firstMessage.value = true
+  timer.value = setTimeout(() => {
+    eventSource.value = new EventSource(`${window.location.pathname}../api/system`)
+    eventSource.value.onmessage = (event) => {
       try {
-        clearTimeout(this.timer)
-        if (this.eventSource) {
-          console.warn('close SSE')
-          this.eventSource.close()
-        }
-      } catch { /* empty */ }
-    },
-    connectToLogStream () {
-      this.disconnectFromLogStream ()
-      this.timer = setTimeout(() => {
-        this.eventSource = new EventSource(`${window.location.pathname}../api/system`)
-        this.eventSource.onmessage = (event) => {
-          try {
-            this.system = JSON.parse(event.data)
-            this.$forceUpdate()
-          } catch (error) {
-            console.error('Failed to parse system info:', error)
+        if (firstMessage.value) {
+          firstMessage.value = false
+          if (_.isFunction(theme.change)) {
+            const userTheme = LoginService.user.theme
+            theme.change(userTheme)
+            document.body.classList.remove('v-theme--dark', 'v-theme--light')
+            document.body.classList.add(`v-theme--${userTheme}`)
+          } else {
+            console.error(`Cannot call theme.change:`, theme)
           }
         }
-        this.eventSource.addEventListener('end', () => {
-          this.eventSource.close()
-          console.warn('System info stream ended')
-          this.connectToLogStream()
-        })
-        this.eventSource.onerror = (error) => {
-          console.error('Error in SSE connection:', error)
-          this.eventSource.close()
-          this.connectToLogStream()
+        system.value = JSON.parse(event.data)
+        const instance = getCurrentInstance()
+        if (instance && instance.proxy) {
+          instance.proxy.$forceUpdate()
         }
-      }, 1000)
-    },
-    isActiveLink (url) {
-      const urlA = new URL(window.location)
-      const urlB = new URL(url)
-      return urlA.host === urlB.host
-    },
-    async logout () {
-      if (this.isEditing) {
-        return window.DialogService.show({event: 'logout', callback: ()=> this.logout()})
+      } catch (error) {
+        console.error('Failed to parse system info:', error)
       }
-      await LoginService.logout()
-    },
-    select (item) {
-      this.$emit('selectItem', item)
-    },
-    timeAgo (current) {
-      return Dayjs().subtract(parseInt(current, 10), 'second').fromNow()
-    },
-    convertBytes (megaBytes) {
-      const sizes = ['MB', 'GB', 'TB']
-      if (megaBytes === 0) {
-        return '0 MB'
-      } else if (Math.log(megaBytes) <= 0) {
-        return `${megaBytes.toFixed(1)} MB`
-      }
-      const i = parseInt(Math.floor(Math.log(megaBytes) / Math.log(1024)))
-      if (i <= 0) {
-        return megaBytes + ' ' + sizes[i]
-      }
-      return (megaBytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i]
     }
-  }
+    eventSource.value.addEventListener('end', () => {
+      eventSource.value.close()
+      console.warn('System info stream ended')
+      connectToLogStream()
+    })
+    eventSource.value.onerror = (error) => {
+      console.error('Error in SSE connection:', error)
+      eventSource.value.close()
+      connectToLogStream()
+    }
+  }, 1000)
 }
+
+function isActiveLink(url) {
+  const urlA = new URL(window.location)
+  const urlB = new URL(url)
+  return urlA.host === urlB.host
+}
+
+async function logout() {
+  if (isEditing.value) {
+    return window.DialogService.show({event: 'logout', callback: () => logout()})
+  }
+  await LoginService.logout()
+}
+
+function timeAgo(current) {
+  return Dayjs().subtract(parseInt(current, 10), 'second').fromNow()
+}
+
+function convertBytes(megaBytes) {
+  const sizes = ['MB', 'GB', 'TB']
+  if (megaBytes === 0) {
+    return '0 MB'
+  } else if (Math.log(megaBytes) <= 0) {
+    return `${megaBytes.toFixed(1)} MB`
+  }
+  const i = parseInt(Math.floor(Math.log(megaBytes) / Math.log(1024)))
+  if (i <= 0) {
+    return megaBytes + ' ' + sizes[i]
+  }
+  return (megaBytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i]
+}
+
+onMounted(() => {
+  window.DialogService.events.on('dialog', onGetRecordEdition)
+  connectToLogStream()
+})
+
+onUnmounted(() => {
+  window.DialogService.events.off('dialog', onGetRecordEdition)
+  if (getCurrentInstance()?.proxy?.$loading) {
+    getCurrentInstance().proxy.$loading.stop('_syslog')
+  }
+  destroyed.value = true
+  clearTimeout(timer.value)
+})
 </script>
 <style lang="scss" scoped>
 @use '@a/scss/variables.scss' as *;
@@ -221,6 +220,7 @@ export default {
     }
     .node-cms-title {
       @include h6;
+      color: $system-info-color;
     }
   }
   .v-icon {
@@ -232,8 +232,10 @@ export default {
   display: flex;
   flex-direction: column;
   @include blurred-background;
+  background-color: $system-info-background;
   .node-cms-title {
     @include h6;
+    color: $system-info-color;
   }
 }
 .system-info-wrapper {
@@ -253,6 +255,7 @@ export default {
   .node-cms-title {
     &.flex {
       @include h5;
+      color: $system-info-color;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -260,7 +263,8 @@ export default {
   }
   small {
     @include subtext;
-  }
+    color: $system-info-color;
+ }
 }
 .system-info-menu, .links-menu {
   background-color: transparent;
@@ -285,6 +289,7 @@ export default {
 
 .system-info-wrapper {
   color: $system-info-color;
+  background-color: $system-info-background;
   .v-progress-linear {
     margin: 8px 0;
     .v-progress-linear__buffer {

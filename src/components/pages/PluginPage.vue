@@ -7,7 +7,9 @@
 <script>
 
 export default {
-  props: ['plugin']
+  props: {
+    plugin: { type: Object, default: () => ({}) }
+  }
 }
 </script>
 <style lang="scss" scoped>

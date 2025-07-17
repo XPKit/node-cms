@@ -32,7 +32,15 @@ import FieldTheme from '@m/FieldTheme'
 
 export default {
   mixins: [FieldTheme],
-  props: ['formId', 'schema', 'model', 'formOptions', 'disabled', 'paragraphIndex', 'paragraphLevel'],
+  props: {
+    formId: { type: Number, default: 0 },
+    schema: { type: Object, default: () => ({}) },
+    model: { type: Object, default: () => ({}) },
+    formOptions: { type: Object, default: () => ({}) },
+    disabled: { type: Boolean, default: false },
+    paragraphIndex: { type: Number, default: 0 },
+    paragraphLevel: { type: Number, default: 0 }
+  },
   created () {
     _.each(this.schema.fields, (field) => {
       const fieldType = this.getFieldType(field)

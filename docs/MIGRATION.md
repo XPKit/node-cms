@@ -18,9 +18,7 @@ Add migration field in config like this
   "disableReplication": false,
   "disableAuthentication": false,
   "disableAnonymous": false,
-  "apiVersion": 2,
   "migration": "./data",
-  "dbEngine": {
     "type": "mongodb",
     "url": "localhost/node-cms"
   }

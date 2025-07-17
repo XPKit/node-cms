@@ -3,12 +3,12 @@
     <h1>Sync Resources</h1>
     <div v-if="config">
       <select v-model="selectedResource" @change="onChangeResource">
-        <option v-for="item in config.sync.resources" :key="item" :value="item">{{ item }}</option>
+        <option v-for="item in config.sync.resources" :key="`resource-${item}`" :value="item">{{ item }}</option>
       </select>
       <div v-if="!isEmpty(recordData)" class="num-records">
         <span>number of records</span>
         <div class="num-records-wrapper">
-          <div v-for="env in environments" :key="env" class="num-record" :num="environments.length">
+          <div v-for="env in environments" :key="`env-${env}`" class="num-record" :num="environments.length">
             <span>{{ env }}</span>
             <span>{{ get(recordData, `${env}.length`, 'N/A') }}</span>
           </div>
@@ -17,15 +17,15 @@
       <div v-if="!isEmpty(reportData)" class="num-records">
         <span>records difference</span>
         <div class="num-records-wrapper">
-          <div class="num-record" num="1" :set="enabled = get(recordData, `local.length`) !== undefined && get(recordData, `remote.length`) !== undefined">
+          <div class="num-record" num="1" :set="enabled = get(recordData, 'local.length') !== undefined && get(recordData, 'remote.length') !== undefined">
             <template v-if="enabled">
               <template v-if="get(syncStatus, 'local.status') !== 'syncing' && get(syncStatus, 'remote.status') !== 'syncing'">
                 <span>local / remote</span>
                 <span>create: {{ reportData.create }}</span>
                 <span>update: {{ reportData.update }}</span>
                 <span>remove: {{ reportData.remove }}</span>
-                <span v-if="includes(get(syncStatus,'remote.allows'), 'write')"><button @click="onClickDeploy('local', 'remote')">push to remote</button></span>
-                <span v-if="includes(get(syncStatus,'local.allows'), 'write')"><button @click="onClickDeploy('remote', 'local')">pull from remote</button></span>
+                <span v-if="includes(get(syncStatus, 'remote.allows'), 'write')"><button @click="onClickDeploy('local', 'remote')">push to remote</button></span>
+                <span v-if="includes(get(syncStatus, 'local.allows'), 'write')"><button @click="onClickDeploy('remote', 'local')">pull from remote</button></span>
               </template>
               <template v-if="get(syncStatus, 'local.status') === 'syncing'">
                 <span>resource: {{ get(syncStatus, `local.resource`) }}</span>

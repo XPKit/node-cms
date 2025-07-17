@@ -9,7 +9,7 @@ export default [
   ...pluginVue.configs['flat/recommended'],
 
   {
-    files: ['lib/**/*.js', 'lib-import/**/*.js', 'lib-importFromRemote/**/*.js', 'test/**/*.js', '*.js'],
+    files: ['lib/**/*.js', 'lib-import/**/*.js', 'lib-importFromRemote/**/*.js', 'test/**/*.js', 'new_tests/**/*.js', '*.js'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'commonjs',

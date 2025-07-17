@@ -1,5 +1,3 @@
-
-
 /**
  * @fileoverview Node CMS - A flexible content management system
  * @author Node CMS Team
@@ -49,7 +47,6 @@ const defaultConfig = () =>
     wsRecordUpdates: true,
     importFromRemote: true,
     disableAnonymous: false,
-    apiVersion: 1,
     auth: {
       secret: 'MdjIwFRi9ezT1234567890abcdef'
     },
@@ -78,7 +75,6 @@ class CMS {
    * @param {boolean} [options.wsRecordUpdates] - Enable WebSocket record updates
    * @param {boolean} [options.importFromRemote] - Enable import from remote
    * @param {boolean} [options.disableAnonymous] - Disable anonymous access
-   * @param {number} [options.apiVersion] - API version
    * @param {Object} [options.session] - Session configuration
    * @param {Object} [options.auth] - Authentication configuration
    *
@@ -524,9 +520,17 @@ class CMS {
     return createResourceAPI
   }
 
-  // Install a plugin
+  // Install a plugin and store in _plugins
   use (plugin, options, configPath) {
-    return new plugin(this, options, configPath)
+    const instance = new plugin(this, options, configPath)
+    // Always store under pluginName if available
+    if (plugin.pluginName) {
+      this._plugins[plugin.pluginName] = instance
+    } else {
+      const name = plugin.name || plugin.constructor?.name || 'plugin'
+      this._plugins[name] = instance
+    }
+    return instance
   }
 
   // Get main application
@@ -582,3 +586,9 @@ exports = module.exports = CMS
  * @type {ResourceAPIWrapper}
  */
 CMS.ResourceAPIWrapper = ResourceAPIWrapper
+
+/**
+ * Export RestHelper for middleware reuse in external projects
+ * @type {RestHelper}
+ */
+CMS.RestHelper = require('./lib/plugins/rest/helper')

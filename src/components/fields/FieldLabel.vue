@@ -9,10 +9,7 @@ import _ from 'lodash'
 
 export default {
   props: {
-    schema: {
-      type: Object,
-      default: () => {}
-    }
+    schema: { type: Object, default: () => {} },
   },
   methods: {
     getHint () {

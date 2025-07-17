@@ -22,7 +22,10 @@ import AbstractField from '@m/AbstractField'
 
 export default {
   mixins: [AbstractField],
-  props: ['groupOptions', 'paragraphLevel'],
+  props: {
+    groupOptions: { type: Object, default: () => ({}) },
+    paragraphLevel: { type: Number, default: 0 }
+  },
   data () {
     return {
       errors: null

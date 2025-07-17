@@ -15,6 +15,53 @@ It installs a CMS called node-cms in your path, that developer can run a CMS or 
 -   [Field Types](docs/FIELDS.md): Existing field types used by node-cms
 -   [Migration](docs/MIGRATION.md): Migrate data
 -   [Import](docs/IMPORT.md): Import data from xlsx
+-   [Smart Cropping](docs/SMART_CROPPING.md): AI-powered image cropping with face detection
+-   [RestHelper](docs/REST_HELPER.md): Reusable middlewares for external projects
+
+## RestHelper - Middleware Reuse
+
+The `RestHelper` class allows you to reuse node-cms REST API middlewares in external Express applications, providing consistent behavior and reducing code duplication.
+
+```javascript
+const CMS = require('node-cms')
+const express = require('express')
+
+// Initialize CMS and RestHelper
+const cms = new CMS({ data: './data' })
+await cms.bootstrap()
+
+const { RestHelper } = CMS
+const restHelper = new RestHelper()
+const cmsContext = { cms }
+
+// Use middlewares in your Express app
+const app = express()
+
+app.get('/api/:resource',
+  restHelper.mw.parse_query,           // Parse query parameters
+  restHelper.mw.find_resource(cmsContext),  // Find CMS resource
+  async (req, res) => {
+    const data = await req.resource.find(req.options)
+    res.json(data)
+  }
+)
+
+app.get('/api/resources', restHelper.mw.list_resources(cmsContext))
+```
+
+**Available Middlewares:**
+- `parse_query`: Parses and extends request query parameters
+- `find_resource`: Validates and loads CMS resources
+- `list_resources`: Lists all available CMS resources
+- `authorize`: JWT/basic authentication and authorization
+
+**Benefits:**
+- ✅ Consistent middleware behavior across projects
+- ✅ Automatic query parsing and validation
+- ✅ Built-in resource discovery and error handling
+- ✅ Optional authentication/authorization support
+
+See [RestHelper Documentation](docs/REST_HELPER.md) for detailed usage patterns and examples.
 
 ## User Guide
 

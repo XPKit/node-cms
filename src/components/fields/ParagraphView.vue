@@ -131,7 +131,14 @@ import pAll from 'p-all'
 
 export default {
   mixins: [DragList],
-  props: ['schema', 'vfg', 'model', 'disabled', 'paragraphLevel', 'theme'],
+  props: {
+    schema: { type: Object, default: () => ({}) },
+    vfg: { type: Object, default: () => ({}) },
+    model: { type: Object, default: () => ({}) },
+    disabled: { type: Boolean, default: false },
+    paragraphLevel: { type: Number, default: 0 },
+    theme: { type: String, default: 'default' }
+  },
   data () {
     return {
       items: _.cloneDeep(_.get(this.model, this.schema.model, [])),

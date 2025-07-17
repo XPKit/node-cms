@@ -65,8 +65,8 @@ export default {
       lastId: -1,
       tempId: 0,
       logLines: [],
-      filterOutLines: [],
-      searchKey: null,
+      filterOutLines: 0,
+      searchKey: '',
       warningQty: 0,
       errorQty: 0,
       ignoreNextScrollEvent: false,
@@ -98,7 +98,9 @@ export default {
         if (this.eventSource) {
           this.eventSource.close()
         }
-      } catch { /* empty */ }
+      } catch (error) {
+        console.error(`Error disconnecting from log stream: ${error.message}`)
+      }
     },
     connectToLogStream () {
       this.$loading.start('_syslog')
@@ -152,7 +154,7 @@ export default {
         return
       }
       await this.$nextTick()
-      if (this.autoscroll === false && scrollTop + clientHeight >= scrollHeight) {
+      if (!this.autoscroll && scrollTop + clientHeight >= scrollHeight) {
         this.stickyId = -1
       }
       this.autoscroll = scrollTop + clientHeight >= scrollHeight
@@ -165,21 +167,21 @@ export default {
     },
     onClickRefresh () {
       this.error = false
-      this.searchKey = null
+      this.searchKey = ''
       this.logLines = []
       this.sysLog = []
       this.updateSysLog()
       this.lastId = -1
     },
     onClickClearSearch () {
-      this.searchKey = null
+      this.searchKey = ''
       this.updateSysLog()
     },
     onClickAutoscroll () {
       this.autoscroll = !this.autoscroll
     },
     onClickClear () {
-      this.searchKey = null
+      this.searchKey = ''
       this.logLines = []
       this.sysLog = []
       this.updateSysLog()
@@ -202,7 +204,7 @@ export default {
     },
     async updateSysLog () {
       clearTimeout(this.processTimout)
-      this.processTimout = setTimeout(()=> {
+      this.processTimout = setTimeout(() => {
         let lines = _.uniqBy(this.logLines, 'id')
         const byLevel = _.groupBy(this.logLines, 'level')
         this.warningQty = _.get(byLevel, '[1].length', 0)
@@ -212,7 +214,9 @@ export default {
             try {
               const query = JSON5.parse(this.searchKey.substr(5))
               lines = lines.filter(sift(query))
-            } catch { /* muted */ }
+            } catch (error) {
+              console.error('Error parsing sift query:', error)
+            }
           } else {
             lines = _.filter(lines, lineItem => {
               return _.includes(_.toLower(lineItem.line), _.toLower(this.searchKey))

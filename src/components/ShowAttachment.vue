@@ -86,40 +86,16 @@ import { Cropper } from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css'
 
 export default {
-  components: {Cropper},
+  components: { Cropper },
   props: {
-    theme: {
-      type: String,
-      default: 'light'
-    },
-    attachment: {
-      type: Object,
-      default: () => {}
-    },
-    getImageSrc: {
-      type: Function,
-      default: ()=> {}
-    },
-    imageSize: {
-      type: Function,
-      default: ()=> {}
-    },
-    schema: {
-      type: Object,
-      default: ()=> {}
-    },
-    removeImage: {
-      type: Function,
-      default: ()=> {}
-    },
-    isImage: {
-      type: Function,
-      default: ()=> {}
-    },
-    onCropperChange: {
-      type: Function,
-      default: ()=> {}
-    }
+    theme: { type: String, default: 'light' },
+    attachment: { type: Object, default: () => ({}) },
+    getImageSrc: { type: Function, default: () => {} },
+    imageSize: { type: Function, default: () => {} },
+    schema: { type: Object, default: () => ({}) },
+    removeImage: { type: Function, default: () => {} },
+    isImage: { type: Function, default: () => {} },
+    onCropperChange: { type: Function, default: () => {} }
   },
   data() {
     return {
@@ -142,31 +118,28 @@ export default {
     }
   },
   mounted() {
-    // Initialize custom dimensions if not defined in schema
-    this.customWidth = this.schema.crop?.width || 500
-    this.customHeight = this.schema.crop?.height || 500
+    this.customWidth = _.get(this.schema, 'crop.width', 500)
+    this.customHeight = _.get(this.schema, 'crop.height', 500)
   },
   methods: {
-    viewFile () {
-      if (!this.attachment) {
-        return
-      }
+    viewFile() {
+      if (!this.attachment) { return }
       const filenameComponents = _.get(this.attachment, '_filename', '').split('.')
       const suffix = filenameComponents.length > 1 ? `.${_.last(filenameComponents)}` : ''
-      const win = window.open(window.origin + this.attachment.url + suffix, '_blank')
-      win.focus()
+      const win = window.open(window.origin + _.get(this.attachment, 'url', '') + suffix, '_blank')
+      if (win) { win.focus() }
     },
     hasOpt(key) {
       return _.get(this.schema, `crop.${key}`, false)
     },
-    imageUrl () {
+    imageUrl() {
       return _.get(this.attachment, 'url', _.get(this.attachment, 'data', ''))
     },
-    getDefaultCropPosition ({ imageSize, visibleArea, coordinates }) {
+    getDefaultCropPosition({ imageSize, visibleArea, coordinates }) {
       if (_.get(this.attachment, 'cropOptions', false)) {
         return {
-          left: this.attachment.cropOptions.left,
-          top: this.attachment.cropOptions.top
+          left: _.get(this.attachment, 'cropOptions.left', 0),
+          top: _.get(this.attachment, 'cropOptions.top', 0)
         }
       }
       const area = visibleArea || imageSize
@@ -175,20 +148,19 @@ export default {
         top: (visibleArea ? visibleArea.top : 0) + area.height / 2 - coordinates.height / 2
       }
     },
-    getDefaultCropSize () {
+    getDefaultCropSize() {
       return {
         width: this.getCurrentWidth(),
         height: this.getCurrentHeight()
       }
     },
     getCurrentWidth() {
-      return this.schema.crop?.width || this.customWidth || 500
+      return _.get(this.schema, 'crop.width', this.customWidth || 500)
     },
     getCurrentHeight() {
-      return this.schema.crop?.height || this.customHeight || 500
+      return _.get(this.schema, 'crop.height', this.customHeight || 500)
     },
     updateCropSize() {
-      // Force cropper to update with new dimensions
       this.$nextTick(() => {
         if (this.$refs.cropper) {
           this.$refs.cropper.refresh()
@@ -198,14 +170,14 @@ export default {
     onCropperChangeForAttachment(data) {
       this.cropData = data
       if (this.firstCropUpdate) {
-        return this.firstCropUpdate = false
+        this.firstCropUpdate = false
+        return
       }
-      // Update custom dimensions based on cropper changes if not fixed in schema
       if (data && data.coordinates) {
-        if (!this.schema.crop?.width) {
+        if (!_.get(this.schema, 'crop.width', false)) {
           this.customWidth = Math.round(data.coordinates.width)
         }
-        if (!this.schema.crop?.height) {
+        if (!_.get(this.schema, 'crop.height', false)) {
           this.customHeight = Math.round(data.coordinates.height)
         }
         this.$forceUpdate()

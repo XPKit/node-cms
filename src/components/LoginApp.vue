@@ -86,11 +86,9 @@ export default {
     async login () {
       if (this.loggingIn) {
         return
-      }
-      if (!this.username) {
+      } else if (!this.username) {
         return this.$refs.username.focus()
-      }
-      if (!this.password) {
+      } else if (!this.password) {
         return this.$refs.password.focus()
       }
       this.$loading.start('login')

@@ -18,7 +18,6 @@ Add sync field in config like this
   "disableReplication": false,
   "disableAuthentication": false,
   "disableAnonymous": false,
-  "apiVersion": 2,
   "sync": {
     "resources": [
       "articles",

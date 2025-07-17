@@ -30,7 +30,11 @@ import Dayjs from 'dayjs'
 
 export default {
   mixins: [AbstractField],
-  props: ['theme', 'options', 'customDatetimePickerOptions'],
+  props: {
+    theme: { type: String, default: 'default' },
+    options: { type: Object, default: () => ({}) },
+    customDatetimePickerOptions: { type: Object, default: () => ({}) }
+  },
   computed: {
     placeholder() {
       const placeholder = _.get(this.schema, 'customDatetimePickerOptions.placeholder', false)

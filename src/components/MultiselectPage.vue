@@ -24,8 +24,8 @@
 <script>
 import pAll from 'p-all'
 import _ from 'lodash'
-import RecordNameHelper from './RecordNameHelper'
-import AbstractEditorView from './AbstractEditorView'
+import RecordNameHelper from '@c/RecordNameHelper'
+import AbstractEditorView from '@c/AbstractEditorView'
 import TranslateService from '@s/TranslateService'
 import Notification from '@m/Notification'
 import RequestService from '@s/RequestService'
@@ -33,22 +33,10 @@ import RequestService from '@s/RequestService'
 export default {
   mixins: [RecordNameHelper, AbstractEditorView, Notification],
   props: {
-    resource: {
-      type: Object,
-      default: () => {}
-    },
-    locale: {
-      type: String,
-      default: 'enUS'
-    },
-    multiselectItems: {
-      type: Array,
-      default: () => []
-    },
-    recordList: {
-      type: Array,
-      default: () => []
-    }
+    resource: { type: Object, default: () => {} },
+    locale: { type: String, default: 'enUS' },
+    multiselectItems: { type: Array, default: () => [] },
+    recordList: { type: Array, default: () => [] }
   },
   data () {
     return {
@@ -62,34 +50,30 @@ export default {
       this.scrolledToBottom = scrollTop + clientHeight >= scrollHeight - 50
     },
     deselectItem (item) {
-      this.$emit('changeMultiselectItems', _.filter(this.multiselectItems, (i) => i._id !== item._id))
+      this.$emit('changeMultiselectItems', _.filter(this.multiselectItems, i => i._id !== item._id))
     },
-    onClickCancel () {
-      this.$emit('cancel')
-    },
+    onClickCancel () { this.$emit('cancel') },
     async onClickDelete () {
       if (!window.confirm(
-        TranslateService.get('TL_ARE_YOU_SURE_TO_DELETE_RECORDS', {num: _.size(this.multiselectItems)}),
+        TranslateService.get('TL_ARE_YOU_SURE_TO_DELETE_RECORDS', { num: _.size(this.multiselectItems) }),
         TranslateService.get('TL_YES'),
         TranslateService.get('TL_NO')
-      )) {
-        return
-      }
+      )) { return }
       this.$loading.start('onDeleteMultiselectedItems')
       try {
-        await pAll(_.map(this.multiselectItems, item => {
-          return async () => {
-            try {
-              await RequestService.delete(`../api/${this.resource.title}/${item._id}`)
-              this.notify(TranslateService.get('TL_RECORD_DELETED', { id: item._id }))
-            } catch (error) {
-              console.error(error)
-              this.manageError(error, 'delete', item)
-            }
+        await pAll(_.map(this.multiselectItems, item => async () => {
+          try {
+            await RequestService.delete(`../api/${this.resource.title}/${item._id}`)
+            this.notify(TranslateService.get('TL_RECORD_DELETED', { id: item._id }))
+          } catch (error) {
+            // Always log errors per instructions
+            console.error('Failed to delete record:', error)
+            this.manageError(error, 'delete', item)
           }
-        }), {concurrency: 1})
+        }), { concurrency: 1 })
       } catch (error) {
-        console.error(error)
+        // Always log errors per instructions
+        console.error('Failed to delete multiselected items:', error)
       }
       this.multiselect = false
       this.$loading.stop('onDeleteMultiselectedItems')

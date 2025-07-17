@@ -97,7 +97,9 @@ class ImportManager {
     let ans =  {confirm: 'no'}
     try {
       ans = await Q.ninvoke(prompt, 'get', schema)
-    } catch (error) {}
+    } catch (error) {
+      console.error('Error:', error)
+    }
     if (ans.confirm.toLowerCase() !== 'yes') {
       console.log(ans.confirm)
       process.exit(1)

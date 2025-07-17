@@ -5,17 +5,36 @@
   </div>
 </template>
 <script setup>
-import { useTheme } from 'vuetify'
 import LoginService from '@s/LoginService'
-
+import _ from 'lodash'
+import { ref, watch } from 'vue'
+import { useTheme } from 'vuetify'
 const theme = useTheme()
+const currentTheme = ref(theme.global.name.value)
+
 function isDark () {
-  return theme.global.name.value === 'dark'
+  return currentTheme.value === 'dark'
 }
 
 async function toggleTheme () {
-  theme.change(await LoginService.changeTheme())
+  if (_.isFunction(theme.change)) {
+    const newTheme = await LoginService.changeTheme()
+    theme.change(newTheme)
+    currentTheme.value = newTheme
+    // document.body.classList.remove('v-theme--dark', 'v-theme--light')
+    // document.body.classList.add(`v-theme--${newTheme}`)
+  } else {
+    console.error(`Cannot call theme change:`, theme)
+  }
 }
+
+// Watch for theme changes and update body class
+watch(() => theme.global.name.value, (newVal) => {
+  currentTheme.value = newVal
+  console.warn(`THEME IS NOW: `, newVal)
+  document.body.classList.remove('v-theme--dark', 'v-theme--light')
+  document.body.classList.add(`v-theme--${newVal}`)
+})
 </script>
 
 <style lang="scss" scoped>

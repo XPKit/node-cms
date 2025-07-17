@@ -47,8 +47,6 @@ declare module 'node-cms' {
     /** Original filename */
     _filename: string;
     /** Additional payload */
-    _payload?: any;
-    /** Form fields */
     _fields?: any;
     /** Crop options */
     cropOptions?: any;
@@ -140,7 +138,7 @@ declare module 'node-cms' {
      * Find an attachment
      * @example const attachment = await api('articles').findAttachment('record-id', 'attachment-id')
      */
-    findAttachment(id: string, aid: string): Promise<Attachment>;
+    findAttachment(id: string, aid: string, opts?: Object): Promise<Attachment>;
 
     /**
      * Remove an attachment
@@ -208,8 +206,6 @@ declare module 'node-cms' {
     importFromRemote?: boolean;
     /** Disable anonymous access */
     disableAnonymous?: boolean;
-    /** API version */
-    apiVersion?: number;
     /** Session configuration */
     session?: {
       secret: string;

@@ -29,14 +29,8 @@ import LoginService from '@s/LoginService'
 
 export default {
   props: {
-    selectedResource: {
-      type: Object,
-      default: ()=> {}
-    },
-    selectedRecord: {
-      type: [Object, Boolean],
-      default: ()=> {}
-    }
+    selectedResource: { type: Object, default: () => {} },
+    selectedRecord: { type: [Object, Boolean], default: () => {} }
   },
   data() {
     return {

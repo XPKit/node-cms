@@ -31,25 +31,16 @@ import TranslateService from '@s/TranslateService'
 import Omnibar from '@c/Omnibar'
 
 export default {
-  components: {Omnibar},
+  components: { Omnibar },
   props: {
-    selectResourceCallback: {
-      type: Function,
-      default: () => {}
-    },
-    groupedList: {
-      type: Array,
-      default: () => []
-    },
-    selectedItem: {
-      type: Object,
-      default: () => {}
-    }
+    selectResourceCallback: { type: Function, default: () => {} },
+    groupedList: { type: Array, default: () => [] },
+    selectedItem: { type: Object, default: () => {} }
   },
   async mounted () {
     await this.$nextTick()
     if (_.isEmpty(this.selectedItem)) {
-      // NOTE: Selects first resource in first group
+      // Selects first resource in first group
       this.selectResourceCallback(_.first(_.get(_.first(this.groupedList), 'list', [])))
     }
   },
@@ -63,7 +54,7 @@ export default {
     getResourceTitle (resource) {
       return resource.displayname ? TranslateService.get(resource.displayname) : resource.title
     },
-    orderedList(list) {
+    orderedList (list) {
       const collator = new Intl.Collator('en', {
         sensitivity: 'base',
         caseFirst: 'upper',
@@ -74,9 +65,7 @@ export default {
       return list.sort((a, b) => collator.compare(this.getResourceTitle(a), this.getResourceTitle(b)))
     },
     groupSelected (resourceGroup) {
-      if (!this.selectedItem) {
-        return false
-      }
+      if (!this.selectedItem) { return false }
       const selectedItemGroup = _.get(this.selectedItem, 'group.enUS', _.get(this.selectedItem, 'group', false))
       const groupName = _.get(resourceGroup, 'name.enUS', resourceGroup.name)
       return groupName === 'TL_OTHERS' && !selectedItemGroup ? true : groupName === selectedItemGroup

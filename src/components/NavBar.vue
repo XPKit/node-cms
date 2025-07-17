@@ -27,32 +27,14 @@ import ResourceList from '@c/ResourceList'
 import defaultLogo from '@a/logo.svg'
 
 export default {
-  components: {SystemInfo, ResourceList},
+  components: { SystemInfo, ResourceList },
   props: {
-    toolbarTitle: {
-      type: [String, Boolean],
-      default: false
-    },
-    groupedList: {
-      type: Array,
-      default: () => []
-    },
-    config: {
-      type: [Object, Boolean],
-      default: false
-    },
-    localeClass: {
-      type: Object,
-      default: () => {}
-    },
-    selectResourceCallback: {
-      type: Function,
-      default: () => {}
-    },
-    selectedItem: {
-      type: Object,
-      default: () => {}
-    }
+    toolbarTitle: { type: [String, Boolean], default: false },
+    groupedList: { type: Array, default: () => [] },
+    config: { type: [Object, Boolean], default: false },
+    localeClass: { type: Object, default: () => {} },
+    selectResourceCallback: { type: Function, default: () => {} },
+    selectedItem: { type: Object, default: () => {} }
   },
   data () {
     return {
@@ -65,7 +47,7 @@ export default {
   methods: {
     getDefaultLogo () {
       return defaultLogo
-    },
+     },
     getLogo () {
       return _.get(this.settingsData, 'logo[0].url', false)
     },
@@ -80,7 +62,7 @@ export default {
       try {
         this.settingsData = _.first(await ResourceService.cache('_settings'))
       } catch (error) {
-        console.error(error)
+        console.error('Failed to get settings data:', error)
       }
     },
     getSelectedItemName () {
@@ -95,29 +77,26 @@ export default {
 
 .nav-bar-wrapper {
   z-index: 2001;
-  .v-toolbar {
+  .nav-bar {
     background-color: $navbar-background;
     color: $navbar-color;
-  }
-}
-
-.nav-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  .v-toolbar__title {
-    padding-left: vw(16px);
-    max-height: 100%;
-    max-width: 200px;
-    width: 200px;
-  }
-  .v-toolbar__content {
-    width: 100%;
-  }
-  .logo {
-    max-width: 200px;
-    max-height: $navbar-height;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    .v-toolbar__title {
+      padding-left: vw(16px);
+      max-height: 100%;
+      max-width: 200px;
+      width: 200px;
+    }
+    .v-toolbar__content {
+      width: 100%;
+    }
+    .logo {
+      max-width: 200px;
+      max-height: $navbar-height;
+    }
   }
 }
 </style>

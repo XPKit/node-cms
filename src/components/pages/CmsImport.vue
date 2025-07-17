@@ -13,7 +13,7 @@
           >
             <v-chip
               v-for="(item, index) in config.resources"
-              :key="index" size="small" :ripple="false"
+              :key="`resource-${index}`" size="small" :ripple="false"
             >
               {{ item }}
             </v-chip>
@@ -35,7 +35,8 @@
           class="file-input-card" elevation="0" :class="{ 'drag-and-drop': dragover, bold: uploadedXlsx && uploadedXlsx.name }"
           @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @click="clickOnFileInput()" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
         >
-          <template v-if="!uploadedXlsx">Click or drag & drop to import an .xlsx file</template><template v-else>{{ uploadedXlsx.name }}</template>
+          <template v-if="!uploadedXlsx">Click or drag & drop to import an .xlsx file</template>
+          <template v-else>{{ uploadedXlsx.name }}</template>
           <v-file-input
             ref="xlsxFile" accept=".xlsx, .xls, .csv"
             :rules="getRules()" class="hidden-field" flat density="compact" hide-details @change="onChangeXlsxFile"
@@ -77,7 +78,9 @@ export default {
   },
   methods: {
     getRules () {
-      return [(value) => !value || value.type === 'text/xlsx' || value.type === 'text/xls' || value.type === 'text/csv' || 'Only XLSX/XLS/CSV files allowed']
+      return [
+        (value) => !value || value.type === 'text/xlsx' || value.type === 'text/xls' || value.type === 'text/csv' || 'Only XLSX/XLS/CSV files allowed'
+      ]
     },
     clickOnFileInput () {
       this.$refs.xlsxFile.$refs.input.click()
@@ -86,7 +89,8 @@ export default {
       this.dragover = false
       const files = _.get(event, 'dataTransfer.files', [])
       if (files.length > 1) {
-        return console.error('Only one file can be uploaded at a time..')
+        console.error('Only one file can be uploaded at a time.')
+        return
       }
       this.onChangeXlsxFile(event, files)
     },
@@ -110,9 +114,9 @@ export default {
       await this.$nextTick()
       try {
         this.status = await RequestService.get('../import/status')
-      } catch (e) {
+      } catch (error) {
         this.status = null
-        this.error = _.get(e, 'message', e)
+        this.error = _.get(error, 'message', error)
       }
       this.$loading.stop('cms-import')
       this.loading = false
@@ -126,9 +130,9 @@ export default {
       await this.$nextTick()
       try {
         this.status = await RequestService.get('../import/execute')
-      } catch (e) {
+      } catch (error) {
         this.status = null
-        this.error = _.get(e, 'message', e)
+        this.error = _.get(error, 'message', error)
       }
       this.$loading.stop('cms-import')
       this.loading = false
@@ -144,9 +148,9 @@ export default {
         const formData = new FormData()
         formData.append('xlsx', this.uploadedXlsx)
         this.status = await RequestService.post('../import/statusXlsx', formData)
-      } catch (e) {
+      } catch (error) {
         this.status = null
-        this.error = _.get(e, 'message', e)
+        this.error = _.get(error, 'message', error)
       }
       this.$loading.stop('xlsx-import')
       this.loading = false
@@ -162,9 +166,9 @@ export default {
         const formData = new FormData()
         formData.append('xlsx', this.uploadedXlsx)
         this.status = await RequestService.post('../import/statusXlsx', formData)
-      } catch (e) {
+      } catch (error) {
         this.status = null
-        this.error = _.get(e, 'message', e)
+        this.error = _.get(error, 'message', error)
       }
       this.$loading.stop('xlsx-import')
       this.loading = false

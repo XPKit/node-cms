@@ -4,65 +4,28 @@
       <v-card-title>
         <span class="text-h5">CMS Configuration Editor</span>
         <v-spacer />
-        <v-chip
-          :color="hasChanges ? 'warning' : 'success'"
-          :text-color="hasChanges ? 'white' : 'white'"
-          small
-        >
+        <v-chip :color="hasChanges ? 'warning' : 'success'" :text-color="hasChanges ? 'white' : 'white'" small>
           {{ hasChanges ? 'Modified' : 'Saved' }}
         </v-chip>
       </v-card-title>
-
       <v-card-text>
-        <v-alert
-          v-if="alert.show"
-          :type="alert.type"
-          class="mb-4"
-          dismissible
-          @click:close="alert.show = false"
-        >
+        <v-alert v-if="alert.show" :type="alert.type" class="mb-4" dismissible @click:close="alert.show = false">
           {{ alert.message }}
         </v-alert>
-
-        <v-textarea
-          v-model="configContent"
-          rows="20"
-          variant="outlined"
-          :error="!isValidJson"
-          :error-messages="jsonError"
-          :disabled="loading"
-          class="mb-4"
-          @input="validateJson"
-        />
-
+        <v-textarea v-model="configContent" rows="20" variant="outlined" :error="!isValidJson" :error-messages="jsonError" :disabled="loading" class="mb-4" @input="validateJson" />
         <div class="d-flex justify-end">
-          <v-btn
-            color="secondary"
-            :disabled="loading"
-            class="mr-2"
-            @click="loadConfig"
-          >
-            <v-icon left>mdi-refresh</v-icon>
-            Reset
+          <v-btn color="secondary" :disabled="loading" class="mr-2" @click="loadConfig">
+            <v-icon left>mdi-refresh</v-icon> Reset
           </v-btn>
 
-          <v-btn
-            color="primary"
-            :disabled="!isValidJson || loading || !hasChanges"
-            :loading="loading"
-            @click="saveConfig"
-          >
-            <v-icon left>mdi-content-save</v-icon>
-            Save & Restart Server
+          <v-btn color="primary" :disabled="!isValidJson || loading || !hasChanges" :loading="loading" @click="saveConfig">
+            <v-icon left>mdi-content-save</v-icon> Save & Restart Server
           </v-btn>
         </div>
-
         <v-divider class="my-4" />
-
         <v-card variant="outlined" class="mt-4">
           <v-card-title class="text-subtitle-1">
-            <v-icon left>mdi-information</v-icon>
-            Information
+            <v-icon left>mdi-information</v-icon> Information
           </v-card-title>
           <v-card-text class="text-caption">
             <p><strong>Warning:</strong> Editing the CMS configuration will restart the server automatically.</p>
@@ -190,14 +153,48 @@ export default {
 <style scoped>
 .cms-config {
   padding: 16px;
-}
-
-.v-textarea {
-  font-family: 'Courier New', monospace;
-}
-
-.v-textarea :deep(.v-field__input) {
-  font-family: 'Courier New', monospace;
-  font-size: 14px;
+  .v-card {
+    .v-card-title {
+      .text-h5 {
+        font-weight: bold;
+      }
+      .v-chip {
+        margin-left: 8px;
+      }
+    }
+    .v-card-text {
+      .mb-4 {
+        margin-bottom: 16px;
+      }
+      .d-flex {
+        display: flex;
+        justify-content: flex-end;
+        .mr-2 {
+          margin-right: 8px;
+        }
+      }
+      .my-4 {
+        margin-top: 16px;
+        margin-bottom: 16px;
+      }
+      .mt-4 {
+        margin-top: 16px;
+      }
+      .text-caption {
+        font-size: 12px;
+      }
+      .text-subtitle-1 {
+        font-size: 16px;
+        font-weight: 500;
+      }
+    }
+    .v-textarea {
+      font-family: 'Courier New', monospace;
+      :deep(.v-field__input) {
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+      }
+    }
+  }
 }
 </style>

@@ -32,28 +32,16 @@ import _ from 'lodash'
 
 export default {
   props: {
-    fileType: {
-      type: String,
-      default: 'image'
-    },
-    schema: {
-      type: Object,
-      default: () => {}
-    },
-    isForMultipleImages: {
-      type: Function,
-      default: () => {}
-    },
-    getMaxCount: {
-      type: Function,
-      default: () => {}
-    }
+    fileType: { type: String, default: 'image' },
+    schema: { type: Object, default: () => {} },
+    isForMultipleImages: { type: Function, default: () => {} },
+    getMaxCount: { type: Function, default: () => {} }
   },
   computed: {
-    hasSizeOptions() {
+    hasSizeOptions () {
       return _.get(this.schema, 'options.width', false) && _.get(this.schema, 'options.height', false)
     },
-    maxCountMsg() {
+    maxCountMsg () {
       return TranslateService.get(`TL_MAX_NUMBER_OF_${_.toUpper(this.fileType)}S`, { num: this.getMaxCount() })
     },
     unlimitedMsg() {

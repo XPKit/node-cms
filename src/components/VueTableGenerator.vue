@@ -31,7 +31,15 @@ import _ from 'lodash'
 import TranslateService from '@s/TranslateService'
 
 export default {
-  props: ['resource', 'schema', 'items', 'locale', 'options', 'selectedRecords', 'theme'],
+  props: {
+    resource: { type: Object, default: () => ({}) },
+    schema: { type: Object, default: () => ({}) },
+    items: { type: Array, default: () => [] },
+    locale: { type: String, default: 'enUS' },
+    options: { type: Object, default: () => ({}) },
+    selectedRecords: { type: Array, default: () => [] },
+    theme: { type: String, default: 'default' }
+  },
   data () {
     return {
       localSelectedRecords: [],

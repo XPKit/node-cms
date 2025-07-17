@@ -107,59 +107,19 @@ Dayjs.extend(relativeTime)
 export default {
   mixins: [Notification, RecordNameHelper],
   props: {
-    list: {
-      type: [Array, Boolean],
-      default: () => []
-    },
-    resource: {
-      type: [Object, Boolean],
-      default: () => {}
-    },
-    groupedList: {
-      type: [Array, Boolean],
-      default: () => []
-    },
-    resourceGroup: {
-      type: [Object, Boolean],
-      default: () => {}
-    },
-    selectedItem: {
-      type: [Object, Boolean],
-      default: () => {}
-    },
-    selectResourceCallback: {
-      type: Function,
-      default: () => {}
-    },
-    updateRecordList: {
-      type: Function,
-      default: () => {}
-    },
-    locale: {
-      type: String,
-      default: 'enUS'
-    },
-    multiselect: {
-      type: Boolean,
-      default: false
-    },
-    multiselectItems: {
-      type: [Array, Boolean],
-      default: () => []
-    }
+    list: { type: [Array, Boolean], default: () => [] },
+    resource: { type: [Object, Boolean], default: () => {} },
+    groupedList: { type: [Array, Boolean], default: () => [] },
+    resourceGroup: { type: [Object, Boolean], default: () => {} },
+    selectedItem: { type: [Object, Boolean], default: () => {} },
+    locale: { type: String, default: 'enUS' },
+    multiselect: { type: Boolean, default: false },
+    multiselectItems: { type: [Array, Boolean], default: () => [] }
   },
   data () {
     return {
       get: _.get,
       sortOptions: [
-        {
-          title: TranslateService.get('TL_UPDATED_AT'),
-          value: '_updatedAt'
-        },
-        // {
-        //   title: TranslateService.get('TL_CREATED_AT'),
-        //   value: '_createdAt'
-        // },
         {
           title: TranslateService.get('TL_ALPHABETICAL'),
           value: 'alphabetical'

@@ -36,18 +36,9 @@ import Notification from '@m/Notification'
 export default {
   mixins: [Notification],
   props: {
-    selectResourceCallback: {
-      type: Function,
-      default: () => {}
-    },
-    groupedList: {
-      type: Array,
-      default: () => []
-    },
-    selectedItem: {
-      type: Object,
-      default: () => {}
-    }
+    selectResourceCallback: { type: Function, default: () => {} },
+    groupedList: { type: Array, default: () => [] },
+    selectedItem: { type: Object, default: () => {} }
   },
   data () {
     return {

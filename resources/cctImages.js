@@ -47,13 +47,19 @@ exports = (module.exports = {
       label: 'Image',
       field: 'image',
       localised: false,
-      required: true,
+      input: 'image'
+    },
+     {
+      label: 'Localized Image',
+      field: 'localizedImage',
+      localised: true,
       options: {
-        maxCount: 3,
+        maxCount: 1,
         accept: '.jpg,.png,.mp4,.webm'
       },
       input: 'image'
     }
   ],
-  type: 'normal'
+  type: 'normal',
+  locales: ['enUS', 'zhCN'],
 })

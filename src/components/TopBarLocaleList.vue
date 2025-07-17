@@ -25,22 +25,10 @@ import TranslateService from '@s/TranslateService'
 
 export default {
   props: {
-    locales: {
-      type: Array,
-      default: () => []
-    },
-    locale: {
-      type: String,
-      default: ''
-    },
-    back: {
-      type: Function,
-      default: () => {}
-    },
-    selectLocale: {
-      type: Function,
-      default: () => {}
-    }
+    locales: { type: Array, default: () => [] },
+    locale: { type: String, default: '' },
+    back: { type: Function, default: () => {} },
+    selectLocale: { type: Function, default: () => {} }
   },
   methods: {
     getLocaleTranslation (locale) {
