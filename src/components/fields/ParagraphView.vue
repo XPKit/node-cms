@@ -6,7 +6,7 @@
         ref="input"
         :ripple="false" :menu-props="menuProps"
         :theme="theme" transition="none"
-        :model-value="selectedType" :items="types" item-title="label" item-value="label"
+        :model-value="selectedType" :items="types" :item-title="getLabel" item-value="title"
         hide-details rounded density="compact" persistent-placeholder variant="solo-filled" flat :rules="[validateField]"
         :disabled="disabled || schema.disabled" menu-icon="mdi-chevron-down" @update:model-value="onChangeType"
       >
@@ -68,7 +68,7 @@
           :data-index="`${idx + 1}/${items.length}`"
         >
           <v-card-title class="handle paragraph-header">
-            <div class="paragraph-title">{{ item.label }}</div>
+            <div class="paragraph-title">{{ getLabel(item) }}</div>
             <div class="add-btn-wrapper">
               <v-btn
                 class="remove-item"
@@ -215,6 +215,9 @@ export default {
     FieldSelectorService.events.off('highlight-paragraph', this.onHighlightParagraph)
   },
   methods: {
+    getLabel(item) {
+      return _.get(item, 'label.enUS', _.get(item, 'label', false))
+    },
     getDefaultParagraph() {
       return _.get(ResourceService.getParagraphSchema(_.get(this.schema, 'mapping.default', false)), 'displayname', false)
     },
@@ -391,7 +394,7 @@ export default {
       return field ? _.get(attach, field) : attach
     },
     onChangeType (type) {
-      const foundType = _.find(this.types, {label: type})
+      const foundType = _.find(this.types, {title: type})
       if (_.isUndefined(foundType)) {
         console.warn(`No type found for ${type} in types:`, this.types)
         return

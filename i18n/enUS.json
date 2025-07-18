@@ -121,6 +121,7 @@
     "TL_INVALID_TEXT_CONTAIN_NUMBER": "Invalid text! Cannot contains numbers or special characters",
     "TL_INVALID_TEXT_CONTAIN_SPEC": "Invalid text! Cannot contains special characters",
     "TL_INVALID_FILE_TYPE": "Invalid file type",
+    "TL_INVALID_IMAGE_TYPE": "Invalid image type",
     "TL_CLOSE": "Close",
     "TL_CLICK_OR_DRAG_AND_DROP_TO_ADD_FILE": "Click or drag & drop to add file",
     "TL_CLICK_OR_DRAG_AND_DROP_TO_ADD_FILES": "Click or drag & drop to add files",

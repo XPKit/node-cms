@@ -11,7 +11,7 @@
         <v-list rounded>
           <v-list-item
             v-for="r in selectedResourceGroup.list" :key="r.name" density="compact" :class="{selected: r === resource}"
-            @click="r !== resource ? selectResourceCallback(r) : ''"
+            @click="onResourceClick(r)"
           >
             <v-list-item-title>{{ getResourceTitle(r) }}</v-list-item-title>
           </v-list-item>
@@ -107,6 +107,7 @@ Dayjs.extend(relativeTime)
 export default {
   mixins: [Notification, RecordNameHelper],
   props: {
+    selectResourceCallback: { type: Function, default: () => {} },
     list: { type: [Array, Boolean], default: () => [] },
     resource: { type: [Object, Boolean], default: () => {} },
     groupedList: { type: [Array, Boolean], default: () => [] },
@@ -233,6 +234,11 @@ export default {
     NotificationsService.events.on('omnibar-display-status', this.onGetOmnibarDisplayStatus)
   },
   methods: {
+    onResourceClick(r) {
+      if (r !== this.resource && _.isFunction(this.selectResourceCallback)) {
+        this.selectResourceCallback(r)
+      }
+    },
     getUpdatedBy(item) {
       return _.last(_.get(item, '_updatedBy', '~API').split('~'))
     },

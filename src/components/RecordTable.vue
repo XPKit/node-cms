@@ -84,7 +84,7 @@ export default {
     locale: { type: String, default: 'enUS' },
     selectedResourceCallback: { type: Function, default: () => {} },
     resource: { type: Object, default: () => {} },
-    record: { type: Object, default: () => {} }
+    record: { type: [Object, Boolean], default: false }
   },
   data () {
     return {

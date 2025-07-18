@@ -1,4 +1,4 @@
-exports = (module.exports = {
+module.exports = {
   displayname: 'My Comments', // Optional, by default filename
   group: 'abc',
   extraSources: {
@@ -39,4 +39,4 @@ exports = (module.exports = {
     'zhCN'
   ],
   type: 'normal'
-})
+}

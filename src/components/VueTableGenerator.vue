@@ -35,7 +35,7 @@ export default {
     resource: { type: Object, default: () => ({}) },
     schema: { type: Object, default: () => ({}) },
     items: { type: Array, default: () => [] },
-    locale: { type: String, default: 'enUS' },
+    locale: { type: [String, Boolean], default: false },
     options: { type: Object, default: () => ({}) },
     selectedRecords: { type: Array, default: () => [] },
     theme: { type: String, default: 'default' }

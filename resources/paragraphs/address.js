@@ -1,24 +1,21 @@
-exports = (module.exports = {
-  displayname: 'My text',
-  maxCount: 1,
+// Paragraph type: address
+module.exports = {
+  displayname: { enUS: 'Address Block' },
   schema: [
     {
-      label: 'String label',
       field: 'string',
       input: 'string',
-      localised: true
+      localised: true,
     },
     {
-      label: 'Checkbox label',
       field: 'checkbox',
       input: 'checkbox',
-      localised: false
+      localised: false,
     },
     {
-      label: 'Image label',
       field: 'image',
       input: 'image',
-      localised: false
-    }
-  ]
-})
+      localised: false,
+    },
+  ],
+}

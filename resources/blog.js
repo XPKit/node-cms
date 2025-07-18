@@ -1,6 +1,6 @@
-// Corporate website resource example
+// Blog resource example
 module.exports = {
-  displayname: { enUS: 'Corporate Pages' },
+  displayname: { enUS: 'Blog Posts' },
   schema: [
     {
       field: 'title',
@@ -16,9 +16,11 @@ module.exports = {
       options: { valueFrom: 'title' },
     },
     {
-      field: 'summary',
-      input: 'text',
+      field: 'author',
+      input: 'select',
       localised: false,
+      required: true,
+      source: 'authors',
     },
     {
       field: 'body',
@@ -34,32 +36,28 @@ module.exports = {
       },
     },
     {
-      field: 'heroImage',
+      field: 'tags',
+      input: 'pillbox',
+      localised: false,
+    },
+    {
+      field: 'published',
+      input: 'checkbox',
+      localised: false,
+    },
+    {
+      field: 'publishedAt',
+      input: 'datetime',
+      localised: false,
+    },
+    {
+      field: 'coverImage',
       input: 'image',
       localised: false,
       options: {
         accept: 'image/*',
         maxCount: 1,
       },
-    },
-    {
-      field: 'attachments',
-      input: 'file',
-      localised: false,
-      options: {
-        accept: '*',
-        maxCount: 5,
-      },
-    },
-    {
-      field: 'seoTitle',
-      input: 'text',
-      localised: false,
-    },
-    {
-      field: 'seoDescription',
-      input: 'text',
-      localised: false,
     },
   ],
 }

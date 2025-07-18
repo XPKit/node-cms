@@ -1,81 +1,62 @@
-exports = (module.exports = {
-  displayname: 'Test paragraph',
+// Paragraph type: testParagraphs
+module.exports = {
+  displayname: { enUS: 'Test Paragraph' },
   schema: [
     {
-      label: 'string label',
-      input: 'string',
       field: 'string',
-      localised: false
-    },
-    {
-      label: 'value',
       input: 'string',
+      localised: false,
+    },
+    {
       field: 'value',
-      localised: false
+      input: 'string',
+      localised: false,
     },
     {
-      label: 'value',
-      input: 'wysiwyg',
       field: 'wysiwyg',
-      localised: false
+      input: 'wysiwyg',
+      localised: false,
     },
     {
-      label: 'Image label',
       field: 'image',
       input: 'image',
-      options: {
-        maxCount: 1
-      }
+      options: { maxCount: 1 },
+      localised: false,
     },
     {
-      label: 'Image label',
       field: 'imageLocalised',
       input: 'image',
-      localised: true
+      localised: true,
     },
     {
-      label: 'text label',
-      input: 'text',
       field: 'text',
-      localised: true
+      input: 'text',
+      localised: true,
     },
     {
-      label: 'Checkbox label',
       field: 'checkbox',
-      input: 'checkbox'
+      input: 'checkbox',
+      localised: false,
     },
     {
-      label: 'Select Paragraph author',
-      input: 'select',
       field: 'select',
-      source: 'authors',
-      options: {
-        customLabel: '{{name}}'
-      }
-    },
-    {
-      label: 'Select Paragraph author - multiple',
-      input: 'multiselect',
-      field: 'select4',
-      source: 'authors',
-      options: {
-        customLabel: '{{name}}'
-      }
-    },
-    {
-      label: 'Select 2',
       input: 'select',
-      field: 'select2',
-      source: ['1', '2', '3']
+      source: 'authors',
+      options: { customLabel: '{{name}}' },
+      localised: false,
     },
     {
-      label: 'Paragraph label',
-      field: 'paragraph3',
-      input: 'paragraph',
-      options: {
-        maxCount: 3,
-        types: ['address']
-      }
-    }
-  ]
-})
+      field: 'select4',
+      input: 'multiselect',
+      source: 'authors',
+      options: { customLabel: '{{name}}' },
+      localised: false,
+    },
+    {
+      field: 'select2',
+      input: 'select',
+      source: ['1', '2', '3'],
+      localised: false,
+    },
+  ],
+}

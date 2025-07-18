@@ -29,7 +29,6 @@ export default {
     'node_modules/**',
     'dist/**',
     // Files we know are unused but want to keep
-    'mongo-client-test.js',
     'src/.plugins/js/main.js',
     // Files with dynamic exports that Knip can't properly analyze
     'lib/helpers.js',

@@ -1,20 +1,23 @@
-exports = (module.exports = {
-  displayname: 'My text',
+// Paragraph type: textParagraphs
+module.exports = {
+  displayname: { enUS: 'Text Paragraph' },
   schema: [
     {
-      label: 'Text field',
       field: 'text',
-      input: 'text'
+      input: 'text',
+      localised: true,
+      required: true,
     },
     {
-      label: 'Wysiwyg',
       field: 'wysiwyg',
-      input: 'wysiwyg'
+      input: 'wysiwyg',
+      localised: true,
     },
     {
       field: 'comment',
       input: 'select',
-      source: 'comments'
-    }
-  ]
-})
+      source: 'comments',
+      localised: false,
+    },
+  ],
+}

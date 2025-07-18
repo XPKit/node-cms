@@ -4,7 +4,7 @@ module.exports = {
   schema: [
     {
       field: 'taskName',
-      input: 'text',
+      input: 'string',
       localised: false,
       required: true,
     },
@@ -25,9 +25,7 @@ module.exports = {
       field: 'assignedTo',
       input: 'select',
       localised: false,
-      options: {
-        resource: 'users',
-      },
+      source: 'users',
     },
     {
       field: 'startTime',

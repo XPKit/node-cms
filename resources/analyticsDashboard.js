@@ -4,7 +4,7 @@ module.exports = {
   schema: [
     {
       field: 'name',
-      input: 'text',
+      input: 'string',
       localised: false,
       required: true,
     },

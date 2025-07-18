@@ -48,10 +48,20 @@ export default {
       }
       if (template) {
         const itemCached = _.clone(item)
-        _.each(this.getExtraRessources(), (extraSource, extraField) => {
+        const extraResources = this.getExtraResources()
+        _.each(extraResources, (extraSource, extraField) => {
           const cache = ResourceService.get(extraSource)
           if (cache) {
-            const value = _.find(cache, {_id: _.get(itemCached, extraField)})
+            // Check if the extraField is localised in the schema
+            const schemaField = _.find(this.resource.schema, { field: extraField })
+            let idToFind
+            if (schemaField && schemaField.localised) {
+              // Use the value for the current locale
+              idToFind = _.get(itemCached, `${extraField}.${this.locale}`)
+            } else {
+              idToFind = _.get(itemCached, extraField)
+            }
+            const value = _.find(cache, { _id: idToFind })
             if (value) {
               _.set(itemCached, extraField, value)
             }
@@ -61,7 +71,7 @@ export default {
       }
       return displayname
     },
-    getExtraRessources () {
+    getExtraResources () {
       return _.extend(_.get(this.resource, 'extraSources', {}), _.get(this.resource, 'schema[0].options.extraSources'))
     }
   }

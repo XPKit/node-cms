@@ -91,67 +91,19 @@ exports = (module.exports = {
       source: 'comments'
     },
     {
-      field: 'file',
-      input: 'file'
-    },
-    {
-      field: 'localisedFile',
-      input: 'file'
-    },
-    {
       field: 'image',
-      input: 'image'
+      input: 'image',
+      localised: false
     },
     {
-      field: 'image2',
+      field: 'localizedImage',
       input: 'image',
-      options: {
-        disabled: true
-      }
+      localised: true
     }
   ],
+  type: 'normal',
   locales: [
     'enUS',
     'zhCN'
-  ],
-  layout: {
-    lines: [
-      {
-        slots: 3,
-        fields: [
-          {
-            model: 'string', width: 1
-          },
-          {
-            model: 'rate', width: 2
-          }
-        ]
-      },
-      {
-        slots: 3,
-        fields: [
-          {
-            model: 'wysiwyg'
-          }
-        ]
-      },
-      {
-        fields: [
-          {
-            model: 'relatedArticles'
-          },
-          {
-            model: 'comment'
-          },
-          {
-            model: 'comments'
-          },
-          {
-            model: 'localizedComments'
-          }
-        ]
-      }
-    ]
-  },
-  type: 'normal'
+  ]
 })

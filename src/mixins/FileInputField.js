@@ -127,12 +127,34 @@ export default {
           }
           _.each(files, (file) => {
             const fileType = `.${_.toLower(_.last(_.split(file.name, '.')))}`
-            if (!_.includes(acceptedTypes, fileType)) {
-              // console.warn(`FILE NOT VALID: ${file.name} (${file.type})`, fileType)
+            const mimeType = file.type || ''
+            let matched = false
+            for (const accept of acceptedTypes) {
+              const trimmed = accept.trim()
+              if (trimmed.startsWith('.')) {
+                // Extension match
+                if (fileType === trimmed) {
+                  matched = true
+                  break
+                }
+              } else if (trimmed.endsWith('/*')) {
+                // MIME group match (e.g., image/*)
+                const group = trimmed.split('/')[0]
+                if (mimeType.startsWith(group + '/')) {
+                  matched = true
+                  break
+                }
+              } else if (trimmed.includes('/')) {
+                // Exact MIME type match
+                if (mimeType === trimmed) {
+                  matched = true
+                  break
+                }
+              }
+            }
+            if (!matched) {
               isValid = false
               return false
-            // } else {
-              // console.warn(`FILE VALID: ${file.name} (${file.type})`)
             }
           })
           return isValid || TranslateService.get(`TL_INVALID_${this.getFieldType()}_TYPE`)

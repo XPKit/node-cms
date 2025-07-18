@@ -1,4 +1,4 @@
-exports = (module.exports = {
+module.exports = {
   displayname: 'Authors', // Optional, by default filename
   group: {
     enUS: 'abc',
@@ -7,7 +7,7 @@ exports = (module.exports = {
   extraSources: {
     'article': 'articles'
   },
-  displayItem: '{{name}} - {{#article}}{{article.string}}{{/article}}',
+  displayItem: '{{name}} - {{#article}}{{article.string.enUS}}{{/article}}',
   schema: [
     {
       label: 'Articles',
@@ -21,7 +21,7 @@ exports = (module.exports = {
       field: 'name',
       input: 'string',
       required: true,
-      localised: true
+      localised: false
     },
     {
       field: 'otherName',
@@ -42,4 +42,4 @@ exports = (module.exports = {
     'zhCN'
   ],
   type: 'normal'
-})
+}

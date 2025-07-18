@@ -1,4 +1,4 @@
-exports = (module.exports = {
+module.exports = {
   schema: [
     {
       label: 'File paragraph file field',
@@ -15,4 +15,4 @@ exports = (module.exports = {
       localised: false
     }
   ]
-})
+}

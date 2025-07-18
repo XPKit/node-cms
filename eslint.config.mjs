@@ -7,7 +7,24 @@ export default [
 
   // Vue configuration
   ...pluginVue.configs['flat/recommended'],
-
+  {
+    files: ['resources/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'commonjs',
+      globals: {
+        module: 'readonly',
+        exports: 'readonly',
+        require: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        console: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        global: 'readonly'
+      }
+    }
+  },
   {
     files: ['lib/**/*.js', 'lib-import/**/*.js', 'lib-importFromRemote/**/*.js', 'test/**/*.js', 'new_tests/**/*.js', '*.js'],
     languageOptions: {
