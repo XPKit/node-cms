@@ -1,0 +1,6 @@
+require('./api_routes.test.js')
+require('./import.test.js')
+require('./importFromRemote.test.js')
+require('./migration.test.js')
+require('./sync.test.js')
+require('./xlsx.test.js')

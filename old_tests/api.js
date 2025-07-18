@@ -1,11 +1,11 @@
 /* // eslint-disable no-unused-expressions */
 
-const CMS = require('../')
+const CMS = require('..')
 const Q = require('q')
 const path = require('path')
 const Helper = require('./helper')
 
-const helper = Helper.getInstance(8001, true)
+const helper = Helper.getInstance(8003, true)
 let cms = null
 const DB = path.join(__dirname, 'data')
 const CONFIG = path.join(__dirname, 'cms.json')
@@ -17,7 +17,7 @@ before(() => helper.removeFiles(
   `${__dirname}/_large_copy2.png`
 ))
 
-// eslint-disable-next-line no-undef
+
 after(() => helper.removeFiles(
   DB,
   CONFIG,
@@ -25,14 +25,14 @@ after(() => helper.removeFiles(
   `${__dirname}/_large_copy.png`,
   `${__dirname}/_large_copy2.png`
 ))
-
 before(async () => {
   cms = new CMS({data: DB,
     config: CONFIG,
     autoload: true,
     disableJwtLogin: false,
     disableAuthentication: true,
-    auth: { secret: 'auth.jwt.secret' }})
+    auth: { secret: 'auth.jwt.secret' }
+  })
   cms.resource('articles',
     // acl:
     //   'hello': '1111' # give 'hello' user full access to 'articles' resource
@@ -54,12 +54,31 @@ before(async () => {
       'zhCN'
     ]
   })
+
   cms.resource('querytest')
+
   await Q.ninvoke(cms.express(), 'listen', helper.port)
   await cms.bootstrap()
+  // Load authentication plugin and set permissions
+  const authPlugin = await cms.use(require('../lib/plugins/authentication'))
+  cms._plugins.authentication = authPlugin
+  await authPlugin.allow('anonymous', ['pages', 'querytest'], ['read', 'create', 'update', 'remove', 'attachments'])
+  // Ensure localAdmin exists and has full permissions
+  let localAdmin
+  try {
+    localAdmin = await authPlugin.users.find({username: 'localAdmin'})
+  } catch (error) {
+    if (error.code === 404) {
+      const adminGroup = await authPlugin.groups.find({name: 'admins'})
+      localAdmin = await authPlugin.users.create({
+        username: 'localAdmin',
+        password: 'localAdmin',
+        group: adminGroup._id
+      })
+    }
+  }
 })
 
-before(() => Q.ninvoke(cms, 'allow', 'anonymous', ['pages', 'querytest']))
 
 before(async () => {
   helper.cms = cms

@@ -1,6 +1,6 @@
 /* // eslint-disable no-unused-expressions */
 
-const CMS = require('../')
+const CMS = require('..')
 const request = require('supertest')
 const Q = require('q')
 const path = require('path')
@@ -18,7 +18,7 @@ before(() => helper.removeFiles(
   `${__dirname}/_large_copy2.png`
 ))
 
-// eslint-disable-next-line no-undef
+
 after(() => helper.removeFiles(
   DB,
   CONFIG,
@@ -33,7 +33,6 @@ before(async () => {
     config: CONFIG,
     mid: 'jegvlp6w',
     autoload: true,
-    apiVersion: 2,
     disableJwtLogin: false,
     disableAuthentication: true,
     auth: { secret: 'auth.jwt.secret' },

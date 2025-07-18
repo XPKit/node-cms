@@ -12,8 +12,8 @@
     "lint": "eslint --fix lib src",
     "knip": "knip",
     "knip-lint": "knip && npm run lint",
-    "new-tests": "node --inspect --no-deprecation new_tests/server.js",
-    "test": "mocha --exit -R spec -b -t 40000 test/spec.js",
+    "test": "node --inspect --no-deprecation test/server.js",
+    "old-tests": "mocha --exit -R spec -b -t 40000 old_tests/spec.js",
     "unit": "mocha -R spec -b -w -t 10000 test/unit",
     "mongodb": "ulimit -n 1000 && mongod --ipv6 --dbpath=../node-cms-mongodb-data",
     "mongodb-auth": "ulimit -n 1000 && mongod --tlsMode requireTLS --tlsCertificateKeyFile ./ssl/server.pem --tlsCAFile ./ssl/ca.pem --bind_ip localhost --dbpath=../node-cms-mongodb-data"

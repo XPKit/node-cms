@@ -11,9 +11,9 @@ import Dialog from '../mixins/Dialog.vue'
 export default {
   mixins: [Dialog],
   async mounted () {
-    window.DialogService.send(true)
-    await this.$nextTick()
-    window.DialogService.show({event: 'event-test', data: '', callback: ()=> this.test('test log')})
+    // window.DialogService.send(true)
+    // await this.$nextTick()
+    // window.DialogService.show({event: 'event-test', data: '', callback: ()=> this.test('test log')})
   },
   methods: {
     test(data) {

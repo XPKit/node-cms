@@ -1,4 +1,4 @@
-const CMS = require('../')
+const CMS = require('..')
 const request = require('supertest')
 const Q = require('q')
 const path = require('path')
@@ -32,7 +32,6 @@ before(async () => {
     config: path.join(__dirname, 'master.json'),
     resources: path.join(__dirname, 'resources'),
     netPort: helper.MASTER_NET_PORT,
-    apiVersion: 2,
     tag: 'master',
     dbEngine: {
       type: 'mongodb'
@@ -59,7 +58,6 @@ before(async () => {
     config: path.join(__dirname, 'slave.json'),
     resources: path.join(__dirname, 'resources'),
     netPort: helper.SLAVE_NET_PORT,
-    apiVersion: 2,
     tag: 'slave',
     dbEngine: {
       type: 'mongodb'

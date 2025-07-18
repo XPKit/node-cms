@@ -1,4 +1,4 @@
-const CMS = require('../')
+const CMS = require('..')
 const chai = require('chai')
 const _ = require('lodash')
 const request = require('supertest')
@@ -90,7 +90,6 @@ before(async () => {
     config: path.join(__dirname, 'master.json'),
     resources: path.join(__dirname, 'resources'),
     netPort: MASTER_NET_PORT,
-    apiVersion: 2,
     disableJwtLogin: false,
     auth: { secret: 'auth.jwt.secret' },
     sync: {
@@ -121,7 +120,6 @@ before(async () => {
     netPort: SLAVE_NET_PORT,
     disableJwtLogin: false,
     auth: { secret: 'auth.jwt.secret' },
-    apiVersion: 2,
     sync: {
       resources: [
         'articles'
@@ -177,7 +175,7 @@ before(async () => {
   })
 })
 
-// eslint-disable-next-line no-undef
+
 after(async () => {
   await remove(
     path.join(__dirname, 'master'),

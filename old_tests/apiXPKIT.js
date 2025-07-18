@@ -25,7 +25,7 @@ before(() => helper.removeFiles(
   `${__dirname}/_large_copy2.png`
 ))
 
-// eslint-disable-next-line no-undef
+
 after(() => helper.removeFiles(
   DB,
   CONFIG,
@@ -39,7 +39,6 @@ before(async () => {
     data: DB,
     config: CONFIG,
     autoload: true,
-    apiVersion: 2,
     mid: 'lajgdwf0',
     disableJwtLogin: false,
     disableAuthentication: true,
@@ -90,7 +89,7 @@ before(async () => {
 
 describe('HTTP', async () => {
   before(async () => {
-    await Promise.all(_.map(resourcesToClean, async (resource) =>
+    await Promise.all(_.map(resourcesToClean, async () =>
       await helper.deleteAllRecords('articles')
     ))
   })

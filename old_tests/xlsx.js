@@ -1,5 +1,5 @@
 /* //eslint-disable no-unused-expressions */
-const CMS = require('../')
+const CMS = require('..')
 const chai = require('chai')
 const _ = require('lodash')
 const fs = require('fs-extra')
@@ -32,7 +32,7 @@ before(() => remove(
   `${__dirname}/xlsxRecords.xlsx`
 ))
 
-// eslint-disable-next-line no-undef
+
 after(() => remove(
   DB,
   CONFIG,
@@ -75,7 +75,7 @@ describe('xlsx', () => {
   }
 
   before(async () => {
-    cms = new CMS({data: DB, config: CONFIG, autoload: true, apiVersion: 2, xlsx: true})
+    cms = new CMS({data: DB, config: CONFIG, autoload: true, xlsx: true})
 
     cms.resource('cities', {
       schema: [

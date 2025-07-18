@@ -1,4 +1,4 @@
-const CMS = require('../')
+const CMS = require('..')
 const express = require('express')
 const request = require('supertest')
 const Q = require('q')
@@ -35,15 +35,19 @@ before(async () => {
     netPort: helper.MASTER_NET_PORT,
     webserver: {
       port: 9090
-    }
+    },
+    disableAnonymous: false
   })
+  const authPlugin = cms.use(require('../lib/plugins/authentication'))
+  cms._plugins.authentication = authPlugin
   helper.master = {
     cms,
     request: request(helper.MASTER_URL)
   }
   cms.resource('articles', { type: 'normal' })
   await cms.bootstrap()
-  await Q.ninvoke(cms, 'allow', 'anonymous', 'articles')
+  // Enable anonymous access for 'articles' resource (after bootstrap)
+  await cms._plugins.authentication.allow('anonymous', 'articles', ['read', 'create', 'update', 'remove', 'attachments'])
   await Q.ninvoke(cms.express(), 'listen', MASTER_HTTP_PORT)
 })
 
@@ -56,9 +60,13 @@ before(async () => {
     netPort: helper.SLAVE_NET_PORT,
     webserver: {
       port: 9091
-    }
-
+    },
+    disableAnonymous: false
   })
+  if (!helper.slave) helper.slave = {}
+  helper.slave.cms = cms
+  const authPlugin = cms.use(require('../lib/plugins/authentication'))
+  cms._plugins.authentication = authPlugin
   helper.slave = {
     app: express(),
     cms,
@@ -66,7 +74,8 @@ before(async () => {
   }
   helper.slave.cms.resource('articles', { type: 'normal' })
   await helper.slave.cms.bootstrap()
-  await Q.ninvoke(helper.slave.cms, 'allow', 'anonymous', 'articles')
+  // Enable anonymous access for 'articles' resource (after bootstrap)
+  await helper.slave.cms._plugins.authentication.allow('anonymous', 'articles', ['read', 'create', 'update', 'remove', 'attachments'])
 
   await Q.ninvoke(cms.express(), 'listen', helper.SLAVE_HTTP_PORT)
 })

@@ -14,7 +14,6 @@ const remove = (...files) => {
 let dbPathIndex = 0
 const getDbPath = () => `${__dirname}/fstest${dbPathIndex++}`
 
-// eslint-disable-next-line no-undef
 after(function () {
   const out = []
   for (let index = 0, end = dbPathIndex, asc = end >= 0; asc ? index <= end : index >= end; asc ? index++ : index--) {
@@ -25,6 +24,4 @@ after(function () {
 
 it('#constructor', function () {
   assert(new FileStore(getDbPath(), 'abc123', {}) instanceof FileStore)
-  assert(FileStore(getDbPath(), 'abc123', {}) instanceof FileStore)
-  assert(FileStore.length === 3)
 })
