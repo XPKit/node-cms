@@ -72,6 +72,26 @@ See [RestHelper Documentation](docs/REST_HELPER.md) for detailed usage patterns 
 
 ### Installation
 
+#### Dependencies
+
+Some features require additional system dependencies:
+
+- **Python v3.x** (required for native modules)
+- **[tensorflow](https://www.npmjs.com/package/@tensorflow/tfjs-node)**
+- **[canvas](https://www.npmjs.com/package/canvas)**
+
+**Linux (Debian/Ubuntu):**
+
+```sh
+sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+```
+
+**Windows:**
+
+- Follow the official [node-canvas Windows installation guide](https://github.com/Automattic/node-canvas/wiki/Installation:-Windows)
+
+Make sure Python and all build tools are available in your PATH.
+
 #### Development
 
     $ git clone https://github.com/XPKit/node-cms.git

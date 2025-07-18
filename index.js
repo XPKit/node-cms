@@ -249,36 +249,20 @@ class CMS {
     })
     this._app.use(SyslogManager.express())
     this._app.use(SystemManager.express())
-    this.usedPlugins = []
-    if (!options.disableREST) {
-      this.usedPlugins.push('rest')
-    }
-    if (options.import) {
-      this.usedPlugins.push('import')
-    }
-    if (options.importFromRemote) {
-      this.usedPlugins.push('importFromRemote')
-    }
-    if (!options.disableAdmin) {
-      this.usedPlugins.push('admin')
-    }
-    if (!options.disableReplication) {
-      this.usedPlugins.push('replicator')
-    }
-    if (options.migration) {
-      this.usedPlugins.push('migration')
-    }
-    if (options.sync) {
-      this.usedPlugins.push('sync')
-    }
-    if (options.xlsx) {
-      this.usedPlugins.push('xlsx')
-    }
-    if (options.anonymousRead) {
-      this.usedPlugins.push('anonymousRead')
-    }
+    const pluginConditions = [
+      { name: 'rest',           enabled: !options.disableREST },
+      { name: 'import',         enabled: !!options.import },
+      { name: 'importFromRemote', enabled: !!options.importFromRemote },
+      { name: 'admin',          enabled: !options.disableAdmin },
+      { name: 'replicator',     enabled: !options.disableReplication },
+      { name: 'migration',      enabled: !!options.migration },
+      { name: 'sync',           enabled: !!options.sync },
+      { name: 'xlsx',           enabled: !!options.xlsx },
+      { name: 'anonymousRead',  enabled: !!options.anonymousRead }
+    ]
+    this.usedPlugins = _.chain(pluginConditions).filter('enabled').map('name').value()
     // console.info(`Will use plugins: ${this.usedPlugins.join(', ')}`)
-    _.each(this.usedPlugins, (plugin)=> {
+    _.each(this.usedPlugins, (plugin) => {
       this.use(require(`./lib/plugins/${plugin}`), options, configPath)
     })
     // handle bootstrap
