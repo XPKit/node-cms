@@ -35,7 +35,7 @@ before(async () => {
     autoload: true,
     disableJwtLogin: false,
     disableAuthentication: true,
-    auth: { secret: 'auth.jwt.secret' },
+    auth: { secret: '$C&F)J@NcRfUjXn2r5u8x/A?D*G-KaPd' },
     dbEngine: {
       type: 'mongodb',
       url: '127.0.0.1/node-cms'

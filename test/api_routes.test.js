@@ -442,7 +442,7 @@ describe('API Route Coverage', () => {
       .post(`/api/articles/${createdId}/attachments`)
       .auth('localAdmin', 'localAdmin')
       .attach('file', __filename)
-    expect([403, 404]).to.include(res.status)
+    expect([404]).to.include(res.status)
   })
 
   it('POST /api/articles should create an article', async () => {

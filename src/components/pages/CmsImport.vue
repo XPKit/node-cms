@@ -7,13 +7,10 @@
       <div class="main-container">
         <div class="config-resources">
           <h5>Resources</h5>
-          <v-chip-group
-            v-if="config && config.resources"
-            column
-          >
+          <v-chip-group v-if="config && config.resources" column>
             <v-chip
-              v-for="(item, index) in config.resources"
-              :key="`resource-${index}`" size="small" :ripple="false"
+              v-for="(item, index) in config.resources" :key="`resource-${index}`"
+              size="small" :ripple="false"
             >
               {{ item }}
             </v-chip>
@@ -33,7 +30,7 @@
         <div class="subtext">Import Excel</div>
         <v-card
           class="file-input-card" elevation="0" :class="{ 'drag-and-drop': dragover, bold: uploadedXlsx && uploadedXlsx.name }"
-          @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @click="clickOnFileInput()" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
+          @drop.prevent="onDrop($event)" @dragover.prevent="dragover = true" @dragenter.prevent="dragover = true" @dragleave.prevent="dragover = false"
         >
           <template v-if="!uploadedXlsx">Click or drag & drop to import an .xlsx file</template>
           <template v-else>{{ uploadedXlsx.name }}</template>
@@ -49,8 +46,15 @@
         <div v-if="status || error">
           <h6 v-if="type == 0">Difference:</h6>
           <h6 v-else>Status:</h6>
-          <pre v-html="status" />
-          <pre v-html="error" />
+          <div v-if="status" class="status">
+            <div v-for="(item, resource) in status" :key="`status-item-${resource}`" class="status-resource">
+              <strong>{{ resource }}:</strong>
+              <p>create: {{ item.create || 0 }}</p>
+              <p>update: {{ item.update || 0 }}</p>
+              <p>remove: {{ item.remove || 0 }}</p>
+            </div>
+          </div>
+          <pre v-else-if="error" v-html="error" />
         </div>
       </div>
     </v-card>
@@ -81,9 +85,6 @@ export default {
       return [
         (value) => !value || value.type === 'text/xlsx' || value.type === 'text/xls' || value.type === 'text/csv' || 'Only XLSX/XLS/CSV files allowed'
       ]
-    },
-    clickOnFileInput () {
-      this.$refs.xlsxFile.$refs.input.click()
     },
     onDrop (event) {
       this.dragover = false
@@ -237,7 +238,11 @@ export default {
     }
   }
   .hidden-field {
-    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
     opacity: 0;
     user-select: none;
   }
@@ -281,6 +286,19 @@ export default {
     @include h6;
     font-weight: 700;
     font-style: normal;
+  }
+  .status {
+    margin-left: 8px;
+  }
+  .status-resource {
+    strong {
+      font-size: 14px;
+      font-synthesis: initial !important;
+    }
+    p {
+      font-size: 12px;
+      margin-left: 8px;
+    }
   }
 }
 </style>

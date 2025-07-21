@@ -91,7 +91,7 @@ before(async () => {
     resources: path.join(__dirname, 'resources'),
     netPort: MASTER_NET_PORT,
     disableJwtLogin: false,
-    auth: { secret: 'auth.jwt.secret' },
+    auth: { secret: '$C&F)J@NcRfUjXn2r5u8x/A?D*G-KaPd' },
     sync: {
       resources: [
         'articles'
@@ -119,7 +119,7 @@ before(async () => {
     resources: path.join(__dirname, 'resources'),
     netPort: SLAVE_NET_PORT,
     disableJwtLogin: false,
-    auth: { secret: 'auth.jwt.secret' },
+    auth: { secret: '$C&F)J@NcRfUjXn2r5u8x/A?D*G-KaPd' },
     sync: {
       resources: [
         'articles'

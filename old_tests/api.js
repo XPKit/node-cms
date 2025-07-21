@@ -31,7 +31,7 @@ before(async () => {
     autoload: true,
     disableJwtLogin: false,
     disableAuthentication: true,
-    auth: { secret: 'auth.jwt.secret' }
+    auth: { secret: '$C&F)J@NcRfUjXn2r5u8x/A?D*G-KaPd' }
   })
   cms.resource('articles',
     // acl:

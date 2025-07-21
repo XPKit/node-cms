@@ -13,7 +13,7 @@ It installs a CMS called node-cms in your path, that developer can run a CMS or 
 -   [API](docs/API.md)
 -   [Configuring node-cms](docs/CONFIG.md)
 -   [Field Types](docs/FIELDS.md): Existing field types used by node-cms
--   [Migration](docs/MIGRATION.md): Migrate data
+
 -   [Import](docs/IMPORT.md): Import data from xlsx
 -   [Smart Cropping](docs/SMART_CROPPING.md): AI-powered image cropping with face detection
 -   [RestHelper](docs/REST_HELPER.md): Reusable middlewares for external projects

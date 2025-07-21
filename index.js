@@ -255,13 +255,12 @@ class CMS {
       { name: 'importFromRemote', enabled: !!options.importFromRemote },
       { name: 'admin',          enabled: !options.disableAdmin },
       { name: 'replicator',     enabled: !options.disableReplication },
-      { name: 'migration',      enabled: !!options.migration },
       { name: 'sync',           enabled: !!options.sync },
       { name: 'xlsx',           enabled: !!options.xlsx },
       { name: 'anonymousRead',  enabled: !!options.anonymousRead }
     ]
     this.usedPlugins = _.chain(pluginConditions).filter('enabled').map('name').value()
-    // console.info(`Will use plugins: ${this.usedPlugins.join(', ')}`)
+    console.info(`Will use plugins: ${this.usedPlugins.join(', ')}`)
     _.each(this.usedPlugins, (plugin) => {
       this.use(require(`./lib/plugins/${plugin}`), options, configPath)
     })
