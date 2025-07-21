@@ -48,7 +48,7 @@ class RequestService {
       try {
         json = await response.json()
       } catch (error) {
-        console.error('Failed to parse JSON response:', response)
+        console.error('Failed to parse JSON response:', error)
       }
       const code = _.get(json, 'code', _.get(response, 'status', 0))
       if (code === 0 && !response.ok) {

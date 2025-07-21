@@ -27,19 +27,6 @@ let options = {
   auth: {
     secret: '$C&F)J@NcRfUjXn2r5u8x/A?D*G-KaPd'
   },
-  import: {
-    oauth: {
-      email: 'view-edit-spreadsheets@sinuous-voice-178902.iam.gserviceaccount.com',
-      keyFile: './test/view-edit-spreadsheets.pem'
-    },
-    gsheetId: '1JjSkthUdQJunBWWxriLINYbzFDTyUVvUrqfcZZk7Ml4',
-    resources: [
-      'regions',
-      'countries',
-      'provinces',
-      'cities'
-    ]
-  },
   disableAnonymous: false,
   session: {
     secret: 'MdjIwFRi9ezT',

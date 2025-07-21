@@ -37,20 +37,6 @@ const logger = new (require('img-sh-logger'))()
 // }
 
 let options = {
-  import: {
-    oauth: {
-      email: 'view-edit-spreadsheets@sinuous-voice-178902.iam.gserviceaccount.com',
-      keyFile: 'view-edit-spreadsheets.pem'
-    },
-    createOnly: true,
-    gsheetId: '1JjSkthUdQJunBWWxriLINYbzFDTyUVvUrqfcZZk7Ml4',
-    resources: [
-      'regions',
-      'countries',
-      'provinces',
-      'cities'
-    ]
-  },
   dbEngine: {
     // type: 'mongodb',
     // url: `${process.env.XPKIT_HOST || '127.0.0.1'}/node-cms`
