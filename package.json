@@ -114,7 +114,7 @@
     "mime-stream": "^2.2.0",
     "mime-types": "^2.1.35",
     "mkdirp": "^0.5.5",
-    "mocha": "^7.2.0",
+    "mocha": "^11.7.1",
     "mongodb": "^4.12.1",
     "msgpack-stream": "0.0.12",
     "multer": "^2.0.2",
