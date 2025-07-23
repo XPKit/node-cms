@@ -1,0 +1,179 @@
+
+@use "../variables.scss" as *;
+@use "../mixins.scss" as *;
+
+.image-view, .attachment-view, .paragraph-attachment-view {
+  overflow: hidden;
+  img.preview {
+    width: 200px;
+    height: 140px;
+    object-fit: contain;
+  }
+  .help-block {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    filter: grayscale(100%);
+    padding-left: 16px;
+    padding-top: 0;
+    margin-top: 3px;
+    font-weight: 600;
+    color: gray;
+    font-size: 12px;
+    line-height: 12px;
+    i {
+      margin-right: 4px;
+    }
+  }
+  svg.icon-remove {
+    // Seems crop plugin write css inline
+    top: -12.5px !important;
+    right: -12.5px !important;
+    width: 25px;
+    height: 25px;
+    z-index: 100;
+  }
+  .label-wrapper {
+    margin-bottom: 12px;
+    label {
+      font-size: 12px;
+      line-height: 12px;
+      padding-right: 12px;
+    }
+  }
+  .filename {
+    &.v-chip.v-size--default {
+      margin: 6px 0;
+      height: 24px;
+      padding: 0 6px;
+      @include subtext;
+      .v-chip__content {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+
+    &.is-dirty {
+      .v-chip__content {
+        color: $imag-orange;
+      }
+    }
+  }
+  .preview-multiple,
+  .preview-single-attachment {
+    >div {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: flex-start;
+      // padding-bottom: 16px;
+      gap: 16px;
+    }
+    .filename {
+      display: block;
+    }
+    .v-card {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      .v-chip {
+        border-width: 2px;
+        padding: 0 8px;
+        height: 24px;
+        color: $file-input-chip-color;
+        border-color: $file-input-chip-border;
+        background-color: $file-input-chip-background;
+        font-size: 12px;
+        font-style: italic;
+        font-weight: 400;
+      }
+    }
+  }
+  .preview-single-attachment {
+    min-width: 230px;
+    max-width: 230px;
+    flex-direction: row;
+    align-items: center;
+    .preview {
+      max-height: 113px;
+    }
+    .v-btn {
+      margin-left: 6px;
+    }
+  }
+  .preview-attachment {
+    min-width: 200px;
+    max-width: 200px;
+    display: inline-block;
+    padding: 8px;
+    user-select: none;
+
+    img {
+      max-height: 113px;
+    }
+    &.can-crop {
+      min-width: initial;
+      max-width: initial;
+      img {
+        max-height: initial;
+      }
+    }
+    // &.odd {
+    //   background-color: rgba($color: #000000, $alpha: 0.2);
+    // }
+  }
+  .row-handle {
+    cursor: -webkit-grab;
+    cursor: move;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    img {
+      width: min-content;
+    }
+  }
+  .image-wrapper {
+    max-width: 100px;
+    min-width: 100px;
+    min-height: 100px;
+    .clickable {
+      cursor: pointer;
+    }
+    img {
+      border-radius: 8px;
+      background-color: #ffffff;
+      opacity: 1;
+      background-repeat: repeat, repeat;
+      background-image:  repeating-linear-gradient(45deg, #cdcdcd 25%, transparent 25%, transparent 75%, #cdcdcd 75%, #cdcdcd), repeating-linear-gradient(45deg, #cdcdcd 25%, #ffffff 25%, #ffffff 75%, #cdcdcd 75%, #cdcdcd);
+      background-position: 0 0, 4px 4px;
+      background-size: 8px 8px;
+    }
+    .v-img {
+      border-radius:8px;
+      width: 100%;
+      height: auto;
+    }
+  }
+  &.full-width {
+    max-width: 100%;
+  }
+}
+
+.image-view, .attachment-view {
+  border: 2px $paragraph-top-bar-background solid;
+  border-radius: 8px;
+  padding: 8px;
+  .v-card {
+    background-color: transparent;
+  }
+}
+.form-group.error {
+  .image-view .croppa-container{
+    border: 1px solid red;
+  }
+}
+

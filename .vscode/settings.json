@@ -6,9 +6,6 @@
     "source.fixAll.eslint": "explicit"
   },
   "eslint.enable": true,
-  "eslint.options": {
-    "configFile": "./.eslintrc.json"
-  },
   "eslint.run": "onSave",
   "eslint.validate": [
     "vue",
@@ -28,8 +25,5 @@
   },
   "javascript.format.enable": false,
   "javascript.validate.enable": false,
-  "files.associations": {
-    "*.wpy": "vue"
-  },
-  "files.eol": "\n",
+  "files.eol": "\n"
 }

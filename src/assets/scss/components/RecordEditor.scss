@@ -1,0 +1,113 @@
+.record-editor {
+  .vue-form-generator > fieldset {
+    border: none;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  *:focus {
+    outline: none;
+  }
+  .vue-form-generator .form-group > label {
+    color: #4c4c4c;
+    font-weight: bold;
+    &::first-letter {
+      text-transform: capitalize;
+    }
+  }
+  .form-group {
+    label {
+      padding: 4px 0;
+      display: inline-block;
+      &.dirty + .field-wrap{
+        input[type=text], input[type=email], input[type=number], input[type=url], input[type=password] {
+          border-color: #e48900;
+          box-shadow: inset 0 1px 1px rgba(138, 67, 0, 0.075);
+        }
+      }
+    }
+    fieldset {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  }
+  .multiselect input:focus,
+  .select input:focus {
+    box-shadow: none;
+  }
+  .datetime-picker input[type='text'] {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    color: #555;
+  }
+  .multiselect {
+    .multiselect__tags,
+    .multiselect__content-wrapper {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+      color: #555;
+    }
+    input[type='text'] {
+      color: #555;
+    }
+  }
+  >.vue-form-generator {
+    flex: 1 1 0;
+    padding-bottom: 50px;
+    overflow: auto;
+    >fieldset {
+      margin: 0px;
+      width: 100%;
+      padding: 20px;
+      // border-width: 0px;
+      .form-group.disabled {
+        .wrapper>input[type=text], input[type=email], input[type=number], input[type=url], input[type=password] {
+          background-color: #f0f0f0;
+        }
+        textarea {
+          background-color: #f0f0f0;
+        }
+      }
+    }
+    .multiselect.multiselect--disabled .multiselect__tags {
+      background-color: #f0f0f0;
+      >input {
+        background-color: #f0f0f0;
+      }
+    }
+  }
+  button {
+    &.back {
+      display: none;
+    }
+  }
+  .v-tabs {
+    flex: inherit;
+    border-bottom: 1px solid #c7c7c7;
+  }
+  .v-form {
+    padding: 16px;
+    margin-bottom: 84px;
+  }
+  .field-wrapper {
+    position: relative;
+    // margin-bottom: 16px;
+  }
+  .drag-and-drop {
+    background-color: grey;
+  }
+
+  &.frozen {
+    .buttons {
+      display: none;
+    }
+  }
+  &.full-width {
+    margin: 0 auto;
+    margin-top: 16px;
+    width: calc(100% - 32px);
+  }
+}

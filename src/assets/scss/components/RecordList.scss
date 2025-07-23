@@ -1,0 +1,231 @@
+@use "../variables.scss" as *;
+@use "../mixins.scss" as *;
+
+.record-list {
+  min-width: 364px;
+  max-width: 364px;
+  overflow: auto;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+  .delete-records,
+  .select-all {
+    padding: 0 !important;
+    @include cta-text;
+    text-transform: none;
+    letter-spacing: normal;
+    .v-icon,
+    .btn__content {
+      color: $sidebar-records-list-delete-icon-color;
+    }
+  }
+  .record-list-top-bar {
+    flex: auto 0 0;
+    position: sticky;
+    .search {
+      padding: 16px;
+      gap: 16px;
+      .search-bar {
+        margin: 0;
+      }
+    }
+  }
+  .new-record {
+    color: $btn-icon-color !important;
+    transition: color 0.15s;
+    &.active {
+      color: $imag-white !important;
+      background-color: $imag-purple;
+    }
+  }
+  .main {
+    @include cta-text;
+  }
+  .infos-wrapper {
+    width: 100%;
+    strong {
+      text-decoration: underline;
+    }
+    .main {
+      width: 100%;
+      overflow: hidden;
+      display: block;
+      span {
+        width: 100%;
+        overflow: hidden;
+        display: inline-block;
+        text-align: left;
+        text-decoration: none;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+  .meta {
+    border-top: 1px solid rgba(0, 0, 0, 0.15);
+    padding-top: 4px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: space-between;
+    align-items: center;
+    height: 20px;
+    font-size: 10px;
+    line-height: 20px;
+    user-select: none;
+    .id,
+    .ts {
+      line-height: 1;
+      color: rgb(46, 46, 46);
+    }
+    .id {
+      font-style: normal;
+      box-sizing: border-box;
+      border: 1px solid transparent;
+      padding: 4px;
+      transition: all .1s linear;
+      &:hover {
+        border-radius: 100px;
+        border: 1px solid $imag-light-grey;
+        border-style: dashed;
+        color: $imag-light-grey;
+        cursor: copy;
+      }
+    }
+    .ts {
+      user-select: none;
+    }
+  }
+  .records,
+  .records-top-bar {
+    background-color: $sidebar-records-list-background;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+  }
+  .records {
+    margin: 0px;
+    padding: 0px;
+    flex: 100% 1 1;
+    position: relative;
+    background-color: $sidebar-records-list-background !important;
+    .records-top-bar {
+      .select-all {
+        cursor: pointer;
+      }
+      .delete-records {
+        .v-icon {
+          color: red;
+        }
+      }
+    }
+    .list {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      @include custom-scrollbar;
+    }
+    .item {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      height: 60px;
+      // margin-bottom: 8px;
+      .item-info {
+        flex-grow: 1;
+        width: 354px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        justify-content: flex-start;
+        height: 56px;
+        margin: 4px;
+        border-radius: 8px;
+        padding: 4px 10px;
+        background-color: $sidebar-records-list-item-background;
+        transition: background-color 0.15s;
+        box-sizing: border-box;
+        border-bottom: 1px solid $imag-light-grey-2;
+        &:hover {
+          background-color: $imag-blue;
+        }
+      }
+      &.selected {
+        .item-info {
+          background-color: $sidebar-records-list-item-background-selected;
+        }
+      }
+
+      &.frozen {
+        .item-info {
+          background-color: $sidebar-records-list-item-background-disabled;
+        }
+      }
+    }
+    // .time-ago {
+    //   padding: 4px 6px;
+    //   box-sizing: border-box;
+    //   border: 1px solid transparent;
+    //   &:hover {
+    //     border-radius: 100px;
+    //     border: 1px solid $imag-light-grey;
+    //     border-style: dashed;
+    //     color: $imag-black;
+    //   }
+    // }
+  }
+  .toggle-view-mode {
+    background-color: $sidebar-toggle-view-mode-background;
+    border: 2px solid $sidebar-toggle-view-mode-border-color;
+    border-radius: 100px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 2px;
+    .v-icon {
+      border-radius: 100px;
+      color: $sidebar-records-list-delete-icon-color;
+      height: 24px;
+      width: 24px;
+      position: relative;
+      &:before {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 16px;
+        height: 16px;
+      }
+      &.selected {
+        color: $sidebar-records-list-delete-icon-selected-color;
+        background-color: $imag-purple;
+      }
+    }
+  }
+  .multiselect-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    span {
+      cursor: pointer;
+      @include cta-text;
+      &.disabled {
+        color: $imag-pale-grey;
+        pointer-events: none;
+        touch-action: none;
+      }
+    }
+  }
+}

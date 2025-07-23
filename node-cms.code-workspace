@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"emmet.includeLanguages": {
+			"vue-html": "html"
+		},
+		"javascript.format.enable": false,
+		"javascript.validate.enable": false
+	}
+}

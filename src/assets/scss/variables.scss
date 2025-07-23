@@ -1,0 +1,391 @@
+
+$imag-black: #000;
+$imag-white: #FFF;
+$imag-pale-grey: #B8BABC;
+$imag-light-grey: #EDEDED;
+$imag-light-grey-2: #E1E1E1;
+$imag-grey: #818386;
+$imag-blue: #71DBD4;
+$imag-light-purple: #93a3db;
+$imag-purple: #8094DD;
+$imag-purple-border: #3E4B78;
+$imag-dark-purple: #292F47;
+$imag-light-dark-purple: #20263C;
+$imag-darker-purple: #1B1F2D;
+$imag-orange: #FF5C39;
+$imag-yellow: #E1E000;
+$imag-green: #3ba05d;
+
+// green: 83% - #00ff1b
+// green: 62% - #7fff8c
+// green: 57% - #b2ffb9
+
+$imag-wysiwyg-background: rgba(255, 255, 255, 0.08);
+
+$layout-background: var(--layout-background);
+$layout-card-background: var(--layout-card-background);
+$layout-color: var(--layout-color);
+$layout-width: var(--layout-width);
+$blurred-background-box-shadow-color: var(--blurred-background-box-shadow-color);
+$blurred-background-background-color: var(--blurred-background-background-color);
+$blurred-background-before-background-color: var(--blurred-background-before-background-color);
+
+$navbar-height: var(--navbar-height);
+$navbar-background: var(--navbar-background);
+$navbar-color: var(--navbar-color);
+$navbar-resource-group-background: var(--navbar-resource-group-background);
+$navbar-resource-group-background-selected: var(--navbar-resource-group-background-selected);
+$navbar-resource-group-title-color: var(--navbar-resource-group-title-color);
+$navbar-resource-group-title-color-selected: var(--navbar-resource-group-title-color-selected);
+$navbar-resource-title-color: var(--navbar-resource-title-color);
+$navbar-resource-title-color-hover: var(--navbar-resource-title-color-hover);
+$navbar-resource-title-color-selected: var(--navbar-resource-title-color-selected);
+$navbar-system-info-icon-color: var(--navbar-system-info-icon-color);
+
+$system-info-background: var(--system-info-background);
+$system-info-color: var(--system-info-color);
+$system-info-progress-bar: var(--system-info-progress-bar);
+$system-info-progress-bar-background: var(--system-info-progress-bar-background);
+$system-info-theme-icon-color: var(--system-info-theme-icon-color);
+$system-info-theme-icon-selected-color: var(--system-info-theme-icon-selected-color);
+
+$sidebar-resource-selector-height: var(--sidebar-resource-selector-height);
+$sidebar-resource-selector-background: var(--sidebar-resource-selector-background);
+$sidebar-resource-selector-background-opened: var(--sidebar-resource-selector-background-opened);
+$sidebar-resource-selector-color: var(--sidebar-resource-selector-color);
+$sidebar-records-list-background: var(--sidebar-records-list-background);
+$sidebar-records-list-checkbox-background: var(--sidebar-records-list-checkbox-background);
+$sidebar-records-list-checkbox-color: var(--sidebar-records-list-checkbox-color);
+$sidebar-records-list-delete-icon-color: var(--sidebar-records-list-delete-icon-color);
+$sidebar-records-list-delete-icon-selected-color: var(--sidebar-records-list-delete-icon-selected-color);
+$sidebar-records-list-item-background: var(--sidebar-records-list-item-background);
+$sidebar-records-list-item-background-selected: var(--sidebar-records-list-item-background-selected);
+$sidebar-records-list-item-background-disabled: var(--sidebar-records-list-item-background-disabled);
+$sidebar-toggle-view-mode-background: var(--sidebar-toggle-view-mode-background);
+$sidebar-toggle-view-mode-border-color: var(--sidebar-toggle-view-mode-border-color);
+
+$multiselect-delete-button-color: var(--multiselect-delete-button-color);
+$multiselect-delete-button-background: var(--multiselect-delete-button-background);
+
+$plugin-title-background: var(--plugin-title-background);
+$plugin-title-color: var(--plugin-title-color);
+
+$cms-import-section-background: var(--cms-import-section-background);
+$cms-import-section-color: var(--cms-import-section-color);
+$cms-import-resource-background: var(--cms-import-resource-background);
+$cms-import-resource-color: var(--cms-import-resource-color);
+$cms-import-btn-background: var(--cms-import-btn-background);
+$cms-import-btn-color: var(--cms-import-btn-color);
+
+$search-icon-color: var(--search-icon-color);
+
+$locales-color: var(--locales-color);
+$locales-selected-color: var(--locales-selected-color);
+$locales-background: var(--locales-background);
+$locales-selected-background: var(--locales-selected-background);
+$locales-border-color: var(--locales-border-color);
+$record-editor-top-height: var(--record-editor-top-height);
+$record-editor-background: var(--record-editor-background);
+$record-editor-inside-background: var(--record-editor-inside-background);
+$field-background: var(--field-background);
+
+$btn-action-background: var(--btn-action-background);
+$btn-action-color: var(--btn-action-color);
+$btn-icon-color: var(--btn-icon-color);
+
+$field-label-color: var(--field-label-color);
+
+$table-background: var(--table-background);
+$table-header-background: var(--table-header-background);
+$table-header-color: var(--table-header-color);
+$table-row-odd-background: var(--table-row-odd-background);
+$table-row-odd-color: var(--table-row-odd-color);
+$table-row-even-background: var(--table-row-even-background);
+$table-row-even-color: var(--table-row-even-color);
+$table-row-icon-color: var(--table-row-icon-color);
+$table-row-icon-background: var(--table-row-icon-background);
+
+$notification-background: var(--notification-background);
+$notification-success-color: var(--notification-success-color);
+$notification-error-color: var(--notification-error-color);
+
+$paragraph-top-bar-background: var(--paragraph-top-bar-background);
+$paragraph-top-bar-color: var(--paragraph-top-bar-color);
+
+$paragraph-top-bar-background-level-2: var(--paragraph-top-bar-background-level-2);
+$paragraph-top-bar-color-level-2: var(--paragraph-top-bar-color-level-2);
+
+$paragraph-top-bar-color-level-3: var(--paragraph-top-bar-color-level-3);
+$paragraph-top-bar-background-level-3: var(--paragraph-top-bar-background-level-3);
+
+$switch-field-background: var(--switch-field-background);
+$switch-field-active-background: var(--switch-field-active-background);
+$switch-field-color: var(--switch-field-color);
+$switch-field-active-color: var(--switch-field-active-color);
+$switch-field-active-color: var(--switch-field-active-color);
+$switch-field-border-color: var(--switch-field-border-color);
+$switch-field-active-drag-background: var(--switch-field-active-drag-background);
+$switch-field-drag-background: var(--switch-field-drag-background);
+
+$wysiwyg-toolbar-background: var(--wysiwyg-toolbar-background);
+$wysiwyg-editor-background: var(--wysiwyg-editor-background);
+$wysiwyg-toolbar-border: var(--wysiwyg-toolbar-border);
+$wysiwyg-toolbar-color: var(--wysiwyg-toolbar-color);
+$wysiwyg-toolbar-hover-background: var(--wysiwyg-toolbar-hover-background);
+
+$levelBackgrounds: $paragraph-top-bar-background $paragraph-top-bar-background-level-2 $paragraph-top-bar-background-level-3;
+$level-hover-border: var(--level-hover-border);
+$levelColors: $paragraph-top-bar-color $paragraph-top-bar-color-level-2 $paragraph-top-bar-color-level-3;
+
+$file-input-chip-border: var(--file-input-chip-border);
+$file-input-chip-background: var(--file-input-chip-background);
+$file-input-chip-color: var(--file-input-chip-color);
+
+$date-time-background: var(--date-time-background);
+$date-time-color: var(--date-time-color);
+$date-time-active-color: var(--date-time-active-color);
+$date-time-active-background: var(--date-time-active-background);
+$date-time-hover-color: var(--date-time-hover-color);
+
+@font-face {
+  font-family: Source Sans Pro;
+  src: url('@a/fonts/SourceSans3-Regular.ttf');
+}
+
+html body {
+  font-family: Source Sans Pro !important;
+
+  --layout-background: #{$imag-light-grey};
+  --layout-card-background: #{$imag-white};
+  --layout-color: #{$imag-black};
+  --layout-width: 1440px;
+
+  --blurred-background-box-shadow-color: rgba(0, 0, 0, 0.25);
+  --blurred-background-background-color: rgba(255, 255, 255, 0.55);
+  --blurred-background-before-background-color: #{white};
+
+  --navbar-height: 58px;
+  --navbar-background: #{$imag-black};
+  --navbar-color: #{$imag-white};
+  --navbar-resource-group-background: transparent;
+  --navbar-resource-group-background-selected: #{$imag-purple};
+  --navbar-resource-group-title-color: #{$imag-white};
+  --navbar-resource-group-title-color-selected: #{$imag-white};
+  --navbar-resource-title-color: #{$imag-black};
+  --navbar-resource-title-color-hover: #{$imag-black};
+  --navbar-resource-title-color-selected: #{$imag-white};
+  --navbar-system-info-icon-color: #{$imag-white};
+
+  --system-info-background: #{$imag-white};
+  --system-info-color: #{$imag-black};
+  --system-info-progress-bar: #{$imag-purple};
+  --system-info-progress-bar-background: #{$imag-black};
+  --system-info-theme-icon-color: #{$system-info-theme-icon-color};
+  --system-info-theme-icon-selected-color: #{$system-info-theme-icon-selected-color};
+
+  --sidebar-resource-selector-height: 56px;
+  --sidebar-resource-selector-background: #{$imag-blue};
+  --sidebar-resource-selector-background-opened: #{$imag-purple};
+  --sidebar-resource-selector-color: #{$imag-white};
+  --search-icon-color: #{$imag-black};
+  --sidebar-records-list-background: #{$imag-light-grey};
+  --sidebar-records-list-checkbox-background: #{$imag-white};
+  --sidebar-records-list-checkbox-color: #{$imag-purple};
+  --sidebar-records-list-delete-icon-color: #{$imag-black};
+  --sidebar-records-list-delete-icon-selected-color: #{$imag-white};
+  --sidebar-records-list-item-background: #{$imag-white};
+  --sidebar-records-list-item-background-selected: #{$imag-purple};
+  --sidebar-records-list-item-background-disabled: #{$imag-grey};
+  --sidebar-toggle-view-mode-background: #{$imag-white};
+  --sidebar-toggle-view-mode-border-color: #{$imag-white};
+
+  --multiselect-delete-button-color: #{$imag-white};
+  --multiselect-delete-button-background: #{$imag-orange};
+
+  --plugin-title-background: #{$imag-blue};
+  --plugin-title-color: #{$imag-white};
+
+  --cms-import-section-background: #{$imag-white};
+  --cms-import-section-color: #{$imag-black};
+  --cms-import-resource-background: #{$imag-black};
+  --cms-import-resource-color: #{$imag-white};
+  --cms-import-btn-background: #{$imag-blue};
+  --cms-import-btn-color: #{$imag-white};
+
+  --btn-action-background: #{$imag-blue};
+  --btn-action-color: #{$imag-white};
+  --btn-icon-color: #{$imag-black};
+
+  --field-label-color: #{$imag-black};
+
+  --locales-border-color: #{$imag-light-grey};
+  --field-background: #{$imag-light-grey};
+  --record-editor-top-height: 34px;
+  --record-editor-background: #{$imag-light-grey-2};
+  --record-editor-inside-background: #{$imag-white};
+  --locales-color: #{$imag-black};
+  --locales-selected-color: #{$imag-white};
+  --locales-background: #{$imag-white};
+  --locales-selected-background: #{$imag-purple};
+
+  --table-background: #{$imag-white};
+  --table-header-background: #{$imag-black};
+  --table-header-color: #{$imag-white};
+  --table-row-odd-background: #{$imag-light-grey};
+  --table-row-odd-color: #{$imag-black};
+  --table-row-even-background: #{$imag-light-grey-2};
+  --table-row-even-color: #{$imag-black};
+  --table-row-icon-color: #{$imag-black};
+  --table-row-icon-background: #{$imag-white};
+
+  --notification-background: #{$imag-white};
+  --notification-success-color: #{$imag-black};
+  --notification-error-color: #{$imag-orange};
+
+  --paragraph-top-bar-background: #{$imag-light-grey};
+  --paragraph-top-bar-color: #{$imag-black};
+  --paragraph-top-bar-background-level-2: #{$imag-light-grey};
+  --paragraph-top-bar-color-level-2: #{$imag-black};
+  --paragraph-top-bar-background-level-3: #{$imag-light-grey};
+  --paragraph-top-bar-color-level-3: #{$imag-black};
+
+  --switch-field-background: #{$imag-white};
+  --switch-field-active-background: #{$imag-purple};
+  --switch-field-color: #{$imag-black};
+  --switch-field-active-color: #{$imag-white};
+  --switch-field-border-color: #{$imag-light-grey};
+  --switch-field-active-drag-background: #{$imag-white};
+  --switch-field-drag-background: #{$imag-light-grey};
+
+  --wysiwyg-toolbar-background: #{$imag-white};
+  --wysiwyg-editor-background: #{$imag-light-grey};
+  --wysiwyg-toolbar-border: #{$imag-light-grey};
+  --wysiwyg-toolbar-color: #{$imag-black};
+  --wysiwyg-toolbar-hover-background: #{$imag-blue};
+
+  --file-input-chip-border: #{$imag-grey};
+  --file-input-chip-background: #{transparent};
+  --file-input-chip-color: #{$imag-black};
+
+  --date-time-background: #{$imag-white};
+  --date-time-color: #{$imag-black};
+  --date-time-active-color: #{$imag-white};
+  --date-time-active-background: #{$imag-purple};
+  --date-time-hover-color: #{$imag-blue};
+
+  --level-hover-border: #{$imag-purple};
+
+  &.v-theme--dark {
+    --layout-background: #{$imag-black};
+    --layout-card-background: #{$imag-black};
+    --layout-color: #{$imag-black};
+
+    --blurred-background-box-shadow-color: #{rgba(0, 0, 0, 0.25)};
+    --blurred-background-background-color: #{rgba(41, 47, 71, 0.75)};
+    --blurred-background-before-background-color: #{rgba(41, 47, 71, 0.75)};
+
+    --navbar-resource-title-color: #{$imag-white};
+    --navbar-resource-title-color-hover: #{$imag-white};
+    --record-editor-background: #{$imag-dark-purple};
+    --record-editor-inside-background: #{$imag-darker-purple};
+
+    --system-info-background: #{$imag-black};
+    --system-info-color: #{$imag-white};
+    --system-info-progress-bar: #{$imag-purple};
+    --system-info-progress-bar-background: #{$imag-white};
+    --system-info-theme-icon-color: #{$system-info-theme-icon-color};
+    --system-info-theme-icon-selected-color: #{$system-info-theme-icon-selected-color};
+
+    --sidebar-resource-selector-background: #{$imag-blue};
+    --sidebar-resource-selector-background-opened: #{$imag-purple};
+    --sidebar-resource-selector-color: #{$imag-white};
+    --search-icon-color: #{$imag-white};
+    --sidebar-records-list-background: #{$imag-darker-purple};
+    --sidebar-records-list-checkbox-background: #{$imag-white};
+    --sidebar-records-list-checkbox-color: #{$imag-purple};
+    --sidebar-records-list-delete-icon-color: #{$imag-white};
+    --sidebar-records-list-delete-icon-selected-color: #{$imag-white};
+    --sidebar-records-list-item-background: #{$imag-dark-purple};
+    --sidebar-records-list-item-background-selected: #{$imag-purple};
+    --sidebar-records-list-item-background-disabled: #{$imag-grey};
+    --sidebar-toggle-view-mode-background: #{transparent};
+    --sidebar-toggle-view-mode-border-color: #{$imag-purple-border};
+
+
+    --locales-border-color: #{$imag-purple-border};
+    --locales-color: #{$imag-white};
+    --locales-selected-color: #{$imag-white};
+    --locales-background: #{transparent};
+    --locales-selected-background: #{$imag-purple};
+
+    --btn-action-color: #{$imag-white};
+    --btn-icon-color: #{$imag-white};
+    --field-label-color: #{$imag-white};
+
+    --wysiwyg-toolbar-background: #{$imag-black};
+    --wysiwyg-editor-background: #{$imag-wysiwyg-background};
+    --wysiwyg-toolbar-border: #{$imag-black};
+    --wysiwyg-toolbar-hover-background: #{$imag-blue};
+
+    --table-background: #{$imag-darker-purple};
+    --table-header-background: #{$imag-darker-purple};
+    --table-header-color: #{$imag-white};
+    --table-row-odd-background: #{$imag-black};
+    --table-row-odd-color: #{$imag-white};
+    --table-row-even-background: #{$imag-grey};
+    --table-row-even-color: #{$imag-black};
+    --table-row-icon-color: #{$imag-white};
+    --table-row-icon-background: #{transparent};
+
+    --notification-background: #{$imag-grey};
+    --notification-success-color: #{$imag-white};
+    --notification-error-color: #{$imag-orange};
+
+    --paragraph-top-bar-background: #{$imag-dark-purple};
+    --paragraph-top-bar-color: #{$imag-white};
+    --paragraph-top-bar-background-level-2: #{$imag-dark-purple};
+    --paragraph-top-bar-color-level-2: #{$imag-white};
+    --paragraph-top-bar-background-level-3: #{$imag-dark-purple};
+    --paragraph-top-bar-color-level-3: #{$imag-white};
+
+    --switch-field-background: #{transparent};
+    --switch-field-active-background: #{$imag-purple};
+    --switch-field-color: #{$imag-white};
+    --switch-field-active-color: #{$imag-white};
+    --switch-field-border-color: #{$imag-purple-border};
+    --switch-field-active-drag-background: #{$imag-white};
+    --switch-field-drag-background: #{$imag-light-grey};
+
+    --wysiwyg-toolbar-background: #{$imag-light-dark-purple};
+    --wysiwyg-editor-background: #{$imag-dark-purple};
+    --wysiwyg-toolbar-border: #{$imag-dark-purple};
+    --wysiwyg-toolbar-color: #{$imag-white};
+    --wysiwyg-toolbar-hover-background: #{$imag-blue};
+
+    --file-input-chip-border: #{$imag-purple-border};
+    --file-input-chip-background: #{transparent};
+    --file-input-chip-color: #{$imag-white};
+
+    --date-time-background: #{$imag-dark-purple};
+    --date-time-color: #{$imag-white};
+    --date-time-active-color: #{$imag-white};
+    --date-time-active-background: #{$imag-purple};
+    --date-time-hover-color: #{$imag-blue};
+
+    --level-hover-border: #{$imag-purple};
+
+  }
+}
+
+
+@media screen and (min-width: 1441px) {
+  .v-application {
+    --layout-width: 2000px;
+  }
+}
+
+@media screen and (min-width: 720px) and (max-width: 1440px) {
+  .v-application {
+    --layout-width: 1440px;
+  }
+}

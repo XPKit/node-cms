@@ -1,0 +1,39 @@
+ul.pager {
+  display: flex;
+  width: 80%;
+  margin: 0 auto;
+  border-collapse: collapse;
+  align-items: center;
+  justify-content: center;
+  li {
+    &:first-child, &:last-child {
+      a {
+        width: 40px;
+        font-weight: bold;
+      }
+    }
+    &.disabled {
+      opacity: 0.5;
+    }
+    &.active {
+      font-weight: bold;
+    }
+    a {
+      display: block;
+      outline: none;
+      position: relative;
+      line-height: 16px;
+      font-size: 14px;
+      height: 16px;
+      margin: 4px;
+      padding: 6px;
+      min-width: 20px;
+      text-align: center;
+      background: #f9f9f9;
+      border: 1px solid #c7c7c7;
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+}

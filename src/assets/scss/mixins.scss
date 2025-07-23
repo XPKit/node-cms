@@ -1,0 +1,153 @@
+@use "sass:list";
+@use "./variables.scss" as vars;
+
+@function vw($px-vw, $base-vw: 1440px) {
+  @return calc(($px-vw * 100vw) / $base-vw);
+}
+
+@font-face {
+  font-family: Source Sans Pro;
+  src: url('@a/fonts/SourceSans3-Regular.ttf');
+}
+
+@mixin normal-text {
+  font-style: normal;
+  line-height: normal;
+  font-weight: 400;
+}
+
+@mixin italic-text {
+  font-style: italic;
+  line-height: normal;
+  font-weight: 400;
+}
+
+@mixin h1 {
+  font-size: clamp(59px, 59px, vw(59px));
+  @include normal-text;
+  font-weight: 700;
+}
+
+@mixin h2 {
+  font-size: clamp(44px, 44px, vw(44px));
+  @include normal-text;
+}
+
+@mixin h3 {
+  font-size: clamp(33px, 33px, vw(33px));
+  @include normal-text;
+}
+
+@mixin h4 {
+  font-size: clamp(25px, 25px, vw(25px));
+  @include italic-text;
+}
+
+@mixin h5 {
+  font-size: clamp(19px, 19px, vw(19px));
+  @include normal-text;
+  font-weight: 700;
+}
+
+@mixin h6 {
+  font-size: clamp(16px, 16px, vw(16px));
+  @include italic-text;
+}
+
+@mixin subtext {
+  font-size: clamp(12px, 12px, vw(12px));
+  @include italic-text;
+}
+
+@mixin error {
+  @include subtext;
+}
+
+@mixin cta-text {
+  @include h5;
+  font-size: clamp(14px, 14px, vw(14px));
+}
+
+@mixin small-cta-text {
+  font-size: clamp(12px, 12px, vw(12px));
+  font-weight: 700;
+  @include italic-text;
+}
+
+@mixin textarea-text {
+  font-size: clamp(14px, 14px, vw(14px));
+  @include normal-text;
+}
+
+@mixin blurred-background {
+  padding: vw(14px);
+  background: white;
+  box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.15);
+}
+
+@function get-level-index($index) {
+  $levelIndex: $index % 3;
+
+  @if $levelIndex ==0 {
+    @return 3;
+  }
+
+  @return $levelIndex;
+}
+
+@mixin nested-paragraph-levels-border($index) {
+  border-color: list.nth(vars.$levelBackgrounds, $index);
+}
+
+@mixin nested-paragraph-levels($index) {
+  color: list.nth(vars.$levelColors, $index) !important;
+  background-color: list.nth(vars.$levelBackgrounds, $index);
+}
+
+
+@mixin nested-paragraphs() {
+  @for $i from 1 through 6 {
+    $valIndex: get-level-index($i);
+    &.nested-level-#{$i} {
+      @include nested-paragraph-levels-border($valIndex);
+      .paragraph-header {
+        @include nested-paragraph-levels($valIndex);
+      }
+      .add-btn-wrapper {
+        .remove-item {
+          color: list.nth(vars.$levelColors, $valIndex) !important;
+        }
+      }
+    }
+  }
+}
+
+@mixin highlight-paragraph() {
+  border-color: vars.$level-hover-border;
+  > .v-card-title {
+    background-color: vars.$level-hover-border;
+  }
+}
+
+@mixin custom-scrollbar() {
+  &::-webkit-scrollbar {
+    width: vw(8px);
+  }
+
+  &::-webkit-scrollbar-track {
+    // box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+    border-radius: 10px;
+    background-color: vars.$imag-pale-grey;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: vars.$imag-purple;
+    &:hover{
+      background-color: vars.$imag-light-purple;
+    }
+    &:active {
+      background-color: vars.$imag-blue;
+    }
+  }
+}

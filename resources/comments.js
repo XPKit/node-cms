@@ -1,4 +1,4 @@
-exports = (module.exports = {
+module.exports = {
   displayname: 'My Comments', // Optional, by default filename
   group: 'abc',
   extraSources: {
@@ -7,9 +7,13 @@ exports = (module.exports = {
   },
   schema: [
     {
+      label: 'Select author',
       field: 'author',
       input: 'select',
       source: 'authors',
+      options: {
+        customLabel: '{{name}}'
+      },
       localised: false
     },
     {
@@ -22,7 +26,17 @@ exports = (module.exports = {
       field: 'category',
       input: 'string',
       localised: true
+    },
+    {
+      label: 'Body',
+      field: 'wysiwyg',
+      input: 'wysiwyg',
+      localised: true
     }
   ],
+  locales: [
+    'enUS',
+    'zhCN'
+  ],
   type: 'normal'
-})
+}

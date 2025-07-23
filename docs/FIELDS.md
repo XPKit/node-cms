@@ -246,7 +246,7 @@ Select input fields
     labels: {
       one: 'My first one',
       two: 'My second one',
-      three: 'My thrid one'
+      three: 'My third one'
     }
   },
   source: [
@@ -429,58 +429,39 @@ Object input fields
 ```
 
 ## Paragraph
-Paragraph input fields
+Paragraph input fields behave like any other resources allowing for nested groups within a record
 ### Example
 ``` Javascript
+resource schema
 {
-  label: 'Paragraph',
-  field: 'paragraph',
-  input: 'paragraph',
-  localised: false,
-  options: {
-    types: [
-      {
-        label: 'normal group',
-        input: 'group',
-        schema: [
-          {
-            field: 'string',
-            input: 'string',
-            required: true
-          },
-          {
-            field: 'paragraph',
-            input: 'paragraph',
-            options: {
-              types: [
-                {
-                  field: 'dealership',
-                  input: 'select',
-                  source: 'dealerships'
-                },
-                'image'
-              ]
-            }
-          },
-          {
-            field: 'checkbox',
-            input: 'checkbox'
-          },
-          {
-            field: 'image',
-            input: 'image'
-          },
-          {
-            field: 'comment',
-            input: 'select',
-            source: 'comments',
-            options: {
-              customLabel: '{{title}} {{category}}'
-            }
-          }
-        ]
+  displayname: 'My resource',
+  schema: [
+    {
+      label: 'Paragraph',
+      field: 'paragraph',
+      input: 'paragraph',
+      localised: false,
+      options: {
+        types: ['myParagraph']
       }
-    ]
-  }
+    }
+  ]
+}
+
+paragraph schema
+{
+  displayname: 'My paragraph',
+  schema: [
+    {
+      label: 'Text field',
+      field: 'text',
+      input: 'text'
+    },
+    {
+      label: 'Checkbox',
+      field: 'checkbox',
+      input: 'checkbox'
+    }
+  ]
 }
 ```

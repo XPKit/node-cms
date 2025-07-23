@@ -1,0 +1,22 @@
+{
+  "local": {
+    "protocol": "http://",
+    "host": "localhost:9990",
+    "prefix": "",
+    "username": "localAdmin",
+    "password": "localAdmin"
+  },
+  "remote": {
+    "protocol": "http://",
+    "host": "localhost:9991",
+    "prefix": "/cms",
+    "username": "localAdmin",
+    "password": "localAdmin"
+  },
+  "resources": [
+    "gallery"
+  ],
+  "paragraphs": [
+    "gallery_item"
+  ]
+}

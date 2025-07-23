@@ -7,7 +7,6 @@ exports = (module.exports = {
     enUS: 'abc',
     zhCN: '甲乙丙'
   },
-  maxCount: 10,
   schema: [
     {
       label: {
@@ -18,7 +17,7 @@ exports = (module.exports = {
       input: 'string',
       required: true,
       unique: true,
-      localised: false
+      localised: true
     },
     {
       field: 'rate',
@@ -26,45 +25,45 @@ exports = (module.exports = {
       localised: false
     },
     {
-      label: 'Paragraph',
-      field: 'paragraph',
-      input: 'paragraph',
-      localised: false,
-      options: {
-        types: [
-          'text',
-          'file',
-          'image',
-          {
-            input: 'select',
-            source: 'comments',
-            options: {
-              customLabel: '{{title}} {{category}}'
-            }
-          }
-        ]
-      }
-    },
-    {
-      label: 'Localized Paragraph',
-      field: 'localizedParagraph',
-      input: 'paragraph',
-      localised: true
-      // options: {
-      //   types: ['string']
-      // }
-    },
-    {
       label: 'Body',
       field: 'wysiwyg',
       input: 'wysiwyg',
-      localised: true
+      localised: true,
+      disabled: true,
+      options: {
+        disabled: true
+      }
     },
     {
-      field: 'Related articles',
+      label: 'Body 2',
+      field: 'wysiwyg2',
+      input: 'wysiwyg',
+      localised: true,
+      disabled: true,
+      options: {
+        buttons: ['bold', 'italic'],
+        disabled: false
+      }
+    },
+    {
+      label: 'Body 3',
+      field: 'wysiwyg3',
+      input: 'wysiwyg',
+      localised: true,
+      disabled: true,
+      options: {
+        buttons: ['none'],
+        disabled: false
+      }
+    },
+    {
+      field: 'relatedArticles',
       input: 'multiselect',
       source: 'articles',
-      localised: false
+      localised: false,
+      options: {
+        disabled: true
+      }
     },
     {
       field: 'comment',
@@ -92,21 +91,19 @@ exports = (module.exports = {
       source: 'comments'
     },
     {
-      field: 'file',
-      input: 'file'
-    },
-    {
-      field: 'localisedFile',
-      input: 'file'
-    },
-    {
       field: 'image',
-      input: 'image'
+      input: 'image',
+      localised: false
+    },
+    {
+      field: 'localizedImage',
+      input: 'image',
+      localised: true
     }
   ],
+  type: 'normal',
   locales: [
     'enUS',
     'zhCN'
-  ],
-  type: 'normal'
+  ]
 })
