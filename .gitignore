@@ -2,7 +2,8 @@ node_modules
 .DS_Store
 app/components
 npm-debug.log
-test/data
+test/data*
+test/resources-*
 old_tests/data
 data
 /cms.json

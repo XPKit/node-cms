@@ -238,12 +238,14 @@ class CMS {
     })
     // Initialize SmartCrop if enabled
     this.bootstrapFunctions.push(async (callback) => {
-      try {
-        const smartCrop = require('./lib/util/smartcrop')
-        await smartCrop.initialize(options)
-        console.info('SmartCrop initialization completed during CMS bootstrap')
-      } catch (error) {
-        console.warn('SmartCrop initialization failed during CMS bootstrap:', error.message)
+      if (_.get(options, 'smartCrop', false)) {
+        try {
+          const smartCrop = require('./lib/util/smartcrop')
+          await smartCrop.initialize(options)
+          console.info('SmartCrop initialization completed during CMS bootstrap')
+        } catch (error) {
+          console.warn('SmartCrop initialization failed during CMS bootstrap:', error.message)
+        }
       }
       callback()
     })

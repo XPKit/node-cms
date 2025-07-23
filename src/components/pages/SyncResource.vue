@@ -2,9 +2,12 @@
   <div class="sync-resources main">
     <h1>Sync Resources</h1>
     <div v-if="config">
-      <select v-model="selectedResource" @change="onChangeResource">
-        <option v-for="item in config.sync.resources" :key="`resource-${item}`" :value="item">{{ item }}</option>
-      </select>
+      <v-select
+        v-model="selectedResource" :items="config.sync.resources" item-text="name" item-value="name" :ripple="false"
+        menu-icon="mdi-chevron-down"
+        flat rounded
+        density="compact" hide-details variant="solo-filled"
+      />
       <div v-if="!isEmpty(recordData)" class="num-records">
         <span>number of records</span>
         <div class="num-records-wrapper">
@@ -90,7 +93,7 @@ export default {
         this.uniqueKeyMap[resource.title] = uniqueKeyField.field
       }
     })
-    this.config = await RequestService.get(`${window.location.pathname}/config`)
+    this.config = await RequestService.get(`../config`)
     if (this.selectedResource) {
       this.update()
     }
@@ -100,14 +103,16 @@ export default {
           await pAll(_.map(['local', 'remote'], env => {
             return async () => {
               try {
-                this.syncStatus[env] = await RequestService.get(`${window.location.pathname}/sync/${env}/${this.selectedResource}/status`)
+                this.syncStatus[env] = await RequestService.get(`../sync/${env}/${this.selectedResource}/status`)
                 this.syncStatus = _.clone(this.syncStatus)
               } catch (error) {
                 console.error(error)
               }
             }
           }))
-        } catch { /* empty */ }
+        } catch (error) {
+          console.error(error)
+         }
 
         const result = _.find(this.syncStatus, {status: 'syncing'})
         if (!result && this.syncingEnvironment) {
@@ -134,9 +139,9 @@ export default {
         await pAll(_.map(this.environments, env => {
           return async () => {
             try {
-              let data = await RequestService.get(`${window.location.pathname}sync/${env}/${this.selectedResource}`)
+              let data = await RequestService.get(`../sync/${env}/${this.selectedResource}`)
               _.set(this.recordData, env, data)
-              data = await RequestService.get(`${window.location.pathname}sync/${env}/${this.selectedResource}/status`)
+              data = await RequestService.get(`../sync/${env}/${this.selectedResource}/status`)
               _.set(this.syncStatus, env, data)
               this.syncStatus = _.clone(this.syncStatus)
             } catch (error) {

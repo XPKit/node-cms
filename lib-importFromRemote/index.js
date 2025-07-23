@@ -24,8 +24,11 @@ class ImportWrapper {
     this.noPrompt = noPrompt
     this.createOnly = createOnly
     this.askConfirmation = askConfirmation
-    this.localApi = Api(this.config.local)
-    this.remoteApi = Api(this.config.remote)
+    // Default local/remote to {} if undefined
+    const localConfig = this.config.local || {}
+    const remoteConfig = this.config.remote || {}
+    this.localApi = Api(localConfig)
+    this.remoteApi = Api(remoteConfig)
     this.binaryMap = {}
     this.cmsRecordsMap = {}
     this.attachmentMap = {}
@@ -535,8 +538,13 @@ class ImportWrapper {
                 toUpdate = _.omit(toUpdate, _.map(matches, (match)=> match.path))
               }
             })
-            // console.warn('will update record ----', record._id, toUpdate)
-            return await this.localApi(resource).update(record._id, toUpdate)
+            // console.warn('will update record ----', record._id)
+            try {
+              return await this.localApi(resource).update(record._id, toUpdate)
+            } catch (error) {
+              console.error(`Failed to update record ${record._id} in resource ${resource}:`, error)
+              return {}
+            }
           }
         }
       }

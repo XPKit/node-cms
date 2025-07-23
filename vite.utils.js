@@ -95,8 +95,7 @@ class ViteUtils {
       rewrite: (path) => path.replace(regex, ''),
       configure: (proxy) => this.handleProxyCall(`^${this.nodeCmsMountPath}(admin)`, proxy)
     })
-    // TODO: hugo - add all the plugins here
-    _.set(this.proxy, `^${this.nodeCmsMountPath}(api|import)`, {
+    _.set(this.proxy, `^${this.nodeCmsMountPath}(api|import|importFromRemote|sync)`, {
       target: `${this.baseUrl}:${this.serverPort}`
     })
     _.set(this.proxy, '^/(socket)', {

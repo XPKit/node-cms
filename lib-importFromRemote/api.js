@@ -3,8 +3,8 @@ const fs = require('fs-extra')
 const _ = require('lodash')
 const RequestService = require('./RequestService')
 
-exports = module.exports = (config) => {
-  config.protocol = config.protocol || 'http://'
+exports = module.exports = (config = {}) => {
+  config.protocol = _.get(config, 'protocol', 'http://')
   const auth = _.pick(config, ['username', 'password'])
   const request = new RequestService(auth)
   const schemaMap = {}
@@ -86,7 +86,7 @@ exports = module.exports = (config) => {
       getUniqueKeys () {
         const uniqueKeyField = _.filter(schemaMap[resource], item => item.unique || item.xlsxKey)
         if (_.isEmpty(uniqueKeyField)) {
-          throw new Error(`${this.name} didn't have unique key field`)
+          throw new Error(`${this.name} - didn't have unique key field`)
         }
         return _.map(uniqueKeyField, 'field')
       }

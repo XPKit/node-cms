@@ -37,6 +37,17 @@ const logger = new (require('img-sh-logger'))()
 // }
 
 let options = {
+  sync: {
+    resources: ['articles','comments','authors']
+  },
+  test: true,
+  replication: {
+    peers: [],
+    peersByResource: {
+      articles: ['http://localhost:9991'],
+      authors: ['http://localhost:9992']
+    }
+  },
   dbEngine: {
     // type: 'mongodb',
     // url: `${process.env.XPKIT_HOST || '127.0.0.1'}/node-cms`
