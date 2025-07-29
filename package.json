@@ -110,7 +110,7 @@
     "lru-cache": "^4.1.5",
     "md5-file": "^5.0.0",
     "measure": "^0.1.1",
-    "mime-stream": "^2.1.0",
+    "mime-stream": "^2.2.0",
     "mime-types": "^3.0.1",
     "mkdirp": "^0.5.5",
     "mocha": "^11.7.1",
