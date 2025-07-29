@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, defineProps, getCurrentInstance } from 'vue'
+import { ref, computed, onMounted, onUnmounted, getCurrentInstance } from 'vue'
 import _ from 'lodash'
 import Dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'

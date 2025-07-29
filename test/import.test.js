@@ -9,7 +9,7 @@ const isoCodes = ['AUS', 'NZL', 'PHL', 'THA', 'VNM', 'ZAF', 'KOR', 'QAT', 'BHR',
 
 // Helper: create a mock XLSX file for import
 function createMockXlsx(filePath) {
-  const xlsx = require('xlsx')
+  const xlsx = require('@e965/xlsx')
   const ws = xlsx.utils.aoa_to_sheet([
     ['id', 'name'],
     ['1', 'Test User'],

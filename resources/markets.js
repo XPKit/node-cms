@@ -691,7 +691,7 @@ exports = (module.exports = {
       input: 'number',
       required: true,
       options: {
-        readonly: true,
+        // readonly: true,
         featured: false,
         disabled: true
       }

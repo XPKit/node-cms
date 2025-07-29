@@ -1,0 +1,6 @@
+const JsonDOWN = require('../lib/db/leveldown/jsondown')
+const db = new JsonDOWN('./testdb.json', { valueEncoding: 'json' })
+console.log('db class:', db.constructor.name)
+console.log('db.hooks:', db.hooks)
+console.log('db.hooks.prewrite:', db.hooks ? db.hooks.prewrite : undefined)
+console.log('db.hooks.prewrite.add:', db.hooks && db.hooks.prewrite ? typeof db.hooks.prewrite.add : undefined)

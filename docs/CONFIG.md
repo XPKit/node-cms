@@ -7,7 +7,6 @@
 ``` Javascript
 /* resources/articles.js */
 exports = module.exports = {
-  acl: { ... },                  // Access control list settings
   schema: [{...}, {...}, {...}], // Resource schema definition
   locales: [],                   // List of resource locales. when defined, enables localisation support
   type: 'normal'                 // replication type, when defined, enables replication support
