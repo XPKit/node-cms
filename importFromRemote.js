@@ -6,7 +6,6 @@ const program = require('commander')
 // const _ = require('lodash')
 const path = require('path')
 const prompt = require('prompt')
-const Q = require('q')
 const autoBind = require('auto-bind')
 
 const ImportWrapper = require('./lib-importFromRemote')
@@ -54,7 +53,7 @@ class ImportManager {
     }
     let answer =  {confirm: 'no'}
     try {
-      answer = await Q.ninvoke(prompt, 'get', schema)
+      answer = await prompt.get(schema)
     // eslint-disable-next-line no-unused-vars
     } catch (error) {}
     if (answer.confirm.toLowerCase() !== 'yes') {

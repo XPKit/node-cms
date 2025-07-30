@@ -13,7 +13,6 @@ const prompt = require('prompt')
 const pAll = require('p-all')
 const {setTimeout} = require('node:timers/promises')
 const { JWT } = require('google-auth-library')
-const Q = require('q')
 
 const h = require('./lib-import/helper')
 const Api = require('./lib-import/api')
@@ -96,7 +95,7 @@ class ImportManager {
     }
     let ans =  {confirm: 'no'}
     try {
-      ans = await Q.ninvoke(prompt, 'get', schema)
+      ans = await prompt.get(schema)
     } catch (error) {
       console.error('Error:', error)
     }
