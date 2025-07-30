@@ -4,6 +4,17 @@ export default {
     'src/main.js',
     // Resource files are dynamically loaded
     'resources/**/*.js',
+    // Plugins that are conditionally loaded based on options
+    'lib/plugins/rest/index.js',
+    'lib/plugins/admin/index.js',
+    'lib/plugins/anonymousRead/index.js',
+    'lib/plugins/authentication/index.js',
+    'lib/plugins/replicator/index.js',
+    'lib/plugins/rest/index.js',
+    'lib/plugins/sync/index.js',
+    'lib/plugins/xlsx/index.js',
+    'lib/plugins/import/index.js',
+    'lib/plugins/importFromRemote/index.js',
     // Test files may be run individually
     'test/**/*.js'
   ],
@@ -34,7 +45,10 @@ export default {
     'lib/helpers.js',
     'lib/plugins/rest/routes.js',
     // Logger dependencies
-    'lib/logger.js'
+    'lib/logger.js',
+    // Plugin alias imports that Knip can't resolve
+    '@p/js/main.js',
+    '@p/scss/main.scss'
   ],
 
   // Path mapping to resolve Vite aliases

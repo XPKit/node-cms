@@ -51,6 +51,12 @@ class ViteUtils {
   }
 
   createPluginsSymlink () {
+    // Skip symlink creation during static analysis tools like knip
+    if (process.argv.some(arg => arg.includes('knip') || arg.includes('eslint'))) {
+      console.log('Skipping symlink creation during static analysis')
+      return
+    }
+
     console.log(`Node-cms is loaded ${this.isInNodeModules ? 'as a dependency' : 'directly'}`)
     if (fs.existsSync(this.plugins.fallback) === false) {
       throw new Error(`No .plugins folder found @ ${this.plugins.fallback}`)
