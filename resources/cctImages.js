@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   displayname: {
     enUS: 'CCT Images'
   },

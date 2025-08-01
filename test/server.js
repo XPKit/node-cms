@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-'use strict'
-
-const _ = require('lodash')
-const fs = require('fs-extra')
-const path = require('path')
-const express = require('express')
-const { spawn } = require('child_process')
-const logger = new (require('img-sh-logger'))()
-const CMS = require('../')
-const pkg = require('../package.json')
+import _ from 'lodash'
+import fs from 'fs-extra'
+import path from 'path'
+import express from 'express'
+import { spawn } from 'child_process'
+import ImgShLogger from 'img-sh-logger'
+import CMS from '../index.js'
+import pkg from '../package.json'
+const logger = new ImgShLogger()
+const __dirname = import.meta.dirname
 
 fs.removeSync('./test/data')
 
@@ -110,7 +110,7 @@ function launchPeers(done) {
     }
 
     // Use a separate resource directory for each peer
-    const path = require('path')
+
     peerConfig.resources = path.join(__dirname, `resources-peer-${port}`)
 
     // Clean peer data directory before starting

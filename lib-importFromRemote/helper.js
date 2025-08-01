@@ -1,9 +1,11 @@
-const util = require('util')
-const measure = require('measure')
-const numeral = require('numeral')
-const logger = new (require('img-sh-logger'))()
-const Dayjs = require('dayjs')
-const _ = require('lodash')
+import util from 'util'
+import measure from 'measure'
+import numeral from 'numeral'
+import Logger from 'img-sh-logger'
+import Dayjs from 'dayjs'
+import _ from 'lodash'
+
+const logger = new Logger()
 
 let startProcess = function () {
   let done, label
@@ -45,7 +47,7 @@ let convertData = function (value, type) {
   return _.trim(value)
 }
 
-exports = module.exports = {
+export default {
   startProcess: startProcess,
   convertData: convertData
 }

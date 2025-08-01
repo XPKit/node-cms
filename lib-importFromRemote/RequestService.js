@@ -1,6 +1,6 @@
-const _ = require('lodash')
-const path = require('path')
-const fs = require('fs-extra')
+import _ from 'lodash'
+import path from 'path'
+import fs from 'fs-extra'
 
 class RequestService {
   constructor(auth) {
@@ -115,4 +115,4 @@ class RequestService {
   }
 }
 
-exports = module.exports = RequestService
+export default RequestService

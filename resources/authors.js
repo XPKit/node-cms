@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   displayname: 'Authors', // Optional, by default filename
   group: {
     enUS: 'abc',

@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 
-'use strict'
+import program from 'commander'
+// import _ from 'lodash'
+import path from 'path'
+import prompt from 'prompt'
+import autoBind from 'auto-bind'
+import { createRequire } from 'module'
 
-const program = require('commander')
-// const _ = require('lodash')
-const path = require('path')
-const prompt = require('prompt')
-const autoBind = require('auto-bind')
+import ImportWrapper from './lib-importFromRemote/index.js'
 
-const ImportWrapper = require('./lib-importFromRemote')
+const require = createRequire(import.meta.url)
+const __dirname = import.meta.dirname
 
 program.on('--help', () => {
   console.log('')
@@ -65,4 +67,5 @@ class ImportManager {
 
 let config = require(path.resolve(program.args[0]))
 
-exports = new ImportManager(config)
+// Create and run the import manager
+const importManager = new ImportManager(config)

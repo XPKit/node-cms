@@ -15,6 +15,7 @@ const viteUtils = ViteUtils.getInstance()
 const defaultVendorsFilename = 'vendors'
 const separatedVendors = ['lodash', 'vuetify', '@json-editor', '@tiptap', 'codemirror']
 const regroupModulesStartingWith = ['vue', 'prosemirror']
+const __dirname = import.meta.dirname
 
 const cacheControl = () => ({
   name: 'cache-control',

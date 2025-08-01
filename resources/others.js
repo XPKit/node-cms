@@ -1,5 +1,5 @@
 // Other field types and options example
-module.exports = {
+export default {
   displayname: { enUS: 'Other Field Types & Options' },
   schema: [
     // Integer field

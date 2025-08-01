@@ -1,8 +1,8 @@
-const path = require('path')
-const fs = require('fs-extra')
-const _ = require('lodash')
+import path from 'path'
+import fs from 'fs-extra'
+import _ from 'lodash'
 
-exports = module.exports = (config, auth) => {
+export default (config, auth) => {
   config.protocol = config.protocol || 'http://'
   const schemaMap = {}
   return (resource) => {

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   title: 'testParagraphAddMultiple',
   displayname: 'Test Paragraph Add Multiple',
   schema: [

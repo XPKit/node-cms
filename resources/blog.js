@@ -1,5 +1,5 @@
 // Blog resource example
-module.exports = {
+export default {
   displayname: { enUS: 'Blog Posts' },
   schema: [
     {

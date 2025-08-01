@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   schema: [
     {
       label: 'File paragraph file field',

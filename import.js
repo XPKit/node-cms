@@ -1,23 +1,25 @@
 #!/usr/bin/env node
 
-'use strict'
+import program from 'commander'
+import _ from 'lodash'
+import path from 'path'
+import fs from 'fs-extra'
+import Logger from 'img-sh-logger'
+import { GoogleSpreadsheet } from 'google-spreadsheet'
+import md5File from 'md5-file'
+import prompt from 'prompt'
+import pAll from 'p-all'
+import { setTimeout } from 'node:timers/promises'
+import { JWT } from 'google-auth-library'
+import { createRequire } from 'module'
 
-const program = require('commander')
-const _ = require('lodash')
-const path = require('path')
-const fs = require('fs-extra')
-const logger = new (require('img-sh-logger'))()
-const { GoogleSpreadsheet } = require('google-spreadsheet')
-const md5File = require('md5-file')
-const prompt = require('prompt')
-const pAll = require('p-all')
-const {setTimeout} = require('node:timers/promises')
-const { JWT } = require('google-auth-library')
+import h from './lib-import/helper.js'
+import Api from './lib-import/api.js'
 
-const h = require('./lib-import/helper')
-const Api = require('./lib-import/api')
-
+const require = createRequire(import.meta.url)
+const __dirname = import.meta.dirname
 const pkg = require('./package.json')
+const logger = new Logger()
 
 program.on('--help', () => {
   console.log('')
@@ -747,4 +749,5 @@ if (config && config.oauth && config.oauth.keyFile) {
 let [username, password] = program.args[1].split(':')
 let auth = {username, password}
 
-exports = new ImportManager(config, auth)
+// Create and run the import manager
+const importManager = new ImportManager(config, auth)

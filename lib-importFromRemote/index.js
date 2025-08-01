@@ -1,12 +1,15 @@
-const path = require('path')
-const _ = require('lodash')
-const fs = require('fs-extra')
-const autoBind = require('auto-bind')
-const md5File = require('md5-file')
-const h = require('./helper')
-const Api = require('./api')
-const logger = new (require('img-sh-logger'))()
-const pAll = require('p-all')
+import path from 'path'
+import _ from 'lodash'
+import fs from 'fs-extra'
+import autoBind from 'auto-bind'
+import md5File from 'md5-file'
+import h from './helper.js'
+import Api from './api.js'
+import Logger from 'img-sh-logger'
+import pAll from 'p-all'
+
+const __dirname = import.meta.dirname
+const logger = new Logger()
 
 class ImportWrapper {
   constructor () {
@@ -711,5 +714,5 @@ class ImportWrapper {
   }
 }
 
-module.exports = ImportWrapper
+export default ImportWrapper
 

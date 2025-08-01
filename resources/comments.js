@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   displayname: 'My Comments', // Optional, by default filename
   group: 'abc',
   extraSources: {

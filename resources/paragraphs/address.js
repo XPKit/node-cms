@@ -1,5 +1,5 @@
 // Paragraph type: address
-module.exports = {
+export default {
   displayname: { enUS: 'Address Block' },
   schema: [
     {

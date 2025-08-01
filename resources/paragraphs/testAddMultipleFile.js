@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   title: 'testAddMultipleFile',
   displayname: 'Test Add Multiple File',
   schema: [

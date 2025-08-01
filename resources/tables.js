@@ -1,5 +1,5 @@
 // Table resource example
-module.exports = {
+export default {
   view: 'table',
   options: {
     paging: 6,

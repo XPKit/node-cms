@@ -1,5 +1,5 @@
 // Analytics dashboard resource example
-module.exports = {
+export default {
   displayname: { enUS: 'Analytics Dashboard' },
   schema: [
     {

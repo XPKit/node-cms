@@ -1,5 +1,5 @@
 // Admin tool resource example
-module.exports = {
+export default {
   displayname: { enUS: 'IT Admin Tool' },
   schema: [
     {

@@ -1,5 +1,5 @@
 // Example resource with paragraph fields
-module.exports = {
+export default {
   displayname: { enUS: 'Page With Paragraphs' },
   schema: [
     {

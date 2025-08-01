@@ -1,5 +1,5 @@
 // Users resource for adminTool select field
-module.exports = {
+export default {
   displayname: { enUS: 'Users' },
   schema: [
     {

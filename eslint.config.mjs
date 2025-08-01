@@ -4,7 +4,6 @@ import pluginVue from 'eslint-plugin-vue'
 export default [
   // Base JavaScript configuration
   js.configs.recommended,
-
   // Vue configuration
   ...pluginVue.configs['flat/recommended'],
   {
@@ -26,19 +25,14 @@ export default [
     }
   },
   {
-    files: ['lib/**/*.js', 'lib-import/**/*.js', 'lib-importFromRemote/**/*.js', 'old_tests/**/*.js', 'test/**/*.js', '*.js'],
+    files: ['lib/**/*.js', 'lib-import/**/*.js', 'lib-importFromRemote/**/*.js', 'test/**/*.js', '*.js'],
     languageOptions: {
       ecmaVersion: 2022,
-      sourceType: 'commonjs',
+      sourceType: 'module',
       globals: {
         console: 'readonly',
         process: 'readonly',
         Buffer: 'readonly',
-        __dirname: 'readonly',
-        __filename: 'readonly',
-        module: 'readonly',
-        require: 'readonly',
-        exports: 'readonly',
         global: 'readonly',
 
         // Test globals (Mocha)
@@ -84,7 +78,6 @@ export default [
       ]
     }
   },
-
   {
     files: ['src/**/*.js'],
     languageOptions: {
@@ -139,7 +132,6 @@ export default [
       ]
     }
   },
-
   {
     files: ['src/**/*.vue'],
     languageOptions: {
@@ -180,7 +172,6 @@ export default [
       'vue/singleline-html-element-content-newline': 'off'
     }
   },
-
   {
     ignores: [
       'node_modules/**',

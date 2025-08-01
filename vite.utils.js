@@ -1,10 +1,13 @@
-const path = require('path')
-const fs = require('fs-extra')
-const _ = require('lodash')
-const crypto = require('crypto')
-const {v4: uuid} = require('uuid')
-const autoBind = require('auto-bind')
+import path from 'path'
+import fs from 'fs-extra'
+import _ from 'lodash'
+import crypto from 'crypto'
+import {v4} from 'uuid'
+import autoBind from 'auto-bind'
+import { createRequire } from 'module'
 
+const require = createRequire(import.meta.url)
+const __dirname = import.meta.dirname
 class ViteUtils {
   constructor () {
     autoBind(this)
@@ -125,8 +128,7 @@ class ViteUtils {
     return this.proxy
   }
 }
-
-module.exports = {
+export default {
   self: null,
   id: null,
   getInstance (baseUrl, pkg) {
@@ -134,7 +136,7 @@ module.exports = {
       if (_.isFunction(crypto.randomUUID)) {
         this.id = crypto.randomUUID()
       } else {
-        this.id = uuid()
+        this.id = v4()
       }
       this.self = new ViteUtils(baseUrl, pkg)
     }

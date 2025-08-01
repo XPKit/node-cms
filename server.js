@@ -1,12 +1,16 @@
 #!/usr/bin/env node
 
-'use strict'
+import express from 'express'
+import { createRequire } from 'module'
 
-const express = require('express')
+import CMS from './index.js'
+// Import logger as a constructor
+import Logger from 'img-sh-logger'
 
-const CMS = require('./')
+// For compatibility with JSON imports
+const require = createRequire(import.meta.url)
 const pkg = require('./package.json')
-const logger = new (require('img-sh-logger'))()
+const logger = new Logger()
 
 // start with leveldb
 // let options = {

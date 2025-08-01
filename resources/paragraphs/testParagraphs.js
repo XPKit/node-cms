@@ -1,5 +1,5 @@
 // Paragraph type: testParagraphs
-module.exports = {
+export default {
   displayname: { enUS: 'Test Paragraph' },
   schema: [
     {

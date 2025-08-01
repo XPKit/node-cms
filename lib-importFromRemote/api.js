@@ -1,9 +1,9 @@
-// const path = require('path')
-const fs = require('fs-extra')
-const _ = require('lodash')
-const RequestService = require('./RequestService')
+// import path from 'path'
+import fs from 'fs-extra'
+import _ from 'lodash'
+import RequestService from './RequestService.js'
 
-exports = module.exports = (config = {}) => {
+export default (config = {}) => {
   config.protocol = _.get(config, 'protocol', 'http://')
   const auth = _.pick(config, ['username', 'password'])
   const request = new RequestService(auth)

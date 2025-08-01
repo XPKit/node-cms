@@ -8,27 +8,30 @@
  * @typedef {import('./lib/ResourceAPIWrapper.js')} ResourceAPIWrapper
  */
 
-const path = require('path')
-const fs = require('fs')
-const pAll = require('p-all')
-const compression = require('compression')
-const cookieParser = require('cookie-parser')
-const express = require('express')
-const helmet = require('helmet')
-const _ = require('lodash')
-const requireDir = require('require-dir')
-const mkdirp = require('mkdirp')
-const session = require('express-session')
+import path from 'path'
+import fs from 'fs'
+import pAll from 'p-all'
+import compression from 'compression'
+import cookieParser from 'cookie-parser'
+import express from 'express'
+import helmet from 'helmet'
+import _ from 'lodash'
+import mkdirp from 'mkdirp'
+import session from 'express-session'
+import { createRequire } from 'module'
 
-const UUID = require('./lib/util/uuid')
-const SyslogManager = require('./lib/SyslogManager')
-const SystemManager = require('./lib/SystemManager')
-const UpdatesManager = require('./lib/UpdatesManager')
-const escapeRegExp = require('./lib/util/escapeRegExp')
+import UUID from './lib/util/uuid.js'
+import SyslogManager from './lib/SyslogManager.js'
+import SystemManager from './lib/SystemManager.js'
+import UpdatesManager from './lib/UpdatesManager.js'
+import escapeRegExp from './lib/util/escapeRegExp.js'
 
-const Resource = require('./lib/resource')
-const ResourceAPIWrapper = require('./lib/ResourceAPIWrapper')
-const autoBind = require('auto-bind')
+import Resource from './lib/resource.js'
+import ResourceAPIWrapper from './lib/ResourceAPIWrapper.js'
+import autoBind from 'auto-bind'
+
+// For compatibility with dynamic requires
+const require = createRequire(import.meta.url)
 
 // Default CMS configration
 const defaultConfig = () =>
@@ -121,63 +124,8 @@ class CMS {
     this._plugins = {}
     // Use prefixed UUID
     options.uuid = new UUID(options.mid)
-    // automaticly populate CMS resources, if specified
-    if (this._options.autoload) {
-      _.each(requireDir(options.resources), (value, key) => this.resource(key, value))
-      const paragraphsDir = path.join(_.get(options, 'paragraphs', options.resources), 'paragraphs')
-      // console.info(`Paragraphs dir: ${paragraphsDir}`)
-      try {
-        const results = requireDir(paragraphsDir)
-        _.each(results, (value, key)=> {
-          _.set(this._paragraphs, key, value)
-          this.formatSchema(this._paragraphs, key, true)
-        })
-      // eslint-disable-next-line no-unused-vars
-      } catch (error) {
-        console.warn('No folder found for ', paragraphsDir)
-      }
-      _.set(this._paragraphs, '_settingsLink', {
-        displayname: 'Settings link',
-        maxCount: 1,
-        schema: [
-          {
-            field: 'name',
-            localised: false,
-            input: 'string',
-            required: true
-          },
-          {
-            field: 'url',
-            localised: false,
-            input: 'url',
-            required: true
-          }
-        ]
-      })
-      this.formatSchema(this._paragraphs, '_settingsLink', true)
-      _.set(this._paragraphs, '_settingsLinkGroup', {
-        displayname: 'Link group',
-        maxCount: 1,
-        schema: [
-          {
-            label: 'Group title',
-            field: 'title',
-            localised: false,
-            input: 'string',
-            required: true
-          },
-          {
-            field: 'links',
-            input: 'paragraph',
-            localised: false,
-            options: {
-              types: ['_settingsLink']
-            }
-          }
-        ]
-      })
-      this.formatSchema(this._paragraphs, '_settingsLinkGroup', true)
-    }
+    // Store autoload flag for later initialization
+    this._needsAutoload = this._options.autoload
     // create main application
     this._app = express()
     this._app.use(helmet.dnsPrefetchControl())
@@ -227,9 +175,15 @@ class CMS {
         next()
       })
     }
-    this.use(require('./lib/plugins/authentication'), options, configPath)
+    // Authentication plugin will be loaded during bootstrap
     // handle syslog and system
     this.bootstrapFunctions = this.bootstrapFunctions || []
+    this.bootstrapFunctions.push(async (callback) => {
+      // Load authentication plugin asynchronously
+      const authModule = await import('./lib/plugins/authentication/index.js')
+      this.use(authModule.default, options, configPath)
+      callback()
+    })
     this.bootstrapFunctions.push(async (callback) => {
       SyslogManager.init(this, options)
       SystemManager.init(this, options)
@@ -240,7 +194,8 @@ class CMS {
     this.bootstrapFunctions.push(async (callback) => {
       if (_.get(options, 'smartCrop', false)) {
         try {
-          const smartCrop = require('./lib/util/smartcrop')
+          const smartCropModule = await import('./lib/util/smartcrop.js')
+          const smartCrop = smartCropModule.default
           await smartCrop.initialize(options)
           console.info('SmartCrop initialization completed during CMS bootstrap')
         } catch (error) {
@@ -263,8 +218,22 @@ class CMS {
     ]
     this.usedPlugins = _.chain(pluginConditions).filter('enabled').map('name').value()
     console.info(`Will use plugins: ${this.usedPlugins.join(', ')}`)
-    _.each(this.usedPlugins, (plugin) => {
-      this.use(require(`./lib/plugins/${plugin}`), options, configPath)
+
+    // Add autoload bootstrap function
+    this.bootstrapFunctions.push(async (callback) => {
+      if (this._needsAutoload) {
+        await this.initializeAutoload()
+      }
+      callback()
+    })
+
+    // Load plugins during bootstrap instead of constructor
+    this.bootstrapFunctions.push(async (callback) => {
+      for (const plugin of this.usedPlugins) {
+        const pluginModule = await import(`./lib/plugins/${plugin}/index.js`)
+        this.use(pluginModule.default, options, configPath)
+      }
+      callback()
     })
     // handle bootstrap
     this.bootstrap = async (server, callback) => {
@@ -289,6 +258,81 @@ class CMS {
     this._processAttachmentFields()
     this._processSourceFields()
   }
+
+  /**
+   * Initialize autoload functionality - load resources and paragraphs from directories
+   * @private
+   */
+  async initializeAutoload() {
+    const { default: requireDir } = await import('./lib/util/requireDir.js')
+    const options = this._options
+    try {
+      // Load resources from directory
+      const resources = await requireDir(options.resources)
+      _.each(resources, (value, key) => this.resource(key, value))
+
+      // Load paragraphs from directory
+      const paragraphsDir = path.join(_.get(options, 'paragraphs', options.resources), 'paragraphs')
+      console.info(`Paragraphs dir: ${paragraphsDir}`)
+      try {
+        const results = await requireDir(paragraphsDir)
+        _.each(results, (value, key) => {
+          _.set(this._paragraphs, key, value)
+          this.formatSchema(this._paragraphs, key, true)
+        })
+      } catch (paragraphError) {
+        console.warn('No folder found for ', paragraphsDir, paragraphError.message)
+      }
+
+      // Add default settings paragraph types
+      _.set(this._paragraphs, '_settingsLink', {
+        displayname: 'Settings link',
+        maxCount: 1,
+        schema: [
+          {
+            field: 'name',
+            localised: false,
+            input: 'string',
+            required: true
+          },
+          {
+            field: 'url',
+            localised: false,
+            input: 'url',
+            required: true
+          }
+        ]
+      })
+      this.formatSchema(this._paragraphs, '_settingsLink', true)
+
+      _.set(this._paragraphs, '_settingsLinkGroup', {
+        displayname: 'Link group',
+        maxCount: 1,
+        schema: [
+          {
+            label: 'Group title',
+            field: 'title',
+            localised: false,
+            input: 'string',
+            required: true
+          },
+          {
+            field: 'links',
+            input: 'paragraph',
+            localised: false,
+            options: {
+              types: ['_settingsLink']
+            }
+          }
+        ]
+      })
+      this.formatSchema(this._paragraphs, '_settingsLinkGroup', true)
+    } catch (error) {
+      console.error('Error during autoload initialization:', error)
+      throw error
+    }
+  }
+
   _processAttachmentFields() {
     _.each(this._resources, (resource, resourceKey) => {
       const schema = _.get(resource, 'options.schema', [])
@@ -564,7 +608,6 @@ class CMS {
  * @name CMS
  * @memberof module:node-cms
  */
-exports = module.exports = CMS
 
 /**
  * Export ResourceAPIWrapper for advanced IDE support
@@ -576,4 +619,6 @@ CMS.ResourceAPIWrapper = ResourceAPIWrapper
  * Export RestHelper for middleware reuse in external projects
  * @type {RestHelper}
  */
-CMS.RestHelper = require('./lib/plugins/rest/helper')
+CMS.RestHelper = (await import('./lib/plugins/rest/helper.js')).default
+
+export default CMS

@@ -1,5 +1,5 @@
 // Paragraph type: textParagraphs
-module.exports = {
+export default {
   displayname: { enUS: 'Text Paragraph' },
   schema: [
     {
