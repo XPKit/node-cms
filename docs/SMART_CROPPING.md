@@ -78,6 +78,51 @@ const objectFocusedAttachment = await api('articles').findAttachment('article-id
   objectDetection: true
 })
 ```
+## Programmatic Usage (Node.js API)
+
+You can use smart cropping directly in your Node.js code via the Resource API. This allows you to crop images programmatically, access crop metadata, and customize cropping behavior.
+
+### Example: Programmatic Smart Cropping
+
+```javascript
+const CMS = require('./index.js')
+const fs = require('fs-extra')
+
+// Initialize CMS and bootstrap
+const cms = new CMS({ data: './data', smartCrop: true })
+await cms.bootstrap()
+
+// Get the Resource API for a resource (e.g., 'articles')
+const api = cms.api('articles')
+
+// Load an image buffer
+const imageBuffer = await fs.readFile('./input.jpg')
+
+// Apply smart cropping (face detection, object detection, etc.)
+const result = await api.applyCrop(imageBuffer, '300x300', { faceOnly: true, facePadding: 10 })
+
+// Save the cropped image
+await fs.writeFile('./output.jpg', result.buffer)
+
+// Access crop metadata
+console.log('Crop result:', result.cropResult)
+```
+
+#### Options
+- `faceOnly`: Crop tightly around detected faces (default: false)
+- `facePadding`: Padding in pixels around faces (default: 10)
+- `objectDetection`: Use object detection for cropping (default: false)
+- `detectFaces`: Enable face detection (default: true)
+- `minScale`: Minimum scale factor for crop (default: 1.0)
+
+#### Return Value
+The result object contains:
+- `buffer`: Cropped image buffer (JPEG)
+- `mimeType`: MIME type of the output image
+- `contentLength`: Size of the output buffer
+- `cropResult`: Crop coordinates and metadata
+- `originalSize`: Original image dimensions
+- `targetSize`: Target crop dimensions
 
 ### API Parameters
 
