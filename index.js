@@ -16,19 +16,37 @@ const cookieParser = require('cookie-parser')
 const express = require('express')
 const helmet = require('helmet')
 const _ = require('lodash')
-const requireDir = require('require-dir')
 const mkdirp = require('mkdirp')
 const session = require('express-session')
-
 const UUID = require('./lib/util/uuid')
 const SyslogManager = require('./lib/SyslogManager')
 const SystemManager = require('./lib/SystemManager')
 const UpdatesManager = require('./lib/UpdatesManager')
 const escapeRegExp = require('./lib/util/escapeRegExp')
-
 const Resource = require('./lib/resource')
 const ResourceAPIWrapper = require('./lib/ResourceAPIWrapper')
-const autoBind = require('auto-bind')
+
+/**
+ * Recursively loads all .js files in a directory as modules (synchronously).
+ * Returns an object mapping filenames (without extension) to the required module.
+ * Only loads .js files, skips directories and non-js files.
+ * @param {string} dirPath - Absolute or relative path to directory
+ * @returns {Object}
+ */
+const requireDirNative = (dirPath) => {
+  const absDir = path.resolve(dirPath)
+  const files = fs.readdirSync(absDir)
+  const result = {}
+  for (const file of files) {
+    const fullPath = path.join(absDir, file)
+    const stat = fs.statSync(fullPath)
+    if (stat.isDirectory()) continue
+    if (!file.endsWith('.js')) continue
+    const key = file.replace(/\.js$/, '')
+    result[key] = require(fullPath)
+  }
+  return result
+}
 
 // Default CMS configration
 const defaultConfig = () =>
@@ -91,8 +109,7 @@ class CMS {
    * const groups = await api('_groups').list()
    * const user = await api('_users').find('user-id')
    */
-  constructor (options) {
-    autoBind(this)
+  constructor(options) {
     // NOTE: Min auth key length
     this.requiredKeyLength = 16
     this.fieldFileTypes = ['file', 'img', 'image', 'imageView', 'attachmentView']
@@ -123,11 +140,11 @@ class CMS {
     options.uuid = new UUID(options.mid)
     // automaticly populate CMS resources, if specified
     if (this._options.autoload) {
-      _.each(requireDir(options.resources), (value, key) => this.resource(key, value))
+      _.each(requireDirNative(options.resources), (value, key) => this.resource(key, value))
       const paragraphsDir = path.join(_.get(options, 'paragraphs', options.resources), 'paragraphs')
       // console.info(`Paragraphs dir: ${paragraphsDir}`)
       try {
-        const results = requireDir(paragraphsDir)
+        const results = requireDirNative(paragraphsDir)
         _.each(results, (value, key)=> {
           _.set(this._paragraphs, key, value)
           this.formatSchema(this._paragraphs, key, true)
@@ -289,7 +306,7 @@ class CMS {
     this._processAttachmentFields()
     this._processSourceFields()
   }
-  _processAttachmentFields() {
+  _processAttachmentFields = () => {
     _.each(this._resources, (resource, resourceKey) => {
       const schema = _.get(resource, 'options.schema', [])
       _.each(schema, fieldItem => {
@@ -305,7 +322,7 @@ class CMS {
       })
     })
   }
-  _processAttachmentFieldsParagraph(fieldItem, resourceKey, rootPath) {
+  _processAttachmentFieldsParagraph = (fieldItem, resourceKey, rootPath) => {
     const paragraphTypes = _.get(fieldItem, 'options.types', [])
     _.each(paragraphTypes, paragraphType => {
       const schema = _.get(this._paragraphs, `["${paragraphType}"].schema`, [])
@@ -322,10 +339,10 @@ class CMS {
       })
     })
   }
-  isValidRelation(field) {
+  isValidRelation = (field) => {
     return _.includes(['select', 'multiselect'], field.input) && _.includes(this._resourceNames, field.source)
   }
-  _processSourceFields() {
+  _processSourceFields = () => {
     _.each(this._resources, (resource, resourceKey) => {
       const schema = _.get(resource, 'options.schema', [])
       _.each(schema, fieldItem => {
@@ -341,7 +358,7 @@ class CMS {
       })
     })
   }
-  _processSourceFieldsParagraph(fieldItem, resourceKey, rootPath) {
+  _processSourceFieldsParagraph = (fieldItem, resourceKey, rootPath) => {
     const paragraphTypes = _.get(fieldItem, 'options.types', [])
     _.each(paragraphTypes, paragraphType => {
       const schema = _.get(this._paragraphs, `["${paragraphType}"].schema`, [])
@@ -358,11 +375,11 @@ class CMS {
       })
     })
   }
-  getKeyFor(name, key, forParagraph = false) {
+  getKeyFor = (name, key, forParagraph = false) => {
     return `[${name}]${!forParagraph ? 'options' : ''}.${key}`
   }
 
-  formatSchema(resourcesList, name, forParagraph = false) {
+  formatSchema = (resourcesList, name, forParagraph = false) => {
     const schemaKey = this.getKeyFor(name, 'schema', forParagraph)
     const schema = _.get(resourcesList, schemaKey, [])
     const attachmentFields = []
@@ -379,13 +396,13 @@ class CMS {
     _.set(resourcesList, attachmentsKey, attachmentFields)
   }
 
-  broadcast(msg) {
+  broadcast = (msg) => {
     if (_.get(this.options, 'wsRecordUpdates', false)) {
       UpdatesManager.broadcast(msg)
     }
   }
 
-  resource (name, config, resolves) {
+  resource = (name, config, resolves) => {
     resolves = _.intersection(resolves, this._resourceNames)
     if (_.isEmpty(resolves)) {
       resolves = undefined
@@ -485,7 +502,7 @@ class CMS {
    * const updated = await groupsAPI.update('group-id', { name: 'Updated' })
    * await groupsAPI.remove('group-id')
    */
-  api () {
+  api = () => {
     const self = this
     /**
      * Create a resource API wrapper for the specified resource
@@ -506,7 +523,7 @@ class CMS {
   }
 
   // Install a plugin and store in _plugins
-  use (plugin, options, configPath) {
+  use = (plugin, options, configPath) => {
     const instance = new plugin(this, options, configPath)
     // Always store under pluginName if available
     if (plugin.pluginName) {
@@ -519,7 +536,7 @@ class CMS {
   }
 
   // Get main application
-  express () {
+  express = () => {
     return this._app
   }
 }

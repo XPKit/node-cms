@@ -1,12 +1,9 @@
 #!/usr/bin/env node
 
-'use strict'
-
 const program = require('commander')
 // const _ = require('lodash')
 const path = require('path')
 const prompt = require('prompt')
-const autoBind = require('auto-bind')
 
 const ImportWrapper = require('./lib-importFromRemote')
 
@@ -29,17 +26,14 @@ if (!program.args[0]) {
 }
 
 class ImportManager {
-  constructor (config) {
-    autoBind(this)
+  constructor(config) {
     this.importWrapper = new ImportWrapper()
     this.importWrapper.startImport(config, program.yes, program.createOnly, this.askConfirmation)
   }
 
-  buildUrl(config) {
-    return `${config.protocol}${config.host}`
-  }
+  buildUrl = (config) => `${config.protocol}${config.host}`
 
-  async askConfirmation () {
+  askConfirmation = async () => {
     if (program.yes) {
       return
     }

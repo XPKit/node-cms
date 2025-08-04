@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-'use strict'
-
 const program = require('commander')
 const _ = require('lodash')
 const path = require('path')

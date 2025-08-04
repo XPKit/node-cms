@@ -1,20 +1,23 @@
 const util = require('util')
-const measure = require('measure')
-const numeral = require('numeral')
 const logger = new (require('img-sh-logger'))()
 const Dayjs = require('dayjs')
+const duration = require('dayjs/plugin/duration')
+Dayjs.extend(duration)
 const _ = require('lodash')
 
 let startProcess = function () {
-  let done, label
-  label = util.format.apply(util, arguments)
+  let label = util.format.apply(util, arguments)
   logger.info(label)
-  done = measure.measure('timeconsumingoperation')
+  const start = Date.now()
   return function () {
-    let totalTime, totalTimeStr
-    totalTime = done()
-    totalTimeStr = ''
-    totalTimeStr = util.format('(%s.%s)', numeral(totalTime / 1000).format('hh:mm:ss'), totalTime % 1000)
+    const totalTime = Date.now() - start
+    // Use dayjs.duration to format elapsed time as hh:mm:ss
+    const dur = Dayjs.duration(totalTime)
+    const formatted = util.format('%s:%s:%s',
+      String(dur.hours()).padStart(2, '0'),
+      String(dur.minutes()).padStart(2, '0'),
+      String(dur.seconds()).padStart(2, '0'))
+    const totalTimeStr = util.format('(%s.%s)', formatted, totalTime % 1000)
     return logger.info(`${label} - ${util.format.apply(util, arguments)} - ${totalTimeStr}`)
   }
 }

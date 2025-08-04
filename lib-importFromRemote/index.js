@@ -1,7 +1,6 @@
 const path = require('path')
 const _ = require('lodash')
 const fs = require('fs-extra')
-const autoBind = require('auto-bind')
 const md5File = require('md5-file')
 const h = require('./helper')
 const Api = require('./api')
@@ -10,16 +9,15 @@ const pAll = require('p-all')
 
 class ImportWrapper {
   constructor () {
-    autoBind(this)
     this.progressCallback = null
     this.ongoingImport = false
   }
 
-  init (progressCallback) {
+  init = (progressCallback) => {
     this.progressCallback = progressCallback
   }
 
-  prepareImport(config, noPrompt, createOnly, askConfirmation) {
+  prepareImport = (config, noPrompt, createOnly, askConfirmation) => {
     this.config = config
     this.noPrompt = noPrompt
     this.createOnly = createOnly
@@ -42,7 +40,7 @@ class ImportWrapper {
     //  NOTE: For paragraphs to work, '/admin/paragraphs' should be in config.cms.routesToAuth for both local & remote CMS
   }
 
-  async startImport(config, noPrompt, createOnly, askConfirmation) {
+  startImport = async (config, noPrompt, createOnly, askConfirmation) => {
     if (this.ongoingImport) {
       return logger.warn('Ongoing import, will cancel')
     }

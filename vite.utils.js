@@ -2,12 +2,10 @@ const path = require('path')
 const fs = require('fs-extra')
 const _ = require('lodash')
 const crypto = require('crypto')
-const {v4: uuid} = require('uuid')
-const autoBind = require('auto-bind')
+
 
 class ViteUtils {
   constructor () {
-    autoBind(this)
     this.isInNodeModules = __dirname.includes('/node_modules/node-cms') || __dirname.includes('\\node_modules\\node-cms')
     this.rootPath = path.join(__dirname, this.isInNodeModules ? '../../' : './')
     const pkgPath = path.join(this.rootPath, 'package.json')
@@ -38,7 +36,7 @@ class ViteUtils {
     }
   }
 
-  getAliasPath (folderPath) {
+  getAliasPath = (folderPath) => {
     return path.resolve(this.nodeCmsSrcPath, folderPath)
   }
 
@@ -46,11 +44,11 @@ class ViteUtils {
    * @param  {Object} aliasesMapping Configuration object for all vite aliases to resolve. All aliases starting with '@' will be prefixed with the node-cms src path
    * @returns {Object} All aliases with resolved paths
    */
-  resolveAliases (aliasesMapping) {
+  resolveAliases = (aliasesMapping) => {
     return _.mapValues(aliasesMapping, (val, key) => _.startsWith(key, '@') ? this.getAliasPath(val) : val)
   }
 
-  createPluginsSymlink () {
+  createPluginsSymlink = () => {
     // Skip symlink creation during static analysis tools like knip
     if (process.argv.some(arg => arg.includes('knip') || arg.includes('eslint'))) {
       console.log('Skipping symlink creation during static analysis')
@@ -73,7 +71,7 @@ class ViteUtils {
     console.log(`Symlink created @ ${this.plugins.toBuild} -> ${this.plugins.source}`)
   }
 
-  handleProxyCall (proxyRoute, proxy) {
+  handleProxyCall = (proxyRoute, proxy) => {
     proxy.on('error', (err) => {
       console.error(`${proxyRoute} - Proxy error`, err)
     })
@@ -85,7 +83,7 @@ class ViteUtils {
     // })
   }
 
-  getProxy () {
+  getProxy = () => {
     this.proxy = {}
     const regex = new RegExp(`^${this.nodeCmsMountPath}admin`, 'g')
     const target = `${this.baseUrl}:${this.serverPort}${this.nodeCmsMountPath}admin`
@@ -131,11 +129,7 @@ module.exports = {
   id: null,
   getInstance (baseUrl, pkg) {
     if (this.self === null) {
-      if (_.isFunction(crypto.randomUUID)) {
-        this.id = crypto.randomUUID()
-      } else {
-        this.id = uuid()
-      }
+      this.id = crypto.randomUUID()
       this.self = new ViteUtils(baseUrl, pkg)
     }
     return this.self

@@ -1,13 +1,10 @@
 #!/usr/bin/env node
 
-'use strict'
-
 const express = require('express')
 
 const CMS = require('./')
 const pkg = require('./package.json')
 const logger = new (require('img-sh-logger'))()
-
 // start with leveldb
 // let options = {
 //   // debug: true,
@@ -31,8 +28,8 @@ const logger = new (require('img-sh-logger'))()
 // // start with dbEngine
 // let options = {
 //   // dbEngine: {
-//   //   type: 'xpkit',
-//   //   url: `${process.env.XPKIT_HOST || 'localhost'}/node-cms`
+//   //   type: 'mongodb',
+//   //   url: `127.0.0.1/node-cms`
 //   // }
 // }
 
@@ -41,9 +38,10 @@ let options = {
     resources: ['articles','comments','authors']
   },
   disableReplication: true,
+  smartCrop: true,
   dbEngine: {
     type: 'mongodb',
-    url: `${process.env.XPKIT_HOST || '127.0.0.1'}/node-cms`
+    url: '127.0.0.1/node-cms'
   }
 }
 
