@@ -177,7 +177,15 @@ export default [
           }
         }
       ],
-      'vue/singleline-html-element-content-newline': 'off'
+      'vue/singleline-html-element-content-newline': 'off',
+      'semi': ['error', 'never']
+      ,
+      // Enforce and autofix indentation in <script> blocks
+      'vue/script-indent': ['error', 2, {
+        'baseIndent': 1,
+        'switchCase': 1,
+        'ignores': []
+      }]
     }
   },
 

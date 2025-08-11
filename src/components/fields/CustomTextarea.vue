@@ -11,17 +11,17 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import AbstractField from '@m/AbstractField'
+  import _ from 'lodash'
+  import AbstractField from '@m/AbstractField'
 
-export default {
-  mixins: [AbstractField],
-  methods: {
-    getType () {
-      return _.get(this.schema, 'inputFieldType', 'text')
+  export default {
+    mixins: [AbstractField],
+    methods: {
+      getType () {
+        return _.get(this.schema, 'inputFieldType', 'text')
+      }
     }
   }
-}
 </script>
 
 <style lang="scss">

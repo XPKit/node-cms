@@ -29,24 +29,24 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import AbstractField from '@m/AbstractField'
-import FileInputField from '@m/FileInputField'
-import PreviewMultiple from '@c/PreviewMultiple'
-import FileInputErrors from '@c/FileInputErrors'
+  import _ from 'lodash'
+  import AbstractField from '@m/AbstractField'
+  import FileInputField from '@m/FileInputField'
+  import PreviewMultiple from '@c/PreviewMultiple'
+  import FileInputErrors from '@c/FileInputErrors'
 
-export default {
-  components: {PreviewMultiple, FileInputErrors},
-  mixins: [AbstractField, FileInputField],
-  methods: {
-    onCropperChange (index, data) {
-      const attachments = this.getAttachments()
-      _.set(attachments, `[${index}].cropOptions`, {data: {coordinates: data.coordinates}, updated: true})
-      this.attachments = attachments
-      this._value = attachments
+  export default {
+    components: {PreviewMultiple, FileInputErrors},
+    mixins: [AbstractField, FileInputField],
+    methods: {
+      onCropperChange (index, data) {
+        const attachments = this.getAttachments()
+        _.set(attachments, `[${index}].cropOptions`, {data: {coordinates: data.coordinates}, updated: true})
+        this.attachments = attachments
+        this._value = attachments
+      }
     }
   }
-}
 </script>
 
 <style lang="scss">

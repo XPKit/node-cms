@@ -57,143 +57,143 @@
 </template>
 
 <script>
-import RequestService from '@s/RequestService'
-import ResourceService from '@s/ResourceService'
-import _ from 'lodash'
-import pAll from 'p-all'
+  import RequestService from '@s/RequestService'
+  import ResourceService from '@s/ResourceService'
+  import _ from 'lodash'
+  import pAll from 'p-all'
 
-export default {
-  data () {
-    return {
-      statusInterval: null,
-      error: null,
-      config: null,
-      selectedResource: null,
-      recordData: {},
-      reportData: {},
-      syncStatus: {},
-      uniqueKeyMap: {},
-      environments: ['local', 'remote'],
-      syncingEnvironment: null,
-      isEmpty: _.isEmpty,
-      get: _.get,
-      includes: _.includes
-    }
-  },
-  unmounted () {
-    if (this.statusInterval) {
-      clearInterval(this.statusInterval)
-    }
-  },
-  async mounted () {
-    let data = await ResourceService.getAll()
-    _.each(data, resource => {
-      let uniqueKeyField = _.find(resource.schema, {unique: true})
-      if (uniqueKeyField) {
-        this.uniqueKeyMap[resource.title] = uniqueKeyField.field
+  export default {
+    data () {
+      return {
+        statusInterval: null,
+        error: null,
+        config: null,
+        selectedResource: null,
+        recordData: {},
+        reportData: {},
+        syncStatus: {},
+        uniqueKeyMap: {},
+        environments: ['local', 'remote'],
+        syncingEnvironment: null,
+        isEmpty: _.isEmpty,
+        get: _.get,
+        includes: _.includes
       }
-    })
-    this.config = await RequestService.get(`../config`)
-    if (this.selectedResource) {
-      this.update()
-    }
-    this.statusInterval = setInterval(async () => {
+    },
+    unmounted () {
+      if (this.statusInterval) {
+        clearInterval(this.statusInterval)
+      }
+    },
+    async mounted () {
+      let data = await ResourceService.getAll()
+      _.each(data, resource => {
+        let uniqueKeyField = _.find(resource.schema, {unique: true})
+        if (uniqueKeyField) {
+          this.uniqueKeyMap[resource.title] = uniqueKeyField.field
+        }
+      })
+      this.config = await RequestService.get(`../config`)
       if (this.selectedResource) {
+        this.update()
+      }
+      this.statusInterval = setInterval(async () => {
+        if (this.selectedResource) {
+          try {
+            await pAll(_.map(['local', 'remote'], env => {
+              return async () => {
+                try {
+                  this.syncStatus[env] = await RequestService.get(`../sync/${env}/${this.selectedResource}/status`)
+                  this.syncStatus = _.clone(this.syncStatus)
+                } catch (error) {
+                  console.error(error)
+                }
+              }
+            }))
+          } catch (error) {
+            console.error(error)
+          }
+
+          const result = _.find(this.syncStatus, {status: 'syncing'})
+          if (!result && this.syncingEnvironment) {
+            this.$loading.stop('deploy-resource')
+            if (result && result.status === 'error') {
+              this.error = result.error
+            }
+            this.syncingEnvironment = false
+            this.update()
+          }
+        }
+      }, 5 * 1000)
+    },
+    methods: {
+      onChangeResource () {
+        this.update()
+      },
+      async update () {
+        this.$loading.start('loading-resource')
         try {
-          await pAll(_.map(['local', 'remote'], env => {
+          const uniqueKey = this.uniqueKeyMap[this.selectedResource]
+          this.recordData = {}
+          this.reportData = {}
+          await pAll(_.map(this.environments, env => {
             return async () => {
               try {
-                this.syncStatus[env] = await RequestService.get(`../sync/${env}/${this.selectedResource}/status`)
+                let data = await RequestService.get(`../sync/${env}/${this.selectedResource}`)
+                _.set(this.recordData, env, data)
+                data = await RequestService.get(`../sync/${env}/${this.selectedResource}/status`)
+                _.set(this.syncStatus, env, data)
                 this.syncStatus = _.clone(this.syncStatus)
               } catch (error) {
                 console.error(error)
               }
             }
-          }))
+          }), {concurrency: 1})
+          this.recordData = _.clone(this.recordData)
+          const fromData = this.recordData.local
+          const toData = this.recordData.remote
+          const fromKeys = _.map(fromData, item => item[uniqueKey])
+          const toKeys = _.map(toData, item => item[uniqueKey])
+          let updateKeys = _.intersection(fromKeys, toKeys)
+          updateKeys = _.filter(updateKeys, key => {
+            let fromItem = _.find(fromData, item => (item[uniqueKey]) === key)
+            let toItem = _.find(toData, item => (item[uniqueKey]) === key)
+            fromItem._attachments = _.map(fromItem._attachments, item => _.omit(item, ['url']))
+            toItem._attachments = _.map(toItem._attachments, item => _.omit(item, ['url']))
+            return !_.isEqual(fromItem, toItem)
+          })
+          if (!_.isEmpty(updateKeys)) {
+            _.each(updateKeys, key => {
+              console.log(key, 'local', _.find(fromData, {[uniqueKey]: key}), 'remote', _.find(toData, {[uniqueKey]: key}))
+            })
+          }
+          this.reportData = {
+            create: _.difference(fromKeys, toKeys).length,
+            remove: _.difference(toKeys, fromKeys).length,
+            update: updateKeys.length
+          }
         } catch (error) {
           console.error(error)
-         }
+        }
+        this.$loading.stop('loading-resource')
+      },
+      async onClickDeploy (from, to) {
+        this.error = null
+        this.$loading.start('deploy-resource')
 
-        const result = _.find(this.syncStatus, {status: 'syncing'})
-        if (!result && this.syncingEnvironment) {
-          this.$loading.stop('deploy-resource')
-          if (result && result.status === 'error') {
-            this.error = result.error
-          }
+        this.syncingEnvironment = true
+        try {
+          await RequestService.post(`../sync/${this.selectedResource}/from/${from}/to/${to}`)
+          _.set(this.syncStatus, `${to}.status`, 'syncing')
+          this.syncStatus = _.clone(this.syncStatus)
+        } catch (error) {
+          console.error(error)
           this.syncingEnvironment = false
-          this.update()
+          this.$loading.stop('deploy-resource')
         }
-      }
-    }, 5 * 1000)
-  },
-  methods: {
-    onChangeResource () {
-      this.update()
-    },
-    async update () {
-      this.$loading.start('loading-resource')
-      try {
-        const uniqueKey = this.uniqueKeyMap[this.selectedResource]
-        this.recordData = {}
-        this.reportData = {}
-        await pAll(_.map(this.environments, env => {
-          return async () => {
-            try {
-              let data = await RequestService.get(`../sync/${env}/${this.selectedResource}`)
-              _.set(this.recordData, env, data)
-              data = await RequestService.get(`../sync/${env}/${this.selectedResource}/status`)
-              _.set(this.syncStatus, env, data)
-              this.syncStatus = _.clone(this.syncStatus)
-            } catch (error) {
-              console.error(error)
-            }
-          }
-        }), {concurrency: 1})
-        this.recordData = _.clone(this.recordData)
-        const fromData = this.recordData.local
-        const toData = this.recordData.remote
-        const fromKeys = _.map(fromData, item => item[uniqueKey])
-        const toKeys = _.map(toData, item => item[uniqueKey])
-        let updateKeys = _.intersection(fromKeys, toKeys)
-        updateKeys = _.filter(updateKeys, key => {
-          let fromItem = _.find(fromData, item => (item[uniqueKey]) === key)
-          let toItem = _.find(toData, item => (item[uniqueKey]) === key)
-          fromItem._attachments = _.map(fromItem._attachments, item => _.omit(item, ['url']))
-          toItem._attachments = _.map(toItem._attachments, item => _.omit(item, ['url']))
-          return !_.isEqual(fromItem, toItem)
-        })
-        if (!_.isEmpty(updateKeys)) {
-          _.each(updateKeys, key => {
-            console.log(key, 'local', _.find(fromData, {[uniqueKey]: key}), 'remote', _.find(toData, {[uniqueKey]: key}))
-          })
-        }
-        this.reportData = {
-          create: _.difference(fromKeys, toKeys).length,
-          remove: _.difference(toKeys, fromKeys).length,
-          update: updateKeys.length
-        }
-      } catch (error) {
-        console.error(error)
-      }
-      this.$loading.stop('loading-resource')
-    },
-    async onClickDeploy (from, to) {
-      this.error = null
-      this.$loading.start('deploy-resource')
-
-      this.syncingEnvironment = true
-      try {
-        await RequestService.post(`../sync/${this.selectedResource}/from/${from}/to/${to}`)
-        _.set(this.syncStatus, `${to}.status`, 'syncing')
-        this.syncStatus = _.clone(this.syncStatus)
-      } catch (error) {
-        console.error(error)
-        this.syncingEnvironment = false
-        this.$loading.stop('deploy-resource')
       }
     }
   }
-}
 </script>
 
 <style lang="scss" scoped>

@@ -62,120 +62,120 @@
 </template>
 
 <script>
-import RequestService from '@s/RequestService'
-import _ from 'lodash'
-export default {
-  data () {
-    return {
-      config: null,
-      status: null,
-      error: null,
-      type: 0,
-      loading: false,
-      uploadedXlsx: null,
-      dragover: false
-    }
-  },
-  async mounted () {
-    const data = await RequestService.get('./config')
-    this.config = data.import
-  },
-  methods: {
-    getRules () {
-      return [
-        (value) => !value || value.type === 'text/xlsx' || value.type === 'text/xls' || value.type === 'text/csv' || 'Only XLSX/XLS/CSV files allowed'
-      ]
-    },
-    onDrop (event) {
-      this.dragover = false
-      const files = _.get(event, 'dataTransfer.files', [])
-      if (files.length > 1) {
-        console.error('Only one file can be uploaded at a time.')
-        return
+  import RequestService from '@s/RequestService'
+  import _ from 'lodash'
+  export default {
+    data () {
+      return {
+        config: null,
+        status: null,
+        error: null,
+        type: 0,
+        loading: false,
+        uploadedXlsx: null,
+        dragover: false
       }
-      this.onChangeXlsxFile(event, files)
     },
-    async onChangeXlsxFile (event, files = false) {
-      this.uploadedXlsx = null
-      const file = _.first(files || _.get(event, 'target.files', event)) || event
-      if (!file) {
-        return
-      }
-      this.uploadedXlsx = file
+    async mounted () {
+      const data = await RequestService.get('./config')
+      this.config = data.import
     },
-    openFile () {
-      window.open(`https://docs.google.com/spreadsheets/d/${this.config.gsheetId}/edit`, '_blank').focus()
-    },
-    async checkStatus () {
-      this.loading = true
-      this.status = null
-      this.error = null
-      this.$loading.start('cms-import')
-      this.type = 0
-      await this.$nextTick()
-      try {
-        this.status = await RequestService.get('../import/status')
-      } catch (error) {
+    methods: {
+      getRules () {
+        return [
+          (value) => !value || value.type === 'text/xlsx' || value.type === 'text/xls' || value.type === 'text/csv' || 'Only XLSX/XLS/CSV files allowed'
+        ]
+      },
+      onDrop (event) {
+        this.dragover = false
+        const files = _.get(event, 'dataTransfer.files', [])
+        if (files.length > 1) {
+          console.error('Only one file can be uploaded at a time.')
+          return
+        }
+        this.onChangeXlsxFile(event, files)
+      },
+      async onChangeXlsxFile (event, files = false) {
+        this.uploadedXlsx = null
+        const file = _.first(files || _.get(event, 'target.files', event)) || event
+        if (!file) {
+          return
+        }
+        this.uploadedXlsx = file
+      },
+      openFile () {
+        window.open(`https://docs.google.com/spreadsheets/d/${this.config.gsheetId}/edit`, '_blank').focus()
+      },
+      async checkStatus () {
+        this.loading = true
         this.status = null
-        this.error = _.get(error, 'message', error)
-      }
-      this.$loading.stop('cms-import')
-      this.loading = false
-    },
-    async execute () {
-      this.loading = true
-      this.status = null
-      this.error = null
-      this.type = 1
-      this.$loading.start('cms-import')
-      await this.$nextTick()
-      try {
-        this.status = await RequestService.get('../import/execute')
-      } catch (error) {
+        this.error = null
+        this.$loading.start('cms-import')
+        this.type = 0
+        await this.$nextTick()
+        try {
+          this.status = await RequestService.get('../import/status')
+        } catch (error) {
+          this.status = null
+          this.error = _.get(error, 'message', error)
+        }
+        this.$loading.stop('cms-import')
+        this.loading = false
+      },
+      async execute () {
+        this.loading = true
         this.status = null
-        this.error = _.get(error, 'message', error)
-      }
-      this.$loading.stop('cms-import')
-      this.loading = false
-    },
-    async checkXlsxStatus () {
-      this.loading = true
-      this.status = null
-      this.error = null
-      this.$loading.start('xlsx-import')
-      this.type = 0
-      await this.$nextTick()
-      try {
-        const formData = new FormData()
-        formData.append('xlsx', this.uploadedXlsx)
-        this.status = await RequestService.post('../import/statusXlsx', formData)
-      } catch (error) {
+        this.error = null
+        this.type = 1
+        this.$loading.start('cms-import')
+        await this.$nextTick()
+        try {
+          this.status = await RequestService.get('../import/execute')
+        } catch (error) {
+          this.status = null
+          this.error = _.get(error, 'message', error)
+        }
+        this.$loading.stop('cms-import')
+        this.loading = false
+      },
+      async checkXlsxStatus () {
+        this.loading = true
         this.status = null
-        this.error = _.get(error, 'message', error)
-      }
-      this.$loading.stop('xlsx-import')
-      this.loading = false
-    },
-    async executeXlsx () {
-      this.loading = true
-      this.status = null
-      this.error = null
-      this.type = 1
-      this.$loading.start('xlsx-import')
-      await this.$nextTick()
-      try {
-        const formData = new FormData()
-        formData.append('xlsx', this.uploadedXlsx)
-        this.status = await RequestService.post('../import/statusXlsx', formData)
-      } catch (error) {
+        this.error = null
+        this.$loading.start('xlsx-import')
+        this.type = 0
+        await this.$nextTick()
+        try {
+          const formData = new FormData()
+          formData.append('xlsx', this.uploadedXlsx)
+          this.status = await RequestService.post('../import/statusXlsx', formData)
+        } catch (error) {
+          this.status = null
+          this.error = _.get(error, 'message', error)
+        }
+        this.$loading.stop('xlsx-import')
+        this.loading = false
+      },
+      async executeXlsx () {
+        this.loading = true
         this.status = null
-        this.error = _.get(error, 'message', error)
+        this.error = null
+        this.type = 1
+        this.$loading.start('xlsx-import')
+        await this.$nextTick()
+        try {
+          const formData = new FormData()
+          formData.append('xlsx', this.uploadedXlsx)
+          this.status = await RequestService.post('../import/statusXlsx', formData)
+        } catch (error) {
+          this.status = null
+          this.error = _.get(error, 'message', error)
+        }
+        this.$loading.stop('xlsx-import')
+        this.loading = false
       }
-      this.$loading.stop('xlsx-import')
-      this.loading = false
     }
   }
-}
 </script>
 
 <style lang="scss" scoped>

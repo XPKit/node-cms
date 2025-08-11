@@ -62,139 +62,139 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, getCurrentInstance } from 'vue'
-import _ from 'lodash'
-import Dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
-import LoginService from '@s/LoginService'
-import ThemeSwitch from '@c/ThemeSwitch'
-import { useTheme } from 'vuetify'
+  import { ref, computed, onMounted, onUnmounted, getCurrentInstance } from 'vue'
+  import _ from 'lodash'
+  import Dayjs from 'dayjs'
+  import relativeTime from 'dayjs/plugin/relativeTime'
+  import LoginService from '@s/LoginService'
+  import ThemeSwitch from '@c/ThemeSwitch'
+  import { useTheme } from 'vuetify'
 
-Dayjs.extend(relativeTime)
-const theme = useTheme()
+  Dayjs.extend(relativeTime)
+  const theme = useTheme()
 
-const props = defineProps({
-  config: { type: [Object, Boolean], default: false },
-  settingsData: { type: [Object, Boolean], default: false }
-})
+  const properties = defineProps({
+    config: { type: [Object, Boolean], default: false },
+    settingsData: { type: [Object, Boolean], default: false }
+  })
 
-const isEditing = ref(false)
-const destroyed = ref(false)
-const timer = ref(null)
-const eventSource = ref(false)
-const firstMessage = ref(true)
-const system = ref({
-  cpu: { count: 0, usage: 0, model: 'Unknown' },
-  memory: { totalMemMb: 0, usedMemMb: 0, freeMemMb: 0, freeMemPercentage: 0 },
-  network: 'not supported',
-  drive: 'not supported',
-  uptime: 0
-})
+  const isEditing = ref(false)
+  const destroyed = ref(false)
+  const timer = ref(null)
+  const eventSource = ref(false)
+  const firstMessage = ref(true)
+  const system = ref({
+    cpu: { count: 0, usage: 0, model: 'Unknown' },
+    memory: { totalMemMb: 0, usedMemMb: 0, freeMemMb: 0, freeMemPercentage: 0 },
+    network: 'not supported',
+    drive: 'not supported',
+    uptime: 0
+  })
 
-const showLogoutButton = computed(() => !_.get(window, 'disableJwtLogin', false))
+  const showLogoutButton = computed(() => !_.get(window, 'disableJwtLogin', false))
 
-function onGetRecordEdition(editing) {
-  isEditing.value = editing
-}
+  function onGetRecordEdition(editing) {
+    isEditing.value = editing
+  }
 
-function getNodeCmsVersion() {
-  return _.get(props.config, 'version', 'X.X.X')
-}
+  function getNodeCmsVersion() {
+    return _.get(properties.config, 'version', 'X.X.X')
+  }
 
-function disconnectFromLogStream() {
-  try {
-    clearTimeout(timer.value)
-    if (eventSource.value) {
-      console.warn('close SSE')
-      eventSource.value.close()
-    }
-  } catch { /* empty */ }
-}
-
-function connectToLogStream() {
-  disconnectFromLogStream()
-  firstMessage.value = true
-  timer.value = setTimeout(() => {
-    eventSource.value = new EventSource(`${window.location.pathname}../api/system`)
-    eventSource.value.onmessage = (event) => {
-      try {
-        if (firstMessage.value) {
-          firstMessage.value = false
-          if (_.isFunction(theme.change)) {
-            const userTheme = LoginService.user.theme
-            theme.change(userTheme)
-            document.body.classList.remove('v-theme--dark', 'v-theme--light')
-            document.body.classList.add(`v-theme--${userTheme}`)
-          } else {
-            console.error(`Cannot call theme.change:`, theme)
-          }
-        }
-        system.value = JSON.parse(event.data)
-        const instance = getCurrentInstance()
-        if (instance && instance.proxy) {
-          instance.proxy.$forceUpdate()
-        }
-      } catch (error) {
-        console.error('Failed to parse system info:', error)
+  function disconnectFromLogStream() {
+    try {
+      clearTimeout(timer.value)
+      if (eventSource.value) {
+        console.warn('close SSE')
+        eventSource.value.close()
       }
+    } catch { /* empty */ }
+  }
+
+  function connectToLogStream() {
+    disconnectFromLogStream()
+    firstMessage.value = true
+    timer.value = setTimeout(() => {
+      eventSource.value = new EventSource(`${window.location.pathname}../api/system`)
+      eventSource.value.onmessage = (event) => {
+        try {
+          if (firstMessage.value) {
+            firstMessage.value = false
+            if (_.isFunction(theme.change)) {
+              const userTheme = LoginService.user.theme
+              theme.change(userTheme)
+              document.body.classList.remove('v-theme--dark', 'v-theme--light')
+              document.body.classList.add(`v-theme--${userTheme}`)
+            } else {
+              console.error(`Cannot call theme.change:`, theme)
+            }
+          }
+          system.value = JSON.parse(event.data)
+          const instance = getCurrentInstance()
+          if (instance && instance.proxy) {
+            instance.proxy.$forceUpdate()
+          }
+        } catch (error) {
+          console.error('Failed to parse system info:', error)
+        }
+      }
+      eventSource.value.addEventListener('end', () => {
+        eventSource.value.close()
+        console.warn('System info stream ended')
+        connectToLogStream()
+      })
+      eventSource.value.onerror = (error) => {
+        console.error('Error in SSE connection:', error)
+        eventSource.value.close()
+        connectToLogStream()
+      }
+    }, 1000)
+  }
+
+  function isActiveLink(url) {
+    const urlA = new URL(window.location)
+    const urlB = new URL(url)
+    return urlA.host === urlB.host
+  }
+
+  async function logout() {
+    if (isEditing.value) {
+      return window.DialogService.show({event: 'logout', callback: () => logout()})
     }
-    eventSource.value.addEventListener('end', () => {
-      eventSource.value.close()
-      console.warn('System info stream ended')
-      connectToLogStream()
-    })
-    eventSource.value.onerror = (error) => {
-      console.error('Error in SSE connection:', error)
-      eventSource.value.close()
-      connectToLogStream()
+    await LoginService.logout()
+  }
+
+  function timeAgo(current) {
+    return Dayjs().subtract(parseInt(current, 10), 'second').fromNow()
+  }
+
+  function convertBytes(megaBytes) {
+    const sizes = ['MB', 'GB', 'TB']
+    if (megaBytes === 0) {
+      return '0 MB'
+    } else if (Math.log(megaBytes) <= 0) {
+      return `${megaBytes.toFixed(1)} MB`
     }
-  }, 1000)
-}
-
-function isActiveLink(url) {
-  const urlA = new URL(window.location)
-  const urlB = new URL(url)
-  return urlA.host === urlB.host
-}
-
-async function logout() {
-  if (isEditing.value) {
-    return window.DialogService.show({event: 'logout', callback: () => logout()})
+    const i = parseInt(Math.floor(Math.log(megaBytes) / Math.log(1024)))
+    if (i <= 0) {
+      return megaBytes + ' ' + sizes[i]
+    }
+    return (megaBytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i]
   }
-  await LoginService.logout()
-}
 
-function timeAgo(current) {
-  return Dayjs().subtract(parseInt(current, 10), 'second').fromNow()
-}
+  onMounted(() => {
+    window.DialogService.events.on('dialog', onGetRecordEdition)
+    connectToLogStream()
+  })
 
-function convertBytes(megaBytes) {
-  const sizes = ['MB', 'GB', 'TB']
-  if (megaBytes === 0) {
-    return '0 MB'
-  } else if (Math.log(megaBytes) <= 0) {
-    return `${megaBytes.toFixed(1)} MB`
-  }
-  const i = parseInt(Math.floor(Math.log(megaBytes) / Math.log(1024)))
-  if (i <= 0) {
-    return megaBytes + ' ' + sizes[i]
-  }
-  return (megaBytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i]
-}
-
-onMounted(() => {
-  window.DialogService.events.on('dialog', onGetRecordEdition)
-  connectToLogStream()
-})
-
-onUnmounted(() => {
-  window.DialogService.events.off('dialog', onGetRecordEdition)
-  if (getCurrentInstance()?.proxy?.$loading) {
-    getCurrentInstance().proxy.$loading.stop('_syslog')
-  }
-  destroyed.value = true
-  clearTimeout(timer.value)
-})
+  onUnmounted(() => {
+    window.DialogService.events.off('dialog', onGetRecordEdition)
+    if (getCurrentInstance()?.proxy?.$loading) {
+      getCurrentInstance().proxy.$loading.stop('_syslog')
+    }
+    destroyed.value = true
+    clearTimeout(timer.value)
+  })
 </script>
 <style lang="scss" scoped>
 @use '@a/scss/variables.scss' as *;

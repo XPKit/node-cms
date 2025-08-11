@@ -11,85 +11,85 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import { Editor, EditorContent } from '@tiptap/vue-3'
-import StarterKit from '@tiptap/starter-kit'
-import Superscript from '@tiptap/extension-superscript'
-import Link from '@tiptap/extension-link'
-import Underline from '@tiptap/extension-underline'
-import TiptapMenuBar from './TiptapMenuBar.vue'
-import AbstractField from '@m/AbstractField'
+  import _ from 'lodash'
+  import { Editor, EditorContent } from '@tiptap/vue-3'
+  import StarterKit from '@tiptap/starter-kit'
+  import Superscript from '@tiptap/extension-superscript'
+  import Link from '@tiptap/extension-link'
+  import Underline from '@tiptap/extension-underline'
+  import TiptapMenuBar from './TiptapMenuBar.vue'
+  import AbstractField from '@m/AbstractField'
 
-export default {
-  components: { EditorContent, TiptapMenuBar },
-  mixins: [AbstractField],
-  data () {
-    return {
-      loaded: false,
-      key: null,
-      editor: null
-    }
-  },
-  watch: {
-    model () {
-      this.updateObj()
-    }
-  },
-  mounted () {
-    this.editor = new Editor({
-      content: this._value,
-      extensions: [
-        StarterKit.configure({history: true, code: true, blockquote: true}),
-        Superscript,
-        Underline,
-        Link
-      ],
-      onUpdate: () => {
-        const val = this.editor.getHTML()
-        this.$emit('change', val)
-        this._value = val
-      },
-      onFocus: ()=> {
-        this.onFieldFocus(true)
-      },
-      onBlur: ()=> {
-        this.onFieldFocus(false)
+  export default {
+    components: { EditorContent, TiptapMenuBar },
+    mixins: [AbstractField],
+    data () {
+      return {
+        loaded: false,
+        key: null,
+        editor: null
       }
-    })
-    this.loaded = true
-    this.updateObj()
-  },
-  created () {
-  },
-  methods: {
-    getButtons() {
-      return _.get(this.schema, 'options.buttons', [])
     },
-    getColorForToolbar () {
-      return this.$vuetify.theme.dark ? 'black' : 'white'
+    watch: {
+      model () {
+        this.updateObj()
+      }
     },
-    onInit () {
-      setTimeout(() => {
-        const elems = _.get(this.$refs.wysiwygWrapper, 'children[1].children[0].children[0].children[0].children[0].children[0].children', [])
-        _.each(elems, (elem) => {
-          elem.tabIndex = -1
-          _.each(elem.children, (children) => {
-            children.tabIndex = -1
-            _.each(children.children, (c) => {
-              c.tabIndex = -1
+    mounted () {
+      this.editor = new Editor({
+        content: this._value,
+        extensions: [
+          StarterKit.configure({history: true, code: true, blockquote: true}),
+          Superscript,
+          Underline,
+          Link
+        ],
+        onUpdate: () => {
+          const val = this.editor.getHTML()
+          this.$emit('change', val)
+          this._value = val
+        },
+        onFocus: ()=> {
+          this.onFieldFocus(true)
+        },
+        onBlur: ()=> {
+          this.onFieldFocus(false)
+        }
+      })
+      this.loaded = true
+      this.updateObj()
+    },
+    created () {
+    },
+    methods: {
+      getButtons() {
+        return _.get(this.schema, 'options.buttons', [])
+      },
+      getColorForToolbar () {
+        return this.$vuetify.theme.dark ? 'black' : 'white'
+      },
+      onInit () {
+        setTimeout(() => {
+          const elems = _.get(this.$refs.wysiwygWrapper, 'children[1].children[0].children[0].children[0].children[0].children[0].children', [])
+          _.each(elems, (elem) => {
+            elem.tabIndex = -1
+            _.each(elem.children, (children) => {
+              children.tabIndex = -1
+              _.each(children.children, (c) => {
+                c.tabIndex = -1
+              })
             })
           })
-        })
-      }, 10)
-    },
-    updateObj () {
-      if (!_.get(this.schema, 'model', false)) {
-        return false
+        }, 10)
+      },
+      updateObj () {
+        if (!_.get(this.schema, 'model', false)) {
+          return false
+        }
+        this.loaded = true
       }
-      this.loaded = true
     }
   }
-}
 </script>
 <style lang="scss">
 @use '@a/scss/variables.scss' as *;

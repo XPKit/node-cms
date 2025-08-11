@@ -25,6 +25,7 @@ const UpdatesManager = require('./lib/UpdatesManager')
 const escapeRegExp = require('./lib/util/escapeRegExp')
 const Resource = require('./lib/resource')
 const ResourceAPIWrapper = require('./lib/ResourceAPIWrapper')
+const logger = new (require('img-sh-logger'))()
 
 /**
  * Recursively loads all .js files in a directory as modules (synchronously).
@@ -142,7 +143,7 @@ class CMS {
     if (this._options.autoload) {
       _.each(requireDirNative(options.resources), (value, key) => this.resource(key, value))
       const paragraphsDir = path.join(_.get(options, 'paragraphs', options.resources), 'paragraphs')
-      // console.info(`Paragraphs dir: ${paragraphsDir}`)
+      // logger.info(`Paragraphs dir: ${paragraphsDir}`)
       try {
         const results = requireDirNative(paragraphsDir)
         _.each(results, (value, key)=> {
@@ -151,7 +152,7 @@ class CMS {
         })
       // eslint-disable-next-line no-unused-vars
       } catch (error) {
-        console.warn('No folder found for ', paragraphsDir)
+        logger.warn('No folder found for ', paragraphsDir)
       }
       _.set(this._paragraphs, '_settingsLink', {
         displayname: 'Settings link',
@@ -259,9 +260,9 @@ class CMS {
         try {
           const smartCrop = require('./lib/util/smartcrop')
           await smartCrop.initialize(options)
-          console.info('SmartCrop initialization completed during CMS bootstrap')
+          logger.info('SmartCrop initialization completed during CMS bootstrap')
         } catch (error) {
-          console.warn('SmartCrop initialization failed during CMS bootstrap:', error.message)
+          logger.warn('SmartCrop initialization failed during CMS bootstrap:', error.message)
         }
       }
       callback()
@@ -279,7 +280,7 @@ class CMS {
       { name: 'anonymousRead',  enabled: !!options.anonymousRead }
     ]
     this.usedPlugins = _.chain(pluginConditions).filter('enabled').map('name').value()
-    console.info(`Will use plugins: ${this.usedPlugins.join(', ')}`)
+    logger.info(`Will use plugins: ${this.usedPlugins.join(', ')}`)
     _.each(this.usedPlugins, (plugin) => {
       this.use(require(`./lib/plugins/${plugin}`), options, configPath)
     })
@@ -435,8 +436,8 @@ class CMS {
    *   let api = cms.api();
    *
    *   api('articles').find('abc123xz', function(error, result) {
-   *     if (error) return console.log(error);
-   *     console.log(result);
+   *     if (error) return logger.info(error);
+   *     logger.info(result);
    *   });
    *
    *  api('articles').attachments.read(['abc123xz','lmnop123'])

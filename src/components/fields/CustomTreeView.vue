@@ -8,31 +8,31 @@
 </template>
 
 <script>
-import {get as objGet} from 'lodash'
-import AbstractField from '@m/AbstractField'
+  import {get as objGet} from 'lodash'
+  import AbstractField from '@m/AbstractField'
 
-export default {
-  mixins: [AbstractField],
-  data () {
-    return {
-      options: {
-        maxDepth: 0,
-        modifiable: !this.disabled,
-        rootObjectKey: this.schema.model
+  export default {
+    mixins: [AbstractField],
+    data () {
+      return {
+        options: {
+          maxDepth: 0,
+          modifiable: !this.disabled,
+          rootObjectKey: this.schema.model
+        }
+      }
+    },
+    watch: {
+      'schema.model': function () {
+        this.options.rootObjectKey = this.schema.model
+      }
+    },
+    methods: {
+      getData () {
+        return objGet(this.model, this.schema.model, false)
       }
     }
-  },
-  watch: {
-    'schema.model': function () {
-      this.options.rootObjectKey = this.schema.model
-    }
-  },
-  methods: {
-    getData () {
-      return objGet(this.model, this.schema.model, false)
-    }
   }
-}
 </script>
 <style lang="scss">
 .json-viewer-wrapper {

@@ -19,58 +19,58 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import TranslateService from '@s/TranslateService'
-import SystemInfo from '@c/SystemInfo'
-import ResourceService from '@s/ResourceService'
-import ResourceList from '@c/ResourceList'
-import defaultLogo from '@a/logo.svg'
+  import _ from 'lodash'
+  import TranslateService from '@s/TranslateService'
+  import SystemInfo from '@c/SystemInfo'
+  import ResourceService from '@s/ResourceService'
+  import ResourceList from '@c/ResourceList'
+  import defaultLogo from '@a/logo.svg'
 
-export default {
-  components: { SystemInfo, ResourceList },
-  props: {
-    toolbarTitle: { type: [String, Boolean], default: false },
-    groupedList: { type: Array, default: () => [] },
-    config: { type: [Object, Boolean], default: false },
-    localeClass: { type: Object, default: () => {} },
-    selectResourceCallback: { type: Function, default: () => {} },
-    selectedItem: { type: Object, default: () => {} }
-  },
-  data () {
-    return {
-      settingsData: false
-    }
-  },
-  mounted () {
-    this.getSettingsData()
-  },
-  methods: {
-    getDefaultLogo () {
-      return defaultLogo
-     },
-    getLogo () {
-      return _.get(this.settingsData, 'logo[0].url', false)
+  export default {
+    components: { SystemInfo, ResourceList },
+    props: {
+      toolbarTitle: { type: [String, Boolean], default: false },
+      groupedList: { type: Array, default: () => [] },
+      config: { type: [Object, Boolean], default: false },
+      localeClass: { type: Object, default: () => {} },
+      selectResourceCallback: { type: Function, default: () => {} },
+      selectedItem: { type: Object, default: () => {} }
     },
-    hasLogoOrTitle () {
-      const title = _.get(this.settingsData, 'title', false)
-      if (title) {
-        window.document.title = title
-      }
-      return this.getLogo() || title
-    },
-    async getSettingsData () {
-      try {
-        this.settingsData = _.first(await ResourceService.cache('_settings'))
-      } catch (error) {
-        console.error('Failed to get settings data:', error)
+    data () {
+      return {
+        settingsData: false
       }
     },
-    getSelectedItemName () {
-      const displayname = _.get(this.selectedItem, 'displayname', false)
-      return displayname ? TranslateService.get(displayname) : _.get(this.selectedItem, 'name', false)
+    mounted () {
+      this.getSettingsData()
+    },
+    methods: {
+      getDefaultLogo () {
+        return defaultLogo
+      },
+      getLogo () {
+        return _.get(this.settingsData, 'logo[0].url', false)
+      },
+      hasLogoOrTitle () {
+        const title = _.get(this.settingsData, 'title', false)
+        if (title) {
+          window.document.title = title
+        }
+        return this.getLogo() || title
+      },
+      async getSettingsData () {
+        try {
+          this.settingsData = _.first(await ResourceService.cache('_settings'))
+        } catch (error) {
+          console.error('Failed to get settings data:', error)
+        }
+      },
+      getSelectedItemName () {
+        const displayname = _.get(this.selectedItem, 'displayname', false)
+        return displayname ? TranslateService.get(displayname) : _.get(this.selectedItem, 'name', false)
+      }
     }
   }
-}
 </script>
 <style lang="scss">
 @use '@a/scss/variables.scss' as *;

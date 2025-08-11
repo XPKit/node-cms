@@ -15,225 +15,315 @@
         <span v-if="errorQty >= 0" class="flag-item flag-error" @click="filterLevel(2)"><v-icon>mdi-alert-box-outline</v-icon> {{ errorQty }}</span>
       </div>
     </div>
+    <!-- TODO: hugo - stylize error -->
     <div v-if="error" class="bg-error">
       {{ $filters.translate('TL_ERROR_RETRIEVE_SYSLOG') }}
     </div>
-    <div ref="log-viewer" class="log-viewer-wrapper">
-      <DynamicScroller
-        ref="scroller"
-        :items="sysLog"
-        :min-item-size="14"
+    <div class="log-viewer-wrapper">
+      <RecycleScroller
+        ref="virtualScroller"
+        v-slot="{ item }"
         class="scroller"
+        :items="currentDisplayableLines"
+        :item-size="20"
+        key-field="id"
+        @scroll="detectScroll"
       >
-        <template #default="{ item, index, active }">
-          <DynamicScrollerItem
-            :key="item.id"
-            :item="item"
-            :active="active"
-            :item-size="null"
-            :data-index="index"
-          >
-            <div class="line-wrapper" :data-line-id="item.id" :data-is-active="active">
-              <div class="line-number" :class="{stickId: stickyId === item.id, search: searchKey}" @click="jumpTo(item.id)">{{ item.id }}</div>
-              <div class="line-content" :class="{stickId: stickyId === item.id}" v-html="item.html" />
-            </div>
-          </DynamicScrollerItem>
-        </template>
-      </DynamicScroller>
+        <div class="log-line" :class="{ 'selected': selectedLineId === item.id }">
+          <span class="line-number" @click="onLineNumberClick(item.id, $event)">{{ item.id }}</span>
+          <div class="line-content" v-html="highlightLogLine(item)" />
+        </div>
+      </RecycleScroller>
     </div>
   </div>
 </template>
 
 <script>
-import _ from 'lodash'
-import sift from 'sift'
-import JSON5 from 'json5'
+  import _ from 'lodash'
+  import sift from 'sift'
+  import JSON5 from 'json5'
+  import stripAnsi from 'strip-ansi'
+  import AnsiToHtml from 'ansi-to-html'
 
-export default {
-  data () {
-    return {
-      timer: null,
-      isLoading: true,
-      sysLog: [],
-      error: false,
-      scrollBottom: true,
-      data: '',
-      stickyId: -1,
-      count: 0,
-      destroyed: false,
-      autoscroll: true,
-      lastId: -1,
-      tempId: 0,
-      logLines: [],
-      filterOutLines: 0,
-      searchKey: '',
-      warningQty: 0,
-      errorQty: 0,
-      ignoreNextScrollEvent: false,
-      fakeData: [],
-      eventSource: false,
-      processTimout: null
-    }
-  },
-  async mounted () {
-    await this.$nextTick()
-    this.connectToLogStream()
-    if (this.$refs.scroller) {
-      const element = this.$refs.scroller.$el
-      element.addEventListener('scroll', this.detectScroll)
-    }
-  },
-  async unmounted () {
-    this.destroyed = true
-    if (this.$refs.scroller) {
-      const element = this.$refs.scroller.$el
-      element.removeEventListener('scroll', this.detectScroll)
-    }
-    this.disconnectFromLogStream()
-  },
-  methods: {
-    disconnectFromLogStream () {
-      try {
-        clearTimeout(this.timer)
-        if (this.eventSource) {
-          this.eventSource.close()
-        }
-      } catch (error) {
-        console.error(`Error disconnecting from log stream: ${error.message}`)
+  export default {
+    data () {
+      return {
+        timer: null,
+        isLoading: true,
+        sysLog: [],
+        error: false,
+        scrollBottom: true,
+        data: '',
+        count: 0,
+        destroyed: false,
+        autoscroll: true,
+        lastId: -1,
+        tempId: 0,
+        logLines: [],
+        filterOutLines: 0,
+        searchKey: '',
+        warningQty: 0,
+        errorQty: 0,
+        ignoreNextScrollEvent: false,
+        fakeData: [],
+        eventSource: false,
+        processTimeout: null,
+        currentDisplayableLines: [],
+        targetLogIdAfterClear: null,
+        isHandlingGutterClick: false,
+        selectedLineId: null,
+        shouldScrollToSelectedLine: false,
       }
     },
-    connectToLogStream () {
-      this.$loading.start('_syslog')
-      this.disconnectFromLogStream()
-      this.timer = setTimeout(() => {
-        this.eventSource = new EventSource(`${window.location.pathname}../api/_syslog`)
-        this.eventSource.onmessage = async (event) => {
-          this.$loading.stop('_syslog')
-          try {
-            const json = JSON.parse(event.data)
-            if (_.get(json, 'id', false) && _.get(json, 'line', false)) {
-              json.size = _.get(`${this.calculateLineNumberSpacing(json.id)} ${json.line}`, 'length', 0)
-              if (json.size > 0) {
-                this.logLines.push(json)
-              }
-            }
-          } catch (error) {
-            console.error('Failed to parse SSE:', error)
-          }
-          if (this.autoscroll) {
-            this.ignoreNextScrollEvent = true
-            if (_.get(this.$refs, 'scroller', false)) {
-              this.$refs.scroller.scrollToBottom()
-            }
-          }
-          this.updateSysLog()
-        }
-        this.eventSource.addEventListener('end', () => {
-          this.$loading.stop('_syslog')
-          this.eventSource.close()
-          console.warn('Log stream ended')
-        })
-        this.eventSource.onerror = (error) => {
-          this.$loading.stop('_syslog')
-          console.error('Error in SSE connection:', error)
-          this.eventSource.close()
-          this.connectToLogStream()
-        }
-      }, 1000)
-    },
-    filterLevel (level) {
-      this.searchKey = `sift:{level: {$gte: ${level}}}`
-      this.updateSysLog()
-    },
-    async detectScroll (event) {
-      const scrollHeight = _.get(event, 'srcElement.scrollHeight', 0)
-      const scrollTop = _.get(event, 'srcElement.scrollTop', 0)
-      const clientHeight = _.get(event, 'srcElement.clientHeight', 0)
-      if (this.ignoreNextScrollEvent) {
-        this.ignoreNextScrollEvent = false
-        return
-      }
+    async mounted () {
       await this.$nextTick()
-      if (!this.autoscroll && scrollTop + clientHeight >= scrollHeight) {
-        this.stickyId = -1
-      }
-      this.autoscroll = scrollTop + clientHeight >= scrollHeight
+      this.connectToLogStream()
+      await this.$nextTick()
     },
-    getLogViewerHeight () {
-      return _.get(this.$refs['log-viewer'], 'offsetHeight', 100)
+    async unmounted () {
+      this.destroyed = true
+      this.disconnectFromLogStream()
     },
-    onInputSearch () {
-      this.updateSysLog()
-    },
-    onClickRefresh () {
-      this.error = false
-      this.searchKey = ''
-      this.logLines = []
-      this.sysLog = []
-      this.updateSysLog()
-      this.lastId = -1
-    },
-    onClickClearSearch () {
-      this.searchKey = ''
-      this.updateSysLog()
-    },
-    onClickAutoscroll () {
-      this.autoscroll = !this.autoscroll
-    },
-    onClickClear () {
-      this.searchKey = ''
-      this.logLines = []
-      this.sysLog = []
-      this.updateSysLog()
-    },
-    calculateLineNumberSpacing (line) {
-      return _.padStart(line, 8, '0') + ' |'
-    },
-    jumpTo (id) {
-      if (id === this.stickyId) {
-        this.stickyId = -1
+    methods: {
+      onLineNumberClick(id) {
+        this.selectedLineId = id
+        this.autoscroll = false
+        this.searchKey = ''
+        this.shouldScrollToSelectedLine = true
         this.updateSysLog()
-        this.autoscroll = true
-        return
-      }
-      this.ignoreNextScrollEvent = true
-      this.autoscroll = false
-      this.stickyId = id
-      this.searchKey = ''
-      this.updateSysLog()
-    },
-    async updateSysLog () {
-      clearTimeout(this.processTimout)
-      this.processTimout = setTimeout(() => {
-        let lines = _.uniqBy(this.logLines, 'id')
-        const byLevel = _.groupBy(this.logLines, 'level')
-        this.warningQty = _.get(byLevel, '[1].length', 0)
-        this.errorQty = _.get(byLevel, '[2].length', 0)
-        if (!_.isEmpty(this.searchKey)) {
-          if (this.searchKey.search('sift:') === 0) {
-            try {
-              const query = JSON5.parse(this.searchKey.substr(5))
-              lines = lines.filter(sift(query))
-            } catch (error) {
-              console.error('Error parsing sift query:', error)
-            }
-          } else {
-            lines = _.filter(lines, lineItem => {
-              return _.includes(_.toLower(lineItem.line), _.toLower(this.searchKey))
-            })
+      },
+      highlightLogLine(lineOrItem) {
+        if (!lineOrItem) {
+          return ''
+        }
+        const ansiConverter = new AnsiToHtml({ escapeXML: true, newline: false })
+        const rawLine = _.get(lineOrItem, 'line', lineOrItem)
+        try {
+          return ansiConverter.toHtml(rawLine)
+        } catch (err) {
+          console.error('Failed to convert ANSI to HTML:', err)
+          return rawLine
+        }
+      },
+      disconnectFromLogStream () {
+        try {
+          clearTimeout(this.timer)
+          if (this.eventSource) {
+            this.eventSource.close()
           }
-        } else if (this.stickyId > -1) {
-          lines = _.filter(lines, lineItem => {
-            return lineItem.id >= (this.stickyId - 20) && lineItem.id <= (this.stickyId + 20)
+        } catch (error) {
+          console.error(`Error disconnecting from log stream: ${error.message}`)
+        }
+      },
+      scrollToBottomIfEnabled () {
+        if (this.isHandlingGutterClick) {
+          return
+        }
+        if (this.shouldScrollToLastLog()) {
+          this.ignoreNextScrollEvent = true
+          this.$nextTick(() => {
+            const lastIndex = this.currentDisplayableLines.length - 1
+            try {
+              this.$refs.virtualScroller.scrollToItem(lastIndex)
+            } catch (error) {
+              console.error('Failed to scroll to bottom:', error)
+            }
           })
         }
-        this.sysLog = lines
-        this.filterOutLines = _.get(this.logLines, 'length', 0) - _.get(this.sysLog, 'length', 0)
-        this.$forceUpdate()
-      }, 50)
-    }
+      },
+      connectToLogStream () {
+        this.$loading.start('_syslog')
+        this.disconnectFromLogStream()
+        this.timer = setTimeout(() => {
+          this.eventSource = new EventSource(`${window.location.pathname}../api/_syslog`)
+          this.eventSource.onmessage = async (event) => {
+            this.$loading.stop('_syslog')
+            try {
+              const json = JSON.parse(event.data)
+              if (_.get(json, 'id', false) && _.get(json, 'line', false)) {
+                json.size = _.get(`${this.calculateLineNumberSpacing(json.id)} ${json.line}`, 'length', 0)
+                if (json.size > 0) {
+                  this.logLines.push(json)
+                }
+              }
+            } catch (error) {
+              console.error('Failed to parse SSE:', error)
+            }
+            if (!this.isHandlingGutterClick) {
+              if (this.autoscroll) {
+                this.ignoreNextScrollEvent = true
+                this.scrollToBottomIfEnabled()
+              }
+              this.updateSysLog()
+            }
+          }
+          this.eventSource.addEventListener('end', () => {
+            this.$loading.stop('_syslog')
+            this.eventSource.close()
+            console.warn('Log stream ended')
+          })
+          this.eventSource.onerror = (error) => {
+            this.$loading.stop('_syslog')
+            this.error = "Error in SSE connection"
+            console.error(`${this.error}:`, error)
+            this.eventSource.close()
+            this.connectToLogStream()
+          }
+        }, 1000)
+      },
+      filterLevel (level) {
+        this.searchKey = `sift:{level: {$gte: ${level}}}`
+        this.updateSysLog()
+      },
+      async detectScroll () {
+        if (this.ignoreNextScrollEvent) {
+          this.ignoreNextScrollEvent = false
+          return
+        }
+        if (this.isHandlingGutterClick) {
+          return
+        }
+        const scrollerEl = this.$refs.virtualScroller?.$el
+        if (!scrollerEl) {
+          return
+        }
+        const scrollHeight = scrollerEl.scrollHeight
+        const scrollTop = scrollerEl.scrollTop
+        const clientHeight = scrollerEl.clientHeight
+        await this.$nextTick()
+        if (scrollTop + clientHeight >= scrollHeight - 1) {
+          if (_.isEmpty(this.searchKey) && !this.isHandlingGutterClick) {
+            this.autoscroll = true
+          }
+        } else {
+          if (!this.isHandlingGutterClick) {
+            this.autoscroll = false
+          }
+        }
+      },
+      onInputSearch () {
+        this.selectedLineId = null
+        this.updateSysLog()
+      },
+      clearFiltering() {
+        this.searchKey = ''
+        this.isHandlingGutterClick = false
+      },
+      onClickRefresh () {
+        this.error = false
+        this.logLines = []
+        this.sysLog = []
+        this.clearFiltering()
+        this.updateSysLog()
+        this.lastId = -1
+      },
+      onClickClearSearch () {
+        this.clearFiltering()
+        this.updateSysLog()
+      },
+      shouldScrollToLastLog() {
+        return this.autoscroll && this.$refs.virtualScroller && _.isArray(this.currentDisplayableLines) && this.currentDisplayableLines.length > 0
+      },
+      onClickAutoscroll () {
+        this.autoscroll = !this.autoscroll
+        if (this.shouldScrollToLastLog()) {
+          this.$nextTick(() => {
+            const lastIndex = this.currentDisplayableLines.length - 1
+            try {
+              this.$refs.virtualScroller.scrollToItem(lastIndex)
+            } catch (error) {
+              console.error('Failed to scroll to bottom on autoscroll:', error)
+            }
+          })
+        }
+      },
+      onClickClear () {
+        this.logLines = []
+        this.sysLog = []
+        this.clearFiltering()
+        this.updateSysLog()
+      },
+      calculateLineNumberSpacing (line) {
+        return _.padStart(line, 8, '0') + ' |'
+      },
+      filterLinesBySearch(lines) {
+        const lowerSearchKey = _.toLower(this.searchKey)
+        if (this.searchKey && this.searchKey.search('sift:') === 0) {
+          try {
+            const query = JSON5.parse(this.searchKey.substr(5))
+            return lines.filter(sift(query))
+          } catch (error) {
+            console.error('Error parsing sift query:', error)
+          }
+        } else if (!_.isEmpty(this.searchKey)) {
+          return _.filter(lines, lineItem => {
+            const lineContent = _.isString(lineItem.line) ? lineItem.line : ''
+            const strippedLine = stripAnsi(lineContent)
+            return _.includes(_.toLower(strippedLine), lowerSearchKey)
+          })
+        }
+      },
+      async updateSysLog () {
+        clearTimeout(this.processTimeout)
+        this.processTimeout = setTimeout(async () => {
+          let lines = _.uniqBy(this.logLines, 'id')
+          const byLevel = _.groupBy(this.logLines, 'level')
+          this.warningQty = _.get(byLevel, '[1].length', 0)
+          this.errorQty = _.get(byLevel, '[2].length', 0)
+          let shouldPositionToTarget = this.targetLogIdAfterClear !== null
+          let targetLogId = this.targetLogIdAfterClear
+          let selectedLogId = null
+          if (shouldPositionToTarget && targetLogId !== null) {
+            selectedLogId = targetLogId
+            this.targetLogIdAfterClear = null
+          } else if (this.selectedLineId) {
+            selectedLogId = this.selectedLineId
+          }
+          if (!_.isEmpty(this.searchKey)) {
+            lines = this.filterLinesBySearch(lines)
+          }
+          this.currentDisplayableLines = lines
+          this.filterOutLines = _.get(this.logLines, 'length', 0) - _.get(this.currentDisplayableLines, 'length', 0)
+          if (!this.$refs.virtualScroller) {
+            return this.$forceUpdate()
+          }
+          if (this.isHandlingGutterClick && !shouldPositionToTarget) {
+            return
+          }
+          if (selectedLogId) {
+            await this.$nextTick()
+            let targetIdx = _.findIndex(this.currentDisplayableLines, {id: selectedLogId})
+            if (targetIdx === -1) {
+              this.currentDisplayableLines = _.uniqBy(this.logLines, 'id')
+              await this.$nextTick()
+              targetIdx = _.findIndex(this.currentDisplayableLines, {id: selectedLogId})
+            }
+            if (targetIdx !== -1) {
+              try {
+                this.selectedLineId = selectedLogId
+                if (this.shouldScrollToSelectedLine) {
+                  this.$refs.virtualScroller.scrollToItem(targetIdx - 15)
+                  this.shouldScrollToSelectedLine = false
+                }
+                setTimeout(() => {
+                  if (shouldPositionToTarget) {
+                    this.isHandlingGutterClick = false
+                  }
+                }, 50)
+              } catch (error) {
+                console.error('Error scrolling to selected line after update:', error)
+              }
+            }
+          }
+          if (!selectedLogId || !this.isHandlingGutterClick) {
+            this.scrollToBottomIfEnabled()
+          }
+          this.$forceUpdate()
+        }, 300)
+      }
+    },
   }
-}
+
 </script>
 
 <style lang="scss" scoped>
@@ -258,7 +348,6 @@ export default {
     align-items: center;
     height: 30px;
     font-size: 10px;
-
     .item {
       color: #9AA0A6;
       width: 30px;
@@ -267,7 +356,6 @@ export default {
       border-right: 1px solid #494C50;
       height: 100%;
       box-sizing: border-box;
-
       i {
         &:before {
           font-size: 16px;
@@ -276,7 +364,6 @@ export default {
           margin-right: 4px;
         }
       }
-
       &.clear-search {
         margin-left: -30px;
         i:before {
@@ -285,7 +372,6 @@ export default {
           color: white;
         }
       }
-
       &.filter-out {
         font-size: 11px;
         border: 1px solid #494C50;
@@ -306,7 +392,6 @@ export default {
           margin-right: 4px;
         }
       }
-
       &.logs-raised-flags {
         font-size: 11px;
         border: 1px solid #494C50;
@@ -319,7 +404,7 @@ export default {
         justify-content: center;
         align-items: center;
         height: 80%;
-        width: 68px;
+        width: auto;
         i:before {
           font-size: 14px;
           color: #F29900;
@@ -327,8 +412,11 @@ export default {
           margin-right: 4px;
         }
         .flag-item {
+          display: flex;
+          align-items: center;
           cursor: pointer;
-          width: 30px;
+          font-size: 10px;
+          line-height: 10px;
           &.flag-error {
             i:before {
               color: #fa5050;
@@ -342,11 +430,9 @@ export default {
           }
         }
       }
-
       &.autoscroll.active {
         background: black;
       }
-
       &.search {
         background-color: #35363A;
         padding-left: 10px;
@@ -377,84 +463,105 @@ export default {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    &:before {
-      position: absolute;
-      left:0;
-      top: 0;
-      bottom: 0;
+    overflow: hidden;
+    .scroller {
       height: 100%;
-      background: rgba(72,72,72,0.2);
-      width: 74px;
-      display: block;
-      content: '';
+      width: 100%;
+      background-color: #222;
     }
-}
-  .vue-recycle-scroller {
-    position: absolute;
-    box-sizing: border-box;
-    display: block;
-    margin: 0;
-    padding: 20px;
-    padding-left: 0px;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 100%;
-    width: 100%;
-  }
-  .line-wrapper {
-    font-size: 12px;
-    font-family: monospace;
-    position: relative;
-
-    .line-number {
-      display: inline-block;
-      color: #666;
-      padding-left: 20px;
-      padding-right: 10px;
-      min-width: 42px;
-      text-align: right;
-      border-right: 2px solid #666;
-      margin-right: 20px;
-      position: absolute;
-      top: 0;
-      left: 0;
-      font-weight: bold;
-      user-select: none;
+    .log-line {
+      display: flex;
+      font-family: monospace;
+      font-size: 12px;
+      line-height: 20px;
+      color: #ccc;
       cursor: pointer;
-      transition: all .15s linear;
-      background: transparent;
+      border-left: 3px solid transparent;
 
-      &.stickId {
-        color: #F29900;
-        border-right: 2px solid #F29900;
-        background-color: #666;
+      &:hover {
+        background-color: #333;
       }
-      &.search {
+      &.selected {
+        font-weight: 900 !important;
+        box-shadow: 0 0 8px 2px #ffe082;
+      }
+      .line-number {
+        display: inline-block;
+        width: 74px;
+        text-align: right;
+        background-color: rgba(72,72,72,0.2);
+        color: #999;
+        padding-right: 8px;
+        cursor: pointer;
+        user-select: none;
+        flex-shrink: 0;
+
         &:hover {
-          cursor: pointer;
-          color: #F29900;
-          border-right: 2px solid #F29900;
-          background-color: #666;
+          background-color: #35363A;
+          color: #ffb300;
         }
       }
-    }
-    .line-content {
-      margin-left: 100px;
-      color: white;
-      text-align: left;
-      white-space: break-spaces;
-      transition: all .15s linear;
-      background: transparent;
-
-      &.stickId {
-        margin-left: 0px;
-        padding-left: 100px;
-        color: #F29900;
-        background-color: #666;
+      .line-content {
+        flex: 1;
+        padding-left: 8px;
+        white-space: pre;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
     }
   }
+  :deep(.v-input.is-sift .v-field__input) {
+    color: #50fa7b;
+  }
+  .compact-chip {
+    height: 20px !important;
+    font-size: 10px !important;
+    padding: 0 6px !important;
+  }
+  .compact-chip .v-icon {
+    font-size: 14px !important;
+    margin-right: 4px !important;
+  }
+  .filter-chip {
+    background-color: rgba(255, 152, 0, 0.1) !important;
+    border-color: #ff9800 !important;
+    color: #ffcc80 !important;
+  }
+  .filter-chip .v-icon {
+    color: #ff9800 !important;
+  }
+  .paused-chip {
+    background-color: rgba(255, 235, 59, 0.1) !important;
+    border-color: #ffeb3b !important;
+    color: #fff9c4 !important;
+  }
+  .paused-chip .v-icon {
+    color: #ffeb3b !important;
+  }
+  .warning-chip {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+    border-color: #ffc107 !important;
+    color: #fff8e1 !important;
+  }
+  .warning-chip .v-icon {
+    color: #ffc107 !important;
+  }
+  .error-chip {
+    background-color: rgba(244, 67, 54, 0.1) !important;
+    border-color: #f44336 !important;
+    color: #ffcdd2 !important;
+  }
+  .error-chip .v-icon {
+    color: #f44336 !important;
+  }
+  .compact-alert {
+    padding: 4px 12px !important;
+    font-size: 12px !important;
+  }
 }
+.test {
+  height: 12px;
+}
+
+
 </style>

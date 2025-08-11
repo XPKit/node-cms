@@ -27,13 +27,13 @@
 </template>
 
 <script>
-import AbstractField from '@m/AbstractField'
-import FileInputField from '@m/FileInputField'
-import PreviewMultiple from '@c/PreviewMultiple'
-import FileInputErrors from '@c/FileInputErrors'
+  import AbstractField from '@m/AbstractField'
+  import FileInputField from '@m/FileInputField'
+  import PreviewMultiple from '@c/PreviewMultiple'
+  import FileInputErrors from '@c/FileInputErrors'
 
-export default {
-  components: {PreviewMultiple, FileInputErrors},
-  mixins: [AbstractField, FileInputField]
-}
+  export default {
+    components: {PreviewMultiple, FileInputErrors},
+    mixins: [AbstractField, FileInputField]
+  }
 </script>

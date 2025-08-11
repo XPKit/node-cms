@@ -43,6 +43,10 @@ let options = {
     type: 'mongodb',
     url: '127.0.0.1/node-cms'
   }
+  //   "syslog": {
+  //   "method": "file",
+  //   "path": "syslog.log"
+  // },
 }
 
 const cms = new CMS(options)

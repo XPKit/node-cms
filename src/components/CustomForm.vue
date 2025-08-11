@@ -24,82 +24,82 @@
   </div>
 </template>
 <script>
-import { getCurrentInstance } from 'vue'
-import _ from 'lodash'
-import FieldSelectorService from '@s/FieldSelectorService'
-import TranslateService from '@s/TranslateService'
-import FieldTheme from '@m/FieldTheme'
+  import { getCurrentInstance } from 'vue'
+  import _ from 'lodash'
+  import FieldSelectorService from '@s/FieldSelectorService'
+  import TranslateService from '@s/TranslateService'
+  import FieldTheme from '@m/FieldTheme'
 
-export default {
-  mixins: [FieldTheme],
-  props: {
-    formId: { type: Number, default: 0 },
-    schema: { type: Object, default: () => ({}) },
-    model: { type: Object, default: () => ({}) },
-    formOptions: { type: Object, default: () => ({}) },
-    disabled: { type: Boolean, default: false },
-    paragraphIndex: { type: Number, default: 0 },
-    paragraphLevel: { type: Number, default: 0 }
-  },
-  created () {
-    _.each(this.schema.fields, (field) => {
-      const fieldType = this.getFieldType(field)
-      if (!(fieldType in getCurrentInstance().appContext.components)) {
-        if (fieldType === false) {
-          const fieldName = _.get(field, 'originalModel', false)
-          if (fieldName) {
-            const fields = _.get(field, 'resource.schema', [])
-            const fieldSchema = _.find(fields, {field: fieldName})
-            console.error(`Field '${fieldName}' use an undefined field type '${_.get(fieldSchema, 'input', 'not-found')}' will not render it`)
+  export default {
+    mixins: [FieldTheme],
+    props: {
+      formId: { type: Number, default: 0 },
+      schema: { type: Object, default: () => ({}) },
+      model: { type: Object, default: () => ({}) },
+      formOptions: { type: Object, default: () => ({}) },
+      disabled: { type: Boolean, default: false },
+      paragraphIndex: { type: Number, default: 0 },
+      paragraphLevel: { type: Number, default: 0 }
+    },
+    created () {
+      _.each(this.schema.fields, (field) => {
+        const fieldType = this.getFieldType(field)
+        if (!(fieldType in getCurrentInstance().appContext.components)) {
+          if (fieldType === false) {
+            const fieldName = _.get(field, 'originalModel', false)
+            if (fieldName) {
+              const fields = _.get(field, 'resource.schema', [])
+              const fieldSchema = _.find(fields, {field: fieldName})
+              console.error(`Field '${fieldName}' use an undefined field type '${_.get(fieldSchema, 'input', 'not-found')}' will not render it`)
+            }
+          } else {
+            console.error('Field isn\'t defined as a custom field type, will not render it', field)
           }
-        } else {
-          console.error('Field isn\'t defined as a custom field type, will not render it', field)
         }
-      }
-      field.focused = false
-    })
-    FieldSelectorService.events.on('select', this.onFieldSelected)
-  },
-  beforeUnmount () {
-    FieldSelectorService.events.off('select', this.onFieldSelected)
-  },
-  methods: {
-    getFieldId (field) {
-      return `${_.isUndefined(field.model) ? this.getFieldType(field) : field.model}-${_.isUndefined(this.formId) ? '1' : this.formId}`
-    },
-    getFieldClasses (field) {
-      const classes = [`width-${_.get(field, 'width', '1')}`]
-      if (field.schema && field.schema.focused === -1) {
-        classes.push('focused')
-      }
-      return classes
-    },
-    getLineClasses (line) {
-      return [`slots-${_.get(line, 'slots', '1')}`, `nb-fields-${_.get(line, 'fields.length', 1)}`]
-    },
-    onFieldSelected (field) {
-      _.each(this.schema.fields, (f) => {
-        f.focused = f.model === `${field.field}${f.localised ? `.${TranslateService.locale}` : ''}`
-        if (f.focused) {
-          setTimeout(() => {
-            f.focused = -1
-            this.$forceUpdate()
-          }, 1)
-        }
+        field.focused = false
       })
-      this.$forceUpdate()
+      FieldSelectorService.events.on('select', this.onFieldSelected)
     },
-    getFieldType (field) {
-      return _.get(field, 'overrideType', _.get(field, 'type', false))
+    beforeUnmount () {
+      FieldSelectorService.events.off('select', this.onFieldSelected)
     },
-    onInput (value, model) {
-      if (_.isUndefined(model)) {
-        model = _.get(_.first(value), 'parentKey', false)
+    methods: {
+      getFieldId (field) {
+        return `${_.isUndefined(field.model) ? this.getFieldType(field) : field.model}-${_.isUndefined(this.formId) ? '1' : this.formId}`
+      },
+      getFieldClasses (field) {
+        const classes = [`width-${_.get(field, 'width', '1')}`]
+        if (field.schema && field.schema.focused === -1) {
+          classes.push('focused')
+        }
+        return classes
+      },
+      getLineClasses (line) {
+        return [`slots-${_.get(line, 'slots', '1')}`, `nb-fields-${_.get(line, 'fields.length', 1)}`]
+      },
+      onFieldSelected (field) {
+        _.each(this.schema.fields, (f) => {
+          f.focused = f.model === `${field.field}${f.localised ? `.${TranslateService.locale}` : ''}`
+          if (f.focused) {
+            setTimeout(() => {
+              f.focused = -1
+              this.$forceUpdate()
+            }, 1)
+          }
+        })
+        this.$forceUpdate()
+      },
+      getFieldType (field) {
+        return _.get(field, 'overrideType', _.get(field, 'type', false))
+      },
+      onInput (value, model) {
+        if (_.isUndefined(model)) {
+          model = _.get(_.first(value), 'parentKey', false)
+        }
+        this.$emit('input', value, model, this.paragraphIndex)
       }
-      this.$emit('input', value, model, this.paragraphIndex)
     }
   }
-}
 </script>
 
 <style lang="scss" scoped>

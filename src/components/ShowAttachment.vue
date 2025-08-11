@@ -81,114 +81,114 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import { Cropper } from 'vue-advanced-cropper'
-import 'vue-advanced-cropper/dist/style.css'
+  import _ from 'lodash'
+  import { Cropper } from 'vue-advanced-cropper'
+  import 'vue-advanced-cropper/dist/style.css'
 
-export default {
-  components: { Cropper },
-  props: {
-    theme: { type: String, default: 'light' },
-    attachment: { type: Object, default: () => ({}) },
-    getImageSrc: { type: Function, default: () => {} },
-    imageSize: { type: Function, default: () => {} },
-    schema: { type: Object, default: () => ({}) },
-    removeImage: { type: Function, default: () => {} },
-    isImage: { type: Function, default: () => {} },
-    onCropperChange: { type: Function, default: () => {} }
-  },
-  data() {
-    return {
-      cropData: false,
-      firstCropUpdate: true,
-      customWidth: null,
-      customHeight: null,
-      stencilProps: {
-        class: 'cropper-stencil',
-        previewClass: 'cropper-stencil__preview',
-        draggingClass: 'cropper-stencil--dragging',
-        handlersClasses: {
-          default: 'cropper-handler',
-          eastNorth: 'cropper-handler--east-north',
-          westNorth: 'cropper-handler--west-north',
-          eastSouth: 'cropper-handler--east-south',
-          westSouth: 'cropper-handler--west-south'
+  export default {
+    components: { Cropper },
+    props: {
+      theme: { type: String, default: 'light' },
+      attachment: { type: Object, default: () => ({}) },
+      getImageSrc: { type: Function, default: () => {} },
+      imageSize: { type: Function, default: () => {} },
+      schema: { type: Object, default: () => ({}) },
+      removeImage: { type: Function, default: () => {} },
+      isImage: { type: Function, default: () => {} },
+      onCropperChange: { type: Function, default: () => {} }
+    },
+    data() {
+      return {
+        cropData: false,
+        firstCropUpdate: true,
+        customWidth: null,
+        customHeight: null,
+        stencilProps: {
+          class: 'cropper-stencil',
+          previewClass: 'cropper-stencil__preview',
+          draggingClass: 'cropper-stencil--dragging',
+          handlersClasses: {
+            default: 'cropper-handler',
+            eastNorth: 'cropper-handler--east-north',
+            westNorth: 'cropper-handler--west-north',
+            eastSouth: 'cropper-handler--east-south',
+            westSouth: 'cropper-handler--west-south'
+          }
         }
       }
-    }
-  },
-  mounted() {
-    this.customWidth = _.get(this.schema, 'crop.width', 500)
-    this.customHeight = _.get(this.schema, 'crop.height', 500)
-  },
-  methods: {
-    viewFile() {
-      if (!this.attachment) { return }
-      const filenameComponents = _.get(this.attachment, '_filename', '').split('.')
-      const suffix = filenameComponents.length > 1 ? `.${_.last(filenameComponents)}` : ''
-      const win = window.open(window.origin + _.get(this.attachment, 'url', '') + suffix, '_blank')
-      if (win) { win.focus() }
     },
-    hasOpt(key) {
-      return _.get(this.schema, `crop.${key}`, false)
+    mounted() {
+      this.customWidth = _.get(this.schema, 'crop.width', 500)
+      this.customHeight = _.get(this.schema, 'crop.height', 500)
     },
-    imageUrl() {
-      return _.get(this.attachment, 'url', _.get(this.attachment, 'data', ''))
-    },
-    getDefaultCropPosition({ imageSize, visibleArea, coordinates }) {
-      if (_.get(this.attachment, 'cropOptions', false)) {
+    methods: {
+      viewFile() {
+        if (!this.attachment) { return }
+        const filenameComponents = _.get(this.attachment, '_filename', '').split('.')
+        const suffix = filenameComponents.length > 1 ? `.${_.last(filenameComponents)}` : ''
+        const win = window.open(window.origin + _.get(this.attachment, 'url', '') + suffix, '_blank')
+        if (win) { win.focus() }
+      },
+      hasOpt(key) {
+        return _.get(this.schema, `crop.${key}`, false)
+      },
+      imageUrl() {
+        return _.get(this.attachment, 'url', _.get(this.attachment, 'data', ''))
+      },
+      getDefaultCropPosition({ imageSize, visibleArea, coordinates }) {
+        if (_.get(this.attachment, 'cropOptions', false)) {
+          return {
+            left: _.get(this.attachment, 'cropOptions.left', 0),
+            top: _.get(this.attachment, 'cropOptions.top', 0)
+          }
+        }
+        const area = visibleArea || imageSize
         return {
-          left: _.get(this.attachment, 'cropOptions.left', 0),
-          top: _.get(this.attachment, 'cropOptions.top', 0)
+          left: (visibleArea ? visibleArea.left : 0) + area.width / 2 - coordinates.width / 2,
+          top: (visibleArea ? visibleArea.top : 0) + area.height / 2 - coordinates.height / 2
         }
-      }
-      const area = visibleArea || imageSize
-      return {
-        left: (visibleArea ? visibleArea.left : 0) + area.width / 2 - coordinates.width / 2,
-        top: (visibleArea ? visibleArea.top : 0) + area.height / 2 - coordinates.height / 2
-      }
-    },
-    getDefaultCropSize() {
-      return {
-        width: this.getCurrentWidth(),
-        height: this.getCurrentHeight()
-      }
-    },
-    getCurrentWidth() {
-      return _.get(this.schema, 'crop.width', this.customWidth || 500)
-    },
-    getCurrentHeight() {
-      return _.get(this.schema, 'crop.height', this.customHeight || 500)
-    },
-    updateCropSize() {
-      this.$nextTick(() => {
-        if (this.$refs.cropper) {
-          this.$refs.cropper.refresh()
+      },
+      getDefaultCropSize() {
+        return {
+          width: this.getCurrentWidth(),
+          height: this.getCurrentHeight()
         }
-      })
-    },
-    onCropperChangeForAttachment(data) {
-      this.cropData = data
-      if (this.firstCropUpdate) {
-        this.firstCropUpdate = false
-        return
-      }
-      if (data && data.coordinates) {
-        if (!_.get(this.schema, 'crop.width', false)) {
-          this.customWidth = Math.round(data.coordinates.width)
+      },
+      getCurrentWidth() {
+        return _.get(this.schema, 'crop.width', this.customWidth || 500)
+      },
+      getCurrentHeight() {
+        return _.get(this.schema, 'crop.height', this.customHeight || 500)
+      },
+      updateCropSize() {
+        this.$nextTick(() => {
+          if (this.$refs.cropper) {
+            this.$refs.cropper.refresh()
+          }
+        })
+      },
+      onCropperChangeForAttachment(data) {
+        this.cropData = data
+        if (this.firstCropUpdate) {
+          this.firstCropUpdate = false
+          return
         }
-        if (!_.get(this.schema, 'crop.height', false)) {
-          this.customHeight = Math.round(data.coordinates.height)
+        if (data && data.coordinates) {
+          if (!_.get(this.schema, 'crop.width', false)) {
+            this.customWidth = Math.round(data.coordinates.width)
+          }
+          if (!_.get(this.schema, 'crop.height', false)) {
+            this.customHeight = Math.round(data.coordinates.height)
+          }
+          this.$forceUpdate()
         }
-        this.$forceUpdate()
+      },
+      apply(isActive) {
+        isActive.value = false
+        this.onCropperChange(this.cropData)
       }
-    },
-    apply(isActive) {
-      isActive.value = false
-      this.onCropperChange(this.cropData)
     }
   }
-}
 </script>
 
 <style lang="scss" scoped>

@@ -20,25 +20,25 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import TranslateService from '@s/TranslateService'
+  import _ from 'lodash'
+  import TranslateService from '@s/TranslateService'
 
-export default {
-  props: {
-    locales: { type: Array, default: () => [] },
-    locale: { type: String, default: '' },
-    back: { type: Function, default: () => {} },
-    selectLocale: { type: Function, default: () => {} }
-  },
-  methods: {
-    getLocaleTranslation (locale) {
-      return TranslateService.get('TL_' + locale.toUpperCase())
+  export default {
+    props: {
+      locales: { type: Array, default: () => [] },
+      locale: { type: String, default: '' },
+      back: { type: Function, default: () => {} },
+      selectLocale: { type: Function, default: () => {} }
     },
-    toggleLocale () {
-      this.selectLocale(_.find(this.locales, (l) => l !== this.locale))
+    methods: {
+      getLocaleTranslation (locale) {
+        return TranslateService.get('TL_' + locale.toUpperCase())
+      },
+      toggleLocale () {
+        this.selectLocale(_.find(this.locales, (l) => l !== this.locale))
+      }
     }
   }
-}
 </script>
 
 <style lang="scss">

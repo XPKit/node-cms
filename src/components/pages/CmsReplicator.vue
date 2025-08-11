@@ -40,40 +40,40 @@
   </div>
 </template>
 <script>
-export default {
-  data() {
-    return {
-      resources: [],
-      showDialog: false,
-      recordId: '',
-      recordResource: ''
-    }
-  },
-  mounted() {
-    this.fetchResources()
-  },
-  methods: {
-    async fetchResources() {
-      const res = await fetch('/replicator/resources')
-      this.resources = await res.json()
+  export default {
+    data() {
+      return {
+        resources: [],
+        showDialog: false,
+        recordId: '',
+        recordResource: ''
+      }
     },
-    async syncResource(resource) {
-      await fetch(`/replicator/sync/${resource}`, { method: 'POST' })
-      this.$notify && this.$notify('Sync started for ' + resource)
+    mounted() {
+      this.fetchResources()
     },
-    syncRecordPrompt(resource) {
-      this.recordResource = resource
-      this.showDialog = true
-      this.recordId = ''
-    },
-    async doSyncRecord() {
-      if (!this.recordId) return
-      await fetch(`/replicator/sync/${this.recordResource}/${this.recordId}`, { method: 'POST' })
-      this.$notify && this.$notify('Sync started for record ' + this.recordId)
-      this.showDialog = false
+    methods: {
+      async fetchResources() {
+        const res = await fetch('/replicator/resources')
+        this.resources = await res.json()
+      },
+      async syncResource(resource) {
+        await fetch(`/replicator/sync/${resource}`, { method: 'POST' })
+        this.$notify && this.$notify('Sync started for ' + resource)
+      },
+      syncRecordPrompt(resource) {
+        this.recordResource = resource
+        this.showDialog = true
+        this.recordId = ''
+      },
+      async doSyncRecord() {
+        if (!this.recordId) return
+        await fetch(`/replicator/sync/${this.recordResource}/${this.recordId}`, { method: 'POST' })
+        this.$notify && this.$notify('Sync started for record ' + this.recordId)
+        this.showDialog = false
+      }
     }
   }
-}
 </script>
 <style scoped>
 .cms-replicator { padding: 2em; }

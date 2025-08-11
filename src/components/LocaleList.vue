@@ -8,16 +8,16 @@
 
 <script>
 
-import TranslateService from '@s/TranslateService'
+  import TranslateService from '@s/TranslateService'
 
-export default {
-  props: {
-    localeList: { type: Array, default: () => [] }
-   },
-  data () {
-    return {
-      TranslateService
+  export default {
+    props: {
+      localeList: { type: Array, default: () => [] }
+    },
+    data () {
+      return {
+        TranslateService
+      }
     }
   }
-}
 </script>

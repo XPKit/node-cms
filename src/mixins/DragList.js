@@ -1,9 +1,7 @@
-import {v4 as uuid} from 'uuid'
-
 export default {
   data () {
     return {
-      key: uuid(),
+      key: crypto.randomUUID(),
       dragOptions: {
         animation: 200,
         group: 'description',

@@ -131,7 +131,7 @@ window.addEventListener('load', async function () {
   })
   window.TranslateService = TranslateService
   const config = await RequestService.get(`${window.location.pathname}config`)
-  console.warn('config = ', config)
+  // console.warn('config = ', config)
   addPlugin('Syslog', 'Syslog')
   addPlugin('CmsConfig', 'Cms Config')
   if (config.import) {
