@@ -55,7 +55,12 @@ const app = express()
 app.use(cms.express())
 const server = app.listen(pkg.config.port, async () => {
   await cms.bootstrap(server)
+  logger.trace('########### server started ###########')
+  logger.verbose('########### server started ###########')
+  logger.debug('########### server started ###########')
   logger.info('########### server started ###########')
+  logger.warn(`You can access the admin interface at http://localhost:${server.address().port}/admin`)
+  logger.error('########### server error ###########')
   return logger.info(`${pkg.name} started at http://localhost:${server.address().port}/admin`)
 })
 

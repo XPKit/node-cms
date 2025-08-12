@@ -64,7 +64,6 @@
     "abstract-level": "^3.1.0",
     "ansi_up": "^6.0.6",
     "ansi-html": "0.0.9",
-    "ansi-to-html": "^0.7.2",
     "basic-auth-connect": "^1.0.0",
     "body-parser": "^1.20.2",
     "canvas": "^3.1.2",

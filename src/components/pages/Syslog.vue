@@ -15,11 +15,10 @@
         <span v-if="errorQty >= 0" class="flag-item flag-error" @click="filterLevel(2)"><v-icon>mdi-alert-box-outline</v-icon> {{ errorQty }}</span>
       </div>
     </div>
-    <!-- TODO: hugo - stylize error -->
-    <div v-if="error" class="bg-error">
-      {{ $filters.translate('TL_ERROR_RETRIEVE_SYSLOG') }}
-    </div>
     <div class="log-viewer-wrapper">
+      <div v-if="error" class="error-syslog">
+        {{ $filters.translate('TL_ERROR_RETRIEVE_SYSLOG') }}
+      </div>
       <RecycleScroller
         ref="virtualScroller"
         v-slot="{ item }"
@@ -43,7 +42,6 @@
   import sift from 'sift'
   import JSON5 from 'json5'
   import stripAnsi from 'strip-ansi'
-  import AnsiToHtml from 'ansi-to-html'
 
   export default {
     data () {
@@ -73,6 +71,13 @@
         isHandlingGutterClick: false,
         selectedLineId: null,
         shouldScrollToSelectedLine: false,
+        colors: {
+          1: '#A00', // error
+          3: '#d1a600', // warn
+          5: '#A0A', // debug
+          6: '#0AA', // info
+          8: '#555', // trace/verbose
+        }
       }
     },
     async mounted () {
@@ -93,17 +98,7 @@
         this.updateSysLog()
       },
       highlightLogLine(lineOrItem) {
-        if (!lineOrItem) {
-          return ''
-        }
-        const ansiConverter = new AnsiToHtml({ escapeXML: true, newline: false })
-        const rawLine = _.get(lineOrItem, 'line', lineOrItem)
-        try {
-          return ansiConverter.toHtml(rawLine)
-        } catch (err) {
-          console.error('Failed to convert ANSI to HTML:', err)
-          return rawLine
-        }
+        return lineOrItem ? _.get(lineOrItem, 'html', _.get(lineOrItem, 'line', lineOrItem)) : ''
       },
       disconnectFromLogStream () {
         try {
@@ -464,6 +459,8 @@
     margin: 0;
     box-sizing: border-box;
     overflow: hidden;
+    display: flex;
+    flex-grow: 1;
     .scroller {
       height: 100%;
       width: 100%;
@@ -559,9 +556,15 @@
     font-size: 12px !important;
   }
 }
-.test {
-  height: 12px;
+.error-syslog {
+  text-align: center;
+  color: white;
+  background-color: #89000085;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1;
 }
-
 
 </style>
