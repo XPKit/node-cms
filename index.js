@@ -91,6 +91,7 @@ class CMS {
 
     /* Use prefixed UUID */
     options.uuid = new UUID(options.mid)
+    options.uuid()
 
     /* automaticly populate CMS resources, if specified */
 
