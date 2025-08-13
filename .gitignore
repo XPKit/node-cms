@@ -4,11 +4,9 @@ app/components
 npm-debug.log
 test/data*
 test/resources-*
-old_tests/data
 data
 /cms.json
 /test/cms.json
-/old_tests/cms.json
 cached/
 view-edit-spreadsheets.pem
 logs/*
@@ -23,5 +21,5 @@ cms.json.backup*
 syslog.log
 storage
 test-data-simple
-old_tests/man-*.jpg
+test/man-*.jpg
 test-*.js
