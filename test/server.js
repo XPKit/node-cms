@@ -6,48 +6,12 @@ const path = require('path')
 const express = require('express')
 const { spawn } = require('child_process')
 const logger = new (require('img-sh-logger'))()
-const CMS = require('../')
+const { getCMSInstance, options } = require('./cmsInstance')
 const pkg = require('../package.json')
 
-fs.removeSync('./test/data')
 
-let options = {
-  ns: [],
-  resources: './test/resources',
-  data: './test/data',
-  autoload: true,
-  mode: 'normal',
-  mid: '42424242',
-  disableREST: false,
-  disableAdmin: false,
-  mountPath: '/',
-  disableJwtLogin: false,
-  disableAuthentication: true,
-  wsRecordUpdates: true,
-  auth: {
-    secret: '$C&F)J@NcRfUjXn2r5u8x/A?D*G-KaPd'
-  },
-  disableAnonymous: false,
-  session: {
-    secret: 'MdjIwFRi9ezT',
-    resave: true,
-    saveUninitialized: true
-  },
-  syslog: {
-    method: 'file',
-    path: './syslog.log'
-  },
-  smartCrop: false,
-  defaultPaging: 12,
-  test: true,
-  replication: {
-    peers: [9991, 9992],
-    peersByResource: {
-      articles: ['http://localhost:9991'],
-      authors: ['http://localhost:9992']
-    }
-  }
-}
+// Clean test data directory before CMS initialization
+fs.removeSync('./test/data')
 
 /*
 node-cms A
@@ -72,16 +36,8 @@ node-cms B
 
 */
 
+// TODO: hugo - change the way the unit tests are being run, only 1 instance of node-cms should be started except for the replication/sync/import tests which need several node-cms instances running at the same time
 
-if (process.env.NODE_CMS_OVERRIDE_CONFIG) {
-  try {
-    options = JSON.parse(process.env.NODE_CMS_OVERRIDE_CONFIG)
-  } catch (err) {
-    logger.error('Failed to parse NODE_CMS_OVERRIDE_CONFIG:', err)
-  }
-}
-
-const cms = new CMS(options)
 
 // Peer process management for replication tests
 const peerPorts = [9991, 9992]
@@ -89,30 +45,49 @@ const peerProcesses = []
 const serverPath = path.join(__dirname, 'server.js')
 let started = 0
 
+
+// Helper to get a random available port in range 9000-9999
+function getRandomPort() {
+  return Math.floor(Math.random() * 1000) + 9000
+}
+
+const runPeerTests = process.env.RUN_PEER_TESTS === '1'
+
 function launchPeers(done) {
   if (_.get(process, 'env.NODE_CMS_OVERRIDE_CONFIG', false)) {
     // If this is a peer, do not launch more peers
     done && done()
     return
   }
-  for (const port of peerPorts) {
+  // Use random ports for peers to avoid conflicts
+  const usedPorts = new Set([port])
+  function getUniquePort() {
+    let p
+    do {
+      p = getRandomPort()
+    } while (usedPorts.has(p))
+    usedPorts.add(p)
+    return p
+  }
+  for (let i = 0; i < peerPorts.length; i++) {
+    const peerPort = getUniquePort()
     // Clone config for each peer
     const peerConfig = JSON.parse(JSON.stringify(options))
-    peerConfig.port = port
+    peerConfig.port = peerPort
     peerConfig.replication = peerConfig.replication || {}
-    peerConfig.replication.peers = peerPorts.filter(p => p !== port).map(p => `http://localhost:${p}`)
+    peerConfig.replication.peers = []
     // Always set peersByResource for all servers
     peerConfig.replication.peersByResource = {
-      articles: ['http://localhost:9991'],
-      authors: ['http://localhost:9992']
+      articles: [`http://localhost:${peerPort}`],
+      authors: [`http://localhost:${peerPort}`]
     }
 
     // Use a separate resource directory for each peer
     const path = require('path')
-    peerConfig.resources = path.join(__dirname, `resources-peer-${port}`)
+    peerConfig.resources = path.join(__dirname, `resources-peer-${peerPort}`)
 
     // Clean peer data directory before starting
-    const peerDataDir = path.join(__dirname, `data-peer-${port}`)
+    const peerDataDir = path.join(__dirname, `data-peer-${peerPort}`)
     fs.removeSync(peerDataDir)
     peerConfig.data = peerDataDir
 
@@ -136,24 +111,14 @@ function launchPeers(done) {
   }
 }
 
-function isProcessRunning(pid) {
-  try {
-    process.kill(pid, 0)
-    return true
-  } catch (error) {
-    console.error('Error:', error)
-    return false
-  }
-}
 
 function killPeers() {
   for (const proc of peerProcesses) {
-    if (proc && proc.pid && isProcessRunning(proc.pid)) {
+    if (_.get(proc, 'id', false) && proc.pid) {
       try {
-        console.warn('Will kill sub process --------', proc.pid)
         proc.kill('SIGKILL')
       } catch (error) {
-        console.error(`Error killing peer process: ${error.message}`)
+        console.error(`Error killing peer process ${proc.pid}: ${error.message}`)
       }
     }
   }
@@ -171,30 +136,51 @@ process.on('exit', () => {
   killPeers()
 })
 
-const app = express()
-app.use(cms.express())
-const port = _.get(options, 'port', pkg.config.port)
-
-launchPeers(() => {
+let cms, app, port
+if (runPeerTests) {
+  port = getRandomPort()
+  cms = getCMSInstance()
+  cms.options.port = port
+  app = express()
+  app.use(cms.express())
+  launchPeers(() => {
+    const server = app.listen(port, async () => {
+      await cms.bootstrap(server)
+      logger.info('########### server started ###########')
+      logger.info(`${pkg.name} started at http://localhost:${server.address().port}/admin`)
+      if (!_.get(process, 'env.NODE_CMS_OVERRIDE_CONFIG', false)) {
+        // Run all tests via runTests.js
+        const testProcess = spawn('npx', ['mocha', '--exit', '-R', 'spec', '-b', '-t', '40000', '--timeout', '60000', './test/runTests.js'], {
+          stdio: 'inherit',
+          shell: true
+        })
+        testProcess.on('exit', (code) => {
+          logger.info(`Test process exited with code ${code}`)
+          killPeers()
+          process.exit(code)
+        })
+      }
+    })
+  })
+} else {
+  port = 9990
+  cms = getCMSInstance()
+  cms.options.port = port
+  app = express()
+  app.use(cms.express())
   const server = app.listen(port, async () => {
     await cms.bootstrap(server)
     logger.info('########### server started ###########')
     logger.info(`${pkg.name} started at http://localhost:${server.address().port}/admin`)
-    // Launch all tests after server is ready
-    if (!_.get(process, 'env.NODE_CMS_OVERRIDE_CONFIG', false)) {
-      const testProcess = spawn('npx', ['mocha', '--exit', '-R', 'spec', '-b', '-t', '40000', '--timeout', '60000', './test/runTests.js'], {
-        stdio: 'inherit',
-        shell: true
-      })
-      testProcess.on('exit', (code) => {
-        logger.info(`Test process exited with code ${code}`)
-        killPeers()
-        process.exit(code)
-      })
-    }
+    // Run all tests via runTests.js
+    const testProcess = spawn('npx', ['mocha', '--exit', '-R', 'spec', '-b', '-t', '40000', '--timeout', '60000', './test/runTests.js'], {
+      stdio: 'inherit',
+      shell: true
+    })
+    testProcess.on('exit', (code) => {
+      logger.info(`Test process exited with code ${code}`)
+      process.exit(code)
+    })
   })
-})
+}
 
-process.on('uncaughtException', (error) => {
-  logger.error(error)
-})

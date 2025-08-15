@@ -6,10 +6,21 @@
  */
 const _ = require('lodash')
 const CMS = require('./index.js')
-const fs = require('fs')
+const fs = require('fs-extra')
 const path = require('path')
+const sharp = require('sharp')
 
 const smartCropOptions = [
+  {
+    resize: '500xauto',
+    smart: false,
+    objectDetection: true
+  },
+  {
+    resize: 'autoxauto',
+    smart: true,
+    objectDetection: false
+  },
   {
     resize: '500xauto',
     smart: true,
@@ -40,7 +51,12 @@ const smartCropOptions = [
     resize: 'autox500',
     smart: true,
     faceOnly: true,
-    // TODO: hugo - check if face padding working
+    facePadding: 50
+  },
+  {
+    resize: 'autox500',
+    smart: true,
+    faceOnly: true,
     facePadding: 100
   }
 ]
@@ -57,34 +73,77 @@ async function streamToFile(stream, filePath) {
 
 async function processSmartCrop(api, fileToProcess, smartCropOptions, outputFilename) {
   const foundRecord = await api('cctImages').find({ key: 'SmartCrop Test Image' })
-  await api('cctImages').remove(foundRecord._id)
+  if (foundRecord) {
+    await api('cctImages').remove(foundRecord._id)
+  }
   const record = await api('cctImages').create({ key: 'SmartCrop Test Image' })
+  // Pass all smartCropOptions directly to createAttachment
   const attachment = await api('cctImages').createAttachment(record._id, {
     name: 'example-attachment',
     stream: fs.createReadStream(fileToProcess),
-    fields: { _filename: 'man.jpg' }
+    fields: { _filename: 'man.jpg' },
+    ...smartCropOptions
   })
-  const result = await api('cctImages').findAttachment(record._id, attachment._id, smartCropOptions)
-  const basePath = path.join(__dirname, 'test')
-  await streamToFile(result.stream, path.join(basePath, outputFilename))
+  // Download the processed attachment (direct result from createAttachment)
+  const resultStreamCreate = await api('cctImages').findFile(attachment._id)
+  const basePath = path.join(__dirname, 'test', 'smartCropAssets')
+  const createPath = path.join(basePath, `create-${outputFilename}`)
+  const findPath = path.join(basePath, `find-${outputFilename}`)
+  await streamToFile(resultStreamCreate, createPath)
+  // Now test findAttachment with the same options
+  const resultFind = await api('cctImages').findAttachment(record._id, attachment._id, smartCropOptions)
+  await streamToFile(resultFind.stream, findPath)
+  // Compare image dimensions
+  const createMeta = await sharp(createPath).metadata()
+  const findMeta = await sharp(findPath).metadata()
+  if (createMeta.width !== findMeta.width || createMeta.height !== findMeta.height) {
+    throw new Error(`Image size mismatch for ${outputFilename}: create=${createMeta.width}x${createMeta.height}, find=${findMeta.width}x${findMeta.height}`)
+  }
 }
 
-async function processAllSmartCropOptions(api) {
+function getMode(options) {
+  return _.chain(options).map((val, key) => {
+    if (!val) {
+      return false
+    } else if (key === 'facePadding') {
+      return `${key}-${val}`
+    }
+    return key
+  }).compact().join('+').value()
+}
+
+async function processAllSmartCropOptions(api, testImagePath) {
   console.log('🧪 [Extra Test] Launch server, create cctImage, use findAttachment with smart crop and object detection')
-  const imagePath = path.join(__dirname, 'test', 'man.jpg')
-  if (!fs.existsSync(imagePath)) {
-    return console.error('Test image ./test/man.jpg not found!')
-  }
-  console.warn(`Will process ${smartCropOptions.length} smart crop options for image ${imagePath}`)
+  console.warn(`Will process ${smartCropOptions.length} smart crop options for image ${testImagePath}`)
   let processedImages = 0
   for (const options of smartCropOptions) {
-    const mode = _.chain(options).map((val, key) => val ? key : false).compact().join('+').value()
+    const mode = getMode(options)
     console.warn(`Will process image with mode = ${mode} and options:`, options)
-    await processSmartCrop(api, imagePath, options, `man-smartcrop-${mode}-${options.resize}.jpg`)
+    await processSmartCrop(api, testImagePath, options, `man-${mode}-${options.resize}.jpg`)
     processedImages++
     console.warn(`Processed ${processedImages}/${smartCropOptions.length} smart crop options`)
   }
   console.warn(`All ${processedImages} smart crop options processed successfully`)
+}
+
+async function initCms() {
+  const cms = new CMS({
+    data: './data',
+    locales: ['enUS'],
+    smartCrop: true // Enable SmartCrop
+  })
+  console.log('✅ Created CMS instance with SmartCrop enabled')
+  await cms.bootstrap()
+  console.log('✅ CMS bootstrap completed')
+  return cms.api()
+}
+
+async function createFolder() {
+  const assetsPath = path.join(__dirname, 'test', 'smartCropAssets')
+  if (fs.existsSync(assetsPath)) {
+    await fs.remove(assetsPath)
+  }
+  await fs.mkdirp(assetsPath)
 }
 
 /**
@@ -93,26 +152,13 @@ async function processAllSmartCropOptions(api) {
 async function testSmartCropAPI() {
   console.log('🧪 Starting SmartCrop API tests...\n')
   try {
-    // Initialize CMS with SmartCrop enabled
-    const cms = new CMS({
-      data: './data',
-      locales: ['enUS'],
-      smartCrop: true // Enable SmartCrop
-    })
-    console.log('✅ Created CMS instance with SmartCrop enabled')
-    // Bootstrap the CMS (crucial step)
-    await cms.bootstrap()
-    console.log('✅ CMS bootstrap completed')
-    // Get API access
-    const api = cms.api()
-    console.log('✅ Got API access\n')
     const testImagePath = path.join(__dirname, 'test', 'man.jpg')
     if (!testImagePath || !fs.existsSync(testImagePath)) {
-      return console.error('⚠️  No test image found. Creating a simple test image...')
+      throw new Error('Test image needed for tests not found')
     }
-    const imageBuffer = fs.readFileSync(testImagePath)
-    console.log(`📷 Using test image: ${testImagePath} (${imageBuffer.length} bytes)\n`)
-    await processAllSmartCropOptions(api)
+    await createFolder()
+    const api = await initCms()
+    await processAllSmartCropOptions(api, testImagePath)
     return true
   } catch (error) {
     console.error('❌ SmartCrop API test failed:', error)

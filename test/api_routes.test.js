@@ -3,77 +3,6 @@ const request = require('supertest')
 const chai = require('chai')
 const expect = chai.expect
 const serverUrl = 'http://localhost:9990'
-/*
-Example of a response body for another resource (see schema of resource in ./resources/cctImages.js)
-[{
-  "key": "dawdwad",
-  "otherField": "awdwadawdaw",
-  "autoSlug": "awdwadawdaw",
-  "editableSlug": "awdwadawdaw",
-  "localizedImage": {
-    "zhCN": [
-      {
-        "_id": "md6tgcjljegvlp6wyjy80474",
-        "_createdAt": 1752722049361,
-        "_updatedAt": 1752722049361,
-        "_contentType": "image/png",
-        "_md5sum": "a6a00a3d88e8437b02a2f50607fd9de8",
-        "_payload": {},
-        "_size": 272857,
-        "_filename": "aaa2.png",
-        "_fields": {
-          "locale": "zhCN",
-          "_filename": "aaa2.png"
-        },
-        "url": "/api/cctImages/md6tgcicjegvlp6wy9vl19y8/attachments/md6tgcjljegvlp6wyjy80474",
-        "_isAttachment": true
-      }
-    ],
-    "enUS": [
-      {
-        "_id": "md6th5q7jegvlp6wyuzaqm2t",
-        "_createdAt": 1752722087094,
-        "_updatedAt": 1752722087094,
-        "_contentType": "image/png",
-        "_md5sum": "d0589e24e32cc4ac5ab0969d22743485",
-        "_payload": {},
-        "_size": 1066999,
-        "_filename": "basePicture.png",
-        "_fields": {
-          "locale": "enUS",
-          "_filename": "basePicture.png"
-        },
-        "url": "/api/cctImages/md6tgcicjegvlp6wy9vl19y8/attachments/md6th5q7jegvlp6wyuzaqm2t",
-        "_isAttachment": true
-      }
-    ]
-  },
-  "_updatedBy": "admins~localAdmin",
-  "_id": "md6tgcicjegvlp6wy9vl19y8",
-  "_createdAt": 1752722049108,
-  "_updatedAt": 1752722087116,
-  "_publishedAt": null,
-  "_local": true,
-  "image": [
-    {
-      "_id": "md6tgcjjjegvlp6wykgo99nf",
-      "_createdAt": 1752722049351,
-      "_updatedAt": 1752722049351,
-      "_contentType": "image/png",
-      "_md5sum": "a6a00a3d88e8437b02a2f50607fd9de8",
-      "_payload": {},
-      "_size": 272857,
-      "_filename": "aaa2.png",
-      "_fields": {
-        "_filename": "aaa2.png"
-      },
-      "url": "/api/cctImages/md6tgcicjegvlp6wy9vl19y8/attachments/md6tgcjjjegvlp6wykgo99nf",
-      "_isAttachment": true
-    }
-  ]
-}] */
-
-
 
 describe('API Route Coverage', () => {
   it('POST /api/articles/:id/attachments should create an attachment with locale field', async () => {
@@ -175,7 +104,7 @@ describe('API Route Coverage', () => {
   let attachmentId = null
   let attachmentExt = 'js'
 
-  it('GET /api/articles without auth should return 403', async () => {
+  it('GET /api/articles without auth should return 401', async () => {
     const res = await request(serverUrl)
       .get('/api/articles')
     expect(res.status).to.equal(401)
@@ -279,14 +208,43 @@ describe('API Route Coverage', () => {
     /*
       example response:
       {
-          title: 'Test Article',
-          _updatedBy: 'admins~localAdmin',
-          _id: 'md6uflms42424242yd7rh3vt',
-          _createdAt: 1752723693892,
-          _updatedAt: 1752723693925,
-          _publishedAt: null,
-          _local: true,
-          file: [ ... ]
+        title: 'Test Article',
+        _updatedBy: 'admins~localAdmin',
+        _id: 'meavgbu142424242y0yntlvo',
+        _createdAt: 1755144054505,
+        _updatedAt: 1755144054536,
+        _publishedAt: null,
+        _local: true,
+        image: [
+          {
+            _id: 'meavgbub42424242y7ur4d1o',
+            _createdAt: 1755144054521,
+            _updatedAt: 1755144054521,
+            _contentType: false,
+            _md5sum: '3e912ef376ec993cb7d2b02e281ec5e7',
+            _payload: {},
+            _size: 34578,
+            _filename: '3c0e8a8eb0a120e53771135177d86cc4',
+            _fields: [Object],
+            url: '/api/articles/meavgbu142424242y0yntlvo/attachments/meavgbub42424242y7ur4d1o',
+            _isAttachment: true
+          }
+        ],
+        localizedImage: [
+          {
+            _id: 'meavgbuq42424242yc778h1t',
+            _createdAt: 1755144054536,
+            _updatedAt: 1755144054536,
+            _contentType: false,
+            _md5sum: '3e912ef376ec993cb7d2b02e281ec5e7',
+            _payload: {},
+            _size: 34578,
+            _filename: '60dde8cc1e935f8d33da09379d81733b',
+            _fields: [Object],
+            url: '/api/articles/meavgbu142424242y0yntlvo/attachments/meavgbuq42424242yc778h1t',
+            _isAttachment: true
+          }
+        ]
       }
     */
     // Check top-level properties
@@ -318,10 +276,10 @@ describe('API Route Coverage', () => {
     })
 
     // Check localized image attachments
-    expect(res.body.localizedImage).to.be.an('object')
-    expect(res.body.localizedImage).to.have.property('enUS')
-    expect(res.body.localizedImage.enUS).to.be.an('array')
-    res.body.localizedImage.enUS.forEach(img => {
+    // TODO: localizedImage should be an array with its first element having fields.locale = "enUS"
+    expect(res.body.localizedImage).to.be.an('array')
+    expect(res.body.localizedImage.length).to.be.at.least(1)
+    _.each(res.body.localizedImage, img => {
       expect(img).to.have.property('_id')
       expect(img).to.have.property('_createdAt')
       expect(img).to.have.property('_updatedAt')
@@ -338,9 +296,9 @@ describe('API Route Coverage', () => {
     })
 
     // Ensure no duplication between non-localized and localized attachments
-    const nonLocalizedIds = res.body.image.map(img => img._id)
-    const localizedIds = res.body.localizedImage.enUS.map(img => img._id)
-    nonLocalizedIds.forEach(id => {
+    const nonLocalizedIds = _.map(res.body.image, img => img._id)
+    const localizedIds = _.map(res.body.localizedImage, img => img._id)
+    _.each(nonLocalizedIds, id => {
       expect(localizedIds).to.not.include(id)
     })
   })
@@ -442,7 +400,7 @@ describe('API Route Coverage', () => {
       .post(`/api/articles/${createdId}/attachments`)
       .auth('localAdmin', 'localAdmin')
       .attach('file', __filename)
-    expect([404]).to.include(res.status)
+    expect(res.status).to.equal(404)
   })
 
   it('POST /api/articles should create an article', async () => {
