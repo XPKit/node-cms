@@ -7,6 +7,16 @@ It installs a CMS called node-cms in your path, that developer can run a CMS or 
 
 ## Documentation
 
+### Smart Cropping (Face/Object Detection)
+
+If you enable the `smartCrop` feature in your CMS configuration, you must manually install TensorFlow.js and related models:
+
+```
+npm install @tensorflow/tfjs-node @tensorflow-models/blazeface @tensorflow-models/coco-ssd
+```
+
+These dependencies are only required if you use smart cropping. If they are not installed, the system will log an error and fallback to center cropping.
+
 `node-cms` is a content management system, in which `resources` [`documents` and `attachments`] are described using plain javascript. It uses a well-defined schema files to dynamically build admin ui and HTTP REST API.
 
 -   [Getting Started](docs/GETTING_STARTED.md): Start here

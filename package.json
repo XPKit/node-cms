@@ -17,7 +17,8 @@
     "unit": "mocha -R spec -b -w -t 10000 test/unit",
     "mongodb": "ulimit -n 1000 && mongod --ipv6 --dbpath=../node-cms-mongodb-data",
     "mongodb-auth": "ulimit -n 1000 && mongod --tlsMode requireTLS --tlsCertificateKeyFile ./ssl/server.pem --tlsCAFile ./ssl/ca.pem --bind_ip localhost --dbpath=../node-cms-mongodb-data",
-    "postinstall": "node postinstall.js"
+    "postinstall": "node postinstall.js",
+    "install-tf": "npm i file:./tf"
   },
   "engines": {
     "node": "^22"
@@ -52,9 +53,6 @@
     "@e965/xlsx": "^0.20.3",
     "@json-editor/json-editor": "^2.10.1",
     "@mdi/font": "^7.1.96",
-    "@tensorflow-models/blazeface": "^0.1.0",
-    "@tensorflow-models/coco-ssd": "^2.2.3",
-    "@tensorflow/tfjs-node": "^4.22.0",
     "@tiptap/extension-link": "^2.2.1",
     "@tiptap/extension-superscript": "^2.2.1",
     "@tiptap/extension-underline": "^2.2.1",
@@ -101,6 +99,7 @@
     "msgpack-stream": "0.0.12",
     "multer": "^2.0.2",
     "mustache": "^2.3.2",
+    "node-cms-tf": "file:tf",
     "node-os-utils": "^1.3.2",
     "p-all": "^3.0.0",
     "prompt": "^1.3.0",
