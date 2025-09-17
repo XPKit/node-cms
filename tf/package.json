@@ -3,25 +3,8 @@
   "version": "1.0.0",
   "description": "Content management system, written in node.js, uses leveldb as an asset and content store.",
   "main": "index.js",
-  "types": "index.d.ts",
   "engines": {
     "node": "^22"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:XPKit/node-cms.git"
-  },
-  "keywords": [
-    "cms",
-    "node.js",
-    "express",
-    "leveldb",
-    "mongodb"
-  ],
-  "pkg": {
-    "assets": [
-      "src/**/*"
-    ]
   },
   "author": "Kong Yim <kong.yim@imagination.com>",
   "license": "ISC",
