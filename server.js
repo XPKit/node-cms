@@ -38,7 +38,7 @@ let options = {
     resources: ['articles','comments','authors']
   },
   disableReplication: true,
-  smartCrop: true,
+  smartCrop: false,
   dbEngine: {
     type: 'mongodb',
     url: '127.0.0.1/node-cms'
