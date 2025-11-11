@@ -15,17 +15,17 @@
         <v-textarea v-model="configContent" rows="20" variant="outlined" :error="!isValidJson" :error-messages="jsonError" :disabled="loading" class="mb-4" @input="validateJson" />
         <div class="d-flex justify-end">
           <v-btn color="secondary" :disabled="loading" class="mr-2" @click="loadConfig">
-            <v-icon left>mdi-refresh</v-icon> Reset
+            <v-icon left icon="$refresh" /> Reset
           </v-btn>
 
           <v-btn color="primary" :disabled="!isValidJson || loading || !hasChanges" :loading="loading" @click="saveConfig">
-            <v-icon left>mdi-content-save</v-icon> Save & Restart Server
+            <v-icon left icon="$contentSave" /> Save & Restart Server
           </v-btn>
         </div>
         <v-divider class="my-4" />
         <v-card variant="outlined" class="mt-4">
           <v-card-title class="text-subtitle-1">
-            <v-icon left>mdi-information</v-icon> Information
+            <v-icon left icon="$information" /> Information
           </v-card-title>
           <v-card-text class="text-caption">
             <p><strong>Warning:</strong> Editing the CMS configuration will restart the server automatically.</p>

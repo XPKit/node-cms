@@ -4,7 +4,7 @@
     <div v-if="config">
       <v-select
         v-model="selectedResource" :items="config.sync.resources" item-text="name" item-value="name" :ripple="false"
-        menu-icon="mdi-chevron-down"
+        menu-icon="$chevronDown"
         flat rounded
         density="compact" hide-details variant="solo-filled"
       />

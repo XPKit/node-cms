@@ -6,7 +6,7 @@
         <v-text-field
           ref="search"
           v-model="search"
-          class="search-bar" flat variant="solo-filled" rounded hide-details prepend-inner-icon="mdi-magnify" density="compact" :placeholder="$filters.translate('TL_INSERT_KEYWORDS')" type="text" autocomplete="off"
+          class="search-bar" flat variant="solo-filled" rounded hide-details prepend-inner-icon="$magnify" density="compact" :placeholder="$filters.translate('TL_INSERT_KEYWORDS')" type="text" autocomplete="off"
           name="search" :prefix="searchMode === 'all' ? '' : `${searchMode}:`" @keydown.ctrl.prevent.p="showHideOmnibar(false)" @keydown.prevent.escape="showHideOmnibar(false)"
         />
       </v-card-title>
@@ -127,7 +127,7 @@
         return this.getIcon(this.searchMode === 'all' ? result.type : this.searchMode)
       },
       getIcon (type) {
-        return `mdi-${type === 'resource' ? 'package' : 'cursor-text'}`
+        return `$${type === 'resource' ? 'package' : 'cursorText'}`
       },
       isCharHighlighted (result, i) {
         return _.includes(_.values(result._indexes), i)

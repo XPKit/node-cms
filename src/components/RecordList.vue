@@ -5,7 +5,7 @@
         <template #activator="{ props }">
           <div class="resource-selector" :class="{opened: menuOpened}" v-bind="props">
             <div class="resource-title">{{ getResourceTitle(resource) }}</div>
-            <v-icon size="large">mdi-chevron-down</v-icon>
+            <v-icon size="large" icon="$chevronDown" />
           </div>
         </template>
         <v-list rounded>
@@ -23,20 +23,19 @@
         :class="{'is-query': sift.isQuery, 'is-valid': sift.isQuery && sift.isValid == true, 'is-invalid': sift.isQuery && sift.isValid == false}" @shortkey="interactiveSearch"
       >
         <v-text-field
-          ref="search" v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat variant="solo-filled" rounded hide-details density="compact"
+          ref="search" v-model="search" prepend-inner-icon="$magnify" class="search-bar" flat variant="solo-filled" rounded hide-details density="compact"
           :placeholder="$filters.translate('TL_SEARCH')" type="text" name="search"
         />
         <v-btn v-if="maxCount <= 0 || listCount < maxCount" elevation="0" icon class="new-record" :class="{active: isCreatingNewRecord()}" @click="onClickNew">
-          <!-- <v-icon v-if="selectedItem && !multiselect">mdi-note-edit-outline</v-icon> -->
-          <v-icon>mdi-note-plus-outline</v-icon>
+          <v-icon icon="$notePlusOutline" />
         </v-btn>
       </div>
     </div>
     <template v-if="maxCount != 1">
       <div v-if="hasEditableRecords()" class="records-top-bar">
         <div class="toggle-view-mode" @click="toggleViewMode()">
-          <v-icon :class="{selected: !multiselect}">mdi-note-edit-outline</v-icon>
-          <v-icon :class="{selected: multiselect}">mdi-format-list-checks</v-icon>
+          <v-icon :class="{selected: !multiselect}" icon="$noteEditOutline" />
+          <v-icon :class="{selected: multiselect}" icon="$formatListChecks" />
         </div>
         <div v-if="multiselect" class="multiselect-buttons">
           <span :class="{disabled: allRecordsSelected()}" @click="onClickSelectAll">{{ $filters.translate('TL_SELECT_ALL') }}</span>
@@ -46,7 +45,7 @@
           <v-select
             :model-value="sortMode" :items="sortOptions"
             :ripple="false"
-            menu-icon="mdi-chevron-down" flat
+            menu-icon="$chevronDown" flat
             rounded density="compact" hide-details variant="solo-filled" @update:model-value="onChangeSort"
           />
         </div>
@@ -59,7 +58,7 @@
           >
             <div class="item-info">
               <div v-if="multiselect" class="checkbox" @click.exact="select($event, item, true)">
-                <v-icon v-if="item._local" :class="{displayed: isItemSelected(item)}" size="small">mdi-check-bold</v-icon>
+                <v-icon v-if="item._local" :class="{displayed: isItemSelected(item)}" size="small" :icon="'mdiCheckBold'" />
               </div>
               <div class="infos-wrapper">
                 <div v-if="item" class="main">

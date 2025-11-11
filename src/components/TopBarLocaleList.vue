@@ -1,7 +1,7 @@
 <template>
   <div class="top-bar-locale-list" :class="{hidden: !locales || locales.length === 0}">
     <template v-if="locales && locales.length === 2">
-      <v-btn elevation="0" class="back" rounded variant="text" size="small" @click="back"><v-icon>mdi-chevron-left</v-icon> {{ $filters.translate("TL_BACK") }}</v-btn>
+      <v-btn elevation="0" class="back" rounded variant="text" size="small" @click="back"><v-icon icon="$chevronLeft" /> {{ $filters.translate("TL_BACK") }}</v-btn>
       <div v-show="locales" class="locales toggle-mode" @click="toggleLocale()">
         <v-chip v-for="(item, i) in locales" :key="i" size="small" :ripple="false" :class="{selected: item === locale}">
           {{ getLocaleTranslation(item) }}
@@ -9,7 +9,7 @@
       </div>
     </template>
     <template v-else>
-      <v-btn elevation="0" class="back" rounded variant="text" size="small" @click="back"><v-icon>mdi-chevron-left</v-icon> {{ $filters.translate("TL_BACK") }}</v-btn>
+      <v-btn elevation="0" class="back" rounded variant="text" size="small" @click="back"><v-icon icon="$chevronLeft" /> {{ $filters.translate("TL_BACK") }}</v-btn>
       <div v-show="locales" class="locales">
         <v-chip v-for="(item, i) in locales" :key="i" size="small" :ripple="false" :class="{selected: item === locale}" @click="selectLocale(item)">
           {{ getLocaleTranslation(item) }}

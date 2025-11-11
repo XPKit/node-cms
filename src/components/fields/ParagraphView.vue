@@ -8,7 +8,7 @@
         :theme="theme" transition="none"
         :model-value="selectedType" :items="types" :item-title="getLabel" item-value="title"
         hide-details rounded density="compact" persistent-placeholder variant="solo-filled" flat :rules="[validateField]"
-        :disabled="disabled || schema.disabled" menu-icon="mdi-chevron-down" @update:model-value="onChangeType"
+        :disabled="disabled || schema.disabled" menu-icon="$chevronDown" @update:model-value="onChangeType"
       >
         <template #prepend><field-label :schema="schema" /></template>
         <template #label />
@@ -33,7 +33,7 @@
       @dragleave.prevent="onDragLeave"
     >
       <div class="drop-zone-content">
-        <v-icon size="48">mdi-cloud-upload</v-icon>
+        <v-icon size="48" icon="$cloudUpload" />
         <div class="drop-zone-text">
           <div class="primary-text">{{ $filters.translate('TL_DRAG_AND_DROP_FILES_HERE') }}</div>
           <div class="secondary-text">{{ $filters.translate('TL_OR_CLICK_TO_SELECT_FILES') }}</div>
@@ -79,7 +79,7 @@
                 size="small"
                 @click="onClickRemoveItem(item)"
               >
-                <v-icon>mdi-trash-can-outline</v-icon>
+                <v-icon icon="$trashCanOutline" />
               </v-btn>
             </div>
           </v-card-title>

@@ -7,7 +7,7 @@
       <v-dialog v-if="attachment && schema.crop" class="crop-dialog">
         <template #activator="{ props: activatorProps }">
           <v-btn class="edit-crop" v-bind="activatorProps" variant="outlined" rounded size="small">
-            <v-icon>mdi-crop</v-icon>{{ $filters.translate('TL_EDIT_CROP') }}
+            <v-icon icon="$crop" />{{ $filters.translate('TL_EDIT_CROP') }}
           </v-btn>
         </template>
         <template #default="{ isActive }">

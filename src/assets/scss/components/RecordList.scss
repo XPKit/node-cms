@@ -199,7 +199,7 @@
       height: 24px;
       width: 24px;
       position: relative;
-      &:before {
+      .v-icon__svg {
         position: absolute;
         left: 50%;
         top: 50%;

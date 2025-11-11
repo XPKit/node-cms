@@ -8,7 +8,7 @@
         <p>{{ notification.message }}</p>
         <template #actions>
           <v-btn rounded @click="resetNotification()">
-            <v-icon>mdi-close-circle-outline</v-icon>
+            <v-icon icon="$closeCircleOutline" />
           </v-btn>
         </template>
       </v-snackbar>

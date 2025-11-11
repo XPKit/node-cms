@@ -9,7 +9,7 @@
     >
       <template v-for="field in getFields('switch')" :key="field.model" #[`item.${field.model}`]="{item}">
         <div class="checkbox">
-          <v-icon size="small" :class="{displayed: getVal(item, field.model)}">mdi-check-bold</v-icon>
+          <v-icon size="small" :class="{displayed: getVal(item, field.model)}" icon="$checkBold" />
         </div>
       </template>
       <template v-for="field in getFields('ImageView')" :key="field.model" #[`item.${field.model}`]="{item}">
@@ -18,8 +18,8 @@
       </template>
       <template #[`item.__ACTIONS__`]="{item}">
         <div class="vue-table-generator-field table-column-actions">
-          <v-btn size="small" variant="flat" icon @click="edit(item)"><v-icon>mdi-note-edit-outline</v-icon></v-btn>
-          <v-btn size="small" variant="flat" class="delete-btn" icon @click="remove(item)"><v-icon>mdi-trash-can-outline</v-icon></v-btn>
+          <v-btn size="small" variant="flat" icon @click="edit(item)"><v-icon icon="$noteEditOutline" /></v-btn>
+          <v-btn size="small" variant="flat" class="delete-btn" icon @click="remove(item)"><v-icon icon="$trashCanOutline" /></v-btn>
         </div>
       </template>
     </v-data-table-virtual>

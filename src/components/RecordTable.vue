@@ -4,7 +4,7 @@
       <template #activator="{ props }">
         <div class="resource-selector" v-bind="props" :class="{opened: menuOpened}">
           <div class="resource-title">{{ getResourceTitle(resource) }}</div>
-          <v-icon size="large">mdi-chevron-down</v-icon>
+          <v-icon size="large" icon="$chevronDown" />
         </div>
       </template>
       <v-list rounded>
@@ -21,7 +21,7 @@
         <top-bar-locale-list :locales="resource.locales" :locale="locale" :select-locale="selectLocale" :back="back" />
         <div v-shortkey="getShortcuts()" class="search" @shortkey="interactiveSearch">
           <v-text-field
-            ref="search" v-model="search" prepend-inner-icon="mdi-magnify" class="search-bar" flat variant="solo-filled" rounded hide-details density="compact" :placeholder="$filters.translate('TL_SEARCH')"
+            ref="search" v-model="search" prepend-inner-icon="$magnify" class="search-bar" flat variant="solo-filled" rounded hide-details density="compact" :placeholder="$filters.translate('TL_SEARCH')"
             type="text"
             name="search"
           />

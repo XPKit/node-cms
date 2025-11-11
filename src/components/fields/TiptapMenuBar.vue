@@ -27,105 +27,105 @@
         menuBarButtons: false,
         defaultButtons: [
           {
-            icon: 'mdi-format-bold',
+            icon: '$formatBold',
             title: 'Bold',
             action: () => this.editor.chain().focus().toggleBold().run(),
             isActive: () => this.editor.isActive('bold')
           },
           {
-            icon: 'mdi-format-italic',
+            icon: '$formatItalic',
             title: 'Italic',
             action: () => this.editor.chain().focus().toggleItalic().run(),
             isActive: () => this.editor.isActive('italic')
           },
           {
-            icon: 'mdi-format-strikethrough',
+            icon: '$formatStrikethrough',
             title: 'Strike through',
             action: () => this.editor.chain().focus().toggleStrike().run(),
             isActive: () => this.editor.isActive('strike')
           },
           {
-            icon: 'mdi-format-paragraph',
+            icon: '$formatParagraph',
             title: 'Paragraph',
             action: () => this.editor.chain().focus().setParagraph().run(),
             isActive: () => this.editor.isActive('paragraph')
           },
           {
-            icon: 'mdi-format-list-bulleted',
+            icon: '$formatListBulleted',
             title: 'Bullet List',
             action: () => this.editor.chain().focus().toggleBulletList().run(),
             isActive: () => this.editor.isActive('bulletList')
           },
           {
-            icon: 'mdi-format-list-numbered',
+            icon: '$formatListNumbered',
             title: 'Ordered List',
             action: () => this.editor.chain().focus().toggleOrderedList().run(),
             isActive: () => this.editor.isActive('orderedList')
           },
           {
-            icon: 'mdi-format-superscript',
+            icon: '$formatSuperscript',
             title: 'Superscript',
             action: () => this.editor.chain().focus().toggleSuperscript().run()
           },
           {
-            icon: 'mdi-format-header-1',
+            icon: '$formatHeader1',
             title: 'Heading 1',
             action: () => this.editor.chain().focus().toggleHeading({ level: 1 }).run(),
             isActive: () => this.editor.isActive('heading', { level: 1 })
           },
           {
-            icon: 'mdi-format-header-2',
+            icon: '$formatHeader2',
             title: 'Heading 2',
             action: () => this.editor.chain().focus().toggleHeading({ level: 2 }).run(),
             isActive: () => this.editor.isActive('heading', { level: 2 })
           },
           {
-            icon: 'mdi-format-header-3',
+            icon: '$formatHeader3',
             title: 'Heading 3',
             action: () => this.editor.chain().focus().toggleHeading({ level: 3 }).run(),
             isActive: () => this.editor.isActive('heading', { level: 3 })
           },
           {
-            icon: 'mdi-format-underline',
+            icon: '$formatUnderline',
             title: 'Underline',
             action: () => this.editor.chain().focus().toggleUnderline().run(),
             isActive: () => this.editor.isActive('underline')
           },
           {
-            icon: 'mdi-link',
+            icon: '$link',
             title: 'Link',
             action: () => this.setLink(),
             isActive: () => this.editor.isActive('link')
           },
           {
-            icon: 'mdi-format-quote-open',
+            icon: '$formatQuoteOpen',
             title: 'Quote',
             action: () => this.editor.chain().focus().toggleBlockquote().run(),
             isActive: () => this.editor.isActive('blockquote')
           },
           {
-            icon: 'mdi-xml',
+            icon: '$xml',
             title: 'Code',
             action: () => this.editor.chain().focus().toggleCode().run(),
             isActive: () => this.editor.isActive('code')
           },
           {
-            icon: 'mdi-format-clear',
+            icon: '$formatClear',
             title: 'Clear Format',
             action: () => this.editor.chain().focus().clearNodes().unsetAllMarks().run()
           },
           {
-            icon: 'mdi-minus',
+            icon: '$minus',
             title: 'Horizontal Rule',
             action: () => this.editor.chain().focus().setHorizontalRule().run()
           },
           {
-            icon: 'mdi-arrow-u-left-top',
+            icon: '$arrowULeftTop',
             title: 'Undo',
             action: () => this.editor.chain().focus().undo().run()
           },
           {
-            icon: 'mdi-arrow-u-right-top',
+            icon: '$arrowURightTop',
             title: 'Redo',
             action: () => this.editor.chain().focus().redo().run()
           }

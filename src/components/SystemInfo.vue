@@ -3,7 +3,7 @@
     <v-menu v-if="settingsData && settingsData.linksGroups && settingsData.linksGroups.length > 0" content-class="links-menu" location="bottom" :close-on-content-click="false" transition="slide-y-transition">
       <template #activator="{ props }">
         <v-btn icon v-bind="props">
-          <v-icon>mdi-dots-vertical</v-icon>
+          <v-icon icon="$dotsVertical" />
         </v-btn>
       </template>
       <div class="links-wrapper">
@@ -18,7 +18,7 @@
     <v-menu content-class="system-info-menu" location="bottom" :close-on-content-click="false" transition="slide-y-transition">
       <template #activator="{ props }">
         <v-btn icon v-bind="props">
-          <v-icon>mdi-cog-outline</v-icon>
+          <v-icon icon="$cogOutline" />
         </v-btn>
       </template>
       <div class="system-info-wrapper">
@@ -44,7 +44,7 @@
         <div class="stats two-by-two">
           <div v-if="system.network != 'not supported'" class="stats network">
             <div class="node-cms-title"><small><b>Network Usage</b></small></div>
-            <small class="text">{{ convertBytes(system.network.total.outputMb) }} <v-icon>mdi-arrow-up</v-icon> / {{ convertBytes(system.network.total.inputMb) }} <v-icon>mdi-arrow-down</v-icon></small>
+            <small class="text">{{ convertBytes(system.network.total.outputMb) }} <v-icon icon="$arrowUp" /> / {{ convertBytes(system.network.total.inputMb) }} <v-icon icon="$arrowDown" /></small>
           </div>
           <div class="stats uptime">
             <div class="node-cms-title"><small><b>Uptime:</b></small> <small class="text">{{ timeAgo(system.uptime) }}</small></div>
@@ -56,7 +56,7 @@
       </div>
     </v-menu>
     <v-btn v-if="showLogoutButton" icon @click="logout()">
-      <v-icon>mdi-logout</v-icon>
+      <v-icon icon="$logout" />
     </v-btn>
   </div>
 </template>

@@ -11,7 +11,7 @@
         <div v-for="item in multiselectItems" :key="item._id" class="selected-record">
           <v-chip variant="outlined" :ripple="false">
             <v-avatar start>
-              <v-icon size="small" @click="deselectItem(item)">mdi-close-circle-outline</v-icon>
+              <v-icon size="small" icon="$closeCircleOutline" @click="deselectItem(item)" />
             </v-avatar>
             {{ $filters.translate(getName(item)) }} ({{ item._id }})
           </v-chip>

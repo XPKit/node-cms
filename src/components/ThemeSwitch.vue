@@ -1,7 +1,7 @@
 <template>
   <div class="theme-switch" @click="toggleTheme()">
-    <v-icon :class="{selected: !isDark()}">mdi-weather-sunny</v-icon>
-    <v-icon :class="{selected: isDark()}">mdi-weather-night</v-icon>
+    <v-icon :class="{selected: !isDark()}" icon="$weatherSunny" />
+    <v-icon :class="{selected: isDark()}" icon="$weatherNight" />
   </div>
 </template>
 <script setup>
@@ -50,7 +50,6 @@
   border: 2px solid $imag-pale-grey;
   border-radius: 100px;
   .v-icon {
-    // padding: 6px;
     color: black;
     background-color: transparent;
     transition: all 0.3s;

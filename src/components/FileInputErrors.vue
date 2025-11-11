@@ -2,25 +2,25 @@
   <div class="file-input-errors">
     <template v-if="isForMultipleImages()">
       <div class="help-block">
-        <v-icon size="small">mdi-information</v-icon>
+        <v-icon size="small" icon="$information" />
         <span v-if="getMaxCount() !== -1 ">{{ maxCountMsg }}</span>
         <span v-else>{{ unlimitedMsg }}</span>
       </div>
     </template>
     <div v-if="schema.options && schema.options.hint" class="help-block">
-      <v-icon size="small">mdi-information</v-icon>
+      <v-icon size="small" icon="$information" />
       <span>{{ $filters.translate(schema.options.hint) }}</span>
     </div>
     <div v-if="hasSizeOptions" class="help-block">
-      <v-icon size="small">mdi-information</v-icon>
+      <v-icon size="small" icon="$information" />
       <span>{{ $filters.translate('TL_THIS_FIELD_REQUIRES_THE_FOLLOWING_SIZE') }}:{{ schema.width }}x{{ schema.height }}</span>
     </div>
     <div v-if="(schema.limit)" class="help-block">
-      <v-icon size="small">mdi-information</v-icon>
+      <v-icon size="small" icon="$information" />
       <span>{{ $filters.translate('TL_THIS_FIELD_REQUIRES_A_FILE_SIZE') }}: {{ getFileSizeLimit(schema.limit) }}</span>
     </div>
     <div v-if="(schema.accept)" class="help-block">
-      <v-icon size="small">mdi-information</v-icon>
+      <v-icon size="small" icon="$information" />
       <span>{{ $filters.translate('TL_THIS_FIELD_REQUIRES') }}: {{ schema.accept }}</span>
     </div>
   </div>

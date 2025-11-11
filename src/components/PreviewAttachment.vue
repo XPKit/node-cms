@@ -2,7 +2,7 @@
   <v-card :key="getKey(attachment)" :theme="theme" elevation="0" class="preview-attachment" :class="{odd: index % 2 !== 0, 'can-crop': schema.crop}">
     <v-tooltip :theme="theme" location="right" eager>
       <template #activator="{ props }">
-        <v-chip variant="outlined" class="filename" :class="{'is-dirty': attachment.dirty}" closable close-icon="mdi-close-circle-outline" v-bind="props" @click:close="removeImage(attachment, index)" @contextmenu.stop.prevent="copyFilenameToClipboard()">#{{ index + 1 }} - {{ $filters.truncate(getAttachmentFilename(attachment),10) }} ({{ imageSize(attachment) }})</v-chip>
+        <v-chip variant="outlined" class="filename" :class="{'is-dirty': attachment.dirty}" closable close-icon="$closeCircleOutline" v-bind="props" @click:close="removeImage(attachment, index)" @contextmenu.stop.prevent="copyFilenameToClipboard()">#{{ index + 1 }} - {{ $filters.truncate(getAttachmentFilename(attachment),10) }} ({{ imageSize(attachment) }})</v-chip>
       </template>
       <span>{{ attachment._filename }} <template v-if="attachment.dirty">({{ $filters.translate(getDirtyReason()) }})</template></span>
     </v-tooltip>

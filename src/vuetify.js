@@ -1,7 +1,54 @@
+import {
+  mdiChevronDown,
+  mdiMagnify,
+  mdiNoteEditOutline,
+  mdiNotePlusOutline,
+  mdiCheckBold,
+  mdiTrashCanOutline,
+  mdiChevronLeft,
+  mdiWeatherSunny,
+  mdiWeatherNight,
+  mdiDotsVertical,
+  mdiCogOutline,
+  mdiArrowUp,
+  mdiArrowDown,
+  mdiLogout,
+  mdiCrop,
+  mdiFormatListChecks,
+  mdiCloseCircleOutline,
+  mdiClose,
+  mdiInformation,
+  mdiContentCopy,
+  mdiContentSave,
+  mdiCloudUpload,
+  mdiFormatBold,
+  mdiFormatItalic,
+  mdiFormatStrikethrough,
+  mdiFormatParagraph,
+  mdiFormatListBulleted,
+  mdiFormatListNumbered,
+  mdiFormatSuperscript,
+  mdiFormatHeader1,
+  mdiFormatHeader2,
+  mdiFormatHeader3,
+  mdiFormatUnderline,
+  mdiLink,
+  mdiFormatQuoteOpen,
+  mdiXml,
+  mdiFormatClear,
+  mdiMinus,
+  mdiArrowULeftTop,
+  mdiArrowURightTop,
+  mdiRefresh,
+  mdiLockOpenOutline,
+  mdiTarget,
+  mdiFlagOutline,
+  mdiAlertBoxOutline
+} from '@mdi/js'
 import { createVuetify } from 'vuetify'
-import '@mdi/font/scss/materialdesignicons.scss'
-// import 'vuetify/dist/vuetify.min.css'
+import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 import 'vuetify/styles'
+
 const vuetify = createVuetify({
   theme: {
     defaultTheme: 'light',
@@ -35,7 +82,58 @@ const vuetify = createVuetify({
     }
   },
   icons: {
-    iconfont: 'mdi'
+    defaultSet: 'mdi',
+    aliases: {
+      ...aliases,
+      chevronDown: mdiChevronDown,
+      magnify: mdiMagnify,
+      noteEditOutline: mdiNoteEditOutline,
+      notePlusOutline: mdiNotePlusOutline,
+      checkBold: mdiCheckBold,
+      trashCanOutline: mdiTrashCanOutline,
+      chevronLeft: mdiChevronLeft,
+      weatherSunny: mdiWeatherSunny,
+      weatherNight: mdiWeatherNight,
+      dotsVertical: mdiDotsVertical,
+      cogOutline: mdiCogOutline,
+      arrowUp: mdiArrowUp,
+      arrowDown: mdiArrowDown,
+      logout: mdiLogout,
+      crop: mdiCrop,
+      formatListChecks: mdiFormatListChecks,
+      close: mdiClose,
+      closeCircleOutline: mdiCloseCircleOutline,
+      information: mdiInformation,
+      contentCopy: mdiContentCopy,
+      contentSave: mdiContentSave,
+      cloudUpload: mdiCloudUpload,
+      formatBold: mdiFormatBold,
+      formatItalic: mdiFormatItalic,
+      formatStrikethrough: mdiFormatStrikethrough,
+      formatParagraph: mdiFormatParagraph,
+      formatListBulleted: mdiFormatListBulleted,
+      formatListNumbered: mdiFormatListNumbered,
+      formatSuperscript: mdiFormatSuperscript,
+      formatHeader1: mdiFormatHeader1,
+      formatHeader2: mdiFormatHeader2,
+      formatHeader3: mdiFormatHeader3,
+      formatUnderline: mdiFormatUnderline,
+      link: mdiLink,
+      formatQuoteOpen: mdiFormatQuoteOpen,
+      xml: mdiXml,
+      formatClear: mdiFormatClear,
+      minus: mdiMinus,
+      arrowULeftTop: mdiArrowULeftTop,
+      arrowURightTop: mdiArrowURightTop,
+      refresh: mdiRefresh,
+      lockOpenOutline: mdiLockOpenOutline,
+      target: mdiTarget,
+      flagOutline: mdiFlagOutline,
+      alertBoxOutline: mdiAlertBoxOutline
+    },
+    sets: {
+      mdi
+    }
   }
 })
 
