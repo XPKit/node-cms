@@ -3,16 +3,11 @@ module.exports = {
   displayname: 'Test Add Multiple File',
   schema: [
     {
-      field: 'title',
-      label: 'Title',
-      input: 'string',
-      required: true
-    },
-    {
       field: 'file',
       label: 'File',
       input: 'file',
       required: true,
+      localised: true,
       options: {
         accept: '.pdf,.docx',
         maxCount: 1

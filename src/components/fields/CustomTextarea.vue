@@ -2,7 +2,7 @@
   <div class="custom-textarea">
     <v-textarea
       ref="input" multi-line :class="[schema.labelClasses]" :type="getType()" :model-value="_value" :max-length="schema.max" :min-length="schema.min"
-      :density="get('density')" :flat="get('flat')" :disabled="schema.disabled ? true : false" :readonly="schema.readonly ? true : false"
+      :density="get('density')" :flat="get('flat')" :disabled="schema.disabled ? true : false" :readonly="schema.readonly ? true : false" :rules="[validateField]"
       hide-details :variant="getVariant()" rounded="get('rounded')" @update:model-value="onChangeData" @update:focused="onFieldFocus"
     >
       <template #prepend><field-label :schema="schema" /></template>
@@ -19,6 +19,15 @@
     methods: {
       getType () {
         return _.get(this.schema, 'inputFieldType', 'text')
+      },
+      validateField (val) {
+        if (this.schema.required && (_.isNull(val) || _.isUndefined(val) || val === '')) {
+          return false
+        }
+        if (this.schema.validator && _.isFunction(this.schema.validator)) {
+          return !!this.schema.validator(val, this.schema.model, this.model)
+        }
+        return true
       }
     }
   }

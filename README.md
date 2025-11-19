@@ -95,7 +95,6 @@ Some features require additional system dependencies:
 
 - **Python v3.x** (required for native modules)
 - **[tensorflow](https://www.npmjs.com/package/@tensorflow/tfjs-node)**
-- **[canvas](https://www.npmjs.com/package/canvas)**
 
 **Linux (Debian/Ubuntu):**
 

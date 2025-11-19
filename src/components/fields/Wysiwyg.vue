@@ -62,6 +62,15 @@
     created () {
     },
     methods: {
+      validateField (val) {
+        if (this.schema.required && (_.isNull(val) || _.isUndefined(val) || val === '')) {
+          return false
+        }
+        if (this.schema.validator && _.isFunction(this.schema.validator)) {
+          return !!this.schema.validator(val, this.schema.model, this.model)
+        }
+        return true
+      },
       getButtons() {
         return _.get(this.schema, 'options.buttons', [])
       },

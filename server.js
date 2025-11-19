@@ -38,11 +38,11 @@ let options = {
     resources: ['articles','comments','authors']
   },
   disableReplication: true,
-  smartCrop: false,
-  dbEngine: {
-    type: 'mongodb',
-    url: '127.0.0.1/node-cms'
-  }
+  smartCrop: false
+  // dbEngine: {
+  //   type: 'mongodb',
+  //   url: '127.0.0.1/node-cms'
+  // }
   //   "syslog": {
   //   "method": "file",
   //   "path": "syslog.log"

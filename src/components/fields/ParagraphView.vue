@@ -200,6 +200,8 @@
     },
     watch: {
       'schema.model': function () {
+        const items = _.get(this.model, this.schema.model, [])
+        console.warn(`tamer ? `, typeof items, items)
         this.items = _.cloneDeep(_.get(this.model, this.schema.model, []))
       }
     },
@@ -346,6 +348,8 @@
           }
           return item
         })
+        this.items = _.toArray(this.items)
+        console.warn(`tamer 2 items - `, typeof this.items, this.items)
       // console.warn('getSchemaForItems ----', this.items, this.schema.model)
       },
       blockMoreItems() {
@@ -454,11 +458,13 @@
         if (value instanceof Event) {
           return
         }
+        console.warn(`tamer before - `, typeof this.items, this.items)
         _.set(this.items, `[${paragraphIndex}].${model}`, value)
+        console.warn(`tamer after - `, typeof this.items, this.items)
         this.updateItems()
       },
       updateItems() {
-        // console.warn('updateItems before ', _.cloneDeep(this.items))
+        console.warn('updateItems before ', _.cloneDeep(this.items))
         const items = _.map(this.items, (item)=> {
           const obj = _.get(item, '_value', {})
           obj._type = item.title
