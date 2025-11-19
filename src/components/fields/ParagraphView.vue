@@ -201,7 +201,6 @@
     watch: {
       'schema.model': function () {
         const items = _.get(this.model, this.schema.model, [])
-        console.warn(`tamer ? `, typeof items, items)
         this.items = _.cloneDeep(_.get(this.model, this.schema.model, []))
       }
     },
@@ -349,8 +348,6 @@
           return item
         })
         this.items = _.toArray(this.items)
-        console.warn(`tamer 2 items - `, typeof this.items, this.items)
-      // console.warn('getSchemaForItems ----', this.items, this.schema.model)
       },
       blockMoreItems() {
         return (this.disabled || this.schema.disabled) || (this.maxCount !== -1 && this.items.length >= this.maxCount)
@@ -458,9 +455,7 @@
         if (value instanceof Event) {
           return
         }
-        console.warn(`tamer before - `, typeof this.items, this.items)
         _.set(this.items, `[${paragraphIndex}].${model}`, value)
-        console.warn(`tamer after - `, typeof this.items, this.items)
         this.updateItems()
       },
       updateItems() {
