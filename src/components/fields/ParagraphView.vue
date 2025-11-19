@@ -200,7 +200,6 @@
     },
     watch: {
       'schema.model': function () {
-        const items = _.get(this.model, this.schema.model, [])
         this.items = _.cloneDeep(_.get(this.model, this.schema.model, []))
       }
     },
