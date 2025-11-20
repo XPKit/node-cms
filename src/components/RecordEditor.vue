@@ -190,7 +190,7 @@
           document.querySelector(`#${firstInvalidField.id}`).focus()
         }
         this.formValid = formValid
-        // TODO: hugo - check validation of fields which aren't part of vuetify
+        // TODO: hugo - check validation of fields which aren't part of vuetify i.e, WYSIWYG fields
         this.canCreateUpdate = true
         if (!this.formValid) {
           // const notificationText = this.editingRecord._id ? TranslateService.get('TL_ERROR_CREATING_RECORD_ID', { id: this.editingRecord._id }) : TranslateService.get('TL_ERROR_CREATING_RECORD')

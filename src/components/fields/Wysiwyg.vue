@@ -62,7 +62,8 @@
     created () {
     },
     methods: {
-      validateField (val) {
+      validateField () {
+        const val = this.editor ? this.editor.getHTML() : ''
         if (this.schema.required && (_.isNull(val) || _.isUndefined(val) || val === '')) {
           return false
         }
