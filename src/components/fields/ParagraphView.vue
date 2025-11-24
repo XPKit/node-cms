@@ -1200,3 +1200,13 @@
   }
 }
 </style>
+<style lang="scss">
+.records {
+  &.full-width {
+    .paragraph-header-bar {
+      top: calc(var(--paragraph-level - 1, 0) * 80px); /* Stack headers based on nesting level */
+    }
+  }
+}
+
+</style>

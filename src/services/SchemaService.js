@@ -21,7 +21,7 @@ class SchemaService {
         model: isLocalised ? `${field.field}.${locale}` : field.field,
         originalModel: field.field,
         placeholder: label,
-        disabled: disabled || _.get(field, 'options.disabled', false),
+        disabled: disabled || _.get(field, 'options.disabled', _.get(field, 'disabled', false)),
         readonly: _.get(field, 'options.readonly', false),
         required: !!field.required,
         options: field.options,
