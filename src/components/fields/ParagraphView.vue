@@ -458,7 +458,7 @@
         this.updateItems()
       },
       updateItems() {
-        console.warn('updateItems before ', _.cloneDeep(this.items))
+        // console.warn('updateItems before ', _.cloneDeep(this.items))
         const items = _.map(this.items, (item)=> {
           const obj = _.get(item, '_value', {})
           obj._type = item.title
