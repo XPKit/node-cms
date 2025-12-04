@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const express = require('express')
-
 const CMS = require('./')
 const pkg = require('./package.json')
 const logger = new (require('img-sh-logger'))()
@@ -62,3 +61,8 @@ const server = app.listen(pkg.config.port, async () => {
 process.on('uncaughtException', (error) => {
   logger.error(error)
 })
+
+process
+  .on('SIGTERM', cms.shutdown('SIGTERM'))
+  .on('SIGINT', cms.shutdown('SIGINT'))
+  .on('uncaughtException', cms.shutdown('uncaughtException'))

@@ -3,7 +3,6 @@
  * @author Node CMS Team
  * @see {@link ./lib/jsdoc-types.js} For complete type definitions
  */
-
 /**
  * @typedef {import('./lib/ResourceAPIWrapper.js')} ResourceAPIWrapper
  */
@@ -112,6 +111,7 @@ class CMS {
    */
   constructor(options) {
     // NOTE: Min auth key length
+    this.isExiting = false
     this.requiredKeyLength = 16
     this.fieldFileTypes = ['file', 'img', 'image', 'imageView', 'attachmentView']
     const configPath = path.resolve((options != null ? options.config : undefined) || './cms.json')
@@ -307,6 +307,37 @@ class CMS {
     this._processAttachmentFields()
     this._processSourceFields()
   }
+
+  async _closeDatabase() {
+    const resourcesToClose = []
+    _.each(this._resources, (resource, resourceName) => {
+      if (resource.json && _.isFunction(resource.json.close)) {
+        resourcesToClose.push({ name: resourceName, resource })
+      }
+    })
+    for (const res of resourcesToClose) {
+      try {
+        await res.resource.json.close()
+        console.log(`Closed resource ${res.name} database.`)
+      } catch (closeErr) {
+        console.error(`Error closing resource ${res.name} database:`, closeErr)
+      }
+    }
+  }
+
+  shutdown (signal) {
+    return (err) => {
+      console.log(`${ signal }...`)
+      if (err) console.error(err.stack || err)
+      if (this.isExiting) return
+      this.isExiting = true
+      process.nextTick(async () => {
+        await this._closeDatabase()
+        process.exit(err ? 1 : 0)
+      })
+    }
+  }
+
   _processAttachmentFields = () => {
     _.each(this._resources, (resource, resourceKey) => {
       const schema = _.get(resource, 'options.schema', [])
