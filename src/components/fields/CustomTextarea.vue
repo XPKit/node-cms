@@ -7,6 +7,10 @@
     >
       <template #prepend><field-label :schema="schema" /></template>
     </v-textarea>
+    <div v-if="schema && schema.options && schema.options.hint" class="help-block">
+      <v-icon size="small" icon="$information" />
+      <span>{{ schema.options.hint }}</span>
+    </div>
   </div>
 </template>
 

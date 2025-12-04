@@ -7,11 +7,17 @@ module.exports = {
       input: 'text',
       localised: false,
       required: true,
+       options: {
+        hint: "Test hint for title field"
+      }
     },
     {
       field: 'intro',
       input: 'wysiwyg',
       localised: false,
+      options: {
+        hint: "Test hint for intro field"
+      }
     },
     {
       field: 'mainContent',

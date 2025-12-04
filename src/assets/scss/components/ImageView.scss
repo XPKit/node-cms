@@ -2,6 +2,23 @@
 @use "../variables.scss" as *;
 @use "../mixins.scss" as *;
 
+.help-block {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  filter: grayscale(100%);
+  padding-left: 16px;
+  padding-top: 0;
+  margin-top: 3px;
+  font-weight: 600;
+  color: gray;
+  font-size: 12px;
+  line-height: 12px;
+  i {
+    margin-right: 4px;
+  }
+}
+
 .image-view, .attachment-view, .paragraph-attachment-view {
   overflow: hidden;
   img.preview {

@@ -9,6 +9,10 @@
     <template #prepend><field-label :schema="schema" /></template>
     <template #label />
   </v-text-field>
+  <div v-if="schema && schema.options && schema.options.hint" class="help-block">
+    <v-icon size="small" icon="$information" />
+    <span>{{ schema.options.hint }}</span>
+  </div>
 </template>
 
 <script>
