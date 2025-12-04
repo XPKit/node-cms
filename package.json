@@ -1,6 +1,6 @@
 {
   "name": "node-cms",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "Content management system, written in node.js, uses leveldb as an asset and content store.",
   "main": "index.js",
   "types": "index.d.ts",
@@ -16,9 +16,7 @@
     "old-tests": "mocha --exit -R spec -b -t 40000 old_tests/spec.js",
     "unit": "mocha -R spec -b -w -t 10000 test/unit",
     "mongodb": "ulimit -n 1000 && mongod --ipv6 --dbpath=../node-cms-mongodb-data",
-    "mongodb-auth": "ulimit -n 1000 && mongod --tlsMode requireTLS --tlsCertificateKeyFile ./ssl/server.pem --tlsCAFile ./ssl/ca.pem --bind_ip localhost --dbpath=../node-cms-mongodb-data",
-    "postinstall": "node postinstall.js",
-    "install-tf": "npm i file:./tf"
+    "mongodb-auth": "ulimit -n 1000 && mongod --tlsMode requireTLS --tlsCertificateKeyFile ./ssl/server.pem --tlsCAFile ./ssl/ca.pem --bind_ip localhost --dbpath=../node-cms-mongodb-data"
   },
   "engines": {
     "node": "^22"
@@ -99,7 +97,6 @@
     "msgpack-stream": "^0.0.13",
     "multer": "^2.0.2",
     "mustache": "^2.3.2",
-    "node-cms-tf": "file:tf",
     "node-os-utils": "^1.3.2",
     "p-all": "^3.0.0",
     "prompt": "^1.3.0",
