@@ -8,6 +8,10 @@
         <span class="label active">{{ $filters.translate('TL_YES') }}</span>
       </div>
     </div>
+    <div v-if="showHint()" class="help-block">
+      <v-icon size="small" icon="$information" />
+      <span>{{ schema.options.hint }}</span>
+    </div>
   </div>
 </template>
 

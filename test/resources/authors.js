@@ -1,4 +1,4 @@
-exports = (module.exports = {
+module.exports = {
   displayname: 'Authors', // Optional, by default filename
   group: {
     enUS: 'abc',
@@ -42,4 +42,4 @@ exports = (module.exports = {
     'zhCN'
   ],
   type: 'normal'
-})
+}

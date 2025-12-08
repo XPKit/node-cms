@@ -317,8 +317,8 @@
       manageError (error, type, record) {
         let typePrefix = this.getTypePrefix(type)
         let errorMessage = typePrefix
-        if (_.get(error, 'response.data.code', 500) === 400) {
-          errorMessage = `${typePrefix}: ${_.get(error, 'response.data.message', TranslateService.get('TL_UNKNOWN_ERROR'))}`
+        if (_.get(error, 'code', 500) === 400) {
+          errorMessage = `${typePrefix}: ${_.get(error, 'message', TranslateService.get('TL_UNKNOWN_ERROR'))}`
         }
         console.error(errorMessage, record)
         this.notify(errorMessage, 'error')

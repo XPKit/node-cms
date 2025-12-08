@@ -1,4 +1,4 @@
-exports = (module.exports = {
+module.exports = {
   displayname: {
     enUS: 'Markets'
   },
@@ -734,4 +734,4 @@ exports = (module.exports = {
     }
   ],
   type: 'normal'
-})
+}

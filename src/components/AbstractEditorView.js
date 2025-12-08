@@ -65,13 +65,8 @@ export default {
     },
     manageError (error, type, record) {
       let errorMessage = this.getTypePrexix(type)
-      if (_.get(error, 'response.data.code', 500) === 400) {
-        const serverError = _.get(error, 'response.data')
-        if (_.get(serverError, 'message', false)) {
-          errorMessage += `: ${serverError.message}`
-        } else {
-          errorMessage += `: ${TranslateService.get('TL_UNKNOWN_ERROR')}`
-        }
+      if (_.get(error, 'code', 500) === 400 && _.get(error, 'message', false)) {
+        errorMessage += `: ${_.get(error, 'message', TranslateService.get('TL_UNKNOWN_ERROR'))}`
       }
       console.error(errorMessage, record)
       this.notify(errorMessage, 'error')

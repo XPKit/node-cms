@@ -323,6 +323,7 @@ class CMS {
         console.error(`Error closing resource ${res.name} database:`, closeErr)
       }
     }
+    console.log('All databases are closed.')
   }
 
   shutdown (signal) {

@@ -1,4 +1,4 @@
-exports = (module.exports = {
+module.exports = {
   displayname: {
     enUS: 'My articles', // Optional, by default filename
     zhCN: '我的文章'
@@ -106,4 +106,4 @@ exports = (module.exports = {
     'enUS',
     'zhCN'
   ]
-})
+}

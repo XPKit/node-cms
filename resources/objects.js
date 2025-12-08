@@ -1,4 +1,4 @@
-exports = (module.exports = {
+module.exports = {
   displayname: 'Object examples', // Optional, by default filename
   group: 'Object',
   schema: [
@@ -231,4 +231,4 @@ exports = (module.exports = {
     'zhCN'
   ],
   type: 'normal'
-})
+}

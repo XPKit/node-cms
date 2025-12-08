@@ -73,6 +73,9 @@ export default {
     }
   },
   methods: {
+    showHint() {
+      return objGet(this.schema, 'options.hint') && !this.errors.length
+    },
     onFieldFocus(focused) {
       if (!focused) {
         return FieldSelectorService.highlightParagraph(-1, -1)

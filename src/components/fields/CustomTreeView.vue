@@ -4,6 +4,10 @@
     <json-viewer v-if="schema" ref="input" :key="schema.model" :value="getData()" :copyable="true" tabindex="-1" @focus="onFieldFocus(true)" @blur="onFieldFocus(false)">
       <template #copy><v-btn icon size="small" elevation="0" variant="flat"><v-icon icon="$contentCopy" /></v-btn></template>
     </json-viewer>
+    <div v-if="showHint()" class="help-block">
+      <v-icon size="small" icon="$information" />
+      <span>{{ schema.options.hint }}</span>
+    </div>
   </div>
 </template>
 

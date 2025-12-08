@@ -1,4 +1,4 @@
-exports = (module.exports = {
+module.exports = {
   displayname: 'My text',
   schema: [
     {
@@ -17,4 +17,4 @@ exports = (module.exports = {
       source: 'comments'
     }
   ]
-})
+}

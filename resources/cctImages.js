@@ -12,7 +12,10 @@ module.exports = {
       localised: false,
       unique: true,
       required: true,
-      input: 'string'
+      input: 'string',
+      options: {
+        hint: 'A unique key to identify this image configuration.'
+      }
     },
     {
       label: 'Image',

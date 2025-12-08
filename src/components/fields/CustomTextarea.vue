@@ -7,7 +7,7 @@
     >
       <template #prepend><field-label :schema="schema" /></template>
     </v-textarea>
-    <div v-if="schema && schema.options && schema.options.hint" class="help-block">
+    <div v-if="showHint()" class="help-block">
       <v-icon size="small" icon="$information" />
       <span>{{ schema.options.hint }}</span>
     </div>
@@ -28,7 +28,7 @@
         if (this.schema.required && (_.isNull(val) || _.isUndefined(val) || val === '')) {
           return false
         }
-        if (this.schema.validator && _.isFunction(this.schema.validator)) {
+        if (_.isFunction(this.schema.validator)) {
           return !!this.schema.validator(val, this.schema.model, this.model)
         }
         return true

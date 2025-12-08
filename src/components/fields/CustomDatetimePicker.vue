@@ -20,6 +20,10 @@
       tabindex="-1"
       @focus="onFieldFocus(true)" @blur="onFieldFocus(false)"
     />
+    <div v-if="showHint()" class="help-block">
+      <v-icon size="small" icon="$information" />
+      <span>{{ schema.options.hint }}</span>
+    </div>
   </div>
 </template>
 

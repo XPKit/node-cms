@@ -1,4 +1,4 @@
-exports = (module.exports = {
+module.exports = {
   displayname: 'Test paragraph',
   schema: [
     {
@@ -69,4 +69,4 @@ exports = (module.exports = {
       source: ['1', '2', '3']
     }
   ]
-})
+}

@@ -2,6 +2,10 @@
   <div class="code-wrapper">
     <div class="label">{{ schema.label }}</div>
     <codemirror v-if="isReady" ref="input" v-model:value="_value" :style="getStyle()" :options="cmOption" tabindex="-1" @input="onChangeData" @focus="onFieldFocus(true)" @blur="onFieldFocus(false)" />
+    <div v-if="showHint()" class="help-block">
+      <v-icon size="small" icon="$information" />
+      <span>{{ schema.options.hint }}</span>
+    </div>
   </div>
 </template>
 

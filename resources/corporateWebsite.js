@@ -1,5 +1,4 @@
-// Corporate website resource example
-exports = (module.exports = {
+module.exports = {
   displayname: { enUS: 'Corporate Pages' },
   schema: [
     {
@@ -62,4 +61,4 @@ exports = (module.exports = {
       localised: false,
     },
   ],
-})
+}

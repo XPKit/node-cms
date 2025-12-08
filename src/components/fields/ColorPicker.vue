@@ -6,6 +6,10 @@
       elevation="1" :dot-size="options.dotSize" :hide-canvas="options.hideCanvas" :hide-sliders="options.hideSliders"
       :hide-inputs="options.hideInputs" :model="options.outputModel" :class="{disabled: disabled}"
     />
+    <div v-if="showHint()" class="help-block">
+      <v-icon size="small" icon="$information" />
+      <span>{{ schema.options.hint }}</span>
+    </div>
   </div>
 </template>
 
