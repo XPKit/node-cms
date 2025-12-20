@@ -318,17 +318,17 @@ class CMS {
     for (const res of resourcesToClose) {
       try {
         await res.resource.json.close()
-        console.log(`Closed resource ${res.name} database.`)
+        logger.debug(`Closed resource "${res.name}" database.`)
       } catch (closeErr) {
-        console.error(`Error closing resource ${res.name} database:`, closeErr)
+        logger.error(`Error closing resource "${res.name}" database:`, closeErr)
       }
     }
-    console.log('All databases are closed.')
+    logger.warn('<!> All node-cms databases are now closed. <!>')
   }
 
   shutdown (signal) {
     return (err) => {
-      console.log(`${ signal }...`)
+      logger.warn(`${ signal }...`)
       if (err) console.error(err.stack || err)
       if (this.isExiting) return
       this.isExiting = true

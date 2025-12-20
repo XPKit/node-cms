@@ -1,6 +1,6 @@
 {
   "name": "node-cms",
-  "version": "2.3.5",
+  "version": "2.3.6",
   "description": "Content management system, written in node.js, uses leveldb as an asset and content store.",
   "main": "index.js",
   "types": "index.d.ts",
@@ -42,8 +42,8 @@
     "cms-import": "./import.js",
     "cms-import-remote": "./importFromRemote.js"
   },
-  "author": "Kong Yim <kong.yim@imagination.com>",
-  "license": "ISC",
+  "author": "Edouard Durand <edouard.durand@imagination.com>",
+  "license": "MIT",
   "dependencies": {
     "@codemirror/state": "^6.5.2",
     "@codemirror/theme-one-dark": "^6.1.3",
