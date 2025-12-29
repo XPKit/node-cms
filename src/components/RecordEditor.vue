@@ -403,9 +403,19 @@
           return
         }
         try {
-          const currentLocale = this.locale
-          await this.checkFormValidForAllLocales()
-          this.selectLocale(currentLocale)
+          if (_.get(this.resource, 'locales.length', 0) > 1) {
+            console.info('will check data for all locales')
+            const currentLocale = this.locale
+            await this.checkFormValidForAllLocales()
+            this.selectLocale(currentLocale)
+          } else {
+            console.info('will check data')
+            await this.$nextTick()
+            await this.checkFormValid()
+            if (!this.formValid) {
+              throw new Error(`Record is not valid`)
+            }
+          }
         } catch (error) {
           console.error(error)
           this.formValid = false
