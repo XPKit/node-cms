@@ -121,6 +121,10 @@
         get: _.get,
         sortOptions: [
           {
+            title: TranslateService.get('TL_UPDATED_AT'),
+            value: '_updatedAt'
+          },
+          {
             title: TranslateService.get('TL_ALPHABETICAL'),
             value: 'alphabetical'
           }
