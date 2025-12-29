@@ -1,28 +1,21 @@
+MIT License
+
 Copyright (c) 2025 Imagination
 
-All Rights Reserved.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-This software and associated documentation files (the “Software”) are the proprietary property of Imagination (the "Copyright Holder").
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-1. Grant of Limited License for Non-Commercial Use:
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this Software, to use, copy, and modify the Software for internal, non-commercial, and personal purposes only, subject to the following conditions:
-a. The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-b. The Software may not be published, distributed, sublicensed, or sold without the express prior written permission of the Copyright Holder, Developers and Code Owner (Imagination).
-
-2. Restrictions on Commercial and Business Use:
-a. Commercial use and business use of the Software are strictly prohibited except as expressly permitted in writing by the Copyright Holder, Developers and Code Owner (Imagination).
-b. "Commercial use" includes, but is not limited to, using the Software for any revenue-generating activity, incorporating the Software into a product or service that is sold or offered for a fee, or using the Software for business operations or purposes.
-c. "Business use" includes, but is not limited to, use by any incorporated or unincorporated business entity, partnership, or organization, whether for profit or not-for-profit, for its internal operations or external offerings, unless explicitly for non-commercial research or educational purposes as defined and permitted by the Copyright Holder.
-d. Notwithstanding the foregoing, the Copyright Holder and individuals or entities explicitly designated in writing by the Copyright Holder as "Developers" or "Allowed Parties" are permitted to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software for commercial and business purposes in accordance with the terms of their specific agreement with the Copyright Holder.
-3. No Other Rights:
-
-No rights or licenses are granted by implication, estoppel, or otherwise to any intellectual property rights of the Copyright Holder except as expressly granted herein or as separately agreed in writing with the Copyright Holder.
-
-4. Disclaimer of Warranty:
-
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-
-5. Limitation of Liability:
-
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
