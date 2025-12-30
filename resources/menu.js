@@ -66,7 +66,7 @@ module.exports = {
       input: 'paragraph',
       options: {
         types: [
-          'pages'
+          'menu_pages'
         ]
       },
       localised: false
@@ -103,7 +103,7 @@ module.exports = {
       input: 'paragraph',
       options: {
         types: [
-          'pages',
+          'menu_pages',
           'special_pages'
         ]
       },
@@ -141,7 +141,7 @@ module.exports = {
       input: 'paragraph',
       options: {
         types: [
-          'pages',
+          'menu_pages',
           'special_pages'
         ]
       },
@@ -179,7 +179,7 @@ module.exports = {
       input: 'paragraph',
       options: {
         types: [
-          'pages',
+          'menu_pages',
           'special_pages'
         ]
       },
@@ -217,7 +217,7 @@ module.exports = {
       input: 'paragraph',
       options: {
         types: [
-          'pages'
+          'menu_pages'
         ]
       },
       localised: false
@@ -254,7 +254,7 @@ module.exports = {
       input: 'paragraph',
       options: {
         types: [
-          'pages'
+          'menu_pages'
         ]
       },
       localised: false
@@ -291,7 +291,7 @@ module.exports = {
       input: 'paragraph',
       options: {
         types: [
-          'pages'
+          'menu_pages'
         ]
       },
       localised: false
@@ -328,7 +328,7 @@ module.exports = {
       input: 'paragraph',
       options: {
         types: [
-          'pages'
+          'menu_pages'
         ]
       },
       localised: false
@@ -365,7 +365,7 @@ module.exports = {
       input: 'paragraph',
       options: {
         types: [
-          'pages'
+          'menu_pages'
         ]
       },
       localised: false

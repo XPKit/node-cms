@@ -34,7 +34,7 @@ module.exports = {
       localised: false,
       options: {
         types: ['address'],
-        maxCount: 2,
+        maxCount: 5,
       },
     },
   ],

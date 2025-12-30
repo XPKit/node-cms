@@ -1,5 +1,5 @@
-module.exports = {
-  displayname: 'Page',
+exports = module.exports = {
+  displayname: 'Menu - Page',
   schema: [
     {
       label: 'Key',

@@ -1,7 +1,6 @@
 <template>
-  <div class="paragraph-view" :style="{ '--paragraph-level': Math.max(0, (paragraphLevel || 1) - 1) }" :data-debug-level="paragraphLevel">
-    <!-- Sticky header with add button -->
-    <div v-if="!disabled && !schema.disabled && (maxCount === -1 || items.length < maxCount)" class="paragraph-header-bar" :data-paragraph-level="paragraphLevel" :data-css-level="Math.max(0, (paragraphLevel || 1) - 1)">
+  <div class="paragraph-view" :class="{'can-add-more': !blockMoreItems()}" :style="{ '--paragraph-level': getParagraphLevel() }">
+    <div v-if="!blockMoreItems()" class="paragraph-header-bar">
       <v-autocomplete
         ref="input"
         :ripple="false" :menu-props="menuProps"
@@ -20,8 +19,6 @@
         </v-btn>
       </div>
     </div>
-
-    <!-- Multiple files drop zone -->
     <div
       v-if="showMultipleDropZone"
       class="multiple-drop-zone"
@@ -111,7 +108,7 @@
                   </div>
                 </template>
               </div>
-              <custom-form v-else :schema="getSchema(item, idx)" :model="item" :paragraph-index="idx" :paragraph-level="paragraphLevel + 1" @error="onError" @input="onModelUpdated" />
+              <custom-form v-else :schema="getSchema(item, idx)" :model="item" :paragraph-index="idx" :paragraph-level="blockMoreItems() ? paragraphLevel : paragraphLevel + 1" @error="onError" @input="onModelUpdated" />
             </div>
           </div>
         </v-card>
@@ -214,6 +211,9 @@
       FieldSelectorService.events.off('highlight-paragraph', this.onHighlightParagraph)
     },
     methods: {
+      getParagraphLevel() {
+        return Math.max(0, (this.paragraphLevel || 1) - 1)
+      },
       getLabel(item) {
         return _.get(item, 'label.enUS', _.get(item, 'label', false))
       },
@@ -978,7 +978,7 @@
 .paragraph-header-bar {
   position: -webkit-sticky;
   position: sticky;
-  top: calc(var(--paragraph-level, 0) * 80px); /* Stack headers based on nesting level */
+  top: calc(var(--paragraph-level, 0) * 80px);
   background-color: var(--v-theme-surface, white);
   border-bottom: 1px solid var(--v-theme-outline, #e0e0e0);
   padding: 16px 8px;
@@ -1193,10 +1193,21 @@
       }
     }
   }
-
-  // Conditional padding for stacked sticky headers
-  &:has(.paragraph-header-bar) .paragraph-content {
-    padding-top: calc(80px * (var(--paragraph-level, 0) + 1)); /* Reserve space for all parent sticky headers */
+  &.can-add-more {
+    >.paragraph-content {
+      padding-top: calc((var(--paragraph-level, 0) - 1) * 80px);
+    }
+    >.paragraph-header-bar {
+      top: calc((var(--paragraph-level, 0)) * 80px);
+    }
+  }
+  &:not(.can-add-more) {
+    >.paragraph-content {
+      padding-top: calc((var(--paragraph-level, 0)) * 80px);
+    }
+    >.paragraph-header-bar {
+      top: calc((var(--paragraph-level, 0) + 1) * 80px);
+    }
   }
 }
 </style>
@@ -1204,7 +1215,7 @@
 .records {
   &.full-width {
     .paragraph-header-bar {
-      top: calc(var(--paragraph-level - 1, 0) * 80px); /* Stack headers based on nesting level */
+      top: calc((var(--paragraph-level, 0) - 1) * 80px);
     }
   }
 }
