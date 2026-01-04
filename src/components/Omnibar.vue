@@ -16,7 +16,7 @@
           <v-list density="compact">
             <v-list-item v-for="(item, i) in results" :id="'result-' + i" :key="i" class="list" :class="{highlighted: highlightedItem === i}" :ripple="false" @click="selectResult(i)">
               <v-list-item-title>
-                <v-icon size="small">{{ getIconForResult(item) }}</v-icon>
+                <v-icon size="small" :icon="getIconForResult(item)" />
                 <span v-html="item.html" />
               </v-list-item-title>
             </v-list-item>

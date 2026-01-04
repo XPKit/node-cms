@@ -58,7 +58,7 @@
           >
             <div class="item-info">
               <div v-if="multiselect" class="checkbox" @click.exact="select($event, item, true)">
-                <v-icon v-if="item._local" :class="{displayed: isItemSelected(item)}" size="small" :icon="'mdiCheckBold'" />
+                <v-icon v-if="item._local" :class="{displayed: isItemSelected(item)}" size="small" icon="$checkBold" />
               </div>
               <div class="infos-wrapper">
                 <div v-if="item" class="main">

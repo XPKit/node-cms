@@ -43,7 +43,9 @@ import {
   mdiLockOpenOutline,
   mdiTarget,
   mdiFlagOutline,
-  mdiAlertBoxOutline
+  mdiAlertBoxOutline,
+  mdiCursorText,
+  mdiPackage
 } from '@mdi/js'
 import { createVuetify } from 'vuetify'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
@@ -129,7 +131,9 @@ const vuetify = createVuetify({
       lockOpenOutline: mdiLockOpenOutline,
       target: mdiTarget,
       flagOutline: mdiFlagOutline,
-      alertBoxOutline: mdiAlertBoxOutline
+      alertBoxOutline: mdiAlertBoxOutline,
+      package: mdiPackage,
+      cursorText: mdiCursorText
     },
     sets: {
       mdi
