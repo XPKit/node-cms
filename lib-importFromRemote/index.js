@@ -17,16 +17,18 @@ class ImportWrapper {
     this.progressCallback = progressCallback
   }
 
-  prepareImport = (config, noPrompt, createOnly, askConfirmation) => {
+  prepareImport = (config, options, askConfirmation) => {
     this.config = config
-    this.noPrompt = noPrompt
-    this.createOnly = createOnly
+    this.options = options
+    this.noPrompt = options.yes
+    this.createOnly = options.createOnly
     this.askConfirmation = askConfirmation
     // Default local/remote to {} if undefined
     const localConfig = this.config.local || {}
     const remoteConfig = this.config.remote || {}
-    this.localApi = Api(localConfig)
-    this.remoteApi = Api(remoteConfig)
+    const overwrite = _.get(this.options, 'overwrite', false)
+    this.localApi = Api(localConfig, overwrite)
+    this.remoteApi = Api(remoteConfig, overwrite)
     this.binaryMap = {}
     this.cmsRecordsMap = {}
     this.attachmentMap = {}
@@ -40,16 +42,29 @@ class ImportWrapper {
     //  NOTE: For paragraphs to work, '/admin/paragraphs' should be in config.cms.routesToAuth for both local & remote CMS
   }
 
-  startImport = async (config, noPrompt, createOnly, askConfirmation) => {
+  async deleteAllLocalRecords () {
+    logger.info('Will delete all local records for resources:', this.config.resources)
+    for (const resource of this.config.resources) {
+      const records = await this.localApi(resource).list({})
+      logger.info(`Will delete ${records.length} records for resource ${resource}`)
+      for (const record of records) {
+        await this.localApi(resource).remove(record._id)
+      }
+      logger.info(`All records deleted for resource: ${resource}`)
+    }
+    logger.info('All local records deleted for resources:', this.config.resources)
+  }
+
+  startImport = async (config, options, askConfirmation) => {
     if (this.ongoingImport) {
       return logger.warn('Ongoing import, will cancel')
     }
     this.ongoingImport = true
-    this.prepareImport(config, noPrompt, createOnly, askConfirmation)
+    this.prepareImport(config, options, askConfirmation)
     logger.info('Starting import...')
     const importStartedAt = Date.now()
     try {
-      if (!noPrompt) {
+      if (!this.noPrompt) {
         await this.askConfirmation()
       }
       await pAll(_.map(['local', 'remote'], (key)=> {
@@ -59,6 +74,11 @@ class ImportWrapper {
         }
       }), {concurrency: 2})
       await this.loadData()
+      if (this.options.overwrite) {
+        logger.info('Overwrite option detected, will delete all local records')
+        await this.deleteAllLocalRecords()
+        logger.info('All local records deleted')
+      }
       await this.checkDuplicatedRecord()
       if (this.createFolders) {
         await this.createDummyFolders()
@@ -105,7 +125,9 @@ class ImportWrapper {
     const attachments = _.get(record, attachmentName, _.filter(_.get(record, '_attachments', []), {_name: attachmentName}))
     return _.compact(_.map(attachments, (attachment)=> {
       if (_.get(attachment, 'url', false)) {
-        attachment.url = `${this.buildUrl(this.config.remote, false)}${attachment.url}`
+        if (!_.startsWith(attachment.url, 'http')) {
+          attachment.url = `${this.buildUrl(this.config.remote, false)}${attachment.url}`
+        }
         return _.omit(attachment, ['_id', '_createdAt', '_updatedAt'])
       }
     }))
@@ -171,7 +193,7 @@ class ImportWrapper {
                   })
                 } else {
                   const attachments = this.getAttachments(newAttachment, match.path)
-                  console.warn('NOT localised attachment field', attachmentField, attachments)
+                  // console.warn('NOT localised attachment field', attachmentField, attachments)
                   if (!_.isUndefined(attachments)) {
                     binaryObj[match.path] = attachments
                   }
@@ -229,6 +251,9 @@ class ImportWrapper {
   }
 
   async checkDuplicatedRecord () {
+    if (this.overwrite) {
+      return
+    }
     let endProcess = h.startProcess('Check duplicated records ...')
     let duplicatedMap = {}
     _.each(this.data, (data, resource) => {
@@ -385,6 +410,9 @@ class ImportWrapper {
   }
 
   async deleteUnusedRecords () {
+    if (this.options.overwrite) {
+      return
+    }
     logger.info('### Delete unused records ###')
     return await pAll(_.map(this.data, (data, resource) => {
       return async () => {

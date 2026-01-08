@@ -5,14 +5,14 @@ exports = module.exports = {
       label: 'Logo A',
       field: 'logoA',
       input: 'image',
-      localised: true,
+      localised: false,
       required: true
     },
     {
       label: 'Logo B',
       field: 'logoB',
       input: 'image',
-      localised: true,
+      localised: false,
       required: true
     },
     {
@@ -34,9 +34,10 @@ exports = module.exports = {
       field: 'imageA',
       input: 'image',
       options: {
-        accept: '.jpg,.png',
-        maxCount: 1,
-        hint: 'Recommended image size: 736 × 1520'
+        hint: 'Recommended canvas size: 736 × 1520',
+        accept: '.jpg',
+        limit: 500 * 1024, // 500 KB
+        maxCount: 1
       },
       localised: true,
       required: true
@@ -46,9 +47,10 @@ exports = module.exports = {
       field: 'imageB',
       input: 'image',
       options: {
-        accept: '.jpg,.png',
-        maxCount: 1,
-        hint: 'Recommended image size: 736 × 1520'
+        hint: 'Recommended canvas size: 882 × 1700',
+        accept: '.jpg',
+        limit: 1 * 1024 * 1024, // 1 MB
+        maxCount: 1
       },
       localised: true,
       required: true

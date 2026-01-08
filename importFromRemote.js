@@ -18,6 +18,7 @@ program
   .usage('<config json>')
   .option('-y, --yes', 'Assume Yes to all queries and do not prompt')
   .option('-o, --createOnly', 'create only')
+  .option('--overwrite', 'Overwrite all local records with remote ones')
   .parse(process.argv)
 
 if (!program.args[0]) {
@@ -28,13 +29,13 @@ if (!program.args[0]) {
 class ImportManager {
   constructor(config) {
     this.importWrapper = new ImportWrapper()
-    this.importWrapper.startImport(config, program.yes, program.createOnly, this.askConfirmation)
+    this.importWrapper.startImport(config, program.opts(), this.askConfirmation)
   }
 
   buildUrl = (config) => `${config.protocol}${config.host}`
 
   askConfirmation = async () => {
-    if (program.yes) {
+    if (program.opts().yes) {
       return
     }
     let schema = {
