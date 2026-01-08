@@ -21,6 +21,8 @@ class ImportWrapper {
     this.config = config
     this.options = options
     this.noPrompt = options.yes
+    this.overwrite = options.overwrite
+    this.useCache = _.get(options, 'useCache', false)
     this.createOnly = options.createOnly
     this.askConfirmation = askConfirmation
     // Default local/remote to {} if undefined
@@ -74,7 +76,7 @@ class ImportWrapper {
         }
       }), {concurrency: 2})
       await this.loadData()
-      if (this.options.overwrite) {
+      if (this.overwrite) {
         logger.info('Overwrite option detected, will delete all local records')
         await this.deleteAllLocalRecords()
         logger.info('All local records deleted')
@@ -104,7 +106,11 @@ class ImportWrapper {
       }
       return this.remoteSchemaMap[resource]
     })
-    await this.downloadDataFromResourceList(resourcesToSync)
+    if (this.useCache) {
+      logger.info('Use cache option detected, will not download from remote')
+    } else {
+      await this.downloadDataFromResourceList(resourcesToSync)
+    }
     await this.loadDataFromCachedJson(resourcesToSync)
   }
 
