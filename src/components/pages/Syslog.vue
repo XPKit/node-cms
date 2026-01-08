@@ -71,6 +71,8 @@
         isHandlingGutterClick: false,
         selectedLineId: null,
         shouldScrollToSelectedLine: false,
+        reconnectAttempts: 0,
+        maxReconnectAttempts: 10,
         colors: {
           1: '#A00', // error
           3: '#d1a600', // warn
@@ -133,12 +135,14 @@
           this.eventSource = new EventSource(`${window.location.pathname}../api/_syslog`)
           this.eventSource.onmessage = async (event) => {
             this.$loading.stop('_syslog')
+            this.reconnectAttempts = 0
             try {
               const json = JSON.parse(event.data)
               if (_.get(json, 'id', false) && _.get(json, 'line', false)) {
                 json.size = _.get(`${this.calculateLineNumberSpacing(json.id)} ${json.line}`, 'length', 0)
                 if (json.size > 0) {
                   this.logLines.push(json)
+                  this.error = false
                 }
               }
             } catch (error) {
@@ -162,7 +166,15 @@
             this.error = "Error in SSE connection"
             console.error(`${this.error}:`, error)
             this.eventSource.close()
-            this.connectToLogStream()
+            if (this.reconnectAttempts < this.maxReconnectAttempts) {
+              this.reconnectAttempts++
+              const reconnectDelay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000)
+              console.warn(`Attempting to reconnect in ${reconnectDelay}ms (attempt ${this.reconnectAttempts})`)
+              setTimeout(() => this.connectToLogStream(), reconnectDelay)
+            } else {
+              this.error = 'Failed to connect to syslog stream after multiple attempts.'
+              console.error(this.error)
+            }
           }
         }, 1000)
       },

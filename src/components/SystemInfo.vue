@@ -83,6 +83,8 @@
   const timer = ref(null)
   const eventSource = ref(false)
   const firstMessage = ref(true)
+  const reconnectAttempts = ref(0)
+  const maxReconnectAttempts = 10
   const system = ref({
     cpu: { count: 0, usage: 0, model: 'Unknown' },
     memory: { totalMemMb: 0, usedMemMb: 0, freeMemMb: 0, freeMemPercentage: 0 },
@@ -118,6 +120,7 @@
       eventSource.value = new EventSource(`${window.location.pathname}../api/system`)
       eventSource.value.onmessage = (event) => {
         try {
+          reconnectAttempts.value = 0
           if (firstMessage.value) {
             firstMessage.value = false
             if (_.isFunction(theme.change)) {
@@ -146,7 +149,14 @@
       eventSource.value.onerror = (error) => {
         console.error('Error in SSE connection:', error)
         eventSource.value.close()
-        connectToLogStream()
+        if (reconnectAttempts.value < maxReconnectAttempts) {
+          reconnectAttempts.value++
+          const reconnectDelay = Math.min(1000 * Math.pow(2, reconnectAttempts.value), 30000)
+          console.log(`Attempting to reconnect system info stream in ${reconnectDelay}ms (attempt ${reconnectAttempts.value})`)
+          setTimeout(() => connectToLogStream(), reconnectDelay)
+        } else {
+          console.error('Max reconnection attempts for system info reached. Giving up.')
+        }
       }
     }, 1000)
   }
