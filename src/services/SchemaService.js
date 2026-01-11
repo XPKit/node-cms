@@ -79,6 +79,10 @@ class SchemaService {
         fields[id].values = field.source
       } else if (_.isString(field.source)) {
         this.updateFieldSchema(fields, field, id, locale, extraSources)
+      } else if (_.get(resource, 'name', false) === '_groups') {
+        if (_.includes(['create', 'update', 'read', 'remove'], fields[id].model)) {
+          fields[id].values = _.map(ResourceService.schemas, 'name')
+        }
       }
       fields[id].localised = resource.locales && (field.localised || _.isUndefined(field.localised))
     }
