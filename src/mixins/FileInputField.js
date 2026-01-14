@@ -87,9 +87,6 @@ export default {
       const rules = []
       if (this.schema.required) {
         rules.push(v => {
-          if (_.isUndefined(v)) {
-            return true
-          }
           const attachmentsLength = _.get(this.getAttachments(), 'length', 0)
           const valueLength = _.get(v, 'length', 0)
           if ((v instanceof Object || v instanceof File) && _.get(v, 'name', false)) {
@@ -113,7 +110,22 @@ export default {
         })
       }
       if (_.get(this.schema, 'options.limit', false)) {
-        rules.push(files => !files || (_.isFunction(files.some) && !files.some(file => file.size > this.schema.limit)) || TranslateService.get(`TL_${this.getFieldType()}_IS_TOO_BIG`))
+        rules.push((files) => {
+          if (!files) {
+            return true
+          }
+          if (!_.isArray(files)) {
+            files = [files]
+          }
+          for (const file of files) {
+            if (file.size > this.schema.options.limit) {
+              const fieldType = this.getFieldType()
+              console.warn(`${fieldType} ${_.get(file, 'name', 'undefined-filename')} is too big: ${this.bytesToSize(file.size)} > ${this.bytesToSize(this.schema.options.limit)}`)
+              return TranslateService.get(`TL_${fieldType}_IS_TOO_BIG`)
+            }
+          }
+          return true
+        })
       }
       if (_.get(this.schema, 'options.accept', false)) {
         const acceptedTypes = this.schema.options.accept.split(',')
