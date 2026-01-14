@@ -113,7 +113,7 @@ export default {
         })
       }
       if (_.get(this.schema, 'options.limit', false)) {
-        rules.push(files => !files || !files.some(file => file.size > this.schema.limit) || TranslateService.get(`TL_${this.getFieldType()}_IS_TOO_BIG`))
+        rules.push(files => !files || (_.isFunction(files.some) && !files.some(file => file.size > this.schema.limit)) || TranslateService.get(`TL_${this.getFieldType()}_IS_TOO_BIG`))
       }
       if (_.get(this.schema, 'options.accept', false)) {
         const acceptedTypes = this.schema.options.accept.split(',')
