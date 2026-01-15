@@ -25,6 +25,15 @@ class LoginService {
   async getStatus () {
     try {
       const data = await RequestService.get(`${window.location.pathname}login`)
+      if (_.get(this.user, '_updatedAt', false) && _.get(data, '_updatedAt', false)) {
+        if (this.user._updatedAt !== data._updatedAt) {
+          console.warn('User data updated, will logout...')
+          return await this.logout()
+        }
+      } else if (_.isEmpty(data) && !_.isEmpty(this.user)) {
+        console.warn('User not logged in, will logout...')
+        return await this.logout()
+      }
       this.user = data
       const remoteUptime = _.get(this.user, 'uptime', +new Date())
       const localUptime = _.parseInt(VueCookies.get('uptime') || -1)
