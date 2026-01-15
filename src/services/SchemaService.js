@@ -80,7 +80,7 @@ class SchemaService {
       } else if (_.isString(field.source)) {
         this.updateFieldSchema(fields, field, id, locale, extraSources)
       } else if (_.get(resource, 'name', false) === '_groups') {
-        if (_.includes(['create', 'update', 'read', 'remove'], fields[id].model)) {
+        if (_.includes(['create', 'update', 'read', 'remove', 'attachments'], fields[id].model)) {
           fields[id].values = _.map(ResourceService.schemas, 'name')
         }
       }
