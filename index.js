@@ -55,6 +55,7 @@ const defaultConfig = () =>
     resources: './resources',
     data: './data',
     autoload: true,
+    disableDarkMode: true,
     mode: 'normal',
     mid: Date.now().toString(36),
     disableREST: false,

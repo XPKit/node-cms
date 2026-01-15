@@ -5,6 +5,7 @@ const options = {
   resources: './test/resources',
   data: './test/data',
   autoload: true,
+  disableDarkMode: true,
   mode: 'normal',
   mid: '42424242',
   disableREST: false,

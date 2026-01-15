@@ -283,7 +283,12 @@
           this.user = await LoginService.getStatus()
           this.allowedPlugins = await LoginService.getPlugins()
           console.info('Plugins available:', this.allowedPlugins)
-          this.$vuetify.theme.dark = _.get(this.user, 'theme', 'light') === 'dark'
+          if (_.get(ConfigService, 'config.disableDarkMode', false)) {
+            this.user.theme = 'light'
+            this.$vuetify.theme.dark = false
+          } else {
+            this.$vuetify.theme.dark = _.get(this.user, 'theme', 'light') === 'dark'
+          }
           this.$forceUpdate()
         } catch (error) {
           this.notify(_.get(error, 'response.data.message', error.message), 'error')
@@ -291,6 +296,9 @@
         }
       },
       getTheme () {
+        if (ConfigService.config.disableDarkMode) {
+          return 'light'
+        }
         return _.get(this.$vuetify, 'theme.dark', false) ? 'dark' : 'light'
       },
       resetNotification () {

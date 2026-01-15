@@ -24,7 +24,7 @@
       <div class="system-info-wrapper">
         <div class="node-cms-title flex">
           <span>{{ $filters.translate('TL_SYSTEM') }}</span>
-          <theme-switch />
+          <theme-switch v-if="!config.disableDarkMode" />
         </div>
         <div class="stats cpu">
           <div class="node-cms-title"><small><b>CPU Usage</b></small></div>
