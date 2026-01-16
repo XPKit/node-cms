@@ -7,14 +7,47 @@
     "password": "localAdmin"
   },
   "remote": {
-    "protocol": "http://",
-    "host": "localhost:9991",
+    "protocol": "https://",
+    "host": "bkk109.imagination-dev.cn",
     "prefix": "/cms",
     "username": "localAdmin",
-    "password": "localAdmin"
+    "password": "localAdmin1!"
   },
   "resources": [
+    "appointments",
+    "feedbacks",
+    "gallery",
+    "hierarchical_listings",
+    "lights",
+    "menu",
+    "notes",
+    "pages",
     "portalUsers",
-    "pages"
+    "screens",
+    "slideshows",
+    "tokens",
+    "tower_360_views",
+    "tower_buildings",
+    "tower_compare_units",
+    "tower_floor_plans",
+    "tower_unit_groups",
+    "tower_unit_mix",
+    "tower_units",
+    "tower_zones",
+    "translations"
+  ],
+  "regroupIDs": [
+    "coming-soon",
+    "films",
+    "menu",
+    "team",
+    "the-project",
+    "the-upper-house",
+    "the-upper-house-360",
+    "the-upper-house-gallery",
+    "the-wireless-place",
+    "the-wireless-place-360",
+    "the-wireless-place-gallery",
+    "towers"
   ]
 }

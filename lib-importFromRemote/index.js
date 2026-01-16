@@ -23,6 +23,7 @@ class ImportWrapper {
     this.noPrompt = options.yes
     this.overwrite = options.overwrite
     this.useCache = _.get(options, 'useCache', false)
+    this.convertToPreload = _.get(options, 'convertToPreload', false)
     this.createOnly = options.createOnly
     this.askConfirmation = askConfirmation
     // Default local/remote to {} if undefined
@@ -76,26 +77,226 @@ class ImportWrapper {
         }
       }), {concurrency: 2})
       await this.loadData()
-      if (this.overwrite) {
-        logger.info('Overwrite option detected, will delete all local records')
-        await this.deleteAllLocalRecords()
-        logger.info('All local records deleted')
-      }
-      await this.checkDuplicatedRecord()
-      if (this.createFolders) {
-        await this.createDummyFolders()
-      } else {
+      if (this.convertToPreload) {
         await this.downloadBinaries()
-        const createdRecordsMap = await this.createDummyRecords()
-        if (!this.createOnly) {
-          await this.deleteUnusedRecords()
+        await this.convertDataToPreload()
+      } else {
+        if (this.overwrite) {
+          logger.info('Overwrite option detected, will delete all local records')
+          await this.deleteAllLocalRecords()
+          logger.info('All local records deleted')
         }
-        await this.updateRecords(this.createOnly ? createdRecordsMap : null)
+        await this.checkDuplicatedRecord()
+        if (this.createFolders) {
+          await this.createDummyFolders()
+        } else {
+          await this.downloadBinaries()
+          let createdRecordsMap = {}
+          createdRecordsMap = await this.createDummyRecords()
+          if (!this.createOnly) {
+            await this.deleteUnusedRecords()
+          }
+          await this.updateRecords(this.createOnly ? createdRecordsMap : null)
+        }
       }
       logger.info(`Import took ${Date.now() - importStartedAt}ms`)
     } catch (error) {
       logger.error(_.get(error, 'response.body', _.get(error, 'message', error)))
     }
+  }
+
+  getFilename (attachment) {
+    return _.get(attachment, '_filename', path.basename(_.first(_.get(attachment, 'url', attachment).split('?'))))
+  }
+
+  getPreloadAttachmentPath(record, resource, uniqueKey, match, locale, attachment) {
+
+    const recordKey = _.get(record, uniqueKey)
+    const attachmentFilename = this.getFilename(attachment)
+    if (_.get(this.config, 'regroupIDs.length', 0) > 0) {
+      let regroupedId = _.find(this.config.regroupIDs, (item) => recordKey.indexOf(item) !== -1)
+      if (!regroupedId) {
+        regroupedId = _.find(this.config.regroupIDs, (item) => attachmentFilename.indexOf(item) !== -1)
+      }
+      if (regroupedId) {
+        return path.join(this.assetsPath, regroupedId, attachmentFilename)
+      }
+    }
+    return path.join(this.assetsPath, resource, recordKey, `${match.path}${locale ? `.${locale}` : ''}`, attachmentFilename)
+  }
+
+  copyAttachmentToPreloads(record, resource, uniqueKey, match, locale, attachment) {
+    try {
+      if (_.isString(attachment) && _.startsWith(attachment, '_attachment://')) {
+        return attachment
+      }
+      const filePath = path.join('./cached', resource, _.get(record, uniqueKey), `${match.path}${locale ? `.${locale}` : ''}`, _.get(attachment, '_id', attachment))
+      if (!fs.existsSync(filePath)) {
+        throw new Error(`Attachment file does not exist: ${filePath}`)
+      }
+      const filename = this.getFilename(attachment)
+      if (this.preloadAssetsMap) {
+        const existingEntry = _.find(this.preloadAssetsMap, {filename: filename})
+        if (existingEntry) {
+          const exisitingFilePath = `_attachment://assets/${existingEntry.filePath}`
+          // console.warn(`file ${filename} already exists in preload assets, reusing it...`, exisitingFilePath)
+          return exisitingFilePath
+        }
+      }
+      const destPath = this.getPreloadAttachmentPath(record, resource, uniqueKey, match, locale, attachment)
+      const destDir = path.dirname(destPath)
+      fs.ensureDirSync(destDir)
+      fs.copySync(filePath, destPath)
+      if (this.preloadAssetsMap) {
+        this.preloadAssetsMap[destPath] = filename
+      }
+      return `_attachment://assets/${resource}/${_.get(record, uniqueKey)}/${match.path}${locale ? `.${locale}` : ''}/${filename}`
+    } catch (error) {
+      console.error('copyAttachmentToPreloads - Error: ', error)
+      console.error('copyAttachmentToPreloads - Error data:', resource, attachment)
+      return ''
+    }
+  }
+
+  convertAttachmentsForPreload(resource, locales, uniqueKey, record, attachmentFields) {
+    _.each(attachmentFields, (attachmentField, key) => {
+      if (_.isString(key)) {
+        const testRegexp = new RegExp(key)
+        const matches = this.findMatches(record, testRegexp, attachmentField.field)
+        _.each(matches, (match) => {
+          if (attachmentField.localised && locales.length > 0) {
+            _.each(locales, (locale) => {
+              const value = _.get(match.value, `${locale}`, false)
+              if (_.isArray(value)) {
+                if (value.length === 1) {
+                  const newUrl = this.copyAttachmentToPreloads(record, resource, uniqueKey, match, locale, value[0])
+                  _.set(record, `${match.path}.${locale}`, newUrl)
+                } else {
+                  _.each(value, (v, index) => {
+                    const newUrl = this.copyAttachmentToPreloads(record, resource, uniqueKey, match, locale, v)
+                    _.set(record, `${match.path}.${locale}[${index}]`, newUrl)
+                  })
+                }
+              } else {
+                const newUrl = this.copyAttachmentToPreloads(record, resource, uniqueKey, match, locale, value)
+                _.set(record, `${match.path}.${locale}`, newUrl)
+              }
+            })
+          } else {
+            let value = match.value
+            const links = []
+            _.each(value, (v) => {
+              const newUrl = this.copyAttachmentToPreloads(record, resource, uniqueKey, match, null, v)
+              links.push(newUrl)
+            })
+            _.set(record, match.path, links.length > 1 ? links : _.first(links))
+          }
+        })
+      }
+    })
+  }
+
+  convertRecordForPreload(resource, locales, uniqueKey, record, attachmentFields) {
+    record = _.omit(record, ['_local', '_id', '_createdAt', '_updatedAt', '_publishedAt', '_preloadedVersion', '_updatedBy'])
+    // Convert relation fields to [name_of_related_resource]://[unique_id_of_related_record]
+    const schema = _.get(this.remoteSchemaMap, [resource, 'schema'], [])
+    _.each(schema, (field) => {
+      if (_.isString(field.source)) {
+        const relatedResource = field.source
+        const relatedRecords = _.get(this.remoteRecords, relatedResource, [])
+        const relatedUniqueKeys = this.remoteApi(relatedResource).getUniqueKeys()
+        const value = _.get(record, field.field)
+        const makeRelationUri = (found) => {
+          if (!found) return null
+          let uniqueId
+          if (relatedUniqueKeys.length === 1) {
+            uniqueId = _.get(found, relatedUniqueKeys[0])
+          } else {
+            // If multiple unique keys, join with '__' (or choose a delimiter that can't appear in keys)
+            uniqueId = relatedUniqueKeys.map(k => _.get(found, k)).join('__')
+          }
+          return `${relatedResource}://${uniqueId}`
+        }
+        if (_.isArray(value)) {
+          // Array of relations
+          const newValues = _.map(value, (v) => {
+            const found = _.find(relatedRecords, { _id: v })
+            const uri = makeRelationUri(found)
+            return uri || v // fallback to original if not found
+          })
+          _.set(record, field.field, newValues)
+        } else if (!_.isNil(value)) {
+          // Single relation
+          const found = _.find(relatedRecords, { _id: value })
+          const uri = makeRelationUri(found)
+          if (uri) {
+            _.set(record, field.field, uri)
+          }
+        }
+      }
+    })
+    this.convertAttachmentsForPreload(resource, locales, uniqueKey, record, attachmentFields)
+    return record
+  }
+
+  getAllFiles(dir, baseDir = null) {
+    let results = []
+    if (!fs.existsSync(dir)) {
+      return results
+    }
+    if (!baseDir) {
+      baseDir = path.resolve('./preload/assets')
+    }
+    const list = fs.readdirSync(dir)
+    _.each(list, filename => {
+      const filePath = path.join(dir, filename)
+      const stat = fs.statSync(filePath)
+      if (stat && stat.isDirectory()) {
+        results = results.concat(this.getAllFiles(filePath, baseDir))
+      } else {
+        results.push({ filePath: path.relative(baseDir, filePath).replace(/\\/g, '/'), filename })
+      }
+    })
+    return results
+  }
+
+  async convertDataToPreload () {
+    const preloadPath = path.resolve('./preload')
+    // fs.emptyDirSync(preloadPath)
+    fs.ensureDirSync(preloadPath)
+    this.assetsPath = path.resolve('./preload/assets')
+    fs.ensureDirSync(this.assetsPath)
+    let endProcess = h.startProcess(`Convert data to preload format for resources ${_.join(this.config.resources, ', ')}...`)
+
+
+    this.preloadAssetsMap = []
+    const allPreloadFiles = this.getAllFiles(this.assetsPath)
+    _.each(allPreloadFiles, (v) => {
+      this.preloadAssetsMap.push(v)
+    })
+    for (const resource of this.config.resources) {
+      let jsonPath = path.join(__dirname, 'cached', `${resource}.json`)
+      if (!fs.existsSync(jsonPath)) {
+        throw new Error(`${jsonPath} doesn't exist`)
+      }
+      let records = fs.readJsonSync(jsonPath)
+      const filePath = path.join(preloadPath, `${resource}.json`)
+      let uniqueKeys = []
+      if (this.remoteApi && this.remoteApi(resource) && this.remoteApi(resource).getUniqueKeys) {
+        uniqueKeys = this.remoteApi(resource).getUniqueKeys()
+      }
+      const uniqueKey = _.first(uniqueKeys) || '_id'
+      const attachmentFields = this.getAttachmentFields(resource)
+      const locales = _.get(this.remoteSchemaMap[resource], 'locales', [])
+      records = _.map(records, record => this.convertRecordForPreload(resource, locales, uniqueKey, record, attachmentFields))
+      const formatted = {
+        version: 1,
+        forced: true,
+        items: records
+      }
+      fs.writeJsonSync(filePath, formatted, {spaces: 2})
+    }
+    endProcess('done')
   }
 
   async loadData () {
@@ -233,11 +434,15 @@ class ImportWrapper {
         })
         if (uniqueKeys.length === 1) {
           const uniqueKey = _.first(uniqueKeys)
-          const map = _.groupBy(list, item => _.first(item[uniqueKey].split('.')))
+          const map = _.groupBy(list, item => {
+            const key = _.get(item, uniqueKey, '')
+            return _.first(key.split('.'))
+          })
           list = _.map(map, (items, key) => {
             let newItem = {}
             _.each(items, item => {
-              let subKeys = _.tail(item[uniqueKey].split('.'))
+              const itemKey = _.get(item, uniqueKey, '')
+              let subKeys = _.tail(itemKey.split('.'))
               delete item[uniqueKey]
               if (!_.isEmpty(subKeys)) {
                 const subKeyStr = subKeys.join('.')
@@ -246,7 +451,12 @@ class ImportWrapper {
                 newItem = item
               }
             })
-            return {[uniqueKey]: key, ...newItem}
+            let obj = {}
+            _.set(obj, uniqueKey, key)
+            obj = {
+              ...newItem
+            }
+            return obj
           })
         }
         this.data[resource] = list
@@ -369,7 +579,7 @@ class ImportWrapper {
             })
             return await this.localApi(resource).create(createObject)
           }
-        }), {concurrency: 10})
+        }), {concurrency: 1})
         endProcess(`${newKeys.length} records created`)
       }
     }), {concurrency: 1})
@@ -570,7 +780,6 @@ class ImportWrapper {
                 toUpdate = _.omit(toUpdate, _.map(matches, (match)=> match.path))
               }
             })
-            // console.warn('will update record ----', record._id)
             try {
               return await this.localApi(resource).update(record._id, toUpdate)
             } catch (error) {

@@ -20,6 +20,7 @@ program
   .option('-o, --createOnly', 'create only')
   .option('--overwrite', 'Overwrite all local records with remote ones')
   .option('--use-cache', 'Use cached data instead of downloading from remote')
+  .option('--convert-to-preload', 'Convert downloaded data to preload format')
   .parse(process.argv)
 
 if (!program.args[0]) {

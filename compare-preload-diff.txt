@@ -1,0 +1,1457 @@
+
+--- DIFF for appointments.json ---
+  Array length differs at items:
+    preload=103
+    old_preload=40
+  Value differs at items[0].guestName:
+    preload="Jane Doe"
+    old_preload="Hugo Barbier"
+  Value differs at items[0].visitDate:
+    preload=1758099220069
+    old_preload=1758012820069
+  Value differs at items[0].startTime:
+    preload=1758093000000
+    old_preload=1758003000000
+  Value differs at items[0].endTime:
+    preload=1758094800000
+    old_preload=1758004800000
+  Value differs at items[1].guestName:
+    preload="Microsoft"
+    old_preload="Jane Doe"
+  Value differs at items[1].visitDate:
+    preload=1758185620069
+    old_preload=1758099220069
+  Value differs at items[1].startTime:
+    preload=1758183000000
+    old_preload=1758093000000
+  Value differs at items[1].endTime:
+    preload=1758186600000
+    old_preload=1758094800000
+  Value differs at items[2].guestName:
+    preload="Jane Doe"
+    old_preload="Microsoft"
+  Value differs at items[2].visitDate:
+    preload=1758963220069
+    old_preload=1758185620069
+  Value differs at items[2].startTime:
+    preload=1758963000000
+    old_preload=1758183000000
+  Value differs at items[2].endTime:
+    preload=1758964800000
+    old_preload=1758186600000
+  Value differs at items[3].guestName:
+    preload="Tencent"
+    old_preload="Apple Inc."
+  Value differs at items[3].visitDate:
+    preload=1758790420069
+    old_preload=1758272020069
+  Value differs at items[3].startTime:
+    preload=1758793000000
+    old_preload=1758273000000
+  Value differs at items[3].endTime:
+    preload=1758794800000
+    old_preload=1758274800000
+  Value differs at items[4].guestName:
+    preload="Microsoft"
+    old_preload="Amazon"
+  Value differs at items[4].visitDate:
+    preload=1759049620069
+    old_preload=1758358420069
+  Value differs at items[4].startTime:
+    preload=1759043000000
+    old_preload=1758353000000
+  Value differs at items[4].endTime:
+    preload=1759046600000
+    old_preload=1758356600000
+  Value differs at items[5].guestName:
+    preload="Jane Doe"
+    old_preload="Google"
+  Value differs at items[5].visitDate:
+    preload=1758099220069
+    old_preload=1758444820069
+  Value differs at items[5].startTime:
+    preload=1758093000000
+    old_preload=1758443000000
+  Value differs at items[5].endTime:
+    preload=1758094800000
+    old_preload=1758444800000
+  Value differs at items[5].contentLanguage:
+    preload="zhCN"
+    old_preload="enUS"
+  Value differs at items[6].guestName:
+    preload="Microsoft"
+    old_preload="Alibaba"
+  Value differs at items[6].visitDate:
+    preload=1758185620069
+    old_preload=1758531220069
+  Value differs at items[6].startTime:
+    preload=1758183000000
+    old_preload=1758533000000
+  Value differs at items[6].endTime:
+    preload=1758184800000
+    old_preload=1758536600000
+  Value differs at items[6].contentLanguage:
+    preload="zhCN"
+    old_preload="enUS"
+  Value differs at items[7].guestName:
+    preload="Tencent"
+    old_preload="Bytedance"
+  Value differs at items[7].visitDate:
+    preload=1759654420069
+    old_preload=1758617620069
+  Value differs at items[7].startTime:
+    preload=1759653000000
+    old_preload=1758613000000
+  Value differs at items[7].endTime:
+    preload=1759654800000
+    old_preload=1758614800000
+  Value differs at items[8].guestName:
+    preload="Jane Doe"
+    old_preload="Facebook"
+  Value differs at items[8].visitDate:
+    preload=1758963220069
+    old_preload=1758704020069
+  Value differs at items[8].startTime:
+    preload=1758963000000
+    old_preload=1758703000000
+  Value differs at items[8].endTime:
+    preload=1758966600000
+    old_preload=1758706600000
+  Value differs at items[8].contentLanguage:
+    preload="zhCN"
+    old_preload="enUS"
+  Value differs at items[9].endTime:
+    preload=1758796600000
+    old_preload=1758794800000
+  Value differs at items[9].contentLanguage:
+    preload="zhCN"
+    old_preload="enUS"
+  Value differs at items[10].guestName:
+    preload="Microsoft"
+    old_preload="Hugo Barbier"
+  Value differs at items[10].visitDate:
+    preload=1759049620069
+    old_preload=1758876820069
+  Value differs at items[10].startTime:
+    preload=1759043000000
+    old_preload=1758873000000
+  Value differs at items[10].endTime:
+    preload=1759044800000
+    old_preload=1758876600000
+  Value differs at items[10].contentLanguage:
+    preload="zhCN"
+    old_preload="enUS"
+  Value differs at items[11].guestName:
+    preload="Tencent"
+    old_preload="Jane Doe"
+  Value differs at items[11].visitDate:
+    preload=1759654420069
+    old_preload=1758963220069
+  Value differs at items[11].startTime:
+    preload=1759653000000
+    old_preload=1758963000000
+  Value differs at items[11].endTime:
+    preload=1759656600000
+    old_preload=1758964800000
+  Value differs at items[11].contentLanguage:
+    preload="zhCN"
+    old_preload="enUS"
+  Value differs at items[12].guestName:
+    preload="Arthit"
+    old_preload="Microsoft"
+  Value differs at items[12].visitDate:
+    preload=1767805200000
+    old_preload=1759049620069
+  Key 'items[12].numberOfGuests' missing in old_preload. Value in preload: 1
+  Value differs at items[12].startTime:
+    preload=1767855600000
+    old_preload=1759043000000
+  Value differs at items[12].endTime:
+    preload=1767858000000
+    old_preload=1759046600000
+  Key 'items[12].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[12].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[13].guestName:
+    preload="Hugue"
+    old_preload="Apple Inc."
+  Value differs at items[13].visitDate:
+    preload=1767891600000
+    old_preload=1759136020069
+  Key 'items[13].numberOfGuests' missing in old_preload. Value in preload: 2
+  Value differs at items[13].startTime:
+    preload=1767942000000
+    old_preload=1759133000000
+  Value differs at items[13].endTime:
+    preload=1767944400000
+    old_preload=1759134800000
+  Key 'items[13].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[13].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[14].guestName:
+    preload="Chaiyasit"
+    old_preload="Amazon"
+  Value differs at items[14].visitDate:
+    preload=1767718800000
+    old_preload=1759222420069
+  Key 'items[14].numberOfGuests' missing in old_preload. Value in preload: 2
+  Value differs at items[14].startTime:
+    preload=1767769200000
+    old_preload=1759223000000
+  Value differs at items[14].endTime:
+    preload=1767771600000
+    old_preload=1759226600000
+  Key 'items[14].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[14].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[15].guestName:
+    preload="Phichit"
+    old_preload="Google"
+  Value differs at items[15].visitDate:
+    preload=1767632400000
+    old_preload=1759308820069
+  Key 'items[15].numberOfGuests' missing in old_preload. Value in preload: 2
+  Value differs at items[15].startTime:
+    preload=1767668400000
+    old_preload=1759303000000
+  Value differs at items[15].endTime:
+    preload=1767670800000
+    old_preload=1759304800000
+  Key 'items[15].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[15].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[16].guestName:
+    preload="Prasert"
+    old_preload="Alibaba"
+  Value differs at items[16].visitDate:
+    preload=1767978000000
+    old_preload=1759395220069
+  Key 'items[16].numberOfGuests' missing in old_preload. Value in preload: 2
+  Value differs at items[16].startTime:
+    preload=1768010400000
+    old_preload=1759393000000
+  Value differs at items[16].endTime:
+    preload=1768012800000
+    old_preload=1759396600000
+  Key 'items[16].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[16].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[17].guestName:
+    preload="Somsak"
+    old_preload="Bytedance"
+  Value differs at items[17].visitDate:
+    preload=1767978000000
+    old_preload=1759481620069
+  Key 'items[17].numberOfGuests' missing in old_preload. Value in preload: 4
+  Value differs at items[17].startTime:
+    preload=1768021200000
+    old_preload=1759483000000
+  Value differs at items[17].endTime:
+    preload=1768023600000
+    old_preload=1759484800000
+  Key 'items[17].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[17].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[18].guestName:
+    preload="Surasak"
+    old_preload="Facebook"
+  Value differs at items[18].visitDate:
+    preload=1768064400000
+    old_preload=1759568020069
+  Key 'items[18].numberOfGuests' missing in old_preload. Value in preload: 6
+  Value differs at items[18].startTime:
+    preload=1768100400000
+    old_preload=1759563000000
+  Value differs at items[18].endTime:
+    preload=1768102800000
+    old_preload=1759566600000
+  Key 'items[18].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[18].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[19].guestName:
+    preload="Pongsak"
+    old_preload="Tencent"
+  Value differs at items[19].visitDate:
+    preload=1768150800000
+    old_preload=1759654420069
+  Key 'items[19].numberOfGuests' missing in old_preload. Value in preload: 2
+  Value differs at items[19].startTime:
+    preload=1768212000000
+    old_preload=1759653000000
+  Value differs at items[19].endTime:
+    preload=1768214400000
+    old_preload=1759654800000
+  Value differs at items[19].contentLanguage:
+    preload="zhCN"
+    old_preload="enUS"
+  Key 'items[19].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[19].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[20].guestName:
+    preload="Amber"
+    old_preload="Hugo Barbier"
+  Value differs at items[20].visitDate:
+    preload=1768237200000
+    old_preload=1758012820069
+  Key 'items[20].numberOfGuests' missing in old_preload. Value in preload: 1
+  Value differs at items[20].startTime:
+    preload=1768305600000
+    old_preload=1758003000000
+  Value differs at items[20].endTime:
+    preload=1768308000000
+    old_preload=1758006600000
+  Value differs at items[20].contentLanguage:
+    preload="enUS"
+    old_preload="zhCN"
+  Key 'items[20].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[20].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[21].guestName:
+    preload="Ada"
+    old_preload="Jane Doe"
+  Value differs at items[21].visitDate:
+    preload=1768323600000
+    old_preload=1758099220069
+  Key 'items[21].numberOfGuests' missing in old_preload. Value in preload: 4
+  Value differs at items[21].startTime:
+    preload=1768370400000
+    old_preload=1758093000000
+  Value differs at items[21].endTime:
+    preload=1768372800000
+    old_preload=1758094800000
+  Key 'items[21].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[21].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[22].guestName:
+    preload="Bang"
+    old_preload="Microsoft"
+  Value differs at items[22].visitDate:
+    preload=1768410000000
+    old_preload=1758185620069
+  Key 'items[22].numberOfGuests' missing in old_preload. Value in preload: 2
+  Value differs at items[22].startTime:
+    preload=1768456800000
+    old_preload=1758183000000
+  Value differs at items[22].endTime:
+    preload=1768459200000
+    old_preload=1758184800000
+  Value differs at items[22].contentLanguage:
+    preload="enUS"
+    old_preload="zhCN"
+  Key 'items[22].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[22].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[23].guestName:
+    preload="Beca"
+    old_preload="Apple Inc."
+  Value differs at items[23].visitDate:
+    preload=1768582800000
+    old_preload=1758272020069
+  Key 'items[23].numberOfGuests' missing in old_preload. Value in preload: 5
+  Value differs at items[23].startTime:
+    preload=1768640400000
+    old_preload=1758273000000
+  Value differs at items[23].endTime:
+    preload=1768642800000
+    old_preload=1758276600000
+  Value differs at items[23].contentLanguage:
+    preload="enUS"
+    old_preload="zhCN"
+  Key 'items[23].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[23].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[24].guestName:
+    preload="Ben"
+    old_preload="Amazon"
+  Value differs at items[24].visitDate:
+    preload=1768669200000
+    old_preload=1758358420069
+  Key 'items[24].numberOfGuests' missing in old_preload. Value in preload: 4
+  Value differs at items[24].startTime:
+    preload=1768712400000
+    old_preload=1758353000000
+  Value differs at items[24].endTime:
+    preload=1768714800000
+    old_preload=1758354800000
+  Key 'items[24].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[24].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[25].guestName:
+    preload="Bell"
+    old_preload="Google"
+  Value differs at items[25].visitDate:
+    preload=1768755600000
+    old_preload=1758444820069
+  Key 'items[25].numberOfGuests' missing in old_preload. Value in preload: 4
+  Value differs at items[25].startTime:
+    preload=1768795200000
+    old_preload=1758443000000
+  Value differs at items[25].endTime:
+    preload=1768797600000
+    old_preload=1758446600000
+  Key 'items[25].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[25].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[26].guestName:
+    preload="Book"
+    old_preload="Alibaba"
+  Value differs at items[26].visitDate:
+    preload=1768842000000
+    old_preload=1758531220069
+  Key 'items[26].numberOfGuests' missing in old_preload. Value in preload: 3
+  Value differs at items[26].startTime:
+    preload=1768896000000
+    old_preload=1758533000000
+  Value differs at items[26].endTime:
+    preload=1768898400000
+    old_preload=1758534800000
+  Key 'items[26].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[26].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[27].guestName:
+    preload="Blob"
+    old_preload="Bytedance"
+  Value differs at items[27].visitDate:
+    preload=1768928400000
+    old_preload=1758617620069
+  Key 'items[27].numberOfGuests' missing in old_preload. Value in preload: 1
+  Value differs at items[27].startTime:
+    preload=1768986000000
+    old_preload=1758613000000
+  Value differs at items[27].endTime:
+    preload=1768988400000
+    old_preload=1758616600000
+  Value differs at items[27].contentLanguage:
+    preload="enUS"
+    old_preload="zhCN"
+  Key 'items[27].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[27].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[28].guestName:
+    preload="Block"
+    old_preload="Facebook"
+  Value differs at items[28].visitDate:
+    preload=1769014800000
+    old_preload=1758704020069
+  Key 'items[28].numberOfGuests' missing in old_preload. Value in preload: 2
+  Value differs at items[28].startTime:
+    preload=1769047200000
+    old_preload=1758703000000
+  Value differs at items[28].endTime:
+    preload=1769049600000
+    old_preload=1758704800000
+  Value differs at items[28].contentLanguage:
+    preload="enUS"
+    old_preload="zhCN"
+  Key 'items[28].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[28].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[29].guestName:
+    preload="Bowie"
+    old_preload="Tencent"
+  Value differs at items[29].visitDate:
+    preload=1769101200000
+    old_preload=1758790420069
+  Key 'items[29].numberOfGuests' missing in old_preload. Value in preload: 2
+  Value differs at items[29].startTime:
+    preload=1769144400000
+    old_preload=1758793000000
+  Value differs at items[29].endTime:
+    preload=1769146800000
+    old_preload=1758796600000
+  Key 'items[29].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[29].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[30].guestName:
+    preload="Boe"
+    old_preload="Hugo Barbier"
+  Value differs at items[30].visitDate:
+    preload=1769187600000
+    old_preload=1758876820069
+  Key 'items[30].numberOfGuests' missing in old_preload. Value in preload: 3
+  Value differs at items[30].startTime:
+    preload=1769227200000
+    old_preload=1758873000000
+  Value differs at items[30].endTime:
+    preload=1769229600000
+    old_preload=1758874800000
+  Key 'items[30].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[30].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[31].guestName:
+    preload="Blue"
+    old_preload="Jane Doe"
+  Value differs at items[31].visitDate:
+    preload=1769274000000
+    old_preload=1758963220069
+  Key 'items[31].numberOfGuests' missing in old_preload. Value in preload: 5
+  Value differs at items[31].startTime:
+    preload=1769324400000
+    old_preload=1758963000000
+  Value differs at items[31].endTime:
+    preload=1769326800000
+    old_preload=1758966600000
+  Value differs at items[31].contentLanguage:
+    preload="enUS"
+    old_preload="zhCN"
+  Key 'items[31].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[31].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[32].guestName:
+    preload="Cook"
+    old_preload="Microsoft"
+  Value differs at items[32].visitDate:
+    preload=1769360400000
+    old_preload=1759049620069
+  Key 'items[32].numberOfGuests' missing in old_preload. Value in preload: 2
+  Value differs at items[32].startTime:
+    preload=1769403600000
+    old_preload=1759043000000
+  Value differs at items[32].endTime:
+    preload=1769406000000
+    old_preload=1759044800000
+  Value differs at items[32].contentLanguage:
+    preload="enUS"
+    old_preload="zhCN"
+  Key 'items[32].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[32].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[33].guestName:
+    preload="Can"
+    old_preload="Apple Inc."
+  Value differs at items[33].visitDate:
+    preload=1769446800000
+    old_preload=1759136020069
+  Key 'items[33].numberOfGuests' missing in old_preload. Value in preload: 2
+  Value differs at items[33].startTime:
+    preload=1769472000000
+    old_preload=1759133000000
+  Value differs at items[33].endTime:
+    preload=1769474400000
+    old_preload=1759136600000
+  Key 'items[33].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[33].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[34].guestName:
+    preload="Camp"
+    old_preload="Amazon"
+  Value differs at items[34].visitDate:
+    preload=1769533200000
+    old_preload=1759222420069
+  Key 'items[34].numberOfGuests' missing in old_preload. Value in preload: 1
+  Value differs at items[34].startTime:
+    preload=1769533200000
+    old_preload=1759223000000
+  Value differs at items[34].endTime:
+    preload=1769616000000
+    old_preload=1759224800000
+  Value differs at items[34].contentLanguage:
+    preload="enUS"
+    old_preload="zhCN"
+  Key 'items[34].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[34].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[35].guestName:
+    preload="Cool"
+    old_preload="Google"
+  Value differs at items[35].visitDate:
+    preload=1769619600000
+    old_preload=1759308820069
+  Key 'items[35].numberOfGuests' missing in old_preload. Value in preload: 4
+  Value differs at items[35].startTime:
+    preload=1769691600000
+    old_preload=1759303000000
+  Value differs at items[35].endTime:
+    preload=1769694000000
+    old_preload=1759306600000
+  Value differs at items[35].contentLanguage:
+    preload="enUS"
+    old_preload="zhCN"
+  Key 'items[35].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[35].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[36].guestName:
+    preload="Clog"
+    old_preload="Alibaba"
+  Value differs at items[36].visitDate:
+    preload=1769706000000
+    old_preload=1759395220069
+  Key 'items[36].numberOfGuests' missing in old_preload. Value in preload: 3
+  Value differs at items[36].startTime:
+    preload=1769734800000
+    old_preload=1759393000000
+  Value differs at items[36].endTime:
+    preload=1769737200000
+    old_preload=1759394800000
+  Value differs at items[36].contentLanguage:
+    preload="enUS"
+    old_preload="zhCN"
+  Key 'items[36].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[36].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[37].guestName:
+    preload="Camera"
+    old_preload="Bytedance"
+  Value differs at items[37].visitDate:
+    preload=1769792400000
+    old_preload=1759481620069
+  Key 'items[37].numberOfGuests' missing in old_preload. Value in preload: 1
+  Value differs at items[37].startTime:
+    preload=1769860500000
+    old_preload=1759483000000
+  Value differs at items[37].endTime:
+    preload=1769862900000
+    old_preload=1759486600000
+  Value differs at items[37].contentLanguage:
+    preload="enUS"
+    old_preload="zhCN"
+  Key 'items[37].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[37].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[38].guestName:
+    preload="Chad"
+    old_preload="Facebook"
+  Value differs at items[38].visitDate:
+    preload=1769878800000
+    old_preload=1759568020069
+  Key 'items[38].numberOfGuests' missing in old_preload. Value in preload: 6
+  Value differs at items[38].startTime:
+    preload=1769931300000
+    old_preload=1759563000000
+  Value differs at items[38].endTime:
+    preload=1769933700000
+    old_preload=1759564800000
+  Value differs at items[38].contentLanguage:
+    preload="enUS"
+    old_preload="zhCN"
+  Key 'items[38].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[38].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Value differs at items[39].guestName:
+    preload="Decha"
+    old_preload="Tencent"
+  Value differs at items[39].visitDate:
+    preload=1769965200000
+    old_preload=1759654420069
+  Key 'items[39].numberOfGuests' missing in old_preload. Value in preload: 1
+  Value differs at items[39].startTime:
+    preload=1770011100000
+    old_preload=1759653000000
+  Value differs at items[39].endTime:
+    preload=1770013500000
+    old_preload=1759656600000
+  Value differs at items[39].contentLanguage:
+    preload="enUS"
+    old_preload="zhCN"
+  Key 'items[39].author' missing in old_preload. Value in preload: "portalUsers://admin"
+  Key 'items[39].updator' missing in old_preload. Value in preload: "portalUsers://admin"
+  Extra item in preload at items[40]: {"guestName":"Nidnoy","visitDate":1767718800000,"numberOfGuests":2,"startTime":1767766800000,"endTime":1767769200000,"contentLanguage":"enUS","author":"portalUsers://user1","updator":"portalUsers://user1"}
+  Extra item in preload at items[41]: {"guestName":"Jaturon","visitDate":1767805200000,"numberOfGuests":2,"startTime":1767851100000,"endTime":1767853500000,"contentLanguage":"enUS","author":"portalUsers://user1","updator":"portalUsers://user1"}
+  Extra item in preload at items[42]: {"guestName":"Kasem","visitDate":1767891600000,"numberOfGuests":1,"startTime":1767929400000,"endTime":1767931800000,"contentLanguage":"enUS","author":"portalUsers://user1","updator":"portalUsers://user1"}
+  Extra item in preload at items[43]: {"guestName":"Kittisak","visitDate":1767891600000,"numberOfGuests":6,"startTime":1767938700000,"endTime":1767941100000,"contentLanguage":"enUS","author":"portalUsers://user1","updator":"portalUsers://user1"}
+  Extra item in preload at items[44]: {"guestName":"Pakorn","visitDate":1767978000000,"numberOfGuests":2,"startTime":1768018200000,"endTime":1768020600000,"contentLanguage":"enUS","author":"portalUsers://user1","updator":"portalUsers://user1"}
+  Extra item in preload at items[45]: {"guestName":"Niran","visitDate":1767978000000,"numberOfGuests":3,"startTime":1768034700000,"endTime":1768037100000,"contentLanguage":"enUS","author":"portalUsers://user1","updator":"portalUsers://user1"}
+  Extra item in preload at items[46]: {"guestName":"Omen","visitDate":1768150800000,"numberOfGuests":2,"startTime":1768204500000,"endTime":1768206900000,"contentLanguage":"enUS","author":"portalUsers://user1","updator":"portalUsers://admin"}
+  Extra item in preload at items[47]: {"guestName":"Bazinga","visitDate":1768150800000,"numberOfGuests":4,"startTime":1768190700000,"endTime":1768193100000,"contentLanguage":"enUS","author":"portalUsers://user1","updator":"portalUsers://admin"}
+  Extra item in preload at items[48]: {"guestName":"Noble","visitDate":1768150800000,"numberOfGuests":3,"startTime":1768195200000,"endTime":1768197900000,"contentLanguage":"zhCN","author":"portalUsers://user1","updator":"portalUsers://admin"}
+  Extra item in preload at items[49]: {"guestName":"LED","visitDate":1768150800000,"numberOfGuests":3,"startTime":1768198200000,"endTime":1768200600000,"contentLanguage":"enUS","author":"portalUsers://user1","updator":"portalUsers://user1"}
+  Extra item in preload at items[50]: {"guestName":"Amy","visitDate":1768150800000,"numberOfGuests":2,"startTime":1768208700000,"endTime":1768211100000,"contentLanguage":"enUS","author":"portalUsers://user1","updator":"portalUsers://admin"}
+  Extra item in preload at items[51]: {"guestName":"Ananda","visitDate":1768150800000,"numberOfGuests":2,"startTime":1768201200000,"endTime":1768203600000,"contentLanguage":"zhCN","author":"portalUsers://user1","updator":"portalUsers://user1"}
+  Extra item in preload at items[52]: {"guestName":"Adam","visitDate":1768150800000,"numberOfGuests":2,"startTime":1768219200000,"endTime":1768221600000,"contentLanguage":"zhCN","author":"portalUsers://user1","updator":"portalUsers://admin"}
+  Extra item in preload at items[53]: {"guestName":"Andy","visitDate":1768150800000,"numberOfGuests":2,"startTime":1768222500000,"endTime":1768224900000,"contentLanguage":"enUS","author":"portalUsers://user1","updator":"portalUsers://admin"}
+  Extra item in preload at items[54]: {"guestName":"Andrew","visitDate":1768323600000,"numberOfGuests":2,"startTime":1768374300000,"endTime":1768376700000,"contentLanguage":"zhCN","author":"portalUsers://user1","updator":"portalUsers://admin"}
+  Extra item in preload at items[55]: {"guestName":"Anto","visitDate":1768410000000,"numberOfGuests":6,"startTime":1768447200000,"endTime":1768449600000,"contentLanguage":"enUS","author":"portalUsers://user1","updator":"portalUsers://admin"}
+  Extra item in preload at items[56]: {"guestName":"Apple","visitDate":1768496400000,"numberOfGuests":2,"startTime":1768542900000,"endTime":1768545300000,"contentLanguage":"zhCN","author":"portalUsers://user1","updator":"portalUsers://admin"}
+  Extra item in preload at items[57]: {"guestName":"Thaksin","visitDate":1768582800000,"numberOfGuests":3,"startTime":1768624500000,"endTime":1768626900000,"contentLanguage":"enUS","author":"portalUsers://user1","updator":"portalUsers://admin"}
+  Extra item in preload at items[58]: {"guestName":"Bob","visitDate":1768755600000,"numberOfGuests":2,"startTime":1768820700000,"endTime":1768823100000,"contentLanguage":"enUS","author":"portalUsers://user1","updator":"portalUsers://admin"}
+  Extra item in preload at items[59]: {"guestName":"Beam","visitDate":1768842000000,"numberOfGuests":3,"startTime":1768880400000,"endTime":1768882800000,"contentLanguage":"enUS","author":"portalUsers://user1","updator":"portalUsers://admin"}
+  Extra item in preload at items[60]: {"guestName":"Boo","visitDate":1768928400000,"numberOfGuests":2,"startTime":1768971000000,"endTime":1768973400000,"contentLanguage":"enUS","author":"portalUsers://user1","updator":"portalUsers://admin"}
+  Extra item in preload at items[61]: {"guestName":"Bird","visitDate":1769014800000,"numberOfGuests":4,"startTime":1769076300000,"endTime":1769078700000,"contentLanguage":"zhCN","author":"portalUsers://user1","updator":"portalUsers://admin"}
+  Extra item in preload at items[62]: {"guestName":"Ban","visitDate":1769101200000,"numberOfGuests":2,"startTime":1769136900000,"endTime":1769139300000,"contentLanguage":"zhCN","author":"portalUsers://user1","updator":"portalUsers://admin"}
+  Extra item in preload at items[63]: {"guestName":"Bud","visitDate":1769187600000,"numberOfGuests":4,"startTime":1769229600000,"endTime":1769232000000,"contentLanguage":"zhCN","author":"portalUsers://user1","updator":"portalUsers://admin"}
+  Extra item in preload at items[64]: {"guestName":"Bean","visitDate":1769274000000,"numberOfGuests":6,"startTime":1769313300000,"endTime":1769315700000,"contentLanguage":"zhCN","author":"portalUsers://user1","updator":"portalUsers://admin"}
+  Extra item in preload at items[65]: {"guestName":"Pimchan","visitDate":1767978000000,"numberOfGuests":5,"startTime":1768024800000,"endTime":1768027200000,"contentLanguage":"enUS","author":"portalUsers://peerada","updator":"portalUsers://peerada"}
+  Extra item in preload at items[66]: {"guestName":"Worrawut","visitDate":1768064400000,"numberOfGuests":5,"startTime":1768107600000,"endTime":1768110000000,"contentLanguage":"enUS","author":"portalUsers://tipsuda","updator":"portalUsers://tipsuda"}
+  Extra item in preload at items[67]: {"guestName":"Moon","visitDate":1767978000000,"numberOfGuests":4,"startTime":1768027200000,"endTime":1768029600000,"contentLanguage":"enUS","author":"portalUsers://tipsuda","updator":"portalUsers://tipsuda"}
+  Extra item in preload at items[68]: {"guestName":"Thjjefv elf felkmv","visitDate":1767978000000,"numberOfGuests":1,"startTime":1768014000000,"endTime":1768016400000,"contentLanguage":"enUS","author":"portalUsers://tipsuda","updator":"portalUsers://tipsuda"}
+  Extra item in preload at items[69]: {"guestName":"Test de nom long","visitDate":1767978000000,"numberOfGuests":5,"startTime":1768029600000,"endTime":1768032000000,"contentLanguage":"enUS","author":"portalUsers://napat","updator":"portalUsers://napat"}
+  Extra item in preload at items[70]: {"guestName":"Veera","visitDate":1767805200000,"numberOfGuests":4,"startTime":1767841200000,"endTime":1767843600000,"contentLanguage":"enUS","author":"portalUsers://napat","updator":"portalUsers://napat"}
+  Extra item in preload at items[71]: {"guestName":"Issaree","visitDate":1767805200000,"numberOfGuests":3,"startTime":1767848400000,"endTime":1767850800000,"contentLanguage":"enUS","author":"portalUsers://napat","updator":"portalUsers://napat"}
+  Extra item in preload at items[72]: {"guestName":"Udom","visitDate":1767718800000,"numberOfGuests":3,"startTime":1767754800000,"endTime":1767764400000,"contentLanguage":"enUS","author":"portalUsers://napat","updator":"portalUsers://napat"}
+  Extra item in preload at items[73]: {"guestName":"Ieurhf editing ","visitDate":1768064400000,"numberOfGuests":4,"startTime":1768122000000,"endTime":1768124400000,"contentLanguage":"enUS","author":"portalUsers://napat","updator":"portalUsers://napat"}
+  Extra item in preload at items[74]: {"guestName":"พี่ไม่มีใคร","visitDate":1768237200000,"numberOfGuests":4,"startTime":1768273200000,"endTime":1768279200000,"contentLanguage":"enUS","author":"portalUsers://napat","updator":"portalUsers://admin"}
+  Extra item in preload at items[75]: {"guestName":"Indy Irene ","visitDate":1768410000000,"numberOfGuests":2,"startTime":1768464000000,"endTime":1768467000000,"contentLanguage":"enUS","author":"portalUsers://napat","updator":"portalUsers://napat"}
+  Extra item in preload at items[76]: {"guestName":"Jicewnc erifun","visitDate":1768410000000,"numberOfGuests":1,"startTime":1768471200000,"endTime":1768473600000,"contentLanguage":"enUS","author":"portalUsers://napat","updator":"portalUsers://napat"}
+  Extra item in preload at items[77]: {"guestName":"Malee","visitDate":1768496400000,"numberOfGuests":3,"startTime":1768532400000,"endTime":1768537200000,"contentLanguage":"enUS","author":"portalUsers://napat","updator":"portalUsers://napat"}
+  Extra item in preload at items[78]: {"guestName":"Ihwdbcuhbwec ","visitDate":1770829200000,"numberOfGuests":1,"startTime":1770876000000,"endTime":1770878400000,"contentLanguage":"enUS","author":"portalUsers://napat","updator":"portalUsers://napat"}
+  Extra item in preload at items[79]: {"guestName":"Patchara","visitDate":1770570000000,"numberOfGuests":1,"startTime":1770613200000,"endTime":1770615600000,"contentLanguage":"enUS","author":"portalUsers://napat","updator":"portalUsers://napat"}
+  Extra item in preload at items[80]: {"guestName":"Kjsdbckjbwecnji3ce ","visitDate":1771002000000,"numberOfGuests":1,"startTime":1771048800000,"endTime":1771051200000,"contentLanguage":"enUS","author":"portalUsers://napat","updator":"portalUsers://napat"}
+  Extra item in preload at items[81]: {"guestName":"Tida","visitDate":1770829200000,"numberOfGuests":1,"startTime":1770890400000,"endTime":1770896400000,"contentLanguage":"enUS","author":"portalUsers://napat","updator":"portalUsers://napat"}
+  Extra item in preload at items[82]: {"guestName":"Rev ieufijernf ","visitDate":1768582800000,"numberOfGuests":4,"startTime":1768633200000,"endTime":1768637400000,"contentLanguage":"enUS","author":"portalUsers://napat","updator":"portalUsers://admin"}
+  Extra item in preload at items[83]: {"guestName":"Jhnrfijvnerv","visitDate":1768064400000,"numberOfGuests":1,"startTime":1768096800000,"endTime":1768099200000,"contentLanguage":"enUS","author":"mk94gnsymk2sc179y11pnjcu","updator":"mk94gnsymk2sc179y11pnjcu"}
+  Extra item in preload at items[84]: {"guestName":"Jortijgotirjg","visitDate":1768582800000,"numberOfGuests":1,"startTime":1768644000000,"endTime":1768646400000,"contentLanguage":"enUS","author":"mk94gnsymk2sc179y11pnjcu","updator":"mk94gnsymk2sc179y11pnjcu"}
+  Extra item in preload at items[85]: {"guestName":"Nedicnuieruncre","visitDate":1768582800000,"numberOfGuests":1,"startTime":1768651200000,"endTime":1768653600000,"contentLanguage":"enUS","author":"mk94gnsymk2sc179y11pnjcu","updator":"mk94gnsymk2sc179y11pnjcu"}
+  Extra item in preload at items[86]: {"guestName":"Uherbvirejnc","visitDate":1768582800000,"numberOfGuests":1,"startTime":1768654800000,"endTime":1768657200000,"contentLanguage":"enUS","author":"mk94gnsymk2sc179y11pnjcu","updator":"mk94gnsymk2sc179y11pnjcu"}
+  Extra item in preload at items[87]: {"guestName":"Goodman","visitDate":1768237200000,"numberOfGuests":1,"startTime":1768269600000,"endTime":1768272000000,"contentLanguage":"zhCN","author":"portalUsers://admin","updator":"portalUsers://admin"}
+  Extra item in preload at items[88]: {"guestName":"CoCo","visitDate":1768323600000,"numberOfGuests":1,"startTime":1768381200000,"endTime":1768387200000,"contentLanguage":"enUS","author":"portalUsers://admin","updator":"portalUsers://admin"}
+  Extra item in preload at items[89]: {"guestName":"Blow","visitDate":1769014800000,"numberOfGuests":1,"startTime":1769049600000,"endTime":1769052000000,"contentLanguage":"enUS","author":"portalUsers://admin","updator":"portalUsers://admin"}
+  Extra item in preload at items[90]: {"guestName":"Berserk","visitDate":1769187600000,"numberOfGuests":1,"startTime":1769266800000,"endTime":1769269200000,"contentLanguage":"zhCN","author":"portalUsers://admin","updator":"portalUsers://admin"}
+  Extra item in preload at items[91]: {"guestName":"Cindy","visitDate":1769360400000,"numberOfGuests":1,"startTime":1769374800000,"endTime":1769377200000,"contentLanguage":"enUS","author":"portalUsers://admin","updator":"portalUsers://admin"}
+  Extra item in preload at items[92]: {"guestName":"Char","visitDate":1769619600000,"numberOfGuests":1,"startTime":1769652000000,"endTime":1769654400000,"contentLanguage":"enUS","author":"portalUsers://admin","updator":"portalUsers://admin"}
+  Extra item in preload at items[93]: {"guestName":"Tim","visitDate":1768323600000,"numberOfGuests":1,"startTime":1768366800000,"endTime":1768369200000,"contentLanguage":"enUS","author":"portalUsers://user1","updator":"portalUsers://user1"}
+  Extra item in preload at items[94]: {"guestName":"Saliz","visitDate":1768237200000,"numberOfGuests":6,"startTime":1768294800000,"endTime":1768297200000,"contentLanguage":"zhCN","author":"portalUsers://admin","updator":"portalUsers://admin"}
+  Extra item in preload at items[95]: {"guestName":"Bill","visitDate":1768669200000,"numberOfGuests":1,"startTime":1768730400000,"endTime":1768732800000,"contentLanguage":"enUS","author":"portalUsers://admin","updator":"portalUsers://admin"}
+  Extra item in preload at items[96]: {"guestName":"ค่ะเดี๋ยวพี่ไปส่งี","visitDate":1768237200000,"numberOfGuests":1,"startTime":1768280400000,"endTime":1768282800000,"contentLanguage":"enUS","author":"portalUsers://admin","updator":"portalUsers://admin"}
+  Extra item in preload at items[97]: {"guestName":"Thanat","visitDate":1769187600000,"numberOfGuests":1,"startTime":1769241600000,"endTime":1769244000000,"contentLanguage":"enUS","author":"portalUsers://admin","updator":"portalUsers://admin"}
+  Extra item in preload at items[98]: {"guestName":"ค่าใช้จ่าที่ะซื้อซื้อให้ไหลใฝ่ะด้วยึ","visitDate":1768669200000,"numberOfGuests":4,"startTime":1768719600000,"endTime":1768722000000,"contentLanguage":"enUS","author":"portalUsers://admin","updator":"portalUsers://admin"}
+  Extra item in preload at items[99]: {"guestName":"ะด้วยซ้ำ","visitDate":1768323600000,"numberOfGuests":1,"startTime":1768359600000,"endTime":1768362000000,"contentLanguage":"enUS","author":"portalUsers://admin","updator":"portalUsers://admin"}
+  Extra item in preload at items[100]: {"guestName":"Mika ","visitDate":1768237200000,"numberOfGuests":5,"startTime":1768291200000,"endTime":1768293600000,"contentLanguage":"enUS","author":"portalUsers://user1","updator":"portalUsers://user1"}
+  Extra item in preload at items[101]: {"guestName":"Pierre Paul","visitDate":1768496400000,"numberOfGuests":1,"startTime":1768546800000,"endTime":1768549200000,"contentLanguage":"enUS","author":"portalUsers://alisa","updator":"portalUsers://alisa"}
+  Extra item in preload at items[102]: {"guestName":"Test of guest","visitDate":1768496400000,"numberOfGuests":5,"startTime":1768550400000,"endTime":1768553400000,"contentLanguage":"enUS","author":"portalUsers://alisa","updator":"portalUsers://alisa"}
+--- END DIFF ---
+
+
+--- DIFF for gallery.json ---
+  Type mismatch at items[id=film-the-project-overview].disclaimer:
+    preload=object
+    old_preload=boolean
+--- END DIFF ---
+
+
+--- DIFF for hierarchical_listings.json ---
+--- END DIFF ---
+
+
+--- DIFF for lights.json ---
+  Value differs at items[id=lights-the-upper-house-gallery].oscMessages[0].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-upper-house-standard-provision].oscMessages[0].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-wireless-place-gallery].oscMessages[1].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-upper-house-services].oscMessages[0].state:
+    preload=true
+    old_preload=false
+  Array length differs at items[id=lights-the-wireless-place-parking].oscMessages:
+    preload=7
+    old_preload=6
+  Extra item in preload at items[id=lights-the-wireless-place-parking].oscMessages[6]: {"message":"/wr/wr-floor-3/wr-parking","state":true,"_type":"osc_messages"}
+  Value differs at items[id=lights-the-project-lumphini-park].oscMessages[0].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-benjakitti-park].oscMessages[1].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-tower-comparison].oscMessages[0].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-tower-comparison].oscMessages[1].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-tower-comparison].oscMessages[2].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-tower-comparison].oscMessages[3].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-tower-comparison].oscMessages[4].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-tower-comparison].oscMessages[5].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-the-upper-house-brand].oscMessages[0].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-the-upper-house-brand].oscMessages[1].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-the-upper-house-brand].oscMessages[2].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-the-upper-house-brand].oscMessages[3].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-the-upper-house-brand].oscMessages[4].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-the-upper-house-brand].oscMessages[5].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-the-wireless-residences-by-upper-house-selling-points].oscMessages[1].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-wireless-place-sustainability].oscMessages[1].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-upper-house-apartment-design].oscMessages[0].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-wireless-place-introduction].oscMessages[1].state:
+    preload=true
+    old_preload=false
+  Array length differs at items[id=lights-the-wireless-place-security-and-access].oscMessages:
+    preload=8
+    old_preload=6
+  Value differs at items[id=lights-the-wireless-place-security-and-access].oscMessages[2].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-wireless-place-security-and-access].oscMessages[4].state:
+    preload=true
+    old_preload=false
+  Extra item in preload at items[id=lights-the-wireless-place-security-and-access].oscMessages[6]: {"message":"/wr/wr-floor-1","_type":"osc_messages"}
+  Extra item in preload at items[id=lights-the-wireless-place-security-and-access].oscMessages[7]: {"message":"/wr/wr-lobby","_type":"osc_messages","state":true}
+  Array length differs at items[id=lights-the-wireless-place-amenity-program].oscMessages:
+    preload=9
+    old_preload=6
+  Value differs at items[id=lights-the-wireless-place-amenity-program].oscMessages[2].state:
+    preload=true
+    old_preload=false
+  Extra item in preload at items[id=lights-the-wireless-place-amenity-program].oscMessages[6]: {"message":"/wr/wr-floor-1/wr-lobby","state":true,"_type":"osc_messages"}
+  Extra item in preload at items[id=lights-the-wireless-place-amenity-program].oscMessages[7]: {"message":"/wr/wr-floor-11/wr-amenity-19","state":true,"_type":"osc_messages"}
+  Extra item in preload at items[id=lights-the-wireless-place-amenity-program].oscMessages[8]: {"message":"/wr/wr-floor-43/wr-amenity-43","state":true,"_type":"osc_messages"}
+  Value differs at items[id=lights-the-project-upper-house-residences-bangkok-selling-points].oscMessages[0].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-wireless-place-services].oscMessages[1].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-upper-house-selling-points-summary].oscMessages[0].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-wireless-place-selling-point-summary].oscMessages[1].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-wireless-place-apartment-design].oscMessages[1].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-developers].oscMessages[0].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-developers].oscMessages[1].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-developers].oscMessages[2].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-developers].oscMessages[3].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-developers].oscMessages[4].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-developers].oscMessages[5].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-masterplan].oscMessages[0].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-masterplan].oscMessages[1].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-masterplan].oscMessages[2].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-masterplan].oscMessages[3].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-masterplan].oscMessages[4].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-masterplan].oscMessages[5].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-architects].oscMessages[0].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-architects].oscMessages[1].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-architects].oscMessages[2].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-architects].oscMessages[3].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-architects].oscMessages[4].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-project-architects].oscMessages[5].state:
+    preload=true
+    old_preload=false
+  Array length differs at items[id=lights-the-upper-house-security-and-access].oscMessages:
+    preload=8
+    old_preload=6
+  Value differs at items[id=lights-the-upper-house-security-and-access].oscMessages[2].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-upper-house-security-and-access].oscMessages[3].state:
+    preload=true
+    old_preload=false
+  Extra item in preload at items[id=lights-the-upper-house-security-and-access].oscMessages[6]: {"message":"/uh/uh-floor-1","_type":"osc_messages"}
+  Extra item in preload at items[id=lights-the-upper-house-security-and-access].oscMessages[7]: {"message":"/uh/uh-floor-1/uh-lobby","_type":"osc_messages","state":true}
+  Value differs at items[id=lights-the-wireless-place-design-concept].oscMessages[1].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-upper-house-design-concept].oscMessages[0].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-upper-house-sustainability].oscMessages[0].state:
+    preload=true
+    old_preload=false
+  Value differs at items[id=lights-the-wireless-place-standard-provision].oscMessages[1].state:
+    preload=true
+    old_preload=false
+  Array length differs at items[id=lights-the-upper-house-amenity-program].oscMessages:
+    preload=10
+    old_preload=6
+  Value differs at items[id=lights-the-upper-house-amenity-program].oscMessages[2].state:
+    preload=true
+    old_preload=false
+  Extra item in preload at items[id=lights-the-upper-house-amenity-program].oscMessages[6]: {"message":"/uh/uh-floor-43/uh-amenities","state":true,"_type":"osc_messages"}
+  Extra item in preload at items[id=lights-the-upper-house-amenity-program].oscMessages[7]: {"message":"/uh/uh-floor-44/uh-amenities","state":true,"_type":"osc_messages"}
+  Extra item in preload at items[id=lights-the-upper-house-amenity-program].oscMessages[8]: {"message":"/uh/uh-floor-45/uh-amenities","state":true,"_type":"osc_messages"}
+  Extra item in preload at items[id=lights-the-upper-house-amenity-program].oscMessages[9]: {"message":"/uh/uh-floor-1/uh-lobby","_type":"osc_messages","state":true}
+  Value differs at items[id=lights-the-upper-house-introduction].oscMessages[0].state:
+    preload=true
+    old_preload=false
+  Extra item in preload at items[id=lights-uh-qtvr]: {"id":"lights-uh-qtvr","linkedPage":"uh-qtvr","oscMessages":[{"message":"/uh/uh-all","state":true,"_type":"osc_messages"},{"message":"/wr/wr-all","state":false,"_type":"osc_messages"},{"message":"/outside/amenity-building","state":false,"_type":"osc_messages"},{"message":"/outside/uh-landscape","_type":"osc_messages"},{"message":"/outside/wr-landscape","_type":"osc_messages"},{"message":"/outside/landscape-lumphini","_type":"osc_messages"}]}
+  Extra item in preload at items[id=lights-wr-qtvr]: {"id":"lights-wr-qtvr","linkedPage":"wr-qtvr","oscMessages":[{"message":"/uh/uh-all","_type":"osc_messages"},{"message":"/wr/wr-all","_type":"osc_messages","state":true},{"message":"/outside/amenity-building","_type":"osc_messages"},{"message":"/outside/uh-landscape","_type":"osc_messages"},{"message":"/outside/wr-landscape","_type":"osc_messages"},{"message":"/outside/landscape-lumphini","_type":"osc_messages"}]}
+  Extra item in old_preload at items[id=lights-landing-page]: {"id":"lights-landing-page","linkedPage":"landing-page","oscMessages":[{"_type":"osc_messages","message":"/uh/uh-all","state":false},{"_type":"osc_messages","message":"/wr/wr-all","state":false},{"_type":"osc_messages","message":"/outside/amenity-building","state":false},{"_type":"osc_messages","message":"/outside/uh-landscape","state":false},{"_type":"osc_messages","message":"/outside/wr-landscape","state":false},{"_type":"osc_messages","message":"/outside/landscape-lumphini","state":false}]}
+--- END DIFF ---
+
+
+--- DIFF for menu.json ---
+  Value differs at items[id=menu].theProject.pages[key=the-project-wireless-road].name.zhCN:
+    preload="Wireless Road"
+    old_preload="无线路"
+  Value differs at items[id=menu].theProject.pages[key=the-project-location-map].name.zhCN:
+    preload="Location Map"
+    old_preload="位置地图"
+--- END DIFF ---
+
+
+--- DIFF for notes.json ---
+  Value differs at items[id=note-team-kcs-and-associates-company-limited].content:
+    preload="<p></p>"
+    old_preload="<h1>Nulla Vitae Elit</h1><h2>Libero A Pharetra</h2><h3>Augue Porta</h3><p><strong>Nulla</strong> vitae elit libero, a pharetra augue porta sem malesuada magna mollis euismod.</p><ul><li>Maecenas faucibus</li><li>Morbi leo risus</li></ul><ol><li>Porta ac</li><li>Consectetur ac</li></ol><blockquote>\"Nullam quis risus eget urna mollis ornare vel eu leo.\"</blockquote>"
+  Value differs at items[id=note-the-wireless-place-design-concept].content:
+    preload="<p></p>"
+    old_preload="<h3>Living room & dining - 2B</h3><p>นี้เป็นภาพ Living & Dining Area ของ 2BR ของ TWR นะคะ </p><p>ตู้ครัวเรามีบิวท์ให้ของ Molteni & C เป็น Italian Brand นะคะ เครื่องใช้ไฟฟ้าของ Miele ตู้เย็น Liebherr ค่ะ ภายในห้องเพดานสูง 3 เมตรนะคะ</p><h3>Master bedroom - 2B</h3><p>อันนี้เป็นภาพ Master bedroom ของ 2BR ค่ะ</p><h3>Master bathroom - 2B</h3><p>ห้องน้ำเราตกแต่งให้สวยงาม พื้นผนังเป็น Tile นะคะ faucet & shower ของ Gessi เป็น Italian Brand และอ่างอาบน้ำ Apaiser เช่นกันค่ะ ของ Australia</p><h3>Bedroom 2 - 2B</h3><p>ห้องนอนท่าสอง สามารถ turn เป็นห้องนอนน้องๆได้นะคะ</p><h3>Master bedroom - 3B</h3><p>นี้เป็น Master Bedroom ของ 3 ห้องนอนนะคะ</p><h3>Bedroom 2 - 3B</h3><p>ห้องนอนที่สอง</p><h3>Living room & dining - 3B</h3><p>อันนี้เป็นภาพ Living & Dining Area ของ 3 ห้องนอนนะคะ</p><h3>Bedroom 3 - 3B</h3><p>ห้องนอนที่สาม สามารถ turn เป็นน study room ได้นะคะ ลูกค้าบางท่านอาจจะมองหายูนิตขนาดใหญ่ แต่อยากได้เพียง 2 ห้องนอน ก็สามารถพิจารณายูนิต 3 ห้องนอนได้นะคะ</p><h3>Private lift lobby - 3B</h3><p>TWR จะมียูนิตที่มี Private Lift Lobby นะคะ และอีกส่วนนึงจะเป็น shared lobby แต่สำหรับยูนิตแชร์ จะแชร์เพียง 2 ยูนิตเท่านั้น ซึ่งก็ยังถือว่า private มากๆอยู่ค่ะ และทุก core lift มีลิฟท์ถึง 3 ตัวด้วยกัน</p><p>สำหรับยูนิตที่มี Private Lift Lobby จะเป็น type 2 bedroom Large ขนาดประมาน 150 ตารางมตรขึ้นไปค่ะ</p>"
+  Value differs at items[id=note-the-upper-house-gallery].content:
+    preload="<p></p>"
+    old_preload="<h1>The Upper House Gallery</h1><h2>Gallery Overview</h2><p><strong>Discover</strong> the beauty of The Upper House through our curated gallery. <b>Experience</b> luxury living in every image.</p><ul><li>Modern design</li><li>Exclusive amenities</li></ul><ol><li>Step inside</li><li>Enjoy the view</li></ol><blockquote>\"A picture is worth a thousand words.\"</blockquote>"
+  Value differs at items[id=note-the-wireless-place-parking].content:
+    preload="<p></p>"
+    old_preload="<h1>Maecenas Faucibus Morbi</h1><h2>Leo Risus</h2><h3>Porta Ac</h3><p><strong>Maecenas</strong> faucibus morbi leo risus, porta ac consectetur ac, <b>vestibulum</b> at eros.</p><ul><li>Donec ullamcorper</li><li>Nulla vitae</li></ul><ol><li>Elit libero</li><li>Pharetra augue</li></ol><blockquote>\"Vivamus sagittis lacus vel augue laoreet rutrum faucibus.\"</blockquote>"
+  Value differs at items[id=note-the-project-developers].content:
+    preload="<p>UHR และ TWR พัฒนาโดยบริษัท City Dynamic จำกัด เป็นบริษัทซึ่งเกิดจากความร่วมมือระหว่างบริษัท Swire Properties และ City Realty </p><p>ทาง Swire Properties เองมี Expertise ในการพัฒนาอสังหาริมทรัพย์ระดับ Luxury มามากมายหลายโครงการนะคะ อย่างในโซน Asia Pacific เองก็จะมีโรงแรม Upper House ที่ติดอันดับ top ten การประกาศ The World’s 50 Best Hotels ประจำปี 2025 แบรนด์ Upper House จะเด่นทางด้านบุคลากร และการบริการที่ tailored มีความ Unique แบบ one of a kind มอบประสบการณ์ที่ Seamless แก่ลูกค้า นอกจาก World’s 50 Best Hotel แล้ว Upper House ยังได้รับรางวัลอื่นๆอีกมากมายตลอดมา</p><p>และทาง City Dynamic ได้นำ Upper House นำการบริการที่เป็นเลิศมาสู่กรุงเทพ และมาเป็นแบรนด์ของโครงการค่ะ ด้วย DNA การบริการที่ ใส่ใจและปรับให้เหมาะกับลูกค้าแต่ละท่าน (tailored service) เรานำประสบการณ์การให้บริการระดับโรงแรม มาสู่การอยู่อาศัยใน Residence ของเราเพื่อให้ผู้อาศัยได้ใช้ชีวิตอย่าง Luxury พร้อมการดูแลและบริการในแบบโรงแรมค่ะ</p><p>นอกจาก Upper House แล้ว Swire Properties ยังได้พัฒนาโครงการที่เป็น Mega Project ซึ่งใหญ่มากๆมาแล้วหลายโครงการ อาทิเช่น</p><ul><li><p>Taikoo Place ซึ่งใหญ่มาก เหมือนเป็นเมืองเลยค่ะ มีโซน Residence 60 กว่าตึกสร้างในโซนเดียวกัน และติดกันเป็นโซน office ซึ่งเป็น premium business district ที่รวม Office Building ร้านอาหาร retail และพื้นที่ศิลปะไว้ในที่เดียว ออกแบบอย่างใส่ใจสิ่งแวดล้อม ได้รับการรับรองจาก LEED (gold) และ WELL (Platinum) ด้วยค่ะ</p></li><li><p>Pacific Place ที่เป็นโครงการ Mixed-Use ชั้นนำที่รวม luxury shopping centre, ร้านอาหารและ โรงแรมห้าดาว และ grade-A office building ไว้ด้วยกัน จะอยู่ในโซน Central ฝั่งฮ่องกงค่ะ</p></li></ul><p>ทางฝั่ง บริษัท ซิตี้เรียลตี้ จำกัด (CRC) Since 1987 ก่อตั้งมากว่า 30 แล้ว เป็นหนึ่งใน Developer ชั้นนำของไทย โดยมีตระกูลโสภณพนิช ผู้ก่อตั้งธนาคารกรุงเทพถือหุ้นหลัก ภายใต้การบริหารของคุณชาลี โสภณพนิช CRC เป็นที่รู้จักในด้านการพัฒนาโครงการระยะยาวที่มีวิสัยทัศน์ มี Expertise ด้านธุรกิจ Hospitality โดยเฉพาะโปรเจคภายใต้แบรนด์ Chatrium ซึ่งเป็นที่รู้จักอย่างกว้างขวางในกลุ่มโรงแรมและ High-End Serviced Residences นอกจากนี้ยังมี office building และ international school อีกด้วยค่ะ ตัวอย่าง project reference:</p><ul><li><p>Chatrium Riverside – ที่ประกอบด้วย Chatrium Riverside Hotel &amp; Residences ที่เป็น serviced residence โซนริมน้ำ</p></li><li><p>EmDistrict (พร้อมพงษ์) – โครงการมิกซ์ยูสระดับบุกเบิก ประกอบด้วย Emporium, EmQuartier, EmSphere และ Emporium Suites by Chatrium เป็นความร่วมมือ 30 ปี กับเดอะมอลล์กรุ๊ป ที่เป็นมาตรฐานใหม่ของไลฟ์สไตล์และรีเทลระดับลักชัวรี่</p></li><li><p>Shrewsbury International School</p></li><li><p>Office Building อย่าง Emporium Tower, Sathorn City Tower และ Asia Centre</p></li></ul>"
+    old_preload="<p>UHR และ TWR พัฒนาโดยบริษัท City Dynamic จำกัด เป็นบริษัทซึ่งเกิดจากความร่วมมือระหว่างบริษัท Swire Properties และ City Realty ทาง Swire Properties เองมี Expertise ในการพัฒนาอสังหาริมทรัพย์ระดับ Luxury มามากมายหลายโครงการนะคะ อย่างในโซน Asia Pacific เองก็จะมีโรงแรม Upper House ที่ติดอันดับ top ten การประกาศ The World’s 50 Best Hotels ประจำปี 2025 แบรนด์ Upper House จะเด่นทางด้านบุคลากร และการบริการที่ tailored มีความ Unique แบบ one of a kind มอบประสบการณ์ที่ Seamless แก่ลูกค้า นอกจาก World’s 50 Best Hotel แล้ว Upper House ยังได้รับรางวัลอื่นๆอีกมากมายตลอดมา</p><p>และทาง City Dynamic ได้นำ Upper House นำการบริการที่เป็นเลิศมาสู่กรุงเทพ และมาเป็นแบรนด์ของโครงการค่ะ ด้วย DNA การบริการที่ ใส่ใจและปรับให้เหมาะกับลูกค้าแต่ละท่าน (tailored service) เรานำประสบการณ์การให้บริการระดับโรงแรม มาสู่การอยู่อาศัยใน Residence ของเราเพื่อให้ผู้อาศัยได้ใช้ชีวิตอย่าง Luxury พร้อมการดูแลและบริการในแบบโรงแรมค่ะ</p><p>นอกจาก Upper House แล้ว Swire Properties ยังได้พัฒนาโครงการที่เป็น Mega Project ซึ่งใหญ่มากๆมาแล้วหลายโครงการ อาทิเช่น</p><ul><li>Taikoo Place ซึ่งใหญ่มาก เหมือนเป็นเมืองเลยค่ะ มีโซน Residence 60 กว่าตึกสร้างในโซนเดียวกัน และติดกันเป็นโซน office ซึ่งเป็น premium business district ที่รวม Office Building ร้านอาหาร retail และพื้นที่ศิลปะไว้ในที่เดียว ออกแบบอย่างใส่ใจสิ่งแวดล้อม ได้รับการรับรองจาก LEED (gold) และ WELL (Platinum) ด้วยค่ะ</li><li>Pacific Place ที่เป็นโครงการ Mixed-Use ชั้นนำที่รวม luxury shopping centre, ร้านอาหารและ โรงแรมห้าดาว และ grade-A office building ไว้ด้วยกัน จะอยู่ในโซน Central ฝั่งฮ่องกงค่ะ</li></ul><p>ทางฝั่ง บริษัท ซิตี้เรียลตี้ จำกัด (CRC) Since 1987 ก่อตั้งมากว่า 30 แล้ว เป็นหนึ่งใน Developer ชั้นนำของไทย โดยมีตระกูลโสภณพนิช ผู้ก่อตั้งธนาคารกรุงเทพถือหุ้นหลัก ภายใต้การบริหารของคุณชาลี โสภณพนิช CRC เป็นที่รู้จักในด้านการพัฒนาโครงการระยะยาวที่มีวิสัยทัศน์ มี Expertise ด้านธุรกิจ Hospitality โดยเฉพาะโปรเจคภายใต้แบรนด์ Chatrium ซึ่งเป็นที่รู้จักอย่างกว้างขวางในกลุ่มโรงแรมและ High-End Serviced Residences นอกจากนี้ยังมี office building และ international school อีกด้วยค่ะ ตัวอย่าง project reference:</p><ul><li>Chatrium Riverside – ที่ประกอบด้วย Chatrium Riverside Hotel & Residences ที่เป็น serviced residence โซนริมน้ำ</li><li>EmDistrict (พร้อมพงษ์) – โครงการมิกซ์ยูสระดับบุกเบิก ประกอบด้วย Emporium, EmQuartier, EmSphere และ Emporium Suites by Chatrium เป็นความร่วมมือ 30 ปี กับเดอะมอลล์กรุ๊ป ที่เป็นมาตรฐานใหม่ของไลฟ์สไตล์และรีเทลระดับลักชัวรี่</li><li>Shrewsbury International School</li><li>Office Building อย่าง Emporium Tower, Sathorn City Tower และ Asia Centre</li></ul>"
+  Value differs at items[id=note-the-wireless-place-gallery].content:
+    preload="<p></p>"
+    old_preload="<h1>Lorem Ipsum</h1><h2>Subheading Example</h2><h3>Section Title</h3><p>Lorem ipsum dolor sit amet, <strong>consectetur</strong> adipiscing elit. <b>Vivamus</b> lacinia odio vitae vestibulum.</p><ul><li>First unordered item</li><li>Second unordered item</li></ul><ol><li>First ordered item</li><li>Second ordered item</li></ol><blockquote>\"This is a sample blockquote for demonstration purposes.\"</blockquote>"
+  Value differs at items[id=note-the-wireless-place-apartment-design].content:
+    preload="<p><strong>Living room &amp; dining - 2B</strong><br>นี้เป็นภาพ Living &amp; Dining Area ของ 2BR ของ TWR นะคะ <br>ตู้ครัวเรามีบิวท์ให้ของ Molteni &amp; C เป็น Italian Brand นะคะ เครื่องใช้ไฟฟ้าของ Miele ตู้เย็น Liebherr ค่ะ ภายในห้องเพดานสูง 3 เมตรนะคะ</p><p></p><p><strong>Master bedroom - 2B</strong><br>อันนี้เป็นภาพ Master bedroom ของ 2BR ค่ะ</p><p></p><p><strong>Master bathroom - 2B</strong><br>ห้องน้ำเราตกแต่งให้สวยงาม พื้นผนังเป็น Tile นะคะ faucet &amp; shower ของ Gessi เป็น Italian Brand และอ่างอาบน้ำ Apaiser เช่นกันค่ะ ของ Australia</p><p></p><p><strong>Bedroom 2 - 2B</strong><br>ห้องนอนท่าสอง สามารถ turn เป็นห้องนอนน้องๆได้นะคะ</p><p></p><p><strong>Master bedroom - 3B</strong><br>นี้เป็น Master Bedroom ของ 3 ห้องนอนนะคะ</p><p></p><p><strong>Bedroom 2 - 3B</strong><br>ห้องนอนที่สอง</p><p></p><p><strong>Living room &amp; dining - 3B</strong><br>อันนี้เป็นภาพ Living &amp; Dining Area ของ 3 ห้องนอนนะคะ</p><p></p><p><strong>Bedroom 3 - 3B</strong><br>ห้องนอนที่สาม สามารถ turn เป็นน study room ได้นะคะ ลูกค้าบางท่านอาจจะมองหายูนิตขนาดใหญ่ แต่อยากได้เพียง 2 ห้องนอน ก็สามารถพิจารณายูนิต 3 ห้องนอนได้นะคะ</p><p></p><p><strong>Private lift lobby - 3B</strong><br>TWR จะมียูนิตที่มี Private Lift Lobby นะคะ และอีกส่วนนึงจะเป็น shared lobby แต่สำหรับยูนิตแชร์ จะแชร์เพียง 2 ยูนิตเท่านั้น ซึ่งก็ยังถือว่า private มากๆอยู่ค่ะ และทุก core lift มีลิฟท์ถึง 3 ตัวด้วยกัน <br>สำหรับยูนิตที่มี Private Lift Lobby จะเป็น type 2 bedroom Large ขนาดประมาน 150 ตารางมตรขึ้นไปค่ะ</p>"
+    old_preload="<h1>Donec Ullamcorper Nulla</h1><h2>Non Metus</h2><h3>Auctor Fringilla</h3><p><strong>Donec</strong> ullamcorper nulla non metus auctor fringilla.</p><ul><li>Morbi leo risus</li><li>Porta ac</li></ul><ol><li>Consectetur ac</li><li>Vestibulum at eros</li></ol><blockquote>\"Aenean lacinia bibendum nulla sed consectetur.\"</blockquote>"
+  Value differs at items[id=note-the-wireless-place-standard-provision].content:
+    preload="<p></p>"
+    old_preload="<h1>Wireless Place Standard</h1><h2>Included Features</h2><p><strong>Move in</strong> with confidence. <b>Enjoy</b> all the essentials provided.</p><ul><li>Smart home tech</li><li>Elegant interiors</li></ul><ol><li>Unpack</li><li>Live well</li></ol><blockquote>\"All you need, ready for you.\"</blockquote>"
+  Value differs at items[id=note-the-upper-house-services].content:
+    preload="<p></p>"
+    old_preload="<h1>The Upper House Services</h1><h2>Premium Offerings</h2><p><strong>Enjoy</strong> world-class services at The Upper House. <b>Relax</b> and let us take care of you.</p><ul><li>Concierge</li><li>Housekeeping</li></ul><ol><li>Request</li><li>Receive</li></ol><blockquote>\"Service with a smile.\"</blockquote>"
+  Value differs at items[id=note-the-wireless-place-sustainability].content:
+    preload="<p>โครงการของเรามี aim ได้ Leed &amp; Well ด้วยนะคะ เพราะฉะนั้น ในด้านการออกแบบ จะเน้นเป็นมิตรต่อสิ่งแวดล้อมและเน้นไปที่ quality of living ของผู้อยู่อาศัยจริงๆ</p>"
+    old_preload="<p>โครงการของเรามี aim ได้ Leed & Well ด้วยนะคะ เพราะฉะนั้น ในด้านการออกแบบ จะเน้นเป็นมิตรต่อสิ่งแวดล้อมและเน้นไปที่ quality of living ของผู้อยู่อาศัยจริงๆ</p>"
+  Value differs at items[id=note-the-upper-house-standard-provision].content:
+    preload="<p></p>"
+    old_preload="<h1>Standard Provision</h1><h2>What’s Included</h2><p><strong>Benefit</strong> from our comprehensive standard provisions. <b>Move in</b> with ease.</p><ul><li>Furnished units</li><li>Modern appliances</li></ul><ol><li>Check list</li><li>Settle in</li></ol><blockquote>\"Everything you need, included.\"</blockquote>"
+  Value differs at items[id=note-the-wireless-place-services].content:
+    preload="<p></p>"
+    old_preload="<h1>Wireless Place Services</h1><h2>Exclusive Care</h2><p><strong>Experience</strong> tailored services at Wireless Place. <b>Feel</b> at home instantly.</p><ul><li>Personalized support</li><li>24/7 security</li></ul><ol><li>Contact</li><li>Assistance</li></ol><blockquote>\"Your comfort, our priority.\"</blockquote>"
+  Value differs at items[id=note-the-upper-house-security-and-access].content:
+    preload="<p></p>"
+    old_preload="<h1>Nulla Vitae Elit</h1><h2>Libero A Pharetra</h2><h3>Augue Porta</h3><p><strong>Nulla</strong> vitae elit libero, a pharetra augue porta sem malesuada magna mollis euismod.</p><ul><li>Maecenas faucibus</li><li>Morbi leo risus</li></ul><ol><li>Porta ac</li><li>Consectetur ac</li></ol><blockquote>\"Nullam quis risus eget urna mollis ornare vel eu leo.\"</blockquote>"
+  Value differs at items[id=note-the-upper-house-parking].content:
+    preload="<p></p>"
+    old_preload="<h1>Donec Ullamcorper Nulla</h1><h2>Non Metus</h2><h3>Auctor Fringilla</h3><p><strong>Donec</strong> ullamcorper nulla non metus auctor fringilla.</p><ul><li>Morbi leo risus</li><li>Porta ac</li></ul><ol><li>Consectetur ac</li><li>Vestibulum at eros</li></ol><blockquote>\"Aenean lacinia bibendum nulla sed consectetur.\"</blockquote>"
+  Key 'items[id=note-the-project-project-concept].content' missing in preload. Value in old_preload: ""
+  Extra item in preload at items[id=note-uh-qtvr]: {"id":"note-uh-qtvr","linkedPage":"uh-qtvr","content":"<p>นี้เป็นวิวที่ถ่ายจาก Drone ที่ตึก Upper House Residences ที่ความสูงประมานชั้น 52 นะคะ</p>"}
+  Extra item in preload at items[id=note-wr-qtvr]: {"id":"note-wr-qtvr","linkedPage":"wr-qtvr","content":"<p>นี้เป็นวิวที่ถ่ายจาก Drone ที่ตึก The Wireless Residences ที่ความสูงประมานชั้น 52 นะคะ</p>"}
+--- END DIFF ---
+
+
+--- DIFF for pages.json ---
+  Value differs at items[id=the-project-tower-comparison].title.enUS:
+    preload="My House is"
+    old_preload="Tower Comparison"
+  Value differs at items[id=the-project-tower-comparison].content[0].items[0].itemA.enUS:
+    preload="In a world of it's own"
+    old_preload="52 floors, 156 units"
+  Value differs at items[id=the-project-tower-comparison].content[0].items[0].itemB.enUS:
+    preload="At the heart of the city"
+    old_preload="71 floors, 239 units"
+  Value differs at items[id=the-project-tower-comparison].content[0].items[1].itemA.enUS:
+    preload="A place of privacy & serenity"
+    old_preload="3.2m ceiling height"
+  Value differs at items[id=the-project-tower-comparison].content[0].items[1].itemB.enUS:
+    preload="A place of togetherness"
+    old_preload="3.1m ceiling height"
+  Value differs at items[id=the-project-tower-comparison].content[0].items[2].itemA.enUS:
+    preload="Where the service is always thoughtful, seamless, unobtrusive"
+    old_preload="2-4 bedrooms + two penthouses"
+  Value differs at items[id=the-project-tower-comparison].content[0].items[2].itemB.enUS:
+    preload="Where the service is always generous and surprising"
+    old_preload="1- to 4-bedroom units + eight special\nunits + five penthouses"
+  Value differs at items[id=the-project-tower-comparison].content[0].items[3].itemA.enUS:
+    preload="An elegant, understated work of art, lush landscapes to live and grow with"
+    old_preload="Starts at 2-bedroom / 140 sqm"
+  Value differs at items[id=the-project-tower-comparison].content[0].items[3].itemB.enUS:
+    preload="With spaces made for sharing, and the most cinematic views of the city"
+    old_preload="Starts at 1-bedroom / 75 sqm"
+  Value differs at items[id=the-project-tower-comparison].content[0].items[4].itemA.enUS:
+    preload="With a secret garden in the clouds"
+    old_preload="Lumphini Park - green & tranquil"
+  Value differs at items[id=the-project-tower-comparison].content[0].items[4].itemB.enUS:
+    preload="A perfect patch of nature all to yourself"
+    old_preload="Benjakitti Park - lively & expansive"
+  Value differs at items[id=the-project-tower-comparison].content[0].items[5].itemA.enUS:
+    preload="Where occasions become flawless & radiant"
+    old_preload="Privacy, serenity, wellness"
+  Value differs at items[id=the-project-tower-comparison].content[0].items[5].itemB.enUS:
+    preload="Where every family moment is one worth keeping"
+    old_preload="Togetherness, family, connection"
+  Value differs at items[id=the-project-tower-comparison].content[0].items[6].itemA.enUS:
+    preload="A place to experience weightlessness"
+    old_preload="Health & Wellness amenities"
+  Value differs at items[id=the-project-tower-comparison].content[0].items[6].itemB.enUS:
+    preload="A place to dive into"
+    old_preload="All-ages recreational amenities"
+  Value differs at items[id=the-project-tower-comparison].content[0].items[7].itemA.enUS:
+    preload="To relax, focus & unwind, where my body and mind belong"
+    old_preload="Designed by BAR Studio"
+  Value differs at items[id=the-project-tower-comparison].content[0].items[7].itemB.enUS:
+    preload="To dance, sing & play, with the ones I love the most"
+    old_preload="Designed by PIA Interior"
+  Value differs at items[id=the-project-tower-comparison].content[0].items[8].itemA.enUS:
+    preload="This is my House"
+    old_preload="Discerning individuals, couples"
+  Value differs at items[id=the-project-tower-comparison].content[0].items[8].itemB.enUS:
+    preload="This is my House"
+    old_preload="Families, multi-gen residents"
+--- END DIFF ---
+
+
+--- DIFF for portalUsers.json ---
+  Extra item in preload at items[username=watcharamonan]: {"username":"watcharamonan","password":"bkk109","defaultLocale":"enUS","hostName":"Watcharamonan"}
+  Extra item in preload at items[username=fionn]: {"username":"fionn","password":"bkk109","defaultLocale":"enUS","hostName":"Fionn"}
+  Extra item in preload at items[username=tipsuda]: {"username":"tipsuda","password":"bkk109","hostName":"Tipsuda","defaultLocale":"enUS"}
+  Extra item in preload at items[username=peerada]: {"username":"peerada","password":"bkk109","hostName":"Peerada","defaultLocale":"enUS"}
+  Extra item in preload at items[username=chanyanat]: {"username":"chanyanat","password":"bkk109","hostName":"Chanyanat","defaultLocale":"enUS"}
+  Extra item in preload at items[username=chiddao]: {"username":"chiddao","password":"bkk109","hostName":"Chiddao","defaultLocale":"enUS"}
+  Extra item in preload at items[username=alisa]: {"username":"alisa","password":"bkk109","hostName":"Alisa","defaultLocale":"enUS"}
+  Extra item in preload at items[username=napat]: {"username":"napat","password":"bkk109","hostName":"Napat","defaultLocale":"enUS"}
+  Extra item in preload at items[username=casey]: {"username":"casey","password":"bkk109","hostName":"Casey","defaultLocale":"enUS"}
+--- END DIFF ---
+
+
+--- DIFF for screens.json ---
+  Key 'items[key=model-room].currentUserToken' missing in old_preload. Value in preload: ""
+  Value differs at items[key=conference-room].status:
+    preload="online"
+    old_preload="offline"
+  Key 'items[key=conference-room].currentUserToken' missing in old_preload. Value in preload: ""
+  Value differs at items[key=private-lounge].status:
+    preload="offline"
+    old_preload="online"
+  Key 'items[key=private-lounge].currentUserToken' missing in old_preload. Value in preload: ""
+  Key 'items[key=dinner].currentUserToken' missing in old_preload. Value in preload: ""
+  Value differs at items[key=corridor].status:
+    preload="online"
+    old_preload="offline"
+  Key 'items[key=corridor].currentUserToken' missing in old_preload. Value in preload: ""
+  Value differs at items[key=small-meeting-room].status:
+    preload="online"
+    old_preload="in-use"
+  Key 'items[key=small-meeting-room].currentUserToken' missing in old_preload. Value in preload: ""
+--- END DIFF ---
+
+
+--- DIFF for slideshows.json ---
+  Type mismatch at items[id=the-project-the-upper-house-brand].slideshow[0].thumbnailFullscreen.enUS:
+    preload=object
+    old_preload=string
+  Type mismatch at items[id=the-project-the-upper-house-brand].slideshow[0].thumbnailFullscreen.zhCN:
+    preload=object
+    old_preload=string
+  Key 'items[id=the-project-the-upper-house-brand].slideshow[0].imageFullscreen' missing in old_preload. Value in preload: {"enUS":"_attachment://assets/the-project/project-upper-house-brand-thumbnail-enUS.jpg","zhCN":"_attachment://assets/the-project/project-upper-house-brand-thumbnail-zhCN.jpg"}
+  Value differs at items[id=the-project-developers].slideshow[0].overlayTitles[0].title.enUS:
+    preload="City Realty"
+    old_preload="City Reality"
+  Value differs at items[id=the-project-developers].slideshow[0].overlayTitles[0].title.zhCN:
+    preload="City Realty"
+    old_preload="City Reality"
+  Value differs at items[id=the-project-developers].slideshow[0].disclaimer:
+    preload=false
+    old_preload=true
+  Type mismatch at items[id=the-upper-house-introduction].slideshow[0].thumbnailFullscreen.enUS:
+    preload=object
+    old_preload=string
+  Type mismatch at items[id=the-upper-house-introduction].slideshow[0].thumbnailFullscreen.zhCN:
+    preload=object
+    old_preload=string
+  Value differs at items[id=the-upper-house-sustainability].slideshow[0].overlayTitles[0].displayOn:
+    preload="kiosk"
+    old_preload="both"
+  Value differs at items[id=the-upper-house-sustainability].slideshow[0].disclaimer:
+    preload=false
+    old_preload=true
+  Value differs at items[id=the-upper-house-sustainability].slideshow[1].disclaimer:
+    preload=false
+    old_preload=true
+  Value differs at items[id=the-upper-house-sustainability].slideshow[2].disclaimer:
+    preload=false
+    old_preload=true
+  Value differs at items[id=the-wireless-place-sustainability].slideshow[0].disclaimer:
+    preload=false
+    old_preload=true
+  Value differs at items[id=the-wireless-place-sustainability].slideshow[1].disclaimer:
+    preload=false
+    old_preload=true
+--- END DIFF ---
+
+
+--- DIFF for tower_360_views.json ---
+--- END DIFF ---
+
+
+--- DIFF for tower_compare_units.json ---
+--- END DIFF ---
+
+
+--- DIFF for tower_floor_plans.json ---
+  Array length differs at items[id=uh-fp-low].levels:
+    preload=16
+    old_preload=1
+  Type mismatch at items[id=uh-fp-low].levels[0]:
+    preload=number
+    old_preload=string
+  Extra item in preload at items[id=uh-fp-low].levels[1]: 4
+  Extra item in preload at items[id=uh-fp-low].levels[2]: 5
+  Extra item in preload at items[id=uh-fp-low].levels[3]: 6
+  Extra item in preload at items[id=uh-fp-low].levels[4]: 7
+  Extra item in preload at items[id=uh-fp-low].levels[5]: 8
+  Extra item in preload at items[id=uh-fp-low].levels[6]: 9
+  Extra item in preload at items[id=uh-fp-low].levels[7]: 10
+  Extra item in preload at items[id=uh-fp-low].levels[8]: 11
+  Extra item in preload at items[id=uh-fp-low].levels[9]: 12
+  Extra item in preload at items[id=uh-fp-low].levels[10]: 13
+  Extra item in preload at items[id=uh-fp-low].levels[11]: 14
+  Extra item in preload at items[id=uh-fp-low].levels[12]: 15
+  Extra item in preload at items[id=uh-fp-low].levels[13]: 16
+  Extra item in preload at items[id=uh-fp-low].levels[14]: 17
+  Extra item in preload at items[id=uh-fp-low].levels[15]: 18
+  Array length differs at items[id=wr-fp-low].levels:
+    preload=8
+    old_preload=1
+  Type mismatch at items[id=wr-fp-low].levels[0]:
+    preload=number
+    old_preload=string
+  Extra item in preload at items[id=wr-fp-low].levels[1]: 4
+  Extra item in preload at items[id=wr-fp-low].levels[2]: 5
+  Extra item in preload at items[id=wr-fp-low].levels[3]: 6
+  Extra item in preload at items[id=wr-fp-low].levels[4]: 7
+  Extra item in preload at items[id=wr-fp-low].levels[5]: 8
+  Extra item in preload at items[id=wr-fp-low].levels[6]: 9
+  Extra item in preload at items[id=wr-fp-low].levels[7]: 10
+  Array length differs at items[id=wr-fp-mid-1].levels:
+    preload=20
+    old_preload=1
+  Type mismatch at items[id=wr-fp-mid-1].levels[0]:
+    preload=number
+    old_preload=string
+  Extra item in preload at items[id=wr-fp-mid-1].levels[1]: 13
+  Extra item in preload at items[id=wr-fp-mid-1].levels[2]: 14
+  Extra item in preload at items[id=wr-fp-mid-1].levels[3]: 15
+  Extra item in preload at items[id=wr-fp-mid-1].levels[4]: 16
+  Extra item in preload at items[id=wr-fp-mid-1].levels[5]: 17
+  Extra item in preload at items[id=wr-fp-mid-1].levels[6]: 18
+  Extra item in preload at items[id=wr-fp-mid-1].levels[7]: 19
+  Extra item in preload at items[id=wr-fp-mid-1].levels[8]: 20
+  Extra item in preload at items[id=wr-fp-mid-1].levels[9]: 21
+  Extra item in preload at items[id=wr-fp-mid-1].levels[10]: 22
+  Extra item in preload at items[id=wr-fp-mid-1].levels[11]: 23
+  Extra item in preload at items[id=wr-fp-mid-1].levels[12]: 24
+  Extra item in preload at items[id=wr-fp-mid-1].levels[13]: 25
+  Extra item in preload at items[id=wr-fp-mid-1].levels[14]: 26
+  Extra item in preload at items[id=wr-fp-mid-1].levels[15]: 27
+  Extra item in preload at items[id=wr-fp-mid-1].levels[16]: 28
+  Extra item in preload at items[id=wr-fp-mid-1].levels[17]: 29
+  Extra item in preload at items[id=wr-fp-mid-1].levels[18]: 30
+  Extra item in preload at items[id=wr-fp-mid-1].levels[19]: 31
+  Type mismatch at items[id=uh-fp-mid-19].levels[0]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-even].levels[0]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-even].levels[1]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-even].levels[2]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-even].levels[3]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-even].levels[4]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-even].levels[5]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-even].levels[6]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-even].levels[7]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-even].levels[8]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-even].levels[9]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-even].levels[10]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-odd].levels[0]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-odd].levels[1]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-odd].levels[2]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-odd].levels[3]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-odd].levels[4]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-odd].levels[5]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-odd].levels[6]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-odd].levels[7]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-odd].levels[8]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-odd].levels[9]:
+    preload=number
+    old_preload=string
+  Array length differs at items[id=wr-fp-mid-2].levels:
+    preload=11
+    old_preload=1
+  Type mismatch at items[id=wr-fp-mid-2].levels[0]:
+    preload=number
+    old_preload=string
+  Extra item in preload at items[id=wr-fp-mid-2].levels[1]: 33
+  Extra item in preload at items[id=wr-fp-mid-2].levels[2]: 34
+  Extra item in preload at items[id=wr-fp-mid-2].levels[3]: 35
+  Extra item in preload at items[id=wr-fp-mid-2].levels[4]: 36
+  Extra item in preload at items[id=wr-fp-mid-2].levels[5]: 37
+  Extra item in preload at items[id=wr-fp-mid-2].levels[6]: 38
+  Extra item in preload at items[id=wr-fp-mid-2].levels[7]: 39
+  Extra item in preload at items[id=wr-fp-mid-2].levels[8]: 40
+  Extra item in preload at items[id=wr-fp-mid-2].levels[9]: 41
+  Extra item in preload at items[id=wr-fp-mid-2].levels[10]: 42
+  Type mismatch at items[id=uh-fp-mid-41].levels[0]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-mid-42].levels[0]:
+    preload=number
+    old_preload=string
+  Array length differs at items[id=wr-fp-high-1-45-54].levels:
+    preload=10
+    old_preload=1
+  Type mismatch at items[id=wr-fp-high-1-45-54].levels[0]:
+    preload=number
+    old_preload=string
+  Extra item in preload at items[id=wr-fp-high-1-45-54].levels[1]: 46
+  Extra item in preload at items[id=wr-fp-high-1-45-54].levels[2]: 47
+  Extra item in preload at items[id=wr-fp-high-1-45-54].levels[3]: 48
+  Extra item in preload at items[id=wr-fp-high-1-45-54].levels[4]: 49
+  Extra item in preload at items[id=wr-fp-high-1-45-54].levels[5]: 50
+  Extra item in preload at items[id=wr-fp-high-1-45-54].levels[6]: 51
+  Extra item in preload at items[id=wr-fp-high-1-45-54].levels[7]: 52
+  Extra item in preload at items[id=wr-fp-high-1-45-54].levels[8]: 53
+  Extra item in preload at items[id=wr-fp-high-1-45-54].levels[9]: 54
+  Type mismatch at items[id=uh-fp-high-46].levels[0]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-high-47].levels[0]:
+    preload=number
+    old_preload=string
+  Array length differs at items[id=uh-fp-high-48-50].levels:
+    preload=3
+    old_preload=1
+  Type mismatch at items[id=uh-fp-high-48-50].levels[0]:
+    preload=number
+    old_preload=string
+  Extra item in preload at items[id=uh-fp-high-48-50].levels[1]: 49
+  Extra item in preload at items[id=uh-fp-high-48-50].levels[2]: 50
+  Type mismatch at items[id=uh-fp-high-51].levels[0]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=uh-fp-high-52].levels[0]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=wr-fp-high-1-55].levels[0]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=wr-fp-high-1-56].levels[0]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=wr-fp-high-2-57].levels[0]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=wr-fp-high-2-even].levels[0]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=wr-fp-high-2-even].levels[1]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=wr-fp-high-2-even].levels[2]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=wr-fp-high-2-even].levels[3]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=wr-fp-high-2-even].levels[4]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=wr-fp-high-2-odd].levels[0]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=wr-fp-high-2-odd].levels[1]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=wr-fp-high-2-odd].levels[2]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=wr-fp-high-2-odd].levels[3]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=wr-fp-high-3-67].levels[0]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=wr-fp-high-3-68].levels[0]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=wr-fp-high-3-69].levels[0]:
+    preload=number
+    old_preload=string
+  Type mismatch at items[id=wr-fp-high-3-70].levels[0]:
+    preload=number
+    old_preload=string
+--- END DIFF ---
+
+
+--- DIFF for tower_units.json ---
+  Key 'items[id=uh-2a].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/uh-2a/renders[0].image/uh-2a-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/uh/units/uh-2a-view-cast-all.jpg"}]
+  Key 'items[id=uh-2al].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/uh-2al/renders[0].image/uh-2al-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/uh/units/uh-2al-view-cast-all.jpg"}]
+  Key 'items[id=uh-2b].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/uh-2b/renders[0].image/uh-2b-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/uh/units/uh-2b-view-cast-all.jpg"}]
+  Key 'items[id=uh-2bl].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","fullscreen":"_attachment://assets/towers/uh/units/uh-2bl-view-cast-all.jpg","image":"_attachment://assets/tower_units/uh-2bl/renders[0].image/uh-2bl-view-gallery-all.jpg"}]
+  Key 'items[id=uh-2cl].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/uh-2cl/renders[0].image/uh-2cl-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/uh/units/uh-2cl-view-cast-all.jpg"}]
+  Key 'items[id=uh-2dl].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/uh-2dl/renders[0].image/uh-2dl-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/uh/units/uh-2dl-view-cast-all.jpg"}]
+  Array length differs at items[id=uh-3a].renders:
+    preload=8
+    old_preload=7
+  Extra item in preload at items[id=uh-3a].renders[7]: {"_type":"tower_unit_renders","fullscreen":"_attachment://assets/towers/uh/units/uh-3a-view-cast-all.jpg","image":"_attachment://assets/tower_units/uh-3a/renders[7].image/uh-3a-view-gallery-all.jpg"}
+  Array length differs at items[id=uh-3b].renders:
+    preload=8
+    old_preload=7
+  Extra item in preload at items[id=uh-3b].renders[7]: {"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/uh-3b/renders[7].image/uh-3b-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/uh/units/uh-3b-view-cast-all.jpg"}
+  Array length differs at items[id=uh-3c].renders:
+    preload=8
+    old_preload=7
+  Extra item in preload at items[id=uh-3c].renders[7]: {"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/uh-3c/renders[7].image/uh-3c-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/uh/units/uh-3c-view-cast-all.jpg"}
+  Key 'items[id=uh-4a].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/uh-4a/renders[0].image/uh-4a-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/uh/units/uh-4a-view-cast-all.jpg"}]
+  Key 'items[id=uh-4ad].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/uh-4ad/renders[0].image/uh-4ad-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/uh/units/uh-4ad-view-cast-all.jpg"}]
+  Key 'items[id=uh-4b].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/uh-4b/renders[0].image/uh-4b-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/uh/units/uh-4b-view-cast-all.jpg"}]
+  Key 'items[id=uh-4bd].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/uh-4bd/renders[0].image/uh-4bd-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/uh/units/uh-4bd-view-cast-all.jpg"}]
+  Key 'items[id=uh-4c].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","fullscreen":"_attachment://assets/towers/uh/units/uh-4c-view-cast-all.jpg","image":"_attachment://assets/tower_units/uh-4c/renders[0].image/uh-4c-view-gallery-all.jpg"}]
+  Key 'items[id=uh-ph1].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/uh-ph1/renders[0].image/uh-ph1-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/uh/units/uh-ph1-view-cast-all.jpg"}]
+  Key 'items[id=uh-ph2].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","fullscreen":"_attachment://assets/towers/uh/units/uh-ph2-view-cast-all.jpg","image":"_attachment://assets/tower_units/uh-ph2/renders[0].image/uh-ph2-view-gallery-all.jpg"}]
+  Key 'items[id=wr-1a].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-1a/renders[0].image/wr-1a-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-1a-view-cast-all.jpg"}]
+  Array length differs at items[id=wr-2a].renders:
+    preload=5
+    old_preload=4
+  Extra item in preload at items[id=wr-2a].renders[4]: {"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-2a/renders[4].image/wr-2a-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-2a-view-cast-all.jpg"}
+  Key 'items[id=wr-2al].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-2al/renders[0].image/wr-2al-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-2al-view-cast-all.jpg"}]
+  Array length differs at items[id=wr-2b].renders:
+    preload=5
+    old_preload=4
+  Extra item in preload at items[id=wr-2b].renders[4]: {"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-2b/renders[4].image/wr-2b-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-2b-view-cast-all.jpg"}
+  Key 'items[id=wr-2bl].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","fullscreen":"_attachment://assets/towers/wr/units/wr-2bl-view-cast-all.jpg","image":"_attachment://assets/tower_units/wr-2bl/renders[0].image/wr-2bl-view-gallery-all.jpg"}]
+  Array length differs at items[id=wr-2c].renders:
+    preload=5
+    old_preload=4
+  Extra item in preload at items[id=wr-2c].renders[4]: {"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-2c/renders[4].image/wr-2c-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-2c-view-cast-all.jpg"}
+  Array length differs at items[id=wr-2d].renders:
+    preload=5
+    old_preload=4
+  Extra item in preload at items[id=wr-2d].renders[4]: {"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-2d/renders[4].image/wr-2d-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-2d-view-cast-all.jpg"}
+  Array length differs at items[id=wr-3a].renders:
+    preload=7
+    old_preload=6
+  Extra item in preload at items[id=wr-3a].renders[6]: {"_type":"tower_unit_renders","fullscreen":"_attachment://assets/towers/wr/units/wr-3a-view-cast-all.jpg","image":"_attachment://assets/tower_units/wr-3a/renders[6].image/wr-3a-view-gallery-all.jpg"}
+  Key 'items[id=wr-3al].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-3al/renders[0].image/wr-3al-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-3al-view-cast-all.jpg"}]
+  Array length differs at items[id=wr-3b].renders:
+    preload=7
+    old_preload=6
+  Extra item in preload at items[id=wr-3b].renders[6]: {"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-3b/renders[6].image/wr-3b-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-3b-view-cast-all.jpg"}
+  Key 'items[id=wr-3bl].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-3bl/renders[0].image/wr-3bl-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-3bl-view-cast-all.jpg"}]
+  Array length differs at items[id=wr-3c].renders:
+    preload=7
+    old_preload=6
+  Extra item in preload at items[id=wr-3c].renders[6]: {"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-3c/renders[6].image/wr-3c-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-3c-view-cast-all.jpg"}
+  Key 'items[id=wr-3cl].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-3cl/renders[0].image/wr-3cl-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-3cl-view-cast-all.jpg"}]
+  Array length differs at items[id=wr-3d].renders:
+    preload=7
+    old_preload=6
+  Extra item in preload at items[id=wr-3d].renders[6]: {"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-3d/renders[6].image/wr-3d-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-3d-view-cast-all.jpg"}
+  Key 'items[id=wr-3dl].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-3dl/renders[0].image/wr-3dl-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-3dl-view-cast-all.jpg"}]
+  Key 'items[id=wr-3ml].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-3ml/renders[0].image/wr-3ml-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-3ml-view-cast-all.jpg"}]
+  Key 'items[id=wr-4a].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-4a/renders[0].image/wr-4a-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-4a-view-cast-all.jpg"}]
+  Key 'items[id=wr-4b].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-4b/renders[0].image/wr-4b-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-4b-view-cast-all.jpg"}]
+  Key 'items[id=wr-4c].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-4c/renders[0].image/wr-4c-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-4c-view-cast-all.jpg"}]
+  Key 'items[id=wr-ph1].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-ph1/renders[0].image/wr-ph1-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-ph1-view-cast-all.jpg"}]
+  Key 'items[id=wr-ph2].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-ph2/renders[0].image/wr-ph2-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-ph2-view-cast-all.jpg"}]
+  Key 'items[id=wr-ph3].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-ph3/renders[0].image/wr-ph3-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-ph3-view-cast-all.jpg"}]
+  Key 'items[id=wr-ph4].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-ph4/renders[0].image/wr-ph4-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-ph4-view-cast-all.jpg"}]
+  Key 'items[id=wr-ph5].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/wr-ph5/renders[0].image/wr-ph5-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/wr/units/wr-ph5-view-cast-all.jpg"}]
+--- END DIFF ---
+
+
+--- DIFF for tower_unit_groups.json ---
+--- END DIFF ---
+
+
+--- DIFF for tower_unit_mix.json ---
+--- END DIFF ---
+
+
+--- DIFF for tower_zones.json ---
+--- END DIFF ---
+
+
+--- DIFF for translations.json ---
+  Extra item in old_preload at items[key=T_HOME]: {"key":"T_HOME","value":{"enUS":"Home","zhCN":"Home"}}
+--- END DIFF ---
+
+Comparison Report:
+DIFFERENT: appointments.json (reason: Array length differs at items:)
+MISSING in old_preload: feedbacks.json
+DIFFERENT: gallery.json (reason: Type mismatch at items[id=film-the-project-overview].disclaimer:)
+SAME: hierarchical_listings.json
+DIFFERENT: lights.json (reason: Value differs at items[id=lights-the-upper-house-gallery].oscMessages[0].state:)
+DIFFERENT: menu.json (reason: Value differs at items[id=menu].theProject.pages[key=the-project-wireless-road].name.zhCN:)
+DIFFERENT: notes.json (reason: Value differs at items[id=note-team-kcs-and-associates-company-limited].content:)
+DIFFERENT: pages.json (reason: Value differs at items[id=the-project-tower-comparison].title.enUS:)
+DIFFERENT: portalUsers.json (reason: Extra item in preload at items[username=watcharamonan]: {"username":"watcharamonan","password":"bkk109","defaultLocale":"enUS","hostName":"Watcharamonan"})
+DIFFERENT: screens.json (reason: Key 'items[key=model-room].currentUserToken' missing in old_preload. Value in preload: "")
+DIFFERENT: slideshows.json (reason: Type mismatch at items[id=the-project-the-upper-house-brand].slideshow[0].thumbnailFullscreen.enUS:)
+MISSING in old_preload: tokens.json
+SAME: tower_360_views.json
+SAME: tower_buildings.json
+SAME: tower_compare_units.json
+DIFFERENT: tower_floor_plans.json (reason: Array length differs at items[id=uh-fp-low].levels:)
+DIFFERENT: tower_units.json (reason: Key 'items[id=uh-2a].renders' missing in old_preload. Value in preload: [{"_type":"tower_unit_renders","image":"_attachment://assets/tower_units/uh-2a/renders[0].image/uh-2a-view-gallery-all.jpg","fullscreen":"_attachment://assets/towers/uh/units/uh-2a-view-cast-all.jpg"}])
+SAME: tower_unit_groups.json
+SAME: tower_unit_mix.json
+SAME: tower_zones.json
+DIFFERENT: translations.json (reason: Extra item in old_preload at items[key=T_HOME]: {"key":"T_HOME","value":{"enUS":"Home","zhCN":"Home"}})
+MISSING in preload: configs.json
+Some JSON files differ or are missing. See report above.
