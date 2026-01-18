@@ -6,7 +6,10 @@ export default {
         animation: 200,
         group: 'description',
         disabled: false,
-        ghostClass: 'ghost'
+        ghostClass: 'ghost',
+        delay: 150,
+        delayOnTouchOnly: false,
+        touchStartThreshold: 10
       }
     }
   },
