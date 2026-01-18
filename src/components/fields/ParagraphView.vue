@@ -53,6 +53,7 @@
         handle=".handle"
         :group="`${schema.model}-${key}`"
         ghost-class="ghost"
+        :force-fallback="true"
         @end="onEndDrag"
       >
         <v-card
