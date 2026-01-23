@@ -19,14 +19,16 @@
   import { Editor, EditorContent } from '@tiptap/vue-3'
   import StarterKit from '@tiptap/starter-kit'
   import Superscript from '@tiptap/extension-superscript'
-  import { all, createLowlight } from 'lowlight'
+  import { createLowlight } from 'lowlight'
+  import CustomHighlight from '@m/CustomHighlight'
   import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
   import TiptapMenuBar from './TiptapMenuBar.vue'
   import AbstractField from '@m/AbstractField'
-  const lowlight = createLowlight(all)
+  const lowlight = createLowlight()
+  lowlight.register('javascript', CustomHighlight)
 
   export default {
-    components: { EditorContent, TiptapMenuBar },
+    components: { EditorContent, TiptapMenuBar},
     mixins: [AbstractField],
     data () {
       return {
@@ -109,6 +111,10 @@
 </script>
 <style lang="scss">
 @use '@a/scss/variables.scss' as *;
+.wysiwyg-wrapper .editor-content pre{
+  background-color: #282a36 !important;
+  border-radius:4px !important;
+}
 
 /* Syntax highlighting */
 .tiptap .hljs-comment,
@@ -229,7 +235,6 @@
       color: #616161;
     }
 
-    .hljs-variable,
     .hljs-template-variable,
     .hljs-attribute,
     .hljs-tag,
@@ -238,34 +243,50 @@
     .hljs-link,
     .hljs-name,
     .hljs-selector-id,
-    .hljs-selector-class {
-      color: #f98181;
+    .hljs-selector-class,
+    .hljs-variable {
+      color: #50fa7b;
     }
 
     .hljs-number,
     .hljs-meta,
     .hljs-built_in,
     .hljs-builtin-name,
-    .hljs-literal,
     .hljs-type,
-    .hljs-params {
+    .hljs-params{
       color: #fbbc88;
     }
+    .hljs-literal{
+      color:#bd93f9;
+    }
 
-    .hljs-string,
     .hljs-symbol,
-    .hljs-bullet {
+    .hljs-bullet
+    {
       color: #b9f18d;
     }
 
     .hljs-title,
+    .hljs-string,
     .hljs-section {
       color: #faf594;
+      &.function_{
+        color:#50fa7b;
+      }
     }
-
+    .hljs-title{
+      &.class_{
+        color:#50fa7b;
+      }
+    }
+    .hljs-property,
+    .hljs-attr{
+      color:#66d9ef;
+    }
     .hljs-keyword,
+    .hljs-operator,
     .hljs-selector-tag {
-      color: #70cff8;
+      color: #ff79c6;
     }
 
     .hljs-emphasis {
