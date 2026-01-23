@@ -17,7 +17,6 @@ program.on('--help', () => {
 program
   .usage('<config json>')
   .option('-y, --yes', 'Assume Yes to all queries and do not prompt')
-  .option('-o, --createOnly', 'create only')
   .option('--overwrite', 'Overwrite all local records with remote ones')
   .option('--use-cache', 'Use cached data instead of downloading from remote')
   .option('--convert-to-preload', 'Convert downloaded data to preload format')

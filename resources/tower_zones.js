@@ -1,0 +1,56 @@
+exports = module.exports = {
+  group: '3. Towers',
+  displayname: '3.4. Towers - Zones',
+  schema: [
+    {
+      label: 'Zone ID',
+      field: 'id',
+      localised: false,
+      required: true,
+      unique: true,
+      input: 'select',
+      source: [
+        'uh-low',
+        'uh-mid',
+        'uh-high',
+        'wr-low',
+        'wr-mid-1',
+        'wr-mid-2',
+        'wr-high-1',
+        'wr-high-2'
+      ]
+    },
+    {
+      label: 'Long Name',
+      field: 'longName',
+      localised: true,
+      required: true,
+      input: 'string'
+    },
+    {
+      label: 'Short Name',
+      field: 'shortName',
+      localised: true,
+      required: true,
+      input: 'string'
+    },
+    {
+      label: 'Floor Plans',
+      field: 'floorplans',
+      localised: false,
+      required: true,
+      input: 'multiselect',
+      source: 'tower_floor_plans'
+    },
+    {
+      label: 'Order',
+      field: 'order',
+      localised: false,
+      required: true,
+      input: 'integer'
+    }
+  ],
+  locales: ['enUS', 'zhCN'],
+  type: 'normal',
+  maxCount: 2
+}

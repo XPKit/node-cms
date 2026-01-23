@@ -1,7 +1,17 @@
 <template>
   <div class="code-wrapper">
     <div class="label">{{ schema.label }}</div>
-    <codemirror v-if="isReady" ref="input" v-model:value="_value" :style="getStyle()" :options="cmOption" tabindex="-1" @input="onChangeData" @focus="onFieldFocus(true)" @blur="onFieldFocus(false)" />
+    <codemirror
+      v-if="isReady"
+      ref="input"
+      v-model:value="_value"
+      :style="getStyle()"
+      :options="cmOption"
+      tabindex="-1"
+      @input="onChangeData"
+      @focus="onFieldFocus(true)"
+      @blur="onFieldFocus(false)"
+    />
     <div v-if="showHint()" class="help-block">
       <v-icon size="small" icon="$information" />
       <span>{{ schema.options.hint }}</span>
@@ -12,20 +22,19 @@
 <script>
   import _ from 'lodash'
   import Codemirror from 'codemirror-editor-vue3'
-  // TODO: hugo - to fix
-  // import 'codemirror/keymap/sublime'
-  // import 'codemirror/mode/javascript/javascript.js'
-  // import 'codemirror/addon/display/placeholder.js'
-  // import 'codemirror/mode/htmlmixed/htmlmixed.js'
-  // import 'codemirror/mode/css/css.js'
-  // import 'codemirror/lib/codemirror.css'
-  // import 'codemirror/theme/dracula.css'
+  import 'codemirror/keymap/sublime.js'
+  import 'codemirror/mode/javascript/javascript.js'
+  import 'codemirror/addon/display/placeholder.js'
+  import 'codemirror/mode/htmlmixed/htmlmixed.js'
+  import 'codemirror/mode/css/css.js'
+  import 'codemirror/lib/codemirror.css'
+  import 'codemirror/theme/dracula.css'
   import AbstractField from '@m/AbstractField'
 
   export default {
-    components: {Codemirror},
+    components: { Codemirror },
     mixins: [AbstractField],
-    data () {
+    data() {
       return {
         isReady: false,
         cmOption: {
@@ -61,17 +70,15 @@
       this.isReady = true
     },
     methods: {
-      getStyle () {
-        return _.merge({
-          height: _.get(this.schema, 'options.height', '100%'),
-          width: _.get(this.schema, 'options.width', '100%')
-        }, _.get(this.schema, 'options.css', {}))
+      getStyle() {
+        const height = _.get(this.schema, 'options.height', '100%')
+        const width = _.get(this.schema, 'options.width', '100%')
+        return _.merge({height, width}, _.get(this.schema, 'options.css', {}))
       },
-      onChangeData (data) {
+      onChangeData(data) {
         _.set(this.model, _.get(this.schema, 'model', false), data)
       }
     }
-
   }
 </script>
 

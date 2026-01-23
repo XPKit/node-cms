@@ -1,6 +1,6 @@
 exports = module.exports = {
   group: '1. BKK109',
-  displayname: '1.3. Portal Users',
+  displayname: '1.3. Web Apps Users',
   schema: [
     {
       label: 'Username',
@@ -15,6 +15,13 @@ exports = module.exports = {
       field: 'password',
       localised: false,
       input: 'password'
+    },
+    {
+      label: 'Host Name',
+      field: 'hostName',
+      input: 'string',
+      required: true,
+      localised: false
     },
     // {
     //   label: 'Email',

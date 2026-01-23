@@ -2,8 +2,8 @@ const fs = require('fs-extra')
 const path = require('path')
 const _ = require('lodash')
 
-const preloadDir = path.resolve(__dirname, 'preload')
-const oldPreloadDir = path.resolve(__dirname, 'old_preload')
+const preloadDir = path.resolve(__dirname, 'preloads')
+const oldPreloadDir = path.resolve(__dirname, 'old_preloads')
 
 const argFile = process.argv[2] ? process.argv[2].replace(/\\/g, '/') : null
 

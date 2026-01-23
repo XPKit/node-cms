@@ -106,8 +106,8 @@
           {
             icon: '$xml',
             title: 'Code',
-            action: () => this.editor.chain().focus().toggleCode().run(),
-            isActive: () => this.editor.isActive('code')
+            action: () => this.editor.chain().focus().toggleCodeBlock({ language: 'javascript' }).run(),
+            isActive: () => this.editor.isActive('codeBlock')
           },
           {
             icon: '$formatClear',

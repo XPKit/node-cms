@@ -23,5 +23,5 @@ storage
 test-data-simple
 test/smartCropAssets
 test-*.js
-preload
-old_preload
+preloads
+old_preloads

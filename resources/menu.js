@@ -1,6 +1,6 @@
-module.exports = {
-  group: '2. Exploration App',
-  displayname: '2.01. Menu - Global',
+exports = module.exports = {
+  group: '2. Content',
+  displayname: '2.1. Menu - Global',
   groups: {
     theProject: {
       label: 'The project'
@@ -54,7 +54,9 @@ module.exports = {
       field: 'theProject.image',
       input: 'image',
       options: {
+        hint: 'Recommended canvas size: 522 × 400',
         accept: '.png,.svg',
+        limit: 5 * 1024 * 1024, // 5 MB
         maxCount: 1
       },
       localised: false,
@@ -66,15 +68,31 @@ module.exports = {
       input: 'paragraph',
       options: {
         types: [
-          'menu_pages'
+          'menu_pages',
+          'menu_pages_tabs'
         ]
       },
+      localised: false
+    },
+    {
+      label: 'Is Folder?',
+      field: 'theProject.isFolder',
+      input: 'checkbox',
       localised: false
     },
     {
       label: 'Key',
       field: 'theUpperHouse.key',
       input: 'string',
+      localised: false,
+      required: true,
+      readOnly: true
+    },
+    {
+      label: 'Tower',
+      field: 'theUpperHouse.tower',
+      input: 'select',
+      source: 'tower_buildings',
       localised: false,
       required: true,
       readOnly: true
@@ -91,7 +109,9 @@ module.exports = {
       field: 'theUpperHouse.image',
       input: 'image',
       options: {
+        hint: 'Recommended canvas size: 522 × 400',
         accept: '.png,.svg',
+        limit: 5 * 1024 * 1024, // 5 MB
         maxCount: 1
       },
       localised: false,
@@ -104,15 +124,31 @@ module.exports = {
       options: {
         types: [
           'menu_pages',
-          'special_pages'
+          'menu_pages_tabs',
+          'menu_special_pages'
         ]
       },
+      localised: false
+    },
+    {
+      label: 'Is Folder?',
+      field: 'theUpperHouse.isFolder',
+      input: 'checkbox',
       localised: false
     },
     {
       label: 'Key',
       field: 'wirelessPlace.key',
       input: 'string',
+      localised: false,
+      required: true,
+      readOnly: true
+    },
+    {
+      label: 'Tower',
+      field: 'wirelessPlace.tower',
+      input: 'select',
+      source: 'tower_buildings',
       localised: false,
       required: true,
       readOnly: true
@@ -129,7 +165,9 @@ module.exports = {
       field: 'wirelessPlace.image',
       input: 'image',
       options: {
+        hint: 'Recommended canvas size: 522 × 400',
         accept: '.png,.svg',
+        limit: 5 * 1024 * 1024, // 5 MB
         maxCount: 1
       },
       localised: false,
@@ -142,9 +180,16 @@ module.exports = {
       options: {
         types: [
           'menu_pages',
-          'special_pages'
+          'menu_pages_tabs',
+          'menu_special_pages'
         ]
       },
+      localised: false
+    },
+    {
+      label: 'Is Folder?',
+      field: 'wirelessPlace.isFolder',
+      input: 'checkbox',
       localised: false
     },
     {
@@ -167,7 +212,9 @@ module.exports = {
       field: 'compareUnits.image',
       input: 'image',
       options: {
+        hint: 'Recommended canvas size: 522 × 400',
         accept: '.png,.svg',
+        limit: 5 * 1024 * 1024, // 5 MB
         maxCount: 1
       },
       localised: false,
@@ -179,9 +226,9 @@ module.exports = {
       input: 'paragraph',
       options: {
         types: [
-          'menu_pages',
-          'special_pages'
-        ]
+          'menu_special_pages'
+        ],
+        maxCount: 1
       },
       localised: false
     },
@@ -205,7 +252,9 @@ module.exports = {
       field: 'team.image',
       input: 'image',
       options: {
+        hint: 'Recommended canvas size: 522 × 400',
         accept: '.png,.svg',
+        limit: 5 * 1024 * 1024, // 5 MB
         maxCount: 1
       },
       localised: false,
@@ -217,9 +266,16 @@ module.exports = {
       input: 'paragraph',
       options: {
         types: [
-          'menu_pages'
+          'menu_pages',
+          'menu_pages_tabs'
         ]
       },
+      localised: false
+    },
+    {
+      label: 'Is Folder?',
+      field: 'team.isFolder',
+      input: 'checkbox',
       localised: false
     },
     {
@@ -242,7 +298,9 @@ module.exports = {
       field: 'film.image',
       input: 'image',
       options: {
+        hint: 'Recommended canvas size: 522 × 400',
         accept: '.png,.svg',
+        limit: 5 * 1024 * 1024, // 5 MB
         maxCount: 1
       },
       localised: false,
@@ -254,9 +312,16 @@ module.exports = {
       input: 'paragraph',
       options: {
         types: [
-          'menu_pages'
+          'menu_pages',
+          'menu_pages_tabs'
         ]
       },
+      localised: false
+    },
+    {
+      label: 'Is Folder?',
+      field: 'film.isFolder',
+      input: 'checkbox',
       localised: false
     },
     {
@@ -279,7 +344,9 @@ module.exports = {
       field: 'faq.image',
       input: 'image',
       options: {
+        hint: 'Recommended canvas size: 522 × 400',
         accept: '.png,.svg',
+        limit: 5 * 1024 * 1024, // 5 MB
         maxCount: 1
       },
       localised: false,
@@ -291,9 +358,16 @@ module.exports = {
       input: 'paragraph',
       options: {
         types: [
-          'menu_pages'
+          'menu_pages',
+          'menu_pages_tabs'
         ]
       },
+      localised: false
+    },
+    {
+      label: 'Is Folder?',
+      field: 'faq.isFolder',
+      input: 'checkbox',
       localised: false
     },
     {
@@ -311,24 +385,26 @@ module.exports = {
       localised: true,
       required: true
     },
-    {
-      label: 'Image',
-      field: 'dashboard.image',
-      input: 'image',
-      options: {
-        accept: '.png,.svg',
-        maxCount: 1
-      },
-      localised: false,
-      required: false
-    },
+    // {
+    //   label: 'Image',
+    //   field: 'dashboard.image',
+    //   input: 'image',
+    //   options: {
+    //     hint: 'Recommended canvas size: 522 × 400',
+    //     accept: '.png,.svg',
+    //     limit: 5 * 1024 * 1024, // 5 MB
+    //     maxCount: 1
+    //   },
+    //   localised: false,
+    //   required: false
+    // },
     {
       label: 'Pages',
       field: 'dashboard.pages',
       input: 'paragraph',
       options: {
         types: [
-          'menu_pages'
+          'menu_special_pages'
         ]
       },
       localised: false
@@ -348,24 +424,26 @@ module.exports = {
       localised: true,
       required: true
     },
-    {
-      label: 'Image',
-      field: 'calendar.image',
-      input: 'image',
-      options: {
-        accept: '.png,.svg',
-        maxCount: 1
-      },
-      localised: false,
-      required: false
-    },
+    // {
+    //   label: 'Image',
+    //   field: 'calendar.image',
+    //   input: 'image',
+    //   options: {
+    //     hint: 'Recommended canvas size: 522 × 400',
+    //     accept: '.png,.svg',
+    //     limit: 5 * 1024 * 1024, // 5 MB
+    //     maxCount: 1
+    //   },
+    //   localised: false,
+    //   required: false
+    // },
     {
       label: 'Pages',
       field: 'calendar.pages',
       input: 'paragraph',
       options: {
         types: [
-          'menu_pages'
+          'menu_special_pages'
         ]
       },
       localised: false

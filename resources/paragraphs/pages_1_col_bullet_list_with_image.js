@@ -17,7 +17,8 @@ exports = module.exports = {
       input: 'image',
       options: {
         hint: 'Recommended canvas size: 1816 × 1672',
-        accept: '.jpg,.png',
+        accept: '.jpg',
+        limit: 1 * 1024 * 1024, // 1 MB
         maxCount: 1
       },
       localised: true,
@@ -28,8 +29,9 @@ exports = module.exports = {
       field: 'fullscreen',
       input: 'image',
       options: {
-        hint: 'Recommended canvas size: 2835 × 2160',
-        accept: '.jpg,.png',
+        hint: 'Recommended canvas size: 2836 × 2160',
+        accept: '.jpg',
+        limit: 2 * 1024 * 1024, // 2 MB
         maxCount: 1
       },
       localised: true,

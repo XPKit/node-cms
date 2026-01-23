@@ -330,8 +330,12 @@ class CMS {
   shutdown (signal) {
     return (err) => {
       logger.warn(`${ signal }...`)
-      if (err) console.error(err.stack || err)
-      if (this.isExiting) return
+      if (err) {
+        console.error(err.stack || err)
+      }
+      if (this.isExiting) {
+        return
+      }
       this.isExiting = true
       process.nextTick(async () => {
         await this._closeDatabase()

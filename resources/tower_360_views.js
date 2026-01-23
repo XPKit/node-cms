@@ -1,0 +1,127 @@
+exports = module.exports = {
+  group: '3. Towers',
+  displayname: '3.8. Towers - QTVR',
+  schema: [
+    {
+      label: 'Unique Id',
+      field: 'id',
+      input: 'select',
+      source: [
+        'uh-l52-daytime',
+        'uh-l45-daytime',
+        'uh-l40-daytime',
+        'uh-l30-daytime',
+        'uh-l20-daytime',
+        'uh-l11-daytime',
+        'uh-l3-daytime',
+        'uh-l52-nighttime',
+        'uh-l45-nighttime',
+        'uh-l40-nighttime',
+        'uh-l30-nighttime',
+        'uh-l20-nighttime',
+        'uh-l11-nighttime',
+        'uh-l03-nighttime',
+        'wr-l70-daytime',
+        'wr-l62-daytime',
+        'wr-l51-daytime',
+        'wr-l42-daytime',
+        'wr-l40-daytime',
+        'wr-l30-daytime',
+        'wr-l20-daytime',
+        'wr-l11-daytime',
+        'wr-l3-daytime',
+        'wr-l70-nighttime',
+        'wr-l62-nighttime',
+        'wr-l51-nighttime',
+        'wr-l42-nighttime',
+        'wr-l40-nighttime',
+        'wr-l30-nighttime',
+        'wr-l20-nighttime',
+        'wr-l11-nighttime',
+        'wr-l3-nighttime'
+
+      ],
+      unique: true,
+      localised: false,
+      required: true
+    },
+    {
+      label: 'Tower',
+      field: 'tower',
+      localised: false,
+      required: true,
+      input: 'select',
+      source: 'tower_buildings'
+    },
+    {
+      label: 'Time',
+      field: 'time',
+      input: 'select',
+      source: [
+        'daytime',
+        'nighttime'
+      ],
+      localised: false,
+      required: true
+    },
+    {
+      label: 'Level',
+      field: 'level',
+      input: 'integer',
+      localised: false,
+      required: true
+    },
+    {
+      label: 'Distance',
+      field: 'distance',
+      input: 'integer',
+      localised: false,
+      required: true
+    },
+    {
+      label: 'Thumbnail',
+      field: 'thumbnail',
+      input: 'image',
+      options: {
+        hint: 'Recommended canvas size: 7680 × 3840',
+        accept: '.jpg',
+        limit: 5 * 1024 * 1024, // 5 MB
+        maxCount: 1
+      },
+      localised: false,
+      required: true
+    },
+    {
+      label: 'Thumbnail Fullscreen',
+      field: 'thumbnailFullscreen',
+      input: 'image',
+      options: {
+        hint: 'Recommended canvas size: 7680 × 3840',
+        accept: '.jpg',
+        limit: 5 * 1024 * 1024, // 5 MB
+        maxCount: 1
+      },
+      localised: false,
+      required: true
+    },
+    {
+      label: 'Image 360',
+      field: 'image360',
+      input: 'image',
+      options: {
+        hint: 'Recommended canvas size: 3840 × 2160',
+        accept: '.jpg',
+        maxCount: 1
+      },
+      localised: false
+    },
+    {
+      label: 'Disclaimer',
+      field: 'disclaimer',
+      input: 'checkbox',
+      required: false
+    }
+  ],
+  locales: ['enUS', 'zhCN'],
+  type: 'normal'
+}

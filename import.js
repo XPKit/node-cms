@@ -679,15 +679,15 @@ class ImportManager {
   }
 
   async createCmsRecordAttachments (createdRecordsMap) {
-    // ---------------------- create attachments ------------------------------
     logger.info('')
     logger.info('### create attachments ###')
-    let funcs = _.map(_.keys(this.attachmentMap), resource => {
+    return pAll(_.map(_.keys(this.attachmentMap), resource => {
       return async () => {
         let endProcess = h.startProcess('create attachments %s ... ... ', resource)
         const uniqueKeys = this.api(resource).getUniqueKeys()
         let list = this.attachmentMap[resource]
         let cmsRecordList = this.cmsRecordsMap[resource]
+        let nbCreatedAttachments = 0
         list = _.filter(list, item => {
           let obj = _.find(cmsRecordList, _.pick(item, uniqueKeys))
           if (!obj) {
@@ -696,22 +696,21 @@ class ImportManager {
           item._id = obj._id
           return !_.find(obj._attachments, _.pick(item, ['_name', '_md5sum', '_filename']))
         })
-        let funcs2 = _.map(list, item => {
+        await pAll(_.map(list, item => {
           return () => {
             if (!createdRecordsMap || _.find(createdRecordsMap[resource], {_id: item._id})) {
-              return this.api(resource).createAttachment(item._id, item._name, item.file)
+              const createdAttachment = this.api(resource).createAttachment(item._id, item._name, item.file)
+              nbCreatedAttachments++
+              return createdAttachment
             }
           }
-        })
-        await pAll(funcs2, {concurrency: 1})
-        endProcess(`${list.length} attachments created)`)
+        }), {concurrency: 10})
+        endProcess(`${nbCreatedAttachments} attachments created)`)
       }
-    })
-    return pAll(funcs, {concurrency: 1})
+    }), {concurrency: 5})
   }
 
   async deleteCmsDeleteAttachments (createdRecordsMap) {
-    logger.info('')
     logger.info('### remove attachments ###')
     let funcs = _.map(_.keys(this.data), resource => {
       return async () => {

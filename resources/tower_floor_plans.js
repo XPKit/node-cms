@@ -1,0 +1,74 @@
+exports = module.exports = {
+  group: '3. Towers',
+  displayname: '3.3. Towers - Floor Plans',
+  schema: [
+    {
+      label: 'Unique ID',
+      field: 'id',
+      localised: false,
+      required: true,
+      unique: true,
+      input: 'select',
+      source: [
+        'uh-fp-low',
+        'uh-fp-mid-19',
+        'uh-fp-mid-odd',
+        'uh-fp-mid-even',
+        'uh-fp-mid-41',
+        'uh-fp-mid-42',
+        'uh-fp-high-46',
+        'uh-fp-high-47',
+        'uh-fp-high-48-50',
+        'uh-fp-high-51',
+        'uh-fp-high-52',
+        'wr-fp-low',
+        'wr-fp-mid-1',
+        'wr-fp-mid-2',
+        'wr-fp-high-1-45-54',
+        'wr-fp-high-1-55',
+        'wr-fp-high-1-56',
+        'wr-fp-high-2-57',
+        'wr-fp-high-2-even',
+        'wr-fp-high-2-odd',
+        'wr-fp-high-3-67',
+        'wr-fp-high-3-68',
+        'wr-fp-high-3-69',
+        'wr-fp-high-3-70'
+      ]
+    },
+    {
+      label: 'Levels',
+      field: 'levels',
+      localised: false,
+      required: true,
+      input: 'pillbox'
+    },
+    {
+      label: 'Units',
+      field: 'units',
+      localised: false,
+      required: true,
+      input: 'multiselect',
+      source: 'tower_units'
+    },
+    {
+      label: 'Floorplan',
+      field: 'floorplan',
+      input: 'paragraph',
+      options: {
+        types: ['tower_floorplan_assets'],
+        maxCount: 1
+      },
+      localised: false
+    },
+    {
+      label: 'Order',
+      field: 'order',
+      localised: false,
+      required: true,
+      input: 'integer'
+    }
+  ],
+  locales: ['enUS', 'zhCN'],
+  type: 'normal'
+}

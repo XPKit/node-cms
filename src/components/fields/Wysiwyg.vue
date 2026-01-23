@@ -19,10 +19,11 @@
   import { Editor, EditorContent } from '@tiptap/vue-3'
   import StarterKit from '@tiptap/starter-kit'
   import Superscript from '@tiptap/extension-superscript'
-  import Link from '@tiptap/extension-link'
-  import Underline from '@tiptap/extension-underline'
+  import { all, createLowlight } from 'lowlight'
+  import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
   import TiptapMenuBar from './TiptapMenuBar.vue'
   import AbstractField from '@m/AbstractField'
+  const lowlight = createLowlight(all)
 
   export default {
     components: { EditorContent, TiptapMenuBar },
@@ -45,8 +46,9 @@
         extensions: [
           StarterKit.configure({history: true, code: true, blockquote: true}),
           Superscript,
-          Underline,
-          Link
+          CodeBlockLowlight.configure({
+            lowlight
+          })
         ],
         onUpdate: () => {
           const val = this.editor.getHTML()
@@ -108,6 +110,59 @@
 <style lang="scss">
 @use '@a/scss/variables.scss' as *;
 
+/* Syntax highlighting */
+.tiptap .hljs-comment,
+.tiptap .hljs-quote {
+  color: #616161;
+}
+
+.tiptap .hljs-variable,
+.tiptap .hljs-template-variable,
+.tiptap .hljs-attribute,
+.tiptap .hljs-tag,
+.tiptap .hljs-name,
+.tiptap .hljs-regexp,
+.tiptap .hljs-link,
+.tiptap .hljs-name,
+.tiptap .hljs-selector-id,
+.tiptap .hljs-selector-class {
+  color: #f98181;
+}
+
+.tiptap .hljs-number,
+.tiptap .hljs-meta,
+.tiptap .hljs-built_in,
+.tiptap .hljs-builtin-name,
+.tiptap .hljs-literal,
+.tiptap .hljs-type,
+.tiptap .hljs-params {
+  color: #fbbc88;
+}
+
+.tiptap .hljs-string,
+.tiptap .hljs-symbol,
+.tiptap .hljs-bullet {
+  color: #b9f18d;
+}
+
+.tiptap .hljs-title,
+.tiptap .hljs-section {
+  color: #faf594;
+}
+
+.tiptap .hljs-keyword,
+.tiptap .hljs-selector-tag {
+  color: #70cff8;
+}
+
+.tiptap .hljs-emphasis {
+  font-style: italic;
+}
+
+.tiptap .hljs-strong {
+  font-weight: 700;
+}
+
 .wysiwyg-wrapper {
   position: relative;
   .border-wrapper {
@@ -151,6 +206,74 @@
     blockquote {
       padding-left: 1rem;
       border-left: 3px solid rgba(#0D0D0D, 0.1);
+    }
+
+    pre {
+      background: #2e2b29;
+      border-radius: .5rem;
+      color: white;
+      font-family: JetBrainsMono, monospace;
+      margin: 1.5rem 0;
+      padding: .75rem 1rem;
+    }
+  code {
+      background: none;
+      color: inherit;
+      font-size: 0.8rem;
+      padding: 0;
+    }
+
+    /* Code styling */
+    .hljs-comment,
+    .hljs-quote {
+      color: #616161;
+    }
+
+    .hljs-variable,
+    .hljs-template-variable,
+    .hljs-attribute,
+    .hljs-tag,
+    .hljs-name,
+    .hljs-regexp,
+    .hljs-link,
+    .hljs-name,
+    .hljs-selector-id,
+    .hljs-selector-class {
+      color: #f98181;
+    }
+
+    .hljs-number,
+    .hljs-meta,
+    .hljs-built_in,
+    .hljs-builtin-name,
+    .hljs-literal,
+    .hljs-type,
+    .hljs-params {
+      color: #fbbc88;
+    }
+
+    .hljs-string,
+    .hljs-symbol,
+    .hljs-bullet {
+      color: #b9f18d;
+    }
+
+    .hljs-title,
+    .hljs-section {
+      color: #faf594;
+    }
+
+    .hljs-keyword,
+    .hljs-selector-tag {
+      color: #70cff8;
+    }
+
+    .hljs-emphasis {
+      font-style: italic;
+    }
+
+    .hljs-strong {
+      font-weight: 700;
     }
   }
   .ProseMirror:focus {
