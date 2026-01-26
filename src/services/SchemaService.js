@@ -1,18 +1,18 @@
 import _ from 'lodash'
 import * as Mustache from 'mustache'
-import TranslateServiceLib from '@s/TranslateService'
 import FormService from '@s/FormService'
+import TranslateServiceLib from '@s/TranslateService'
 import ResourceService from './ResourceService'
 
 const TranslateService = window.TranslateService || TranslateServiceLib
 
 class SchemaService {
-  constructor () {
+  constructor() {
     this.typeMapper = FormService.typeMapper
   }
 
-  getSchemaFields (schema, resource, locale, userLocale, disabled, extraSources, rootView) {
-    let fields = _.map(schema, (field) => {
+  getSchemaFields(schema, resource, locale, userLocale, disabled, extraSources, rootView) {
+    const fields = _.map(schema, (field) => {
       const isLocalised = resource.locales && (field.localised || _.isUndefined(field.localised))
       const name = field.label && TranslateService.get(field.label)
       const label = `${name || field.field}${isLocalised ? ` (${TranslateService.get(`TL_${locale.toUpperCase()}`)})` : ''}`
@@ -29,7 +29,7 @@ class SchemaService {
         resource,
         locale,
         userLocale,
-        rootView
+        rootView,
       })
       _.each(field.options, (val, key) => {
         _.set(schema, key, val)
@@ -41,7 +41,7 @@ class SchemaService {
         schema.paragraphKey = field.paragraphKey
         schema.paragraphType = field.paragraphType
       }
-      if ((field.input === 'file') && _.get(schema, 'maxCount', false) === false) {
+      if (field.input === 'file' && _.get(schema, 'maxCount', false) === false) {
         schema.maxCount = Infinity
       } else if (field.input === 'select' && _.get(schema, 'labels', false)) {
         schema.selectOptions.label = _.map(schema.labels, (label, value) => {
@@ -53,7 +53,7 @@ class SchemaService {
           _.each(field.source, (value) => {
             values.push({
               text: _.get(schema, `labels.${value}`, value),
-              value
+              value,
             })
           })
           field.source = values
@@ -89,16 +89,16 @@ class SchemaService {
     return fields
   }
 
-  updateFieldSchema (fields, field, id, locale, extraSources) {
+  updateFieldSchema(fields, field, id, locale, extraSources) {
     const cachedData = ResourceService.get(field.source)
     // handle extra source
     extraSources = _.extend({}, extraSources, _.get(field, 'options.extraSources'))
     _.each(extraSources, (source, key) => {
       const list = ResourceService.get(source)
-      _.each(cachedData, item => {
+      _.each(cachedData, (item) => {
         const value = _.get(item, key)
         if (_.isString(value)) {
-          _.set(item, key, _.find(list, {_id: value}))
+          _.set(item, key, _.find(list, { _id: value }))
         }
       })
     })
@@ -117,7 +117,7 @@ class SchemaService {
       fields[id].selectOptions = _.clone(fields[id].selectOptions || {})
       fields[id].selectOptions.key = '_id'
       fields[id].selectOptions.customLabel = (itemId) => {
-        const item = _.isString(itemId) ? _.find(cachedData, {_id: itemId}) : itemId
+        const item = _.isString(itemId) ? _.find(cachedData, { _id: itemId }) : itemId
         if (!_.get(fields[id], 'customLabel', false)) {
           return _.get(item, `${key}.${locale}`, _.get(item, key))
         } else if (_.isUndefined(item)) {
@@ -138,12 +138,12 @@ class SchemaService {
     }
   }
 
-  getKeyLocale (schema) {
+  getKeyLocale(schema) {
     return FormService.getKeyLocale(schema)
   }
 
-  getNestedGroups (resource, fields, level, path, prefix) {
-    let groups = _.groupBy(fields, item => {
+  getNestedGroups(resource, fields, level, path, prefix) {
+    let groups = _.groupBy(fields, (item) => {
       let list = item.originalModel
       if (prefix) {
         list = list.replace(prefix, '')
@@ -155,7 +155,9 @@ class SchemaService {
       if (_.uniqBy(list, 'originalModel').length === 1) {
         const value = _.first(list)
         if (list.length > 1) {
-          console.warn(`duplicated field '${value.model}' detected in resource '${resource.displayname || resource.title}'`)
+          console.warn(
+            `duplicated field '${value.model}' detected in resource '${resource.displayname || resource.title}'`,
+          )
         }
         return value
       }
@@ -165,8 +167,8 @@ class SchemaService {
         key,
         path,
         groupOptions: {
-          fields: this.getNestedGroups(resource, list, level + 1, path, prefix)
-        }
+          fields: this.getNestedGroups(resource, list, level + 1, path, prefix),
+        },
       })
     })
     return groups

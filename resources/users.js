@@ -7,24 +7,24 @@ module.exports = {
       input: 'string',
       localised: false,
       required: true,
-      unique: true
+      unique: true,
     },
     {
       field: 'email',
       input: 'email',
       localised: false,
       required: true,
-      unique: true
+      unique: true,
     },
     {
       field: 'role',
       input: 'select',
       localised: false,
       options: {
-        values: ['admin', 'editor', 'viewer']
-      }
-    }
+        values: ['admin', 'editor', 'viewer'],
+      },
+    },
   ],
   type: 'normal',
-  locales: ['enUS', 'zhCN']
+  locales: ['enUS', 'zhCN'],
 }

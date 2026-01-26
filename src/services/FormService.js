@@ -1,4 +1,3 @@
-
 import _ from 'lodash'
 import TranslateServiceLib from '@s/TranslateService'
 
@@ -14,11 +13,15 @@ const getKeyLocale = (schema) => {
 }
 
 const validateEmail = (email) => {
-  return _.isUndefined(email) || String(email).length === 0 || String(email)
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    )
+  return (
+    _.isUndefined(email) ||
+    String(email).length === 0 ||
+    String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+      )
+  )
 }
 
 const validators = {
@@ -35,7 +38,7 @@ const validators = {
   double: (n) => _.isNumber(n) && (_.isInteger(n) || (n === +n && n !== (n | 0))),
   text: (t) => _.isString(t),
   array: (a) => _.isArray(a),
-  email: (e) => validateEmail(e)
+  email: (e) => validateEmail(e),
 }
 
 const fieldIsRequired = () => {
@@ -53,7 +56,7 @@ const checkNumber = (field, value, model, type) => {
   if (func) {
     return func(Number(value || 0), field, model, {
       fieldIsRequired: fieldIsRequired(),
-      invalidFormat: invalidFormat()
+      invalidFormat: invalidFormat(),
     })
   }
   console.error(`checkNumber - No validator found for type '${type}'`)
@@ -66,7 +69,7 @@ const customLabel = (item, labelProp) => {
 
 const customValidators = {
   array: (a) => _.isArray(a),
-  email: (e) => (new RegExp('/^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$/')).test(e),
+  email: (e) => /\/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$\//.test(e),
   text: (value, field) => {
     if (_.get(field, 'required', false) && (!_.isString(value) || _.isEmpty(value))) {
       return fieldIsRequired()
@@ -136,97 +139,97 @@ const customValidators = {
       return fieldIsRequired()
     }
     return true
-  }
+  },
 }
 
-let typeMapper = {
+const typeMapper = {
   string: {
     type: 'input',
     overrideType: 'CustomInput',
-    validator: customValidators.text
+    validator: customValidators.text,
   },
   transliterate: {
     type: 'input',
     overrideType: 'Transliterate',
-    validator: customValidators.text
+    validator: customValidators.text,
   },
   text: {
     type: 'textarea',
     overrideType: 'CustomTextarea',
     rows: 5,
-    validator: customValidators.text
+    validator: customValidators.text,
   },
   password: {
     type: 'input',
     inputFieldType: 'password',
-    overrideType: 'CustomInput'
+    overrideType: 'CustomInput',
   },
   email: {
     type: 'input',
     overrideType: 'CustomInput',
     inputFieldType: 'email',
-    validator: validators.email
+    validator: validators.email,
   },
   url: {
     type: 'input',
     overrideType: 'CustomInput',
-    validator: validators.url
+    validator: validators.url,
   },
   number: {
     type: 'input',
     overrideType: 'CustomInput',
     inputFieldType: 'number',
-    validator: customValidators.number
+    validator: customValidators.number,
   },
   double: {
     type: 'input',
     overrideType: 'CustomInput',
     inputFieldType: 'number',
-    validator: customValidators.double
+    validator: customValidators.double,
   },
   integer: {
     type: 'input',
     overrideType: 'CustomInput',
     inputFieldType: 'number',
-    validator: customValidators.integer
+    validator: customValidators.integer,
   },
   checkbox: {
     type: 'switch',
-    overrideType: 'CustomCheckbox'
+    overrideType: 'CustomCheckbox',
   },
   date: {
     type: 'CustomDatetimePicker',
     format: 'YYYY-MM-DD',
     customDatetimePickerOptions: {
-      placeholder: 'YYYY-MM-DD'
-    }
+      placeholder: 'YYYY-MM-DD',
+    },
   },
   time: {
     type: 'CustomDatetimePicker',
     format: 'HH:mm:ss a',
     customDatetimePickerOptions: {
-      placeholder: 'HH:mm:ss'
-    }
+      placeholder: 'HH:mm:ss',
+    },
   },
   datetime: {
     type: 'CustomDatetimePicker',
     format: 'YYYY-MM-DD HH:mm:ss',
     customDatetimePickerOptions: {
-      placeholder: 'YYYY-MM-DD HH:mm:ss'
-    }
+      placeholder: 'YYYY-MM-DD HH:mm:ss',
+    },
   },
   pillbox: {
     type: 'CustomInputTag',
     selectOptions: {
       multiple: true,
       searchable: true,
-      onNewTag (newTag, id, options, value) {
+      onNewTag(newTag, id, options, value) {
         options.push(newTag)
         value.push(newTag)
-      }
+      },
     },
     values: [],
-    validator: customValidators.pillbox
+    validator: customValidators.pillbox,
   },
   select: {
     type: 'CustomMultiSelect',
@@ -234,9 +237,9 @@ let typeMapper = {
       multiple: false,
       trackBy: '_id',
       customLabel,
-      searchable: true
+      searchable: true,
     },
-    validator: customValidators.select
+    validator: customValidators.select,
   },
   multiselect: {
     type: 'CustomMultiSelect',
@@ -247,9 +250,9 @@ let typeMapper = {
       chips: true,
       deletableChips: true,
       customLabel,
-      searchable: true
+      searchable: true,
     },
-    validator: validators.array
+    validator: validators.array,
   },
   json: {
     type: 'TreeView',
@@ -257,42 +260,40 @@ let typeMapper = {
     treeViewOptions: {
       maxDepth: 4,
       rootObjectKey: 'root',
-      modifiable: false
-    }
+      modifiable: false,
+    },
   },
   code: {
     type: 'Code',
     overrideType: 'CustomCode',
-    options: {
-    }
+    options: {},
   },
   wysiwyg: {
     type: 'Wysiwyg',
-    overrideType: 'WysiwygField'
+    overrideType: 'WysiwygField',
   },
   image: {
     type: 'ImageView',
-    validator: customValidators.image
+    validator: customValidators.image,
   },
   file: {
     type: 'AttachmentView',
-    validator: customValidators.file
+    validator: customValidators.file,
   },
   paragraph: {
-    type: 'ParagraphView'
+    type: 'ParagraphView',
   },
   group: {
     type: 'group',
-    overrideType: 'Group'
+    overrideType: 'Group',
   },
   object: {
-    type: 'JsonEditor'
+    type: 'JsonEditor',
   },
   color: {
     type: 'ColorPicker',
-    colorPickerOptions: {
-    }
-  }
+    colorPickerOptions: {},
+  },
 }
 
 _.each(typeMapper, (type) => {
@@ -303,11 +304,11 @@ _.each(typeMapper, (type) => {
 })
 
 class FormService {
-  constructor () {
+  constructor() {
     this.typeMapper = typeMapper
   }
 
-  getKeyLocale (schema) {
+  getKeyLocale(schema) {
     return getKeyLocale(schema)
   }
 }

@@ -15,26 +15,26 @@
 </template>
 
 <script>
-  import _ from 'lodash'
-  import AbstractField from '@m/AbstractField'
+import _ from 'lodash'
+import AbstractField from '@m/AbstractField'
 
-  export default {
-    mixins: [AbstractField],
-    methods: {
-      getType () {
-        return _.get(this.schema, 'inputFieldType', 'text')
-      },
-      validateField (val) {
-        if (this.schema.required && (_.isNull(val) || _.isUndefined(val) || val === '')) {
-          return false
-        }
-        if (_.isFunction(this.schema.validator)) {
-          return !!this.schema.validator(val, this.schema.model, this.model)
-        }
-        return true
+export default {
+  mixins: [AbstractField],
+  methods: {
+    getType() {
+      return _.get(this.schema, 'inputFieldType', 'text')
+    },
+    validateField(val) {
+      if (this.schema.required && (_.isNull(val) || _.isUndefined(val) || val === '')) {
+        return false
       }
-    }
-  }
+      if (_.isFunction(this.schema.validator)) {
+        return !!this.schema.validator(val, this.schema.model, this.model)
+      }
+      return true
+    },
+  },
+}
 </script>
 
 <style lang="scss">

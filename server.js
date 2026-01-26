@@ -2,8 +2,8 @@
 
 const express = require('express')
 const CMS = require('./')
-const pkg = require('./package.json')
 const logger = new (require('img-sh-logger'))()
+const pkg = require('./package.json')
 // start with leveldb
 // let options = {
 //   // debug: true,
@@ -32,12 +32,12 @@ const logger = new (require('img-sh-logger'))()
 //   // }
 // }
 
-let options = {
+const options = {
   sync: {
-    resources: ['articles','comments','authors']
+    resources: ['articles', 'comments', 'authors'],
   },
   disableReplication: true,
-  smartCrop: false
+  smartCrop: false,
   // dbEngine: {
   //   type: 'mongodb',
   //   url: '127.0.0.1/node-cms'

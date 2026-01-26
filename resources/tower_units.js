@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   group: '3. Towers',
   displayname: '3.2. Towers - Units',
   schema: [
@@ -48,8 +48,8 @@ exports = module.exports = {
         'wr-ph3',
         'wr-ph4',
         'wr-ph5',
-        'wr-4c'
-      ]
+        'wr-4c',
+      ],
     },
     {
       label: 'Unit Type',
@@ -57,7 +57,7 @@ exports = module.exports = {
       localised: false,
       required: true,
       input: 'select',
-      source: 'tower_unit_groups'
+      source: 'tower_unit_groups',
     },
     {
       label: 'Icon',
@@ -69,50 +69,50 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 384 × 180',
         accept: '.svg,.png',
         limit: 300 * 1024, // 300 KB
-        maxCount: 1
-      }
+        maxCount: 1,
+      },
     },
     {
       label: 'Short Name',
       field: 'shortName',
       localised: true,
       required: true,
-      input: 'string'
+      input: 'string',
     },
     {
       label: 'Remaning Available Units',
       field: 'remainingAvailableUnits',
       localised: false,
       required: true,
-      input: 'integer'
+      input: 'integer',
     },
     {
       label: 'Price',
       field: 'price',
       localised: false,
       required: true,
-      input: 'integer'
+      input: 'integer',
     },
     {
       label: 'Square Meters',
       field: 'squareMeters',
       localised: false,
       required: true,
-      input: 'double'
+      input: 'double',
     },
     {
       label: 'Bedrooms Count',
       field: 'bedroomsCount',
       localised: false,
       required: true,
-      input: 'integer'
+      input: 'integer',
     },
     {
       label: 'Bathrooms Count',
       field: 'bathroomsCount',
       localised: false,
       required: true,
-      input: 'integer'
+      input: 'integer',
     },
     {
       label: 'Unit View',
@@ -120,39 +120,39 @@ exports = module.exports = {
       input: 'paragraph',
       options: {
         types: ['tower_unit_views'],
-        maxCount: 1
+        maxCount: 1,
       },
       localised: false,
-      required: false
+      required: false,
     },
     {
       label: 'Unit Plan',
       field: 'unitPlan',
       input: 'paragraph',
       options: {
-        types: ['tower_unit_plans']
+        types: ['tower_unit_plans'],
       },
       localised: false,
-      required: false
+      required: false,
     },
     {
       label: 'Renders',
       field: 'renders',
       input: 'paragraph',
       options: {
-        types: ['tower_unit_renders']
+        types: ['tower_unit_renders'],
       },
       localised: false,
-      required: false
+      required: false,
     },
     {
       label: 'Order',
       field: 'order',
       localised: false,
       required: true,
-      input: 'integer'
-    }
+      input: 'integer',
+    },
   ],
   locales: ['enUS', 'zhCN'],
-  type: 'normal'
+  type: 'normal',
 }

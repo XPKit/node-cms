@@ -10,11 +10,11 @@ module.exports = {
       required: true,
       options: {
         accept: '.jpg,.png',
-        maxCount: 1
-      }
-    }
+        maxCount: 1,
+      },
+    },
   ],
   layout: {
-    slots: 4
-  }
+    slots: 4,
+  },
 }

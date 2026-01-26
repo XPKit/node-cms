@@ -1,14 +1,14 @@
 // vite.config.js
 
-import { defineConfig } from 'vite'
-import path from 'path'
-import _ from 'lodash'
+import path from 'node:path'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-import ViteUtils from './vite.utils.js'
-import vuetify from 'vite-plugin-vuetify'
+import _ from 'lodash'
 import rollupNodePolyFill from 'rollup-plugin-node-polyfills'
 import { visualizer } from 'rollup-plugin-visualizer'
+import { defineConfig } from 'vite'
+import vuetify from 'vite-plugin-vuetify'
+import ViteUtils from './vite.utils.js'
 
 const viteUtils = ViteUtils.getInstance()
 
@@ -18,12 +18,9 @@ const regroupModulesStartingWith = ['vue', 'prosemirror']
 
 const cacheControl = () => ({
   name: 'cache-control',
-  configureServer (server) {
+  configureServer(server) {
     server.middlewares.use((req, res, next) => {
-      const cachedPaths = [
-        '/assets/',
-        '/api/file/'
-      ]
+      const cachedPaths = ['/assets/', '/api/file/']
       for (const cachedPath of cachedPaths) {
         if (req.originalUrl.search(cachedPath) > -1) {
           res.setHeader('Cache-Control', 'public,max-age=31536000,immutable')
@@ -34,7 +31,7 @@ const cacheControl = () => ({
       }
       next()
     })
-  }
+  },
 })
 
 export default defineConfig(({ mode }) => {
@@ -45,17 +42,11 @@ export default defineConfig(({ mode }) => {
     css: {
       preprocessorOptions: {
         scss: {
-          api: 'modern-compiler' // or "modern"
-        }
-      }
+          api: 'modern-compiler', // or "modern"
+        },
+      },
     },
-    plugins: [
-      cacheControl(),
-      vue({exclude: 'os'}),
-      vueJsx({}),
-      vuetify({ autoImport: true }),
-      visualizer()
-    ],
+    plugins: [cacheControl(), vue({ exclude: 'node:os' }), vueJsx({}), vuetify({ autoImport: true }), visualizer()],
     server: viteUtils.serverConfig,
     resolve: {
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
@@ -73,12 +64,12 @@ export default defineConfig(({ mode }) => {
         '@u': 'utils',
         '@l': 'lib',
         '@r': 'router',
-        '@m': 'mixins'
-      })
+        '@m': 'mixins',
+      }),
     },
     preview: viteUtils.serverConfig,
     optimizeDeps: {
-      include: ['dayjs/plugin/relativeTime', 'fuzzysort']
+      include: ['dayjs/plugin/relativeTime', 'fuzzysort'],
     },
     build: {
       chunkSizeWarningLimit: 1500,
@@ -90,7 +81,7 @@ export default defineConfig(({ mode }) => {
         plugins: [
           // Enable rollup polyfills plugin
           // used during production bundling
-          rollupNodePolyFill()
+          rollupNodePolyFill(),
         ],
         output: {
           manualChunks: (id) => {
@@ -99,20 +90,24 @@ export default defineConfig(({ mode }) => {
               if (!moduleName) {
                 return defaultVendorsFilename
               }
-              const shouldRegroupModule = _.find(regroupModulesStartingWith, (startingWith) => id.includes(startingWith))
+              const shouldRegroupModule = _.find(regroupModulesStartingWith, (startingWith) =>
+                id.includes(startingWith),
+              )
               if (!_.isUndefined(shouldRegroupModule)) {
                 return shouldRegroupModule
               }
-              const foundSeperatedVendor = _.find(separatedVendors, (separatedVendor) => id.includes(`node_modules/${separatedVendor}`))
+              const foundSeperatedVendor = _.find(separatedVendors, (separatedVendor) =>
+                id.includes(`node_modules/${separatedVendor}`),
+              )
               return !_.isUndefined(foundSeperatedVendor) ? moduleName : defaultVendorsFilename
             }
             return null
-          }
+          },
         },
         input: {
-          main: path.resolve(viteUtils.nodeCmsSrcPath, 'index.html')
-        }
-      }
-    }
+          main: path.resolve(viteUtils.nodeCmsSrcPath, 'index.html'),
+        },
+      },
+    },
   }
 })

@@ -2,11 +2,11 @@
 import Emitter from 'tiny-emitter'
 
 class FieldSelectorService {
-  constructor () {
+  constructor() {
     this.events = new Emitter()
   }
 
-  select (field) {
+  select(field) {
     this.events.emit('select', field)
   }
 

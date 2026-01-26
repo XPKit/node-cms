@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   group: '2. Content',
   displayname: '2.6. Translations',
   schema: [
@@ -8,15 +8,15 @@ exports = module.exports = {
       input: 'string',
       unique: true,
       required: true,
-      localised: false
+      localised: false,
     },
     {
       label: 'Value',
       field: 'value',
       input: 'text',
       required: true,
-      localised: true
-    }
+      localised: true,
+    },
   ],
-  locales: ['enUS', 'zhCN']
+  locales: ['enUS', 'zhCN'],
 }

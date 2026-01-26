@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   group: '1. BKK109',
   displayname: '1.4. Notes',
   schema: [
@@ -8,28 +8,42 @@ exports = module.exports = {
       input: 'string',
       unique: true,
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'Linked Page',
       field: 'linkedPage',
       input: 'string',
       options: {
-        hint: 'The unique id of the page this note is linked to'
+        hint: 'The unique id of the page this note is linked to',
       },
       unique: false,
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'Content',
       field: 'content',
       input: 'wysiwyg',
       options: {
-        buttons: ['bold', 'underline', 'superscript', 'paragraph', 'bullet-list', 'ordered-list', 'heading-1', 'heading-2', 'heading-3', 'quote', 'clear-format', 'undo', 'redo']
+        buttons: [
+          'bold',
+          'underline',
+          'superscript',
+          'paragraph',
+          'bullet-list',
+          'ordered-list',
+          'heading-1',
+          'heading-2',
+          'heading-3',
+          'quote',
+          'clear-format',
+          'undo',
+          'redo',
+        ],
       },
-      localised: false
-    }
+      localised: false,
+    },
   ],
-  type: 'normal'
+  type: 'normal',
 }

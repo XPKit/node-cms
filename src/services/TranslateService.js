@@ -1,16 +1,16 @@
 import _ from 'lodash'
-import RequestService from './RequestService'
 import Mustache from 'mustache'
+import RequestService from './RequestService'
 
 class TranslateService {
-  constructor () {
+  constructor() {
     this.dict = {}
     this.locale = 'enUS'
   }
 
-  async init () {
+  async init() {
     const data = await RequestService.get(`${window.location.pathname}i18n/config.json`)
-    this.config = _.get(data, 'config.language', { 'defaultLocale': 'enUS', 'locales': ['enUS'] })
+    this.config = _.get(data, 'config.language', { defaultLocale: 'enUS', locales: ['enUS'] })
     this.locale = _.get(this.config, 'defaultLocale', 'enUS')
     for (const locale of this.getLocales()) {
       try {
@@ -25,7 +25,7 @@ class TranslateService {
     return _.get(this.config, 'locales', [])
   }
 
-  setLocale (locale) {
+  setLocale(locale) {
     this.locale = locale
   }
 
@@ -33,23 +33,21 @@ class TranslateService {
     try {
       return Mustache.render(translation, params || {})
     } catch (error) {
-      console.error('Failed to render translation:', locale ? {error, locale} : {error})
+      console.error('Failed to render translation:', locale ? { error, locale } : { error })
     }
     return ''
   }
 
   translationNotFound(key) {
-    console.info(`Did not find any translation for ${key}`,
-      {
-        key,
-        locale: this.locale,
-        dictItem: _.get(this.dict, `${key}.${this.locale}`, false),
-        dict: this.dict
-      }
-    )
+    console.info(`Did not find any translation for ${key}`, {
+      key,
+      locale: this.locale,
+      dictItem: _.get(this.dict, `${key}.${this.locale}`, false),
+      dict: this.dict,
+    })
   }
 
-  get (key, params) {
+  get(key, params) {
     if (_.isString(key)) {
       if (_.isEmpty(key)) {
         return ''
@@ -61,7 +59,7 @@ class TranslateService {
       }
       if (_.get(this.dict, `${this.locale}.${key}`, false)) {
         return this.renderTranslation(this.dict[this.locale][key], params)
-      } else if (_.get(key, this.locale, false))  {
+      } else if (_.get(key, this.locale, false)) {
         return this.renderTranslation(key[this.locale], params, this.locale)
       }
       this.translationNotFound(key)

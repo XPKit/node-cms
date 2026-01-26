@@ -7,58 +7,58 @@
 const _ = require('lodash')
 const CMS = require('./index.js')
 const fs = require('fs-extra')
-const path = require('path')
+const path = require('node:path')
 const sharp = require('sharp')
 
 const smartCropOptions = [
   {
     resize: '500xauto',
     smart: false,
-    objectDetection: true
+    objectDetection: true,
   },
   {
     resize: 'autoxauto',
     smart: true,
-    objectDetection: false
+    objectDetection: false,
   },
   {
     resize: '500xauto',
     smart: true,
-    objectDetection: true
+    objectDetection: true,
   },
   {
     resize: 'autox500',
     smart: true,
-    objectDetection: false
+    objectDetection: false,
   },
   {
     resize: '500xauto',
     smart: false,
-    objectDetection: true
+    objectDetection: true,
   },
   {
     resize: 'autox500',
     smart: false,
-    objectDetection: false
+    objectDetection: false,
   },
   {
     resize: 'autox500',
     smart: true,
     faceOnly: true,
-    facePadding: 0
+    facePadding: 0,
   },
   {
     resize: 'autox500',
     smart: true,
     faceOnly: true,
-    facePadding: 50
+    facePadding: 50,
   },
   {
     resize: 'autox500',
     smart: true,
     faceOnly: true,
-    facePadding: 100
-  }
+    facePadding: 100,
+  },
 ]
 
 async function streamToFile(stream, filePath) {
@@ -82,7 +82,7 @@ async function processSmartCrop(api, fileToProcess, smartCropOptions, outputFile
     name: 'example-attachment',
     stream: fs.createReadStream(fileToProcess),
     fields: { _filename: 'man.jpg' },
-    ...smartCropOptions
+    ...smartCropOptions,
   })
   // Download the processed attachment (direct result from createAttachment)
   const resultStreamCreate = await api('cctImages').findFile(attachment._id)
@@ -97,19 +97,25 @@ async function processSmartCrop(api, fileToProcess, smartCropOptions, outputFile
   const createMeta = await sharp(createPath).metadata()
   const findMeta = await sharp(findPath).metadata()
   if (createMeta.width !== findMeta.width || createMeta.height !== findMeta.height) {
-    throw new Error(`Image size mismatch for ${outputFilename}: create=${createMeta.width}x${createMeta.height}, find=${findMeta.width}x${findMeta.height}`)
+    throw new Error(
+      `Image size mismatch for ${outputFilename}: create=${createMeta.width}x${createMeta.height}, find=${findMeta.width}x${findMeta.height}`,
+    )
   }
 }
 
 function getMode(options) {
-  return _.chain(options).map((val, key) => {
-    if (!val) {
-      return false
-    } else if (key === 'facePadding') {
-      return `${key}-${val}`
-    }
-    return key
-  }).compact().join('+').value()
+  return _.chain(options)
+    .map((val, key) => {
+      if (!val) {
+        return false
+      } else if (key === 'facePadding') {
+        return `${key}-${val}`
+      }
+      return key
+    })
+    .compact()
+    .join('+')
+    .value()
 }
 
 async function processAllSmartCropOptions(api, testImagePath) {
@@ -130,7 +136,7 @@ async function initCms() {
   const cms = new CMS({
     data: './data',
     locales: ['enUS'],
-    smartCrop: true // Enable SmartCrop
+    smartCrop: true, // Enable SmartCrop
   })
   console.log('✅ Created CMS instance with SmartCrop enabled')
   await cms.bootstrap()
@@ -170,7 +176,7 @@ async function testSmartCropAPI() {
 // Run the test if this script is executed directly
 if (require.main === module) {
   testSmartCropAPI()
-    .then(success => {
+    .then((success) => {
       if (success) {
         console.log('\n✅ All tests passed!')
         process.exit(0)
@@ -179,7 +185,7 @@ if (require.main === module) {
         process.exit(1)
       }
     })
-    .catch(error => {
+    .catch((error) => {
       console.error('❌ Test runner failed:', error)
       process.exit(1)
     })

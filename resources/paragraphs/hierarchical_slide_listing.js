@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: 'Slide - Listing',
   schema: [
     {
@@ -6,17 +6,17 @@ exports = module.exports = {
       field: 'sections',
       input: 'paragraph',
       options: {
-        types: ['hierarchical_sections']
+        types: ['hierarchical_sections'],
       },
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'Footer Note',
       field: 'footerNote',
       input: 'string',
       localised: true,
-      required: false
-    }
-  ]
+      required: false,
+    },
+  ],
 }

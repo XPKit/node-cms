@@ -2,15 +2,15 @@ import { get as objGet } from 'lodash'
 import LoginService from '@s/LoginService'
 
 export default {
-  data () {
+  data() {
     return {
-      theme: 'light'
+      theme: 'light',
     }
   },
-  mounted () {
+  mounted() {
     LoginService.events.on('changed-theme', (theme) => {
       this.theme = theme
     })
     this.theme = objGet(LoginService, 'user.theme', 'light')
-  }
+  },
 }

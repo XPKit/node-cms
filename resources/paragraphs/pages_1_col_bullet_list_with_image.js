@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: '1 Column - Bullet List + Image',
   schema: [
     {
@@ -6,10 +6,10 @@ exports = module.exports = {
       field: 'items',
       input: 'paragraph',
       options: {
-        types: ['pages_bullet_list_items']
+        types: ['pages_bullet_list_items'],
       },
       localised: false,
-      required: false
+      required: false,
     },
     {
       label: 'Image',
@@ -19,10 +19,10 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 1816 × 1672',
         accept: '.jpg',
         limit: 1 * 1024 * 1024, // 1 MB
-        maxCount: 1
+        maxCount: 1,
       },
       localised: true,
-      required: true
+      required: true,
     },
     {
       label: 'Fullscreen',
@@ -32,16 +32,16 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 2836 × 2160',
         accept: '.jpg',
         limit: 2 * 1024 * 1024, // 2 MB
-        maxCount: 1
+        maxCount: 1,
       },
       localised: true,
-      required: true
+      required: true,
     },
     {
       label: 'Disclaimer',
       field: 'disclaimer',
       input: 'checkbox',
-      required: false
-    }
-  ]
+      required: false,
+    },
+  ],
 }

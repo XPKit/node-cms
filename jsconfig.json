@@ -9,10 +9,7 @@
     "checkJs": false,
     "declaration": false,
     "paths": {
-      "@/*": [
-        "src/*",
-        "lib/*"
-      ],
+      "@/*": ["src/*", "lib/*"],
       "@s/*": ["src/services/*"],
       "@c/*": ["src/components/*"],
       "@v/*": ["src/views/*"],
@@ -25,25 +22,9 @@
       "@static/*": ["src/static/*"],
       "@p/*": ["src/plugins/*"]
     },
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable",
-      "scripthost"
-    ],
-    "typeRoots": [
-      "./types",
-      "./node_modules/@types"
-    ]
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
+    "typeRoots": ["./types", "./node_modules/@types"]
   },
-  "include": [
-    "**/*.js",
-    "**/*.d.ts",
-    "types/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build"
-  ]
+  "include": ["**/*.js", "**/*.d.ts", "types/**/*"],
+  "exclude": ["node_modules", "dist", "build"]
 }

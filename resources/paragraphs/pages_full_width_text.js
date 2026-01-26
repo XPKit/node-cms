@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: 'Full Width Text',
   schema: [
     {
@@ -9,26 +9,26 @@ exports = module.exports = {
         hint: 'Recommended canvas size: auto × 140',
         accept: '.jpg,.png,.svg',
         limit: 1 * 1024 * 1024, // 1 MB
-        maxCount: 1
+        maxCount: 1,
       },
       localised: true,
-      required: false
+      required: false,
     },
     {
       label: 'Text',
       field: 'text',
       input: 'wysiwyg',
       options: {
-        buttons: ['heading-3', 'paragraph', 'bold', 'clear-format', 'undo', 'redo']
+        buttons: ['heading-3', 'paragraph', 'bold', 'clear-format', 'undo', 'redo'],
       },
       localised: true,
-      required: true
+      required: true,
     },
     {
       label: 'Is Vertically Centered?',
       field: 'isVerticallyCentered',
       input: 'checkbox',
-      required: false
-    }
-  ]
+      required: false,
+    },
+  ],
 }

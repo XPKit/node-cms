@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   group: '3. Towers',
   displayname: '3.8. Towers - QTVR',
   schema: [
@@ -38,12 +38,11 @@ exports = module.exports = {
         'wr-l30-nighttime',
         'wr-l20-nighttime',
         'wr-l11-nighttime',
-        'wr-l3-nighttime'
-
+        'wr-l3-nighttime',
       ],
       unique: true,
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'Tower',
@@ -51,32 +50,29 @@ exports = module.exports = {
       localised: false,
       required: true,
       input: 'select',
-      source: 'tower_buildings'
+      source: 'tower_buildings',
     },
     {
       label: 'Time',
       field: 'time',
       input: 'select',
-      source: [
-        'daytime',
-        'nighttime'
-      ],
+      source: ['daytime', 'nighttime'],
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'Level',
       field: 'level',
       input: 'integer',
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'Distance',
       field: 'distance',
       input: 'integer',
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'Thumbnail',
@@ -86,10 +82,10 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 7680 × 3840',
         accept: '.jpg',
         limit: 5 * 1024 * 1024, // 5 MB
-        maxCount: 1
+        maxCount: 1,
       },
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'Thumbnail Fullscreen',
@@ -99,10 +95,10 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 7680 × 3840',
         accept: '.jpg',
         limit: 5 * 1024 * 1024, // 5 MB
-        maxCount: 1
+        maxCount: 1,
       },
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'Image 360',
@@ -111,17 +107,17 @@ exports = module.exports = {
       options: {
         hint: 'Recommended canvas size: 3840 × 2160',
         accept: '.jpg',
-        maxCount: 1
+        maxCount: 1,
       },
-      localised: false
+      localised: false,
     },
     {
       label: 'Disclaimer',
       field: 'disclaimer',
       input: 'checkbox',
-      required: false
-    }
+      required: false,
+    },
   ],
   locales: ['enUS', 'zhCN'],
-  type: 'normal'
+  type: 'normal',
 }

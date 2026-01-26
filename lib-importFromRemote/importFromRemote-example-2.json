@@ -13,10 +13,6 @@
     "username": "localAdmin",
     "password": "localAdmin"
   },
-  "resources": [
-    "gallery"
-  ],
-  "paragraphs": [
-    "gallery_item"
-  ]
+  "resources": ["gallery"],
+  "paragraphs": ["gallery_item"]
 }

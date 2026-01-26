@@ -62,5 +62,5 @@
 
 // Export for CommonJS (Node.js) compatibility
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {};
+  module.exports = {}
 }

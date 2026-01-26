@@ -1,36 +1,40 @@
-// const path = require('path')
+// const path = require('node:path')
 const fs = require('fs-extra')
 const _ = require('lodash')
 const RequestService = require('./RequestService')
 
-exports = module.exports = (config = {}, overwrite = false) => {
+module.exports = (config = {}, overwrite = false) => {
   config.protocol = _.get(config, 'protocol', 'http://')
   const auth = _.pick(config, ['username', 'password'])
   const request = new RequestService(auth)
   const schemaMap = {}
   const paragraphMap = {}
-  const buildUrl = (url)=> `${config.protocol}${config.host}${config.prefix}/${url}`
+  const buildUrl = (url) => `${config.protocol}${config.host}${config.prefix}/${url}`
   return (resource) => {
     return {
-      async create (item) {
+      async create(item) {
         return await request.post(buildUrl(`api/${resource}`), item)
       },
-      async list (query) {
+      async list(query) {
         return await request.get(buildUrl(`api/${resource}?query=${JSON.stringify(query) || ''}`))
       },
-      async update (id, item) {
+      async update(id, item) {
         return await request.put(buildUrl(`api/${resource}/${id}`), item)
       },
-      async remove (id) {
+      async remove(id) {
         return await request.delete(buildUrl(`api/${resource}/${id}`))
       },
-      async getAttachment (url, outputPath, maxRetries = 10) {
+      async getAttachment(url, outputPath, maxRetries = 10) {
         await request.getAttachment(url, outputPath, maxRetries)
       },
-      async createAttachment (recordId, fieldname, filepath, attachment) {
+      async createAttachment(recordId, fieldname, filepath, attachment) {
         // console.log(`Uploading ${path.relative(path.resolve('.'), path.normalize(filepath))} ...`)
         const data = new FormData()
-        data.append(fieldname, new Blob([fs.readFileSync(filepath)], { type: _.get(attachment, '_contentType') }), _.get(attachment, '_filename' ))
+        data.append(
+          fieldname,
+          new Blob([fs.readFileSync(filepath)], { type: _.get(attachment, '_contentType') }),
+          _.get(attachment, '_filename'),
+        )
         if (_.get(attachment, '_fields.locale', false)) {
           data.append('locale', attachment._fields.locale)
         }
@@ -48,7 +52,7 @@ exports = module.exports = (config = {}, overwrite = false) => {
         return await request.post(buildUrl(`api/${resource}/${recordId}/attachments`), data)
         // return await request.post(buildUrl(`api/${resource}/${recordId}/attachments`), formData)
       },
-      async removeAttachment (id, aid) {
+      async removeAttachment(id, aid) {
         let message
         message = `remove ${aid} ...`
         console.log(message)
@@ -56,26 +60,26 @@ exports = module.exports = (config = {}, overwrite = false) => {
         console.log(`${message} done`)
         return body
       },
-      async login () {
+      async login() {
         const url = buildUrl('admin/login')
         console.warn('will login with ', url, auth)
-        const result = await request.post(url, {username: auth.username, password: auth.password})
+        const result = await request.post(url, { username: auth.username, password: auth.password })
         request.setAuth(_.get(result, 'token', false))
         return result
       },
-      async resources () {
+      async resources() {
         const resources = await request.get(buildUrl('resources?listAttachments=true'))
-        _.each(resources, resource => {
+        _.each(resources, (resource) => {
           schemaMap[resource.name] = resource.schema
         })
         return resources
       },
-      async paragraphs () {
+      async paragraphs() {
         let paragraphs = []
         const url = buildUrl('admin/paragraphs')
         try {
           paragraphs = await request.get(url)
-          _.each(paragraphs, paragraph => {
+          _.each(paragraphs, (paragraph) => {
             paragraphMap[paragraph.title] = paragraph.schema
           })
         } catch (error) {
@@ -83,8 +87,8 @@ exports = module.exports = (config = {}, overwrite = false) => {
         }
         return paragraphs
       },
-      getUniqueKeys () {
-        const uniqueKeyField = _.filter(schemaMap[resource], item => item.unique || item.xlsxKey)
+      getUniqueKeys() {
+        const uniqueKeyField = _.filter(schemaMap[resource], (item) => item.unique || item.xlsxKey)
         if (_.isEmpty(uniqueKeyField)) {
           if (overwrite) {
             return [_.get(schemaMap[resource], '[0].field', false)]
@@ -92,7 +96,7 @@ exports = module.exports = (config = {}, overwrite = false) => {
           throw new Error(`${resource} - didn't have unique key field`)
         }
         return _.map(uniqueKeyField, 'field')
-      }
+      },
     }
   }
 }

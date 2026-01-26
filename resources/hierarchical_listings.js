@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   group: '2. Content',
   displayname: '2.5. Hierarchical Listings',
   schema: [
@@ -8,41 +8,33 @@ exports = module.exports = {
       input: 'string',
       unique: true,
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'Title',
       field: 'title',
       input: 'string',
       localised: true,
-      required: true
+      required: true,
     },
     {
       label: 'Logo',
       field: 'kiosk.logo',
       input: 'select',
-      source: [
-        'no-logo',
-        'upper-house-residences',
-        'upper-house-residences-bangkok',
-        'the-wireless-residences'
-      ],
+      source: ['no-logo', 'upper-house-residences', 'upper-house-residences-bangkok', 'the-wireless-residences'],
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'Slides',
       field: 'slides',
       input: 'paragraph',
       options: {
-        types: [
-          'hierarchical_slide_listing',
-          'hierarchical_slide_grid'
-        ]
+        types: ['hierarchical_slide_listing', 'hierarchical_slide_grid'],
       },
-      localised: false
-    }
+      localised: false,
+    },
   ],
   locales: ['enUS', 'zhCN'],
-  type: 'normal'
+  type: 'normal',
 }

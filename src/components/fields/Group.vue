@@ -17,43 +17,43 @@
 </template>
 
 <script>
-  import _ from 'lodash'
-  import AbstractField from '@m/AbstractField'
+import _ from 'lodash'
+import AbstractField from '@m/AbstractField'
 
-  export default {
-    mixins: [AbstractField],
-    props: {
-      groupOptions: { type: Object, default: () => ({}) },
-      paragraphLevel: { type: Number, default: 0 }
-    },
-    data () {
-      return {
-        errors: null
-      }
-    },
-    methods: {
-      onError (error) {
-        console.error('Group - onError:', error)
-      },
-      async validate () {
-        const isValid = _.get(await this.$refs.input.validate(), 'length', 0) === 0
-        if (!isValid) {
-          this.errors = this.$refs.input.errors
-          throw new Error('group validation error')
-        }
-        return isValid
-      },
-      debouncedValidate () {
-        return this.$refs.input.debouncedValidate()
-      },
-      clearValidationErrors () {
-        return this.$refs.input.clearValidationErrors()
-      },
-      onModelUpdated (value, model) {
-        this.$emit('input', value, model)
-      }
+export default {
+  mixins: [AbstractField],
+  props: {
+    groupOptions: { type: Object, default: () => ({}) },
+    paragraphLevel: { type: Number, default: 0 },
+  },
+  data() {
+    return {
+      errors: null,
     }
-  }
+  },
+  methods: {
+    onError(error) {
+      console.error('Group - onError:', error)
+    },
+    async validate() {
+      const isValid = _.get(await this.$refs.input.validate(), 'length', 0) === 0
+      if (!isValid) {
+        this.errors = this.$refs.input.errors
+        throw new Error('group validation error')
+      }
+      return isValid
+    },
+    debouncedValidate() {
+      return this.$refs.input.debouncedValidate()
+    },
+    clearValidationErrors() {
+      return this.$refs.input.clearValidationErrors()
+    },
+    onModelUpdated(value, model) {
+      this.$emit('input', value, model)
+    },
+  },
+}
 </script>
 
 <style lang="scss" scoped>

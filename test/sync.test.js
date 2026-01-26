@@ -25,9 +25,7 @@ describe('Sync Plugin API', () => {
   })
 
   it('POST /articles/from/local/to/remote should return a valid response', async () => {
-    const res = await request(serverUrl)
-      .post('/articles/from/local/to/remote')
-      .send({ test: 'value' })
+    const res = await request(serverUrl).post('/articles/from/local/to/remote').send({ test: 'value' })
     console.log('POST /sync/articles/from/local/to/remote response:', res.body)
     console.log('POST /sync/articles/from/local/to/remote status:', res.status)
     expect(res.status).to.be.oneOf([200, 204, 404])
@@ -67,9 +65,7 @@ describe('Sync Plugin API', () => {
   })
 
   it('PUT /articles should return a valid response', async () => {
-    const res = await request(serverUrl)
-      .put('/articles')
-      .send({ test: 'value' })
+    const res = await request(serverUrl).put('/articles').send({ test: 'value' })
     console.log('PUT /sync/articles response:', res.body)
     console.log('PUT /sync/articles status:', res.status)
     expect(res.status).to.be.oneOf([200, 204, 404])

@@ -1,11 +1,11 @@
 import RequestService from '@s/RequestService'
 
 class ConfigService {
-  constructor () {
+  constructor() {
     this.config = {}
   }
 
-  async init () {
+  async init() {
     try {
       this.config = await RequestService.get(`${window.location.pathname}config`)
       // console.info('Config:', data)

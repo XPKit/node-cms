@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   group: '3. Towers',
   displayname: '3.7. Compare Units',
   schema: [
@@ -6,14 +6,10 @@ exports = module.exports = {
       label: 'Unique Id',
       field: 'id',
       input: 'select',
-      source: [
-        'all-compare',
-        'uh-compare',
-        'wr-compare'
-      ],
+      source: ['all-compare', 'uh-compare', 'wr-compare'],
       unique: true,
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'Tower',
@@ -21,7 +17,7 @@ exports = module.exports = {
       localised: false,
       required: false,
       input: 'select',
-      source: 'tower_buildings'
+      source: 'tower_buildings',
     },
     {
       label: 'Image',
@@ -31,10 +27,10 @@ exports = module.exports = {
         hint: 'Recommended image size: 2572 × 1672',
         accept: '.jpg',
         limit: 2 * 1024 * 1024, // 2 MB
-        maxCount: 1
+        maxCount: 1,
       },
       localised: true,
-      required: true
+      required: true,
     },
     {
       label: 'Fullscreen image',
@@ -44,11 +40,11 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 3840 × 2160',
         accept: '.jpg',
         limit: 2 * 1024 * 1024, // 2 MB
-        maxCount: 1
+        maxCount: 1,
       },
-      localised: true
-    }
+      localised: true,
+    },
   ],
   locales: ['enUS', 'zhCN'],
-  type: 'normal'
+  type: 'normal',
 }

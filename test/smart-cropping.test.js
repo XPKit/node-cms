@@ -4,7 +4,7 @@
  */
 const _ = require('lodash')
 const fs = require('fs-extra')
-const path = require('path')
+const path = require('node:path')
 const sharp = require('sharp')
 const { expect } = require('chai')
 const { getCMSInstance } = require('./cmsInstance')
@@ -12,7 +12,7 @@ const { getCMSInstance } = require('./cmsInstance')
 const smartCropOptions = [
   { resize: '500xauto', smart: false, objectDetection: true },
   { resize: 'autoxauto', smart: true, objectDetection: false },
-  { resize: '500xauto', smart: true, objectDetection: true }
+  { resize: '500xauto', smart: true, objectDetection: true },
   // { resize: 'autox500', smart: true, objectDetection: false },
   // { resize: '500xauto', smart: false, objectDetection: true },
   // { resize: 'autox500', smart: false, objectDetection: false },
@@ -22,11 +22,15 @@ const smartCropOptions = [
 ]
 
 function getMode(options) {
-  return _.chain(options).map((val, key) => {
-    if (!val) return false
-    if (key === 'facePadding') return `${key}-${val}`
-    return key
-  }).compact().join('+').value()
+  return _.chain(options)
+    .map((val, key) => {
+      if (!val) return false
+      if (key === 'facePadding') return `${key}-${val}`
+      return key
+    })
+    .compact()
+    .join('+')
+    .value()
 }
 
 async function streamToFile(stream, filePath) {
@@ -34,7 +38,7 @@ async function streamToFile(stream, filePath) {
     const writable = fs.createWriteStream(filePath)
     stream.on('error', reject)
     writable.on('error', reject)
-    writable.on('finish', ()=> {
+    writable.on('finish', () => {
       console.warn(`SAVED ${filePath}`)
       resolve()
     })
@@ -42,10 +46,9 @@ async function streamToFile(stream, filePath) {
   })
 }
 
-
 let api
 
-before(async function () {
+before(async () => {
   // Clean test data directory before CMS initialization
   if (fs.existsSync('./test/data')) {
     await fs.remove('./test/data')
@@ -58,11 +61,11 @@ before(async function () {
   }
 })
 
-describe('SmartCrop API', function () {
+describe('SmartCrop API', () => {
   const assetsPath = path.join(__dirname, 'smartCropAssets')
   const testImagePath = path.join(__dirname, 'man.jpg')
 
-  before(async function () {
+  before(async () => {
     if (!fs.existsSync(testImagePath)) {
       throw new Error('Test image needed for tests not found')
     }
@@ -77,7 +80,7 @@ describe('SmartCrop API', function () {
 
   _.each(smartCropOptions, (options) => {
     const outputFilename = `man-${getMode(options)}-${options.resize}.jpg`
-    it(`createAttachment and findAttachment produce same size for ${outputFilename}`, async function () {
+    it(`createAttachment and findAttachment produce same size for ${outputFilename}`, async () => {
       const foundRecord = await api('cctImages').find({ key: 'SmartCrop Test Image' })
       if (foundRecord) {
         await api('cctImages').remove(foundRecord._id)
@@ -87,7 +90,7 @@ describe('SmartCrop API', function () {
         name: 'example-attachment',
         stream: fs.createReadStream(testImagePath),
         fields: { _filename: 'man.jpg' },
-        ...options
+        ...options,
       })
       const createPath = path.join(assetsPath, `create-${outputFilename}`)
       const resultStreamCreate = await api('cctImages').findFile(attachment._id)
@@ -95,7 +98,7 @@ describe('SmartCrop API', function () {
       const createMeta = await sharp(createPath).metadata()
 
       const findPath = path.join(assetsPath, `find-${outputFilename}`)
-      const {stream} = await api('cctImages').findAttachment(record._id, attachment._id, options)
+      const { stream } = await api('cctImages').findAttachment(record._id, attachment._id, options)
       await streamToFile(stream, findPath)
       const findMeta = await sharp(findPath).metadata()
 

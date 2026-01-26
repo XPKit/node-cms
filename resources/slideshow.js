@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   group: '2. Exploration App',
   displayname: '2.08. Slideshow [7B]',
   schema: [
@@ -8,14 +8,14 @@ exports = module.exports = {
       field: 'id',
       input: 'string',
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'Title',
       field: 'title',
       input: 'string',
       localised: true,
-      required: false
+      required: false,
     },
     {
       label: 'Image',
@@ -25,26 +25,22 @@ exports = module.exports = {
         hint: 'Recommended image size: 1 image: 3295 × 1563, 2 images: 1648 × 1563, 3+ images 2084 × 1563. Note: If the image is larger, it will be centered and cropped on the sides.',
         accept: '.jpg,.png',
         limit: 4 * 1024 * 1024, // 10 MB
-        maxCount: 1
+        maxCount: 1,
       },
       localised: true,
-      required: true
+      required: true,
     },
     {
       label: 'Slideshow',
       field: 'slideshow',
       input: 'paragraph',
       options: {
-        types: [
-          'slideshow_image',
-          'slideshow_image_with_text',
-          'slideshow_video'
-        ]
+        types: ['slideshow_image', 'slideshow_image_with_text', 'slideshow_video'],
       },
       localised: false,
-      required: false
-    }
+      required: false,
+    },
   ],
   locales: ['enUS', 'zhCN'],
-  type: 'normal'
+  type: 'normal',
 }

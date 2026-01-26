@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
 class RequestService {
-  async handleRequest (url, options) {
+  async handleRequest(url, options) {
     const returnJson = _.get(options, 'returnJson', false)
     if (returnJson) {
       delete options.returnJson
@@ -9,11 +9,15 @@ class RequestService {
     const contentType = options.body instanceof FormData ? false : 'application/json'
     if (!(options.body instanceof FormData)) {
       options.headers = {
-        'Accept': 'application/json',
-        'Content-Type': contentType
+        Accept: 'application/json',
+        'Content-Type': contentType,
       }
     }
-    if (_.get(options.headers, 'Content-Type', false) === 'application/json' && _.get(options, 'body', false) && _.isObject(options.body)) {
+    if (
+      _.get(options.headers, 'Content-Type', false) === 'application/json' &&
+      _.get(options, 'body', false) &&
+      _.isObject(options.body)
+    ) {
       options.body = JSON.stringify(options.body)
     }
     const response = await fetch(url, options)
@@ -34,20 +38,20 @@ class RequestService {
     return json
   }
 
-  async get (url, returnJson = true) {
-    return await this.handleRequest(url, {method: 'GET', returnJson})
+  async get(url, returnJson = true) {
+    return await this.handleRequest(url, { method: 'GET', returnJson })
   }
 
-  async post (url, body = {}, returnJson = true) {
-    return await this.handleRequest(url, {method: 'POST', body, returnJson})
+  async post(url, body = {}, returnJson = true) {
+    return await this.handleRequest(url, { method: 'POST', body, returnJson })
   }
 
-  async put (url, body = {}, returnJson = true) {
-    return await this.handleRequest(url, {method: 'PUT', body, returnJson})
+  async put(url, body = {}, returnJson = true) {
+    return await this.handleRequest(url, { method: 'PUT', body, returnJson })
   }
 
-  async delete (url, body = {}, returnJson = true) {
-    return await this.handleRequest(url, {method: 'DELETE', body, returnJson})
+  async delete(url, body = {}, returnJson = true) {
+    return await this.handleRequest(url, { method: 'DELETE', body, returnJson })
   }
 }
 

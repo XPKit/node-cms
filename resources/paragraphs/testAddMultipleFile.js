@@ -10,11 +10,11 @@ module.exports = {
       localised: true,
       options: {
         accept: '.pdf,.docx',
-        maxCount: 1
-      }
-    }
+        maxCount: 1,
+      },
+    },
   ],
   layout: {
-    slots: 4
-  }
+    slots: 4,
+  },
 }

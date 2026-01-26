@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: 'Menu - Special Page',
   schema: [
     {
@@ -20,10 +20,10 @@ exports = module.exports = {
         'wr-compare',
         'wr-mix-all',
         'wr-units',
-        'wr-zonal-selection'
+        'wr-zonal-selection',
       ],
       localised: false,
-      required: true
-    }
-  ]
+      required: true,
+    },
+  ],
 }

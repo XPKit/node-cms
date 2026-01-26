@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: 'Image',
   schema: [
     {
@@ -6,12 +6,10 @@ exports = module.exports = {
       field: 'overlayTitles',
       input: 'paragraph',
       options: {
-        types: [
-          'overlay_titles'
-        ]
+        types: ['overlay_titles'],
       },
       localised: false,
-      required: false
+      required: false,
     },
     {
       label: 'Image',
@@ -21,23 +19,23 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 2572 × 1672',
         accept: '.jpg',
         limit: 1 * 1024 * 1024, // 1 MB
-        maxCount: 1
+        maxCount: 1,
       },
       localised: true,
-      required: true
+      required: true,
     },
     {
       label: 'Zoomable',
       field: 'zoomable',
       input: 'checkbox',
       localised: false,
-      required: false
+      required: false,
     },
     {
       label: 'Disclaimer',
       field: 'disclaimer',
       input: 'checkbox',
-      required: false
+      required: false,
     },
     {
       label: 'Fullscreen',
@@ -47,10 +45,10 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 3840 × 2160',
         accept: '.jpg',
         limit: 2 * 1024 * 1024, // 2 MB
-        maxCount: 1
+        maxCount: 1,
       },
       localised: true,
-      required: true
-    }
-  ]
+      required: true,
+    },
+  ],
 }

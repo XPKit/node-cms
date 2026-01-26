@@ -20,13 +20,11 @@
   -webkit-font-smooth: antialiased !important;
   // overscroll-behavior: none;
 }
-
 .unclickable {
   touch-action: none;
   pointer-events: none;
   user-select: none;
 }
-
 html,
 body {
   height: 100%;

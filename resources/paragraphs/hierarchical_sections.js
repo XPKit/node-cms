@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: 'Section',
   schema: [
     {
@@ -6,17 +6,17 @@ exports = module.exports = {
       field: 'title',
       input: 'string',
       localised: true,
-      required: true
+      required: true,
     },
     {
       label: 'Items',
       field: 'items',
       input: 'paragraph',
       options: {
-        types: ['hierarchical_items']
+        types: ['hierarchical_items'],
       },
       localised: false,
-      required: true
-    }
-  ]
+      required: true,
+    },
+  ],
 }

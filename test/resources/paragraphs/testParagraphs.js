@@ -5,44 +5,44 @@ module.exports = {
       label: 'string label',
       input: 'string',
       field: 'string',
-      localised: false
+      localised: false,
     },
     {
       label: 'value',
       input: 'string',
       field: 'value',
-      localised: false
+      localised: false,
     },
     {
       label: 'value',
       input: 'wysiwyg',
       field: 'wysiwyg',
-      localised: false
+      localised: false,
     },
     {
       label: 'Image label',
       field: 'image',
       input: 'image',
       options: {
-        maxCount: 1
-      }
+        maxCount: 1,
+      },
     },
     {
       label: 'Image label',
       field: 'imageLocalised',
       input: 'image',
-      localised: true
+      localised: true,
     },
     {
       label: 'text label',
       input: 'text',
       field: 'text',
-      localised: true
+      localised: true,
     },
     {
       label: 'Checkbox label',
       field: 'checkbox',
-      input: 'checkbox'
+      input: 'checkbox',
     },
     {
       label: 'Select Paragraph author',
@@ -50,8 +50,8 @@ module.exports = {
       field: 'select',
       source: 'authors',
       options: {
-        customLabel: '{{name}}'
-      }
+        customLabel: '{{name}}',
+      },
     },
     {
       label: 'Select Paragraph author - multiple',
@@ -59,14 +59,14 @@ module.exports = {
       field: 'select4',
       source: 'authors',
       options: {
-        customLabel: '{{name}}'
-      }
+        customLabel: '{{name}}',
+      },
     },
     {
       label: 'Select 2',
       input: 'select',
       field: 'select2',
-      source: ['1', '2', '3']
-    }
-  ]
+      source: ['1', '2', '3'],
+    },
+  ],
 }

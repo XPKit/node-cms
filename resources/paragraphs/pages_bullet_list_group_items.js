@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: 'Group Bullet Item',
   schema: [
     {
@@ -6,17 +6,17 @@ exports = module.exports = {
       field: 'groupTitle',
       input: 'string',
       localised: true,
-      required: true
+      required: true,
     },
     {
       label: 'Items',
       field: 'items',
       input: 'paragraph',
       options: {
-        types: ['pages_bullet_list_items']
+        types: ['pages_bullet_list_items'],
       },
       localised: false,
-      required: false
-    }
-  ]
+      required: false,
+    },
+  ],
 }

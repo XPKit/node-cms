@@ -1,28 +1,28 @@
 module.exports = {
   displayname: {
     enUS: 'My articles', // Optional, by default filename
-    zhCN: '我的文章'
+    zhCN: '我的文章',
   },
   group: {
     enUS: 'abc',
-    zhCN: '甲乙丙'
+    zhCN: '甲乙丙',
   },
   schema: [
     {
       label: {
         enUS: 'Title',
-        zhCN: '标题'
+        zhCN: '标题',
       },
       field: 'string',
       input: 'string',
       required: true,
       unique: true,
-      localised: true
+      localised: true,
     },
     {
       field: 'rate',
       input: 'number',
-      localised: false
+      localised: false,
     },
     {
       label: 'Body',
@@ -31,8 +31,8 @@ module.exports = {
       localised: true,
       disabled: true,
       options: {
-        disabled: true
-      }
+        disabled: true,
+      },
     },
     {
       label: 'Body 2',
@@ -42,8 +42,8 @@ module.exports = {
       disabled: true,
       options: {
         buttons: ['bold', 'italic'],
-        disabled: false
-      }
+        disabled: false,
+      },
     },
     {
       label: 'Body 3',
@@ -53,8 +53,8 @@ module.exports = {
       disabled: true,
       options: {
         buttons: ['none'],
-        disabled: false
-      }
+        disabled: false,
+      },
     },
     {
       field: 'relatedArticles',
@@ -62,48 +62,45 @@ module.exports = {
       source: 'articles',
       localised: false,
       options: {
-        disabled: true
-      }
+        disabled: true,
+      },
     },
     {
       field: 'comment',
       input: 'select',
       source: 'comments',
-      localised: false
+      localised: false,
     },
     {
       field: 'comments',
       input: 'multiselect',
       source: 'comments',
-      localised: false
+      localised: false,
     },
     {
       field: 'localizedComment',
       input: 'select',
       source: 'comments',
       options: {
-        customLabel: '{{title}} {{category}}'
-      }
+        customLabel: '{{title}} {{category}}',
+      },
     },
     {
       field: 'localizedComments',
       input: 'multiselect',
-      source: 'comments'
+      source: 'comments',
     },
     {
       field: 'image',
       input: 'image',
-      localised: false
+      localised: false,
     },
     {
       field: 'localizedImage',
       input: 'image',
-      localised: true
-    }
+      localised: true,
+    },
   ],
   type: 'normal',
-  locales: [
-    'enUS',
-    'zhCN'
-  ]
+  locales: ['enUS', 'zhCN'],
 }

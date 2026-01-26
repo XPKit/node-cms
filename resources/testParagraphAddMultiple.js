@@ -6,19 +6,19 @@ module.exports = {
       field: 'string',
       label: 'string',
       input: 'string',
-      required: true
+      required: true,
     },
     {
       field: 'text',
       label: 'text',
       input: 'text',
-      required: true
+      required: true,
     },
     {
       field: 'wysiwyg',
       label: 'wysiwyg',
       input: 'wysiwyg',
-      required: true
+      required: true,
     },
     {
       field: 'testAddMultiple',
@@ -30,27 +30,24 @@ module.exports = {
         mapping: {
           default: {
             _type: 'testAddMultipleImage',
-            field: 'image'
+            field: 'image',
           },
           'mp4,mkv,avi': {
             _type: 'testAddMultipleFile',
-            field: 'video'
+            field: 'video',
           },
           'jpg,jpeg,png,gif,webp': {
             _type: 'testAddMultipleImage',
-            field: 'image'
+            field: 'image',
           },
           'pdf,doc,docx,txt': {
             _type: 'testAddMultipleFile',
-            field: 'file'
-          }
+            field: 'file',
+          },
         },
-        dynamicLayout: true
-      }
-    }
+        dynamicLayout: true,
+      },
+    },
   ],
-  locales: [
-    'enUS',
-    'zhCN'
-  ],
+  locales: ['enUS', 'zhCN'],
 }

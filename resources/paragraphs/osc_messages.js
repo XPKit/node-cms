@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: 'OSC Message',
   schema: [
     {
@@ -585,17 +585,17 @@ exports = module.exports = {
         '/wr/wr-ph2',
         '/wr/wr-ph3',
         '/wr/wr-ph4',
-        '/wr/wr-ph5'
+        '/wr/wr-ph5',
       ],
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'State',
       field: 'state',
       input: 'checkbox',
       localised: false,
-      required: false
-    }
-  ]
+      required: false,
+    },
+  ],
 }

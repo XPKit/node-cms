@@ -28,62 +28,63 @@
 </template>
 
 <script>
-  import _ from 'lodash'
-  import AbstractField from '@m/AbstractField'
-  import Dayjs from 'dayjs'
+import Dayjs from 'dayjs'
+import _ from 'lodash'
+import AbstractField from '@m/AbstractField'
 
-  export default {
-    mixins: [AbstractField],
-    props: {
-      theme: { type: String, default: 'default' },
-      options: { type: Object, default: () => ({}) },
-      customDatetimePickerOptions: { type: Object, default: () => ({}) }
-    },
-    computed: {
-      placeholder() {
-        const placeholder = _.get(this.schema, 'customDatetimePickerOptions.placeholder', false)
-        if (!placeholder) {
-          console.warn(`No placeholder found in customDatetimePickerOptions for field ${this.schema.model}, will default to 'YYYY-MM-DD'`)
-          return 'YYYY-MM-DD'
-        }
-        return placeholder
-      },
-      fieldType() {
-        const resourceSchema = _.get(this.schema, 'resource.schema', [])
-        const foundField = _.find(resourceSchema, {field: this.schema.originalModel})
-        if (!foundField) {
-          return console.error(`Couldn't find field ${this.schema.originalModel} in resource schema`, resourceSchema)
-        }
-        return _.get(foundField, 'input', false)
-      },
-      enableTimePicker() {
-        return this.fieldType.indexOf('time') !== -1
-      },
-      enableDatePicker() {
-        return this.fieldType.indexOf('date') !== -1
-      },
-      locale() {
-        return this.schema.locale === 'enUS' ? 'en' : 'zh'
+export default {
+  mixins: [AbstractField],
+  props: {
+    theme: { type: String, default: 'default' },
+    options: { type: Object, default: () => ({}) },
+    customDatetimePickerOptions: { type: Object, default: () => ({}) },
+  },
+  computed: {
+    placeholder() {
+      const placeholder = _.get(this.schema, 'customDatetimePickerOptions.placeholder', false)
+      if (!placeholder) {
+        console.warn(
+          `No placeholder found in customDatetimePickerOptions for field ${this.schema.model}, will default to 'YYYY-MM-DD'`,
+        )
+        return 'YYYY-MM-DD'
       }
+      return placeholder
     },
-    created () {
-      this.schema.format = _.get(this.schema, 'format', 'YYYY/MM/DD h:i:s')
-    },
-    methods: {
-      isInFormat(toFind) {
-        return this.schema.format.indexOf(toFind) !== -1
-      },
-      getDayClass (date) {
-        const tomorrow = Dayjs().startOf('day').add(1, 'day')
-        if (Dayjs(date).isSame(tomorrow, 'day'))
-          return 'marked-cell'
-        return ''
-      },
-      formatDateSelection (date) {
-        return Dayjs(date).format(this.schema.format)
+    fieldType() {
+      const resourceSchema = _.get(this.schema, 'resource.schema', [])
+      const foundField = _.find(resourceSchema, { field: this.schema.originalModel })
+      if (!foundField) {
+        return console.error(`Couldn't find field ${this.schema.originalModel} in resource schema`, resourceSchema)
       }
-    }
-  }
+      return _.get(foundField, 'input', false)
+    },
+    enableTimePicker() {
+      return this.fieldType.indexOf('time') !== -1
+    },
+    enableDatePicker() {
+      return this.fieldType.indexOf('date') !== -1
+    },
+    locale() {
+      return this.schema.locale === 'enUS' ? 'en' : 'zh'
+    },
+  },
+  created() {
+    this.schema.format = _.get(this.schema, 'format', 'YYYY/MM/DD h:i:s')
+  },
+  methods: {
+    isInFormat(toFind) {
+      return this.schema.format.indexOf(toFind) !== -1
+    },
+    getDayClass(date) {
+      const tomorrow = Dayjs().startOf('day').add(1, 'day')
+      if (Dayjs(date).isSame(tomorrow, 'day')) return 'marked-cell'
+      return ''
+    },
+    formatDateSelection(date) {
+      return Dayjs(date).format(this.schema.format)
+    },
+  },
+}
 </script>
 
 <style lang="scss">

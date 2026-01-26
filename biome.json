@@ -1,0 +1,80 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
+  "vcs": { "clientKind": "git", "enabled": true, "useIgnoreFile": true },
+  "files": { "includes": ["**", "!!**/dist"] },
+  "formatter": { "enabled": true, "indentStyle": "space", "lineWidth": 120 },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              ":NODE:",
+              [
+                ":PACKAGE:",
+                "!@m/**",
+                "!@s/**",
+                "!@c/**",
+                "!@p/**",
+                "!@a/**",
+                "!@v/**",
+                "!@f/**",
+                "!@u/**",
+                "!@l/**",
+                "!@r/**"
+              ],
+              ":PACKAGE_WITH_PROTOCOL:",
+              ":ALIAS:",
+              ["@m/**", "@s/**", "@c/**", "@p/**", "@a/**", "@v/**", "@f/**", "@u/**", "@l/**", "@r/**"],
+              ":PATH:",
+              ":RELATIVE_PATH:"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "javascript": {
+    "formatter": { "quoteStyle": "single", "semicolons": "asNeeded" }
+  },
+  "html": {
+    "experimentalFullSupportEnabled": true
+  },
+  "linter": {
+    "domains": {
+      "vue": "all"
+    },
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "noConsole": "off",
+        "noExplicitAny": "off"
+      },
+      "correctness": {
+        "noUnusedVariables": "error",
+        "noSwitchDeclarations": "off"
+      },
+      "complexity": {
+        "noArguments": "off",
+        "noBannedTypes": "off"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["src/**/*.js", "src/**/*.vue"],
+      "javascript": {
+        "globals": ["window", "document", "navigator", "sessionStorage", "localStorage", "Vue"]
+      }
+    },
+    {
+      "includes": ["lib/**/*.js", "test/**/*.js", "resources/**/*.js"],
+      "javascript": {
+        "globals": ["require", "module", "process", "__dirname", "Buffer", "describe", "it", "before", "after"]
+      }
+    }
+  ]
+}

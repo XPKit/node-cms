@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   group: '1. BKK109',
   displayname: '1.8. Tokens',
   schema: [
@@ -6,19 +6,19 @@ exports = module.exports = {
       label: 'User',
       field: 'user',
       localised: false,
-      input: 'string'
+      input: 'string',
     },
     {
       label: 'From',
       field: 'from',
       localised: false,
-      input: 'string'
+      input: 'string',
     },
     {
       label: 'JWT',
       field: 'jwt',
       localised: false,
-      input: 'string'
+      input: 'string',
     },
     {
       label: 'Expire At',
@@ -27,15 +27,15 @@ exports = module.exports = {
       input: 'datetime',
       options: {
         readonly: true,
-        disabled: true
-      }
+        disabled: true,
+      },
     },
     {
       label: 'Content',
       field: 'content',
       localised: false,
-      input: 'json'
-    }
+      input: 'json',
+    },
   ],
-  type: 'normal'
+  type: 'normal',
 }

@@ -7,6 +7,6 @@ window.plugins = [
     name: 'TestComponent',
     component: markRaw(defineAsyncComponent(() => import('./components/TestComponent.vue'))),
     pluginComponent: 'TestComponent',
-    group: '- Dashboard -'
-  }
+    group: '- Dashboard -',
+  },
 ]

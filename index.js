@@ -7,8 +7,8 @@
  * @typedef {import('./lib/ResourceAPIWrapper.js')} ResourceAPIWrapper
  */
 
-const path = require('path')
-const fs = require('fs')
+const path = require('node:path')
+const fs = require('node:fs')
 const pAll = require('p-all')
 const compression = require('compression')
 const cookieParser = require('cookie-parser')
@@ -49,32 +49,31 @@ const requireDirNative = (dirPath) => {
 }
 
 // Default CMS configration
-const defaultConfig = () =>
-  ({
-    ns: [],
-    resources: './resources',
-    data: './data',
-    autoload: true,
-    disableDarkMode: true,
-    mode: 'normal',
-    mid: Date.now().toString(36),
-    disableREST: false,
-    disableAdmin: false,
-    disableJwtLogin: true,
-    disableReplication: false,
-    disableAuthentication: false,
-    wsRecordUpdates: true,
-    importFromRemote: true,
-    disableAnonymous: false,
-    auth: {
-      secret: 'MdjIwFRi9ezT1234567890abcdef'
-    },
-    session: {
-      secret: 'MdjIwFRi9ezT',
-      resave: true,
-      saveUninitialized: true
-    }
-  })
+const defaultConfig = () => ({
+  ns: [],
+  resources: './resources',
+  data: './data',
+  autoload: true,
+  disableDarkMode: true,
+  mode: 'normal',
+  mid: Date.now().toString(36),
+  disableREST: false,
+  disableAdmin: false,
+  disableJwtLogin: true,
+  disableReplication: false,
+  disableAuthentication: false,
+  wsRecordUpdates: true,
+  importFromRemote: true,
+  disableAnonymous: false,
+  auth: {
+    secret: 'MdjIwFRi9ezT1234567890abcdef',
+  },
+  session: {
+    secret: 'MdjIwFRi9ezT',
+    resave: true,
+    saveUninitialized: true,
+  },
+})
 
 class CMS {
   /**
@@ -125,7 +124,7 @@ class CMS {
       fs.writeFileSync(configPath, JSON.stringify(cfg, null, 2))
     }
     // aggregate options
-    this.options = (options = (this._options = _.extend({}, defaultConfig(), require(configPath), options)))
+    this.options = options = this._options = _.extend({}, defaultConfig(), require(configPath), options)
     // ensure required folders are in place
     mkdirp.sync(path.resolve(options.resources))
     mkdirp.sync(path.resolve(options.data))
@@ -147,12 +146,11 @@ class CMS {
       // logger.info(`Paragraphs dir: ${paragraphsDir}`)
       try {
         const results = requireDirNative(paragraphsDir)
-        _.each(results, (value, key)=> {
+        _.each(results, (value, key) => {
           _.set(this._paragraphs, key, value)
           this.formatSchema(this._paragraphs, key, true)
         })
-      // eslint-disable-next-line no-unused-vars
-      } catch (error) {
+      } catch (_error) {
         logger.warn('No folder found for ', paragraphsDir)
       }
       _.set(this._paragraphs, '_settingsLink', {
@@ -163,15 +161,15 @@ class CMS {
             field: 'name',
             localised: false,
             input: 'string',
-            required: true
+            required: true,
           },
           {
             field: 'url',
             localised: false,
             input: 'url',
-            required: true
-          }
-        ]
+            required: true,
+          },
+        ],
       })
       this.formatSchema(this._paragraphs, '_settingsLink', true)
       _.set(this._paragraphs, '_settingsLinkGroup', {
@@ -183,17 +181,17 @@ class CMS {
             field: 'title',
             localised: false,
             input: 'string',
-            required: true
+            required: true,
           },
           {
             field: 'links',
             input: 'paragraph',
             localised: false,
             options: {
-              types: ['_settingsLink']
-            }
-          }
-        ]
+              types: ['_settingsLink'],
+            },
+          },
+        ],
       })
       this.formatSchema(this._paragraphs, '_settingsLinkGroup', true)
     }
@@ -209,32 +207,36 @@ class CMS {
     this._app.use(helmet.permittedCrossDomainPolicies())
     this._app.use(helmet.referrerPolicy())
     // Enable compression
-    this._app.use(compression({
-      filter (req, res) {
-        return req.headers['x-no-compression'] ? false : compression.filter(req, res)
-      }
-    }))
+    this._app.use(
+      compression({
+        filter(req, res) {
+          return req.headers['x-no-compression'] ? false : compression.filter(req, res)
+        },
+      }),
+    )
     if (!options.disableAuthentication || !options.disableJwtLogin) {
       const secret = _.get(this.options, 'auth.secret')
       if (_.isEmpty(secret)) {
         throw new Error('config.auth.secret is missing')
       } else if (_.get(secret, 'length', 0) <= this.requiredKeyLength) {
-        throw new Error(`config.auth.secret isn't long enough, adjust the value to have minimum ${this.requiredKeyLength} characters`)
+        throw new Error(
+          `config.auth.secret isn't long enough, adjust the value to have minimum ${this.requiredKeyLength} characters`,
+        )
       }
-      this._app.use(session(_.extend({cookie: {}}, this.options.session)))
+      this._app.use(session(_.extend({ cookie: {} }, this.options.session)))
     }
     if (!options.disableAuthentication) {
       // Enables session with basic auth
-      this._app.use((req, res, next) => {
+      this._app.use((req, _res, next) => {
         if (req.session.user && !req.headers.authorization) {
-          req.headers.authorization = 'Basic ' + Buffer.from(req.session.user.username + ':' + req.session.user.password).toString('base64')
+          req.headers.authorization = `Basic ${Buffer.from(`${req.session.user.username}:${req.session.user.password}`).toString('base64')}`
         }
         next()
       })
     } else if (!options.disableJwtLogin) {
       // Enables session with jwt token auth
       this._app.use(cookieParser())
-      this._app.use((req, res, next) => {
+      this._app.use((req, _res, next) => {
         if (!req.headers.authorization) {
           const token = _.get(req, 'session.nodeCmsUser.token', false)
           if (token) {
@@ -271,14 +273,14 @@ class CMS {
     this._app.use(SyslogManager.express())
     this._app.use(SystemManager.express())
     const pluginConditions = [
-      { name: 'rest',           enabled: !options.disableREST },
-      { name: 'import',         enabled: !!options.import },
+      { name: 'rest', enabled: !options.disableREST },
+      { name: 'import', enabled: !!options.import },
       { name: 'importFromRemote', enabled: !!options.importFromRemote },
-      { name: 'admin',          enabled: !options.disableAdmin },
-      { name: 'replicator',     enabled: !options.disableReplication },
-      { name: 'sync',           enabled: !!options.sync },
-      { name: 'xlsx',           enabled: !!options.xlsx },
-      { name: 'anonymousRead',  enabled: !!options.anonymousRead }
+      { name: 'admin', enabled: !options.disableAdmin },
+      { name: 'replicator', enabled: !options.disableReplication },
+      { name: 'sync', enabled: !!options.sync },
+      { name: 'xlsx', enabled: !!options.xlsx },
+      { name: 'anonymousRead', enabled: !!options.anonymousRead },
     ]
     this.usedPlugins = _.chain(pluginConditions).filter('enabled').map('name').value()
     logger.info(`Will use plugins: ${this.usedPlugins.join(', ')}`)
@@ -293,17 +295,20 @@ class CMS {
       }
       this.server = server
       // this.io = new Server(this.server)
-      await pAll(_.map(this.bootstrapFunctions, bootstrap => {
-        return async () => {
-          await new Promise((resolve, reject) => {
-            bootstrap((err) => {
-              if (err) reject(err)
-              else resolve()
+      await pAll(
+        _.map(this.bootstrapFunctions, (bootstrap) => {
+          return async () => {
+            await new Promise((resolve, reject) => {
+              bootstrap((err) => {
+                if (err) reject(err)
+                else resolve()
+              })
             })
-          })
-        }
-      }), {concurrency: 1})
-      callback && callback()
+          }
+        }),
+        { concurrency: 1 },
+      )
+      callback?.()
     }
     this._processAttachmentFields()
     this._processSourceFields()
@@ -327,9 +332,9 @@ class CMS {
     logger.warn('<!> All node-cms databases are now closed. <!>')
   }
 
-  shutdown (signal) {
+  shutdown(signal) {
     return (err) => {
-      logger.warn(`${ signal }...`)
+      logger.warn(`${signal}...`)
       if (err) {
         console.error(err.stack || err)
       }
@@ -347,7 +352,7 @@ class CMS {
   _processAttachmentFields = () => {
     _.each(this._resources, (resource, resourceKey) => {
       const schema = _.get(resource, 'options.schema', [])
-      _.each(schema, fieldItem => {
+      _.each(schema, (fieldItem) => {
         const rootPath = `${fieldItem.field}`
         if (_.includes(['file', 'image'], fieldItem.input)) {
           const field = _.cloneDeep(fieldItem)
@@ -362,15 +367,19 @@ class CMS {
   }
   _processAttachmentFieldsParagraph = (fieldItem, resourceKey, rootPath) => {
     const paragraphTypes = _.get(fieldItem, 'options.types', [])
-    _.each(paragraphTypes, paragraphType => {
+    _.each(paragraphTypes, (paragraphType) => {
       const schema = _.get(this._paragraphs, `["${paragraphType}"].schema`, [])
-      _.each(schema, paragraphFieldItem => {
+      _.each(schema, (paragraphFieldItem) => {
         const paragraphRootPath = `${rootPath}.{{*}}.${paragraphFieldItem.field}`
         if (_.includes(['file', 'image'], paragraphFieldItem.input)) {
           const field = _.cloneDeep(paragraphFieldItem)
           field.path = paragraphRootPath
-          _.set(this._resources, `["${resourceKey}"].options._attachmentFields["${escapeRegExp(paragraphRootPath, field.localised)}"]`, field)
-          _.set(this._attachmentFields,  `${resourceKey}["${escapeRegExp(paragraphRootPath)}"]`, field)
+          _.set(
+            this._resources,
+            `["${resourceKey}"].options._attachmentFields["${escapeRegExp(paragraphRootPath, field.localised)}"]`,
+            field,
+          )
+          _.set(this._attachmentFields, `${resourceKey}["${escapeRegExp(paragraphRootPath)}"]`, field)
         } else if (fieldItem.input === 'paragraph') {
           this._processAttachmentFieldsParagraph(paragraphFieldItem, resourceKey, paragraphRootPath)
         }
@@ -383,7 +392,7 @@ class CMS {
   _processSourceFields = () => {
     _.each(this._resources, (resource, resourceKey) => {
       const schema = _.get(resource, 'options.schema', [])
-      _.each(schema, fieldItem => {
+      _.each(schema, (fieldItem) => {
         const rootPath = `${fieldItem.field}`
         if (this.isValidRelation(fieldItem)) {
           const field = _.cloneDeep(fieldItem)
@@ -398,15 +407,15 @@ class CMS {
   }
   _processSourceFieldsParagraph = (fieldItem, resourceKey, rootPath) => {
     const paragraphTypes = _.get(fieldItem, 'options.types', [])
-    _.each(paragraphTypes, paragraphType => {
+    _.each(paragraphTypes, (paragraphType) => {
       const schema = _.get(this._paragraphs, `["${paragraphType}"].schema`, [])
-      _.each(schema, paragraphFieldItem => {
+      _.each(schema, (paragraphFieldItem) => {
         const paragraphRootPath = `${rootPath}.{{*}}.${paragraphFieldItem.field}`
         if (this.isValidRelation(paragraphFieldItem)) {
           const field = _.cloneDeep(paragraphFieldItem)
           field.path = paragraphRootPath
           _.set(this._resources, `["${resourceKey}"].options._relations["${escapeRegExp(paragraphRootPath)}"]`, field)
-          _.set(this._relations,  `${resourceKey}["${escapeRegExp(paragraphRootPath)}"]`, field)
+          _.set(this._relations, `${resourceKey}["${escapeRegExp(paragraphRootPath)}"]`, field)
         } else if (fieldItem.input === 'paragraph') {
           this._processAttachmentFieldsParagraph(paragraphFieldItem, resourceKey, paragraphRootPath)
         }
@@ -423,7 +432,7 @@ class CMS {
     const attachmentFields = []
     const localesKey = this.getKeyFor(name, 'locales', forParagraph)
     const resourceIsLocalised = _.get(resourcesList, `${localesKey}.length`, 0) !== 0
-    _.each(schema, (field)=> {
+    _.each(schema, (field) => {
       field.localised = _.get(field, 'localised', resourceIsLocalised)
       if (_.includes(this.fieldFileTypes, _.get(field, 'input', false))) {
         attachmentFields.push(field.field)
@@ -446,13 +455,16 @@ class CMS {
       resolves = undefined
     }
     const key = JSON.stringify({ name, resolves })
-    if (!this._tempResources[key] && (config || resolves || (this._options.mode === 'normal'))) {
+    if (!this._tempResources[key] && (config || resolves || this._options.mode === 'normal')) {
       let opts = _.extend(config || Resource.DEFAULTS, { cms: this._options })
       if (!_.isEmpty(resolves)) {
         const referenceKey = JSON.stringify({ name, resolves: undefined })
         opts = this._tempResources[referenceKey].options
       }
-      const resolveMap = _.zipObject(resolves, _.map(resolves, item => this.resource(item)))
+      const resolveMap = _.zipObject(
+        resolves,
+        _.map(resolves, (item) => this.resource(item)),
+      )
       this._tempResources[key] = new Resource(name, opts, resolveMap, this)
       if (_.isEmpty(resolves)) {
         this._resources[name] = this._tempResources[key]
@@ -548,7 +560,7 @@ class CMS {
      * @param {...*} rest - Additional arguments passed to resource()
      * @returns {ResourceAPIWrapper} A wrapper providing list, find, create, update, remove and attachment methods
      */
-    function createResourceAPI (name, ...rest) {
+    function createResourceAPI(name, ...rest) {
       const resource = self.resource(name, null, rest)
       return new ResourceAPIWrapper(resource)
     }
@@ -619,7 +631,7 @@ class CMS {
  * @name CMS
  * @memberof module:node-cms
  */
-exports = module.exports = CMS
+module.exports = CMS
 
 /**
  * Export ResourceAPIWrapper for advanced IDE support

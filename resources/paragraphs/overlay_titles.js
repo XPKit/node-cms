@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: 'Overlay Title',
   schema: [
     {
@@ -6,42 +6,31 @@ exports = module.exports = {
       field: 'title',
       input: 'text',
       localised: true,
-      required: true
+      required: true,
     },
     {
       label: 'Color',
       field: 'color',
       input: 'select',
-      source: [
-        'white',
-        'black'
-      ],
+      source: ['white', 'black'],
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'Position',
       field: 'position',
       input: 'select',
-      source: [
-        'top-left',
-        'middle-left',
-        'middle-right'
-      ],
+      source: ['top-left', 'middle-left', 'middle-right'],
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'Display On',
       field: 'displayOn',
       input: 'select',
-      source: [
-        'tablet',
-        'kiosk',
-        'both'
-      ],
+      source: ['tablet', 'kiosk', 'both'],
       localised: false,
-      required: true
-    }
-  ]
+      required: true,
+    },
+  ],
 }

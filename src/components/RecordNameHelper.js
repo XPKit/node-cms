@@ -1,29 +1,31 @@
 import _ from 'lodash'
-import ResourceService from '@s/ResourceService'
 import * as Mustache from 'mustache'
+import ResourceService from '@s/ResourceService'
 
 export default {
   methods: {
-    getName (item) {
+    getName(item) {
       const name = this.getValue(item, _.first(this.resource.schema), this.resource.displayItem)
       return !_.isString(name) ? _.get(item, '_id', false) : name
     },
-    getValue (item, field, template) {
+    getValue(item, field, template) {
       let displayname = ''
       if (field) {
         if (field.input === 'file') {
-          const attachment = _(item).get('_attachments', []).find(file => file._name === field.field)
-          displayname = attachment && attachment._filename
+          const attachment = _(item)
+            .get('_attachments', [])
+            .find((file) => file._name === field.field)
+          displayname = attachment?._filename
         } else if (field.input === 'select') {
           let value = _.get(item, field.field)
           if (_.isString(value)) {
             if (_.isString(field.source)) {
-              value = _.find(ResourceService.get(field.source), {_id: value})
+              value = _.find(ResourceService.get(field.source), { _id: value })
               if (value) {
-                _.each(field.options && field.options.extraSources, (source, field) => {
+                _.each(field.options?.extraSources, (source, field) => {
                   const subId = _.get(value, field)
                   if (_.isString(subId)) {
-                    _.set(value, field, _.find(ResourceService.get(source), {_id: subId}))
+                    _.set(value, field, _.find(ResourceService.get(source), { _id: subId }))
                   }
                 })
               }
@@ -31,7 +33,7 @@ export default {
               displayname = value
             }
           }
-          if (field.options && field.options.customLabel) {
+          if (field.options?.customLabel) {
             displayname = Mustache.render(field.options.customLabel, value || {})
           } else if (!_.isString(value)) {
             displayname = _.get(value, _.chain(value).keys().first().value(), '')
@@ -55,7 +57,7 @@ export default {
             // Check if the extraField is localised in the schema
             const schemaField = _.find(this.resource.schema, { field: extraField })
             let idToFind
-            if (schemaField && schemaField.localised) {
+            if (schemaField?.localised) {
               // Use the value for the current locale
               idToFind = _.get(itemCached, `${extraField}.${this.locale}`)
             } else {
@@ -71,8 +73,8 @@ export default {
       }
       return displayname
     },
-    getExtraResources () {
+    getExtraResources() {
       return _.extend(_.get(this.resource, 'extraSources', {}), _.get(this.resource, 'schema[0].options.extraSources'))
-    }
-  }
+    },
+  },
 }

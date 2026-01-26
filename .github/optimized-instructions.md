@@ -25,7 +25,7 @@
 - Try/catch: always log errors in catch.
 - For backend, export a class (not functions); always add JSDoc.
 - Test scripts must be prefixed with `test-`.
-- Use repo eslint config.
+- Use repo biome config.
 - Do not create separate documentation after changes unless asked.
 - Functions: ≤25 lines, lines ≤80 chars (except for method chaining).
 - Answers must be short but clear about changes.

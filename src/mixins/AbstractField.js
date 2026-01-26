@@ -1,8 +1,18 @@
-import { get as objGet, set as objSet, join, forEach, isFunction, isString, isArray, uniq as arrayUniq, includes } from 'lodash'
-import validators from '@u/validators'
+import {
+  uniq as arrayUniq,
+  forEach,
+  includes,
+  isArray,
+  isFunction,
+  isString,
+  join,
+  get as objGet,
+  set as objSet,
+} from 'lodash'
 import FieldSelectorService from '@s/FieldSelectorService'
+import validators from '@u/validators'
 
-function convertValidator (validator) {
+function convertValidator(validator) {
   if (isString(validator)) {
     if (validators[validator] != null) return validators[validator]
     else {
@@ -13,9 +23,9 @@ function convertValidator (validator) {
   return validator
 }
 
-function attributesDirective (el, binding, vnode) {
+function attributesDirective(el, binding, vnode) {
   let attrs = objGet(vnode.context, 'schema.attributes', {})
-  let container = binding.value || 'input'
+  const container = binding.value || 'input'
   if (isString(container)) {
     attrs = objGet(attrs, container) || attrs
   }
@@ -26,20 +36,20 @@ function attributesDirective (el, binding, vnode) {
 
 export default {
   props: ['model', 'schema', 'formOptions', 'disabled', 'focused', 'paragraphLevel', 'paragraphIndex', 'theme'],
-  data () {
+  data() {
     return {
-      errors: []
+      errors: [],
     }
   },
   directives: {
     attributes: {
       bind: attributesDirective,
       updated: attributesDirective,
-      componentUpdated: attributesDirective
-    }
+      componentUpdated: attributesDirective,
+    },
   },
   watch: {
-    focused () {
+    focused() {
       if (this.focused === -1) {
         return
       }
@@ -54,23 +64,25 @@ export default {
       if (this.focused) {
         elem.focus()
       }
-    }
+    },
   },
   computed: {
     _value: {
       cache: false,
-      get () {
-        return isFunction(objGet(this.schema, 'get')) ? this.schema.get(this.model) : objGet(this.model, this.schema.model)
+      get() {
+        return isFunction(objGet(this.schema, 'get'))
+          ? this.schema.get(this.model)
+          : objGet(this.model, this.schema.model)
       },
-      set (newValue) {
-        let oldValue = this._value
+      set(newValue) {
+        const oldValue = this._value
         if (isFunction(newValue)) {
           newValue(newValue, oldValue)
         } else {
           this.updateModelValue(newValue, oldValue)
         }
-      }
-    }
+      },
+    },
   },
   methods: {
     showHint() {
@@ -82,14 +94,14 @@ export default {
       }
       FieldSelectorService.highlightParagraph(this.paragraphLevel - 1, this.paragraphIndex)
     },
-    get (key, defaultVal = false) {
+    get(key, defaultVal = false) {
       return objGet(this.schema, key, defaultVal)
     },
-    getOpt (opt, defaultVal) {
+    getOpt(opt, defaultVal) {
       return objGet(this.schema, `options.${opt}`, defaultVal)
     },
-    getVariant () {
-      let variant = []
+    getVariant() {
+      const variant = []
       forEach(['underlined', 'outlined', 'filled', 'solo', 'solo-inverted', 'solo-filled', 'plain'], (key) => {
         if (this.get(key)) {
           variant.push(key)
@@ -97,33 +109,33 @@ export default {
       })
       return join(variant, ' ')
     },
-    onChangeData (data) {
+    onChangeData(data) {
       this._value = data
     },
-    async validate (calledParent) {
+    async validate(calledParent) {
       this.clearValidationErrors()
-      let validateAsync = objGet(this.formOptions, 'validateAsync', false)
+      const validateAsync = objGet(this.formOptions, 'validateAsync', false)
       let results = []
       if (this.schema.validator && this.schema.readonly !== true && this.disabled !== true) {
-        let validators = []
+        const validators = []
         if (!isArray(this.schema.validator)) {
           validators.push(convertValidator(this.schema.validator).bind(this))
         } else {
-          forEach(this.schema.validator, validator => {
+          forEach(this.schema.validator, (validator) => {
             validators.push(convertValidator(validator).bind(this))
           })
         }
-        forEach(validators, validator => {
+        forEach(validators, (validator) => {
           if (validateAsync) {
             results.push(validator(this._value, this.schema, this.model))
           } else {
-            let result = validator(this._value, this.schema, this.model)
+            const result = validator(this._value, this.schema, this.model)
             if (result && isFunction(result.then)) {
-              result.then(err => {
+              result.then((err) => {
                 if (err) {
                   this.errors = this.errors.concat(err)
                 }
-                let isValid = this.errors.length === 0
+                const isValid = this.errors.length === 0
                 this.$emit('validated', isValid, this.errors, this)
               })
             } else if (result) {
@@ -132,9 +144,9 @@ export default {
           }
         })
       }
-      let handleErrors = (errors) => {
+      const handleErrors = (errors) => {
         let fieldErrors = []
-        forEach(arrayUniq(errors), err => {
+        forEach(arrayUniq(errors), (err) => {
           if (isArray(err) && err.length > 0) {
             fieldErrors = fieldErrors.concat(err)
           } else if (isString(err)) {
@@ -144,7 +156,7 @@ export default {
         if (isFunction(this.schema.onValidated)) {
           this.schema.onValidated.call(this, this.model, fieldErrors, this.schema)
         }
-        let isValid = fieldErrors.length === 0
+        const isValid = fieldErrors.length === 0
         if (!calledParent) {
           this.$emit('validated', isValid, fieldErrors, this)
         }
@@ -156,7 +168,7 @@ export default {
       }
       return Promise.all(results).then(handleErrors)
     },
-    async updateModelValue (newValue, oldValue) {
+    async updateModelValue(newValue, oldValue) {
       let changed = false
       if (isFunction(this.schema.set)) {
         this.schema.set(this.model, newValue)
@@ -175,10 +187,10 @@ export default {
         this.$emit('input', newValue, this.schema.model)
       }
     },
-    clearValidationErrors () {
+    clearValidationErrors() {
       this.errors.splice(0)
     },
-    getKeyLocale () {
+    getKeyLocale() {
       const options = {}
       const list = this.schema.model.split('.')
       if (this.schema.localised) {
@@ -187,8 +199,8 @@ export default {
       options.key = list.join('.')
       return options
     },
-    getFieldClasses () {
+    getFieldClasses() {
       return objGet(this.schema, 'fieldClasses', [])
-    }
-  }
+    },
+  },
 }

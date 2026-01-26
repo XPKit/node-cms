@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const path = require('path')
+const path = require('node:path')
 const fs = require('fs-extra')
 
 class RequestService {
@@ -10,7 +10,7 @@ class RequestService {
 
   setAuth(jwtToken) {
     this.auth = `nodeCmsJwt=${jwtToken}`
-    this.basicAuth = 'Basic ' + Buffer.from(this.username + ':' + this.password).toString('base64')
+    this.basicAuth = `Basic ${Buffer.from(`${this.username}:${this.password}`).toString('base64')}`
   }
 
   addAuthToRequest(options) {
@@ -20,7 +20,7 @@ class RequestService {
     }
   }
 
-  async handleRequest (url, options) {
+  async handleRequest(url, options) {
     try {
       const returnJson = _.get(options, 'returnJson', false)
       if (returnJson) {
@@ -29,12 +29,16 @@ class RequestService {
       const contentType = options.body instanceof FormData ? false : 'application/json'
       if (!(options.body instanceof FormData)) {
         options.headers = {
-          'Accept': 'application/json',
-          'Content-Type': contentType
+          Accept: 'application/json',
+          'Content-Type': contentType,
         }
       }
       this.addAuthToRequest(options)
-      if (_.get(options.headers, 'Content-Type', false) === 'application/json' && _.get(options, 'body', false) && _.isObject(options.body)) {
+      if (
+        _.get(options.headers, 'Content-Type', false) === 'application/json' &&
+        _.get(options, 'body', false) &&
+        _.isObject(options.body)
+      ) {
         options.body = JSON.stringify(options.body)
       }
       const response = await fetch(url, options)
@@ -63,15 +67,16 @@ class RequestService {
     }
   }
 
-  async get (url, returnJson = true) {
-    return await this.handleRequest(url, {method: 'GET', returnJson})
+  async get(url, returnJson = true) {
+    return await this.handleRequest(url, { method: 'GET', returnJson })
   }
 
   async getAttachment(url, outputPath, maxRetries = 10) {
     const options = {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36'
-      }
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36',
+      },
     }
     this.addAuthToRequest(options)
     for (let i = 0; i < maxRetries; i++) {
@@ -89,30 +94,30 @@ class RequestService {
             },
             close() {
               fileStream.end()
-            }
-          })
+            },
+          }),
         )
       } catch (error) {
         console.error(`Attempt ${url} - ${i + 1} failed:`, error)
         if (i === maxRetries - 1) {
           throw error
         }
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        await new Promise((resolve) => setTimeout(resolve, 1000))
       }
     }
   }
 
-  async post (url, body = {}, returnJson = true) {
-    return await this.handleRequest(url, {method: 'POST', body, returnJson})
+  async post(url, body = {}, returnJson = true) {
+    return await this.handleRequest(url, { method: 'POST', body, returnJson })
   }
 
-  async put (url, body = {}, returnJson = true) {
-    return await this.handleRequest(url, {method: 'PUT', body, returnJson})
+  async put(url, body = {}, returnJson = true) {
+    return await this.handleRequest(url, { method: 'PUT', body, returnJson })
   }
 
-  async delete (url, body = {}, returnJson = true) {
-    return await this.handleRequest(url, {method: 'DELETE', body, returnJson})
+  async delete(url, body = {}, returnJson = true) {
+    return await this.handleRequest(url, { method: 'DELETE', body, returnJson })
   }
 }
 
-exports = module.exports = RequestService
+module.exports = RequestService

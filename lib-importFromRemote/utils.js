@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const path = require('path')
+const path = require('node:path')
 const md5File = require('md5-file')
 
 function determineResourceOrder(resources, schemaMap) {
@@ -53,9 +53,9 @@ function findMatches(obj, regex, field) {
   function traverse(value, path = '') {
     if (value && _.isObject(value)) {
       if (regex.test(path) && _.endsWith(path, field)) {
-        results.push({path, value})
+        results.push({ path, value })
       }
-      for (let key in value) {
+      for (const key in value) {
         if (_.isArray(value)) {
           traverse(value[key], `${path}[${key}]`)
         } else {
@@ -70,25 +70,33 @@ function findMatches(obj, regex, field) {
 
 function getAttachmentFields(resource, remoteSchemaMap) {
   const attachmentFields = _.get(remoteSchemaMap[resource], '_attachmentFields', false)
-  return attachmentFields ? attachmentFields : _.filter(remoteSchemaMap[resource].schema, (field)=> _.includes(['file', 'image'], field.input))
+  return attachmentFields
+    ? attachmentFields
+    : _.filter(remoteSchemaMap[resource].schema, (field) => _.includes(['file', 'image'], field.input))
 }
 
 function getAttachments(record, attachmentName, config) {
-  const attachments = _.get(record, attachmentName, _.filter(_.get(record, '_attachments', []), {_name: attachmentName}))
-  return _.compact(_.map(attachments, (attachment)=> {
-    if (_.get(attachment, 'url', false)) {
-      if (!_.startsWith(attachment.url, 'http')) {
-        attachment.url = `${buildUrl(config.remote, false)}${attachment.url}`
+  const attachments = _.get(
+    record,
+    attachmentName,
+    _.filter(_.get(record, '_attachments', []), { _name: attachmentName }),
+  )
+  return _.compact(
+    _.map(attachments, (attachment) => {
+      if (_.get(attachment, 'url', false)) {
+        if (!_.startsWith(attachment.url, 'http')) {
+          attachment.url = `${buildUrl(config.remote, false)}${attachment.url}`
+        }
+        return _.omit(attachment, ['_id', '_createdAt', '_updatedAt'])
       }
-      return _.omit(attachment, ['_id', '_createdAt', '_updatedAt'])
-    }
-  }))
+    }),
+  )
 }
 
 function convertKeyToId(field, v, remoteToLocalIdMap, originalRemoteRecords) {
   const localId = _.get(remoteToLocalIdMap, `${field.source}.${v}`, false)
   if (!localId) {
-    const foundRemoteRecord = _.find(originalRemoteRecords[field.source], {_id: v})
+    const foundRemoteRecord = _.find(originalRemoteRecords[field.source], { _id: v })
     if (!foundRemoteRecord) {
       return null
     }
@@ -106,11 +114,11 @@ function deepMerge(target, source) {
       Object.assign(source[key], deepMerge(target[key], source[key]))
     }
   }
-  return {...target, ...source}
+  return { ...target, ...source }
 }
 
 function filterAttachments(list, attachmentsToIgnore) {
-  return _.filter(list, key => !_.includes(attachmentsToIgnore, key))
+  return _.filter(list, (key) => !_.includes(attachmentsToIgnore, key))
 }
 
 async function md5FileAsync(filePath) {
@@ -127,5 +135,5 @@ module.exports = {
   buildUrl,
   deepMerge,
   filterAttachments,
-  md5FileAsync
+  md5FileAsync,
 }

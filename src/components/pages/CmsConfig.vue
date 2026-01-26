@@ -39,115 +39,115 @@
 </template>
 
 <script>
-  export default {
-    name: 'CmsConfig',
-    data() {
-      return {
-        configContent: '',
-        originalContent: '',
-        isValidJson: true,
-        jsonError: '',
-        loading: false,
-        alertTimeout: false,
-        alert: {
-          show: false,
-          type: 'success',
-          message: ''
-        }
-      }
-    },
-    computed: {
-      hasChanges() {
-        return this.configContent !== this.originalContent
-      }
-    },
-    async mounted() {
-      await this.loadConfig()
-    },
-    methods: {
-      async loadConfig() {
-        this.loading = true
-        try {
-          const response = await fetch(`${window.location.pathname}/cms-config`)
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`)
-          }
-          const config = await response.json()
-          this.configContent = JSON.stringify(config, null, 2)
-          this.originalContent = this.configContent
-          this.validateJson()
-        } catch (error) {
-          console.error('Error loading config:', error)
-          this.showAlert('error', 'Failed to load configuration: ' + error.message)
-        } finally {
-          this.loading = false
-        }
+export default {
+  name: 'CmsConfig',
+  data() {
+    return {
+      configContent: '',
+      originalContent: '',
+      isValidJson: true,
+      jsonError: '',
+      loading: false,
+      alertTimeout: false,
+      alert: {
+        show: false,
+        type: 'success',
+        message: '',
       },
-
-      validateJson() {
-        try {
-          JSON.parse(this.configContent)
-          this.isValidJson = true
-          this.jsonError = ''
-        } catch (error) {
-          this.isValidJson = false
-          this.jsonError = 'Invalid JSON: ' + error.message
-        }
-      },
-
-      async saveConfig() {
-        if (!this.isValidJson) {
-          return this.showAlert('error', 'Please fix JSON errors before saving')
-        }
-        // Show confirmation dialog for server restart
-        if (!confirm('Saving will restart the server. Are you sure you want to continue?')) {
-          return
-        }
-        this.loading = true
-        try {
-          const parsedConfig = JSON.parse(this.configContent)
-          const response = await fetch('/admin/cms-config', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(parsedConfig)
-          })
-          if (!response.ok) {
-            const errorText = await response.text()
-            throw new Error(errorText || `HTTP error! status: ${response.status}`)
-          }
-          await response.json() // Consume the response but don't store it
-          this.originalContent = this.configContent
-          this.showAlert('success', 'Configuration saved successfully! Server will restart shortly.')
-          // Show notification that server is restarting
-          setTimeout(() => {
-            this.showAlert('info', 'Server is restarting... Please refresh the page in a few seconds.')
-          }, 1000)
-          // Attempt to reload the page after a delay
-          setTimeout(() => {
-            window.location.reload()
-          }, 5000)
-        } catch (error) {
-          console.error('Error saving config:', error)
-          this.showAlert('error', 'Failed to save configuration: ' + error.message)
-        } finally {
-          this.loading = false
-        }
-      },
-      showAlert(type, message) {
-        this.alert = {
-          show: true,
-          type: type,
-          message: message
-        }
-        clearTimeout(this.alertTimeout)
-        this.alertTimeout = setTimeout(() => {
-          this.alert.show = false
-        }, 5000)
-      }
     }
-  }
+  },
+  computed: {
+    hasChanges() {
+      return this.configContent !== this.originalContent
+    },
+  },
+  async mounted() {
+    await this.loadConfig()
+  },
+  methods: {
+    async loadConfig() {
+      this.loading = true
+      try {
+        const response = await fetch(`${window.location.pathname}/cms-config`)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const config = await response.json()
+        this.configContent = JSON.stringify(config, null, 2)
+        this.originalContent = this.configContent
+        this.validateJson()
+      } catch (error) {
+        console.error('Error loading config:', error)
+        this.showAlert('error', 'Failed to load configuration: ' + error.message)
+      } finally {
+        this.loading = false
+      }
+    },
+
+    validateJson() {
+      try {
+        JSON.parse(this.configContent)
+        this.isValidJson = true
+        this.jsonError = ''
+      } catch (error) {
+        this.isValidJson = false
+        this.jsonError = 'Invalid JSON: ' + error.message
+      }
+    },
+
+    async saveConfig() {
+      if (!this.isValidJson) {
+        return this.showAlert('error', 'Please fix JSON errors before saving')
+      }
+      // Show confirmation dialog for server restart
+      if (!confirm('Saving will restart the server. Are you sure you want to continue?')) {
+        return
+      }
+      this.loading = true
+      try {
+        const parsedConfig = JSON.parse(this.configContent)
+        const response = await fetch('/admin/cms-config', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(parsedConfig),
+        })
+        if (!response.ok) {
+          const errorText = await response.text()
+          throw new Error(errorText || `HTTP error! status: ${response.status}`)
+        }
+        await response.json() // Consume the response but don't store it
+        this.originalContent = this.configContent
+        this.showAlert('success', 'Configuration saved successfully! Server will restart shortly.')
+        // Show notification that server is restarting
+        setTimeout(() => {
+          this.showAlert('info', 'Server is restarting... Please refresh the page in a few seconds.')
+        }, 1000)
+        // Attempt to reload the page after a delay
+        setTimeout(() => {
+          window.location.reload()
+        }, 5000)
+      } catch (error) {
+        console.error('Error saving config:', error)
+        this.showAlert('error', 'Failed to save configuration: ' + error.message)
+      } finally {
+        this.loading = false
+      }
+    },
+    showAlert(type, message) {
+      this.alert = {
+        show: true,
+        type: type,
+        message: message,
+      }
+      clearTimeout(this.alertTimeout)
+      this.alertTimeout = setTimeout(() => {
+        this.alert.show = false
+      }, 5000)
+    },
+  },
+}
 </script>
 
 <style scoped>

@@ -2,12 +2,12 @@ import _ from 'lodash'
 import RequestService from '@s/RequestService'
 
 class ResourceService {
-  constructor () {
+  constructor() {
     this.cacheMap = {}
     this.paragraphs = {}
   }
 
-  async cache (resource) {
+  async cache(resource) {
     const data = await RequestService.get(`${window.location.pathname}../api/${resource}`)
     if (_.get(data, 'userLoggedOut', false)) {
       console.info('Received userLoggedOut from server, will redirect to login page')
@@ -24,12 +24,12 @@ class ResourceService {
 
   async getAllParagraphs() {
     const paragraphs = await RequestService.get(`${window.location.pathname}paragraphs`)
-    _.each(paragraphs, (paragraph)=> {
+    _.each(paragraphs, (paragraph) => {
       _.set(this.paragraphs, paragraph.title, paragraph)
     })
   }
 
-  get (resource) {
+  get(resource) {
     const data = this.cacheMap[resource]
     if (_.isUndefined(data)) {
       console.info(`resource (${resource}) is not cached`)
@@ -37,11 +37,11 @@ class ResourceService {
     return data
   }
 
-  setSchemas (schemas) {
+  setSchemas(schemas) {
     this.schemas = schemas
   }
 
-  getSchema (resource) {
+  getSchema(resource) {
     return _.find(this.schemas, { title: resource })
   }
 

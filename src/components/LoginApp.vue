@@ -25,87 +25,89 @@
 </template>
 
 <script>
-  import _ from 'lodash'
+import _ from 'lodash'
+import Loading from '@c/Loading.vue'
+import ConfigService from '@s/ConfigService'
+import LoadingService from '@s/LoadingService'
+import LoginService from '@s/LoginService'
+import RequestService from '@s/RequestService'
+import TranslateService from '@s/TranslateService'
 
-  import Loading from '@c/Loading.vue'
-  import LoadingService from '@s/LoadingService'
-  import ConfigService from '@s/ConfigService'
-  import TranslateService from '@s/TranslateService'
-  import LoginService from '@s/LoginService'
-  import RequestService from '@s/RequestService'
-
-  export default {
-    components: {
-      Loading
-    },
-    data () {
-      return {
-        username: null,
-        password: null,
-        activeField: false,
-        loginFailed: false,
-        isLoading: false,
-        loggingIn: false,
-        showLoginForm: false,
-        loaded: false,
-        LoadingService,
-        TranslateService
-      }
-    },
-    async unmounted () {
-      LoadingService.events.off('has-loading', this.onLoading)
-    },
-    async mounted () {
-      LoadingService.events.on('has-loading', this.onLoading)
-      this.$loading.start('init')
-      try {
-        const noLogin = _.get(window, 'noLogin', false)
-        if (!noLogin) {
-          LoginService.init()
-        }
-        await ConfigService.init()
-        await TranslateService.init()
-        this.loaded = true
-      } catch (error) {
-        console.error('Error happen during mounted:', error)
-      }
-      this.loaded = true
-      this.$nextTick(() => {
-        setTimeout(() => {
-          this.showLoginForm = true
-        }, 100)
-      })
-      this.$loading.stop('init')
-    },
-    methods: {
-      async onLoading(isLoading) {
-        await this.$nextTick()
-        this.isLoading = isLoading
-        this.$forceUpdate()
-      },
-      async login () {
-        if (this.loggingIn) {
-          return
-        } else if (!this.username) {
-          return this.$refs.username.focus()
-        } else if (!this.password) {
-          return this.$refs.password.focus()
-        }
-        this.$loading.start('login')
-        this.loggingIn = true
-        try {
-          await RequestService.post(`${window.location.pathname}login`, {username: this.username, password: this.password})
-          this.$loading.stop('login')
-          window.location.reload()
-        } catch (error) {
-          console.error('Error happen during login:', error)
-          this.loginFailed = true
-          this.$loading.stop('login')
-        }
-        this.loggingIn = false
-      }
+export default {
+  components: {
+    Loading,
+  },
+  data() {
+    return {
+      username: null,
+      password: null,
+      activeField: false,
+      loginFailed: false,
+      isLoading: false,
+      loggingIn: false,
+      showLoginForm: false,
+      loaded: false,
+      LoadingService,
+      TranslateService,
     }
-  }
+  },
+  async unmounted() {
+    LoadingService.events.off('has-loading', this.onLoading)
+  },
+  async mounted() {
+    LoadingService.events.on('has-loading', this.onLoading)
+    this.$loading.start('init')
+    try {
+      const noLogin = _.get(window, 'noLogin', false)
+      if (!noLogin) {
+        LoginService.init()
+      }
+      await ConfigService.init()
+      await TranslateService.init()
+      this.loaded = true
+    } catch (error) {
+      console.error('Error happen during mounted:', error)
+    }
+    this.loaded = true
+    this.$nextTick(() => {
+      setTimeout(() => {
+        this.showLoginForm = true
+      }, 100)
+    })
+    this.$loading.stop('init')
+  },
+  methods: {
+    async onLoading(isLoading) {
+      await this.$nextTick()
+      this.isLoading = isLoading
+      this.$forceUpdate()
+    },
+    async login() {
+      if (this.loggingIn) {
+        return
+      } else if (!this.username) {
+        return this.$refs.username.focus()
+      } else if (!this.password) {
+        return this.$refs.password.focus()
+      }
+      this.$loading.start('login')
+      this.loggingIn = true
+      try {
+        await RequestService.post(`${window.location.pathname}login`, {
+          username: this.username,
+          password: this.password,
+        })
+        this.$loading.stop('login')
+        window.location.reload()
+      } catch (error) {
+        console.error('Error happen during login:', error)
+        this.loginFailed = true
+        this.$loading.stop('login')
+      }
+      this.loggingIn = false
+    },
+  },
+}
 </script>
 
 <style lang="scss" scoped>

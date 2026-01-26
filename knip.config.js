@@ -16,7 +16,7 @@ export default {
     'lib/plugins/import/index.js',
     'lib/plugins/importFromRemote/index.js',
     // Test files may be run individually
-    'test/**/*.js'
+    'test/**/*.js',
   ],
 
   project: [
@@ -26,7 +26,7 @@ export default {
     'lib-importFromRemote/**/*.js',
     'resources/**/*.js',
     'test/**/*.js',
-    '*.js'
+    '*.js',
   ],
 
   ignore: [
@@ -48,7 +48,7 @@ export default {
     'lib/logger.js',
     // Plugin alias imports that Knip can't resolve
     '@p/js/main.js',
-    '@p/scss/main.scss'
+    '@p/scss/main.scss',
   ],
 
   // Path mapping to resolve Vite aliases
@@ -63,7 +63,7 @@ export default {
     '@m/*': ['src/mixins/*'],
     '@a/*': ['src/assets/*'],
     '@static/*': ['src/static/*'],
-    '@p/*': ['src/plugins/*']
+    '@p/*': ['src/plugins/*'],
   },
 
   ignoreDependencies: [
@@ -77,9 +77,9 @@ export default {
     '@c/FileInputErrors',
     // Logger dependencies used in lib/logger.js (which is ignored)
     'colors',
-    'debug'
+    'debug',
   ],
 
   // Ignore binaries that are referenced in package.json but not installed
-  ignoreBinaries: ['ulimit', 'mongod']
+  ignoreBinaries: ['ulimit', 'mongod'],
 }

@@ -28,172 +28,177 @@
 </template>
 
 <script>
-  import _ from 'lodash'
-  import fuzzysort from 'fuzzysort'
-  import FieldSelectorService from '@s/FieldSelectorService'
-  import Notification from '@m/Notification'
+import fuzzysort from 'fuzzysort'
+import _ from 'lodash'
+import Notification from '@m/Notification'
+import FieldSelectorService from '@s/FieldSelectorService'
 
-  export default {
-    mixins: [Notification],
-    props: {
-      selectResourceCallback: { type: Function, default: () => {} },
-      groupedList: { type: Array, default: () => [] },
-      selectedItem: { type: Object, default: () => {} }
-    },
-    data () {
-      return {
-        showOmnibar: false,
-        search: null,
-        scrolledToBottom: false,
-        resourcesList: [],
-        results: [],
-        highlightedItem: 0,
-        searchModes: ['all', 'resource', 'field'],
-        searchMode: 'all',
-        shortcutsWhenClosed: {
-          'open': ['ctrl', 'p']
-        },
-        shortcuts: {
-          'esc': ['esc'],
-          'open': ['ctrl', 'p'],
-          'arrow-up': ['arrowup'],
-          'arrow-down': ['arrowdown'],
-          'enter': ['enter'],
-          'all': ['shift', 'a'],
-          'resource': ['shift', 'r'],
-          'field': ['shift', 'f']
-        },
-        searchOptions: {
-          keys: ['displayname'],
-          scoreFn: a => {
-            if (!a[0]) {
-              return -10000000
-            }
-            return a[0].score + (this.isResultInCurrentResource(a) ? 10000000 : 0)
+export default {
+  mixins: [Notification],
+  props: {
+    selectResourceCallback: { type: Function, default: () => {} },
+    groupedList: { type: Array, default: () => [] },
+    selectedItem: { type: Object, default: () => {} },
+  },
+  data() {
+    return {
+      showOmnibar: false,
+      search: null,
+      scrolledToBottom: false,
+      resourcesList: [],
+      results: [],
+      highlightedItem: 0,
+      searchModes: ['all', 'resource', 'field'],
+      searchMode: 'all',
+      shortcutsWhenClosed: {
+        open: ['ctrl', 'p'],
+      },
+      shortcuts: {
+        esc: ['esc'],
+        open: ['ctrl', 'p'],
+        'arrow-up': ['arrowup'],
+        'arrow-down': ['arrowdown'],
+        enter: ['enter'],
+        all: ['shift', 'a'],
+        resource: ['shift', 'r'],
+        field: ['shift', 'f'],
+      },
+      searchOptions: {
+        keys: ['displayname'],
+        scoreFn: (a) => {
+          if (!a[0]) {
+            return -10000000
           }
-        }
-      }
-    },
-    watch: {
-      search () {
-        this.highlightedItem = 0
-        this.results = []
-        const results = fuzzysort.go(this.search, this.getDataForSearch(), this.searchOptions)
-        this.results = _.compact(_.map(results, (result) => {
+          return a[0].score + (this.isResultInCurrentResource(a) ? 10000000 : 0)
+        },
+      },
+    }
+  },
+  watch: {
+    search() {
+      this.highlightedItem = 0
+      this.results = []
+      const results = fuzzysort.go(this.search, this.getDataForSearch(), this.searchOptions)
+      this.results = _.compact(
+        _.map(results, (result) => {
           if (_.isNull(_.get(result, '[0]', null))) {
             return false
           }
           result.obj.html = fuzzysort.highlight(result[0])
           result.obj.score = result.score
           return result.obj
-        }))
-      }
+        }),
+      )
     },
-    mounted () {
-      this.resourcesList = _.map(_.flatten(_.map(this.groupedList, 'list')), (resource) => {
-        if (_.isString(resource)) {
-          return resource
-        }
-        resource.type = 'resource'
-        resource.displayname = _.get(resource, 'displayname.enUS', _.get(resource, 'displayname', resource.title))
+  },
+  mounted() {
+    this.resourcesList = _.map(_.flatten(_.map(this.groupedList, 'list')), (resource) => {
+      if (_.isString(resource)) {
         return resource
-      })
-      this.fieldsList = _.flatten(_.map(_.cloneDeep(this.resourcesList), (resource) => {
+      }
+      resource.type = 'resource'
+      resource.displayname = _.get(resource, 'displayname.enUS', _.get(resource, 'displayname', resource.title))
+      return resource
+    })
+    this.fieldsList = _.flatten(
+      _.map(_.cloneDeep(this.resourcesList), (resource) => {
         return _.map(resource.schema, (field) => {
           field.resource = resource
           field.displayname = `${resource.displayname}.${_.get(field, 'label.enUS', _.get(field, 'label', field.field))}`
           field.type = 'field'
           return field
         })
-      }))
+      }),
+    )
+  },
+  methods: {
+    getShortcuts() {
+      return this.showOmnibar ? this.shortcuts : this.shortcutsWhenClosed
     },
-    methods: {
-      getShortcuts () {
-        return this.showOmnibar ? this.shortcuts : this.shortcutsWhenClosed
-      },
-      onScroll ({ target: { scrollTop, clientHeight, scrollHeight } }) {
-        this.scrolledToBottom = scrollTop + clientHeight >= scrollHeight - 50
-      },
-      isResultInCurrentResource (result) {
-        return _.startsWith(_.get(result[0], 'target', ''), _.get(this.selectedItem, 'displayname', ''))
-      },
-      getDataForSearch () {
-        if (this.searchMode === 'all') {
-          return _.concat(this.resourcesList, this.fieldsList)
-        }
-        return this.searchMode === 'resource' ? this.resourcesList : this.fieldsList
-      },
-      getIconForResult (result) {
-        return this.getIcon(this.searchMode === 'all' ? result.type : this.searchMode)
-      },
-      getIcon (type) {
-        return `$${type === 'resource' ? 'package' : 'cursorText'}`
-      },
-      isCharHighlighted (result, i) {
-        return _.includes(_.values(result._indexes), i)
-      },
-      showHideOmnibar (display) {
-        this.showOmnibar = display
-        this.setSearchMode('all')
-        if (display) {
-          this.$nextTick(() => {
-            const elem = _.get(this.$refs, '[\'search\']', false)
-            elem.focus()
-          })
-        }
-        this.sendOmnibarDisplayStatus(display)
-      },
-      selectResult (i = -1) {
-        const result = _.get(this.results, `[${i === -1 ? this.highlightedItem : i}]`, false)
-        if (!result) {
-          return
-        }
-        const resultResource = _.includes(['resource', 'plugin'], result.type) ? result : result.resource
-        if (resultResource !== this.selectedItem) {
-          console.info(`Switching to resource ${resultResource.title}`)
-          this.selectResourceCallback(resultResource)
-        } else if (result.type === 'field') {
-          FieldSelectorService.events.emit('select', _.omit(result, 'resource'))
-        }
-        this.showHideOmnibar(false)
-      },
-      setSearchMode (mode) {
-        this.searchMode = mode
-        this.search = ''
-      },
-      scrollToResult () {
-        const elem = document.getElementById(`result-${this.highlightedItem}`)
-        if (elem) {
-          elem.scrollIntoView()
-        }
-      },
-      async interactiveSearch (event) {
-        const action = _.get(event, 'srcKey', false)
-        if (!action) {
-          return
-        }
-        if (!this.showOmnibar) {
-          if (action === 'open') {
-            this.showHideOmnibar(true)
-          }
-          return
-        }
-        if (action === 'esc' || action === 'open') {
-          this.showHideOmnibar(false)
-        } else if (action === 'arrow-up') {
-          this.highlightedItem = this.highlightedItem > 0 ? this.highlightedItem - 1 : 0
-          this.scrollToResult()
-        } else if (action === 'arrow-down') {
-          this.highlightedItem = this.highlightedItem < this.results.length ? this.highlightedItem + 1 : this.results.length - 1
-          this.scrollToResult()
-        } else if (action === 'enter') {
-          this.selectResult()
-        } else if (_.includes(this.searchModes, action)) {
-          this.setSearchMode(action)
-        }
+    onScroll({ target: { scrollTop, clientHeight, scrollHeight } }) {
+      this.scrolledToBottom = scrollTop + clientHeight >= scrollHeight - 50
+    },
+    isResultInCurrentResource(result) {
+      return _.startsWith(_.get(result[0], 'target', ''), _.get(this.selectedItem, 'displayname', ''))
+    },
+    getDataForSearch() {
+      if (this.searchMode === 'all') {
+        return _.concat(this.resourcesList, this.fieldsList)
       }
-    }
-  }
+      return this.searchMode === 'resource' ? this.resourcesList : this.fieldsList
+    },
+    getIconForResult(result) {
+      return this.getIcon(this.searchMode === 'all' ? result.type : this.searchMode)
+    },
+    getIcon(type) {
+      return `$${type === 'resource' ? 'package' : 'cursorText'}`
+    },
+    isCharHighlighted(result, i) {
+      return _.includes(_.values(result._indexes), i)
+    },
+    showHideOmnibar(display) {
+      this.showOmnibar = display
+      this.setSearchMode('all')
+      if (display) {
+        this.$nextTick(() => {
+          const elem = _.get(this.$refs, "['search']", false)
+          elem.focus()
+        })
+      }
+      this.sendOmnibarDisplayStatus(display)
+    },
+    selectResult(i = -1) {
+      const result = _.get(this.results, `[${i === -1 ? this.highlightedItem : i}]`, false)
+      if (!result) {
+        return
+      }
+      const resultResource = _.includes(['resource', 'plugin'], result.type) ? result : result.resource
+      if (resultResource !== this.selectedItem) {
+        console.info(`Switching to resource ${resultResource.title}`)
+        this.selectResourceCallback(resultResource)
+      } else if (result.type === 'field') {
+        FieldSelectorService.events.emit('select', _.omit(result, 'resource'))
+      }
+      this.showHideOmnibar(false)
+    },
+    setSearchMode(mode) {
+      this.searchMode = mode
+      this.search = ''
+    },
+    scrollToResult() {
+      const elem = document.getElementById(`result-${this.highlightedItem}`)
+      if (elem) {
+        elem.scrollIntoView()
+      }
+    },
+    async interactiveSearch(event) {
+      const action = _.get(event, 'srcKey', false)
+      if (!action) {
+        return
+      }
+      if (!this.showOmnibar) {
+        if (action === 'open') {
+          this.showHideOmnibar(true)
+        }
+        return
+      }
+      if (action === 'esc' || action === 'open') {
+        this.showHideOmnibar(false)
+      } else if (action === 'arrow-up') {
+        this.highlightedItem = this.highlightedItem > 0 ? this.highlightedItem - 1 : 0
+        this.scrollToResult()
+      } else if (action === 'arrow-down') {
+        this.highlightedItem =
+          this.highlightedItem < this.results.length ? this.highlightedItem + 1 : this.results.length - 1
+        this.scrollToResult()
+      } else if (action === 'enter') {
+        this.selectResult()
+      } else if (_.includes(this.searchModes, action)) {
+        this.setSearchMode(action)
+      }
+    },
+  },
+}
 </script>
 <style lang="scss">
 @use '@a/scss/variables.scss' as *;

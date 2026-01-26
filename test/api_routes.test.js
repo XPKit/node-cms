@@ -31,9 +31,7 @@ describe('API Route Coverage', () => {
   })
 
   it('GET /api/articles/:id/attachments with wrong record id should return 404', async () => {
-    const res = await request(serverUrl)
-      .get('/api/articles/doesnotexist/attachments')
-      .auth('localAdmin', 'localAdmin')
+    const res = await request(serverUrl).get('/api/articles/doesnotexist/attachments').auth('localAdmin', 'localAdmin')
     expect(res.status).to.equal(404)
   })
 
@@ -77,25 +75,19 @@ describe('API Route Coverage', () => {
       .auth('localAdmin', 'localAdmin')
     expect(delRes.status).to.equal(200)
     // Check parent document _attachments array
-    const parentRes = await request(serverUrl)
-      .get(`/api/articles/${articleId}`)
-      .auth('localAdmin', 'localAdmin')
+    const parentRes = await request(serverUrl).get(`/api/articles/${articleId}`).auth('localAdmin', 'localAdmin')
     expect(parentRes.status).to.equal(200)
     expect(parentRes.body).to.have.property('file')
     expect(parentRes.body.file).to.be.an('array')
     expect(parentRes.body.file.length).to.equal(1)
     // Clean up: delete all articles created in this test
-    const articlesRes = await request(serverUrl)
-      .get('/api/articles')
-      .auth('localAdmin', 'localAdmin')
+    const articlesRes = await request(serverUrl).get('/api/articles').auth('localAdmin', 'localAdmin')
     if (_.isArray(articlesRes.body)) {
       for (const article of articlesRes.body) {
         const id = _.get(article, '_id', false)
         if (id) {
           // Await each delete to ensure cleanup completes before test ends
-          await request(serverUrl)
-            .delete(`/api/articles/${id}`)
-            .auth('localAdmin', 'localAdmin')
+          await request(serverUrl).delete(`/api/articles/${id}`).auth('localAdmin', 'localAdmin')
         }
       }
     }
@@ -105,15 +97,12 @@ describe('API Route Coverage', () => {
   let attachmentExt = 'js'
 
   it('GET /api/articles without auth should return 401', async () => {
-    const res = await request(serverUrl)
-      .get('/api/articles')
+    const res = await request(serverUrl).get('/api/articles')
     expect(res.status).to.equal(401)
   })
 
   it('GET /api/articles should return an empty array', async () => {
-    const res = await request(serverUrl)
-      .get('/api/articles')
-      .auth('localAdmin', 'localAdmin')
+    const res = await request(serverUrl).get('/api/articles').auth('localAdmin', 'localAdmin')
     expect(res.status).to.equal(200)
     expect(res.body).to.be.an('array')
     expect(res.body.length).to.equal(0)
@@ -132,9 +121,7 @@ describe('API Route Coverage', () => {
   })
 
   it('GET /api/articles should return 1 article with the correct title', async () => {
-    const res = await request(serverUrl)
-      .get('/api/articles')
-      .auth('localAdmin', 'localAdmin')
+    const res = await request(serverUrl).get('/api/articles').auth('localAdmin', 'localAdmin')
     expect(res.status).to.equal(200)
     expect(res.body).to.be.an('array')
     expect(res.body.length).to.equal(1)
@@ -200,9 +187,7 @@ describe('API Route Coverage', () => {
   })
 
   it('GET /api/articles/:id should include both non-localized and localized attachments in the response', async () => {
-    const res = await request(serverUrl)
-      .get(`/api/articles/${createdId}`)
-      .auth('localAdmin', 'localAdmin')
+    const res = await request(serverUrl).get(`/api/articles/${createdId}`).auth('localAdmin', 'localAdmin')
     expect(res.status).to.equal(200)
     expect(res.body).to.be.an('object')
     /*
@@ -261,7 +246,7 @@ describe('API Route Coverage', () => {
     // Check non-localized image attachments
     expect(res.body.image).to.be.an('array')
     expect(res.body.image.length).to.be.at.least(1)
-    res.body.image.forEach(img => {
+    res.body.image.forEach((img) => {
       expect(img).to.have.property('_id')
       expect(img).to.have.property('_createdAt')
       expect(img).to.have.property('_updatedAt')
@@ -279,7 +264,7 @@ describe('API Route Coverage', () => {
     // TODO: localizedImage should be an array with its first element having fields.locale = "enUS"
     expect(res.body.localizedImage).to.be.an('array')
     expect(res.body.localizedImage.length).to.be.at.least(1)
-    _.each(res.body.localizedImage, img => {
+    _.each(res.body.localizedImage, (img) => {
       expect(img).to.have.property('_id')
       expect(img).to.have.property('_createdAt')
       expect(img).to.have.property('_updatedAt')
@@ -296,9 +281,9 @@ describe('API Route Coverage', () => {
     })
 
     // Ensure no duplication between non-localized and localized attachments
-    const nonLocalizedIds = _.map(res.body.image, img => img._id)
-    const localizedIds = _.map(res.body.localizedImage, img => img._id)
-    _.each(nonLocalizedIds, id => {
+    const nonLocalizedIds = _.map(res.body.image, (img) => img._id)
+    const localizedIds = _.map(res.body.localizedImage, (img) => img._id)
+    _.each(nonLocalizedIds, (id) => {
       expect(localizedIds).to.not.include(id)
     })
   })
@@ -313,9 +298,7 @@ describe('API Route Coverage', () => {
   })
 
   it('GET /api/articles/file/:aid should return a file stream', async () => {
-    const res = await request(serverUrl)
-      .get(`/api/articles/file/${attachmentId}`)
-      .auth('localAdmin', 'localAdmin')
+    const res = await request(serverUrl).get(`/api/articles/file/${attachmentId}`).auth('localAdmin', 'localAdmin')
     expect(res.status).to.equal(200)
     // Accepts binary only
   })
@@ -328,13 +311,16 @@ describe('API Route Coverage', () => {
     // Accepts binary only
   })
 
-  it('GET /api/articles/:id/attachments/:aid.' + attachmentExt + '/cropped should return cropped attachment', async () => {
-    const res = await request(serverUrl)
-      .get(`/api/articles/${createdId}/attachments/${attachmentId}.${attachmentExt}/cropped`)
-      .auth('localAdmin', 'localAdmin')
-    expect(res.status).to.equal(200)
-    // Accepts binary only
-  })
+  it(
+    'GET /api/articles/:id/attachments/:aid.' + attachmentExt + '/cropped should return cropped attachment',
+    async () => {
+      const res = await request(serverUrl)
+        .get(`/api/articles/${createdId}/attachments/${attachmentId}.${attachmentExt}/cropped`)
+        .auth('localAdmin', 'localAdmin')
+      expect(res.status).to.equal(200)
+      // Accepts binary only
+    },
+  )
 
   it('PUT /api/articles/:id/attachments/:aid.' + attachmentExt + ' should update the attachment', async () => {
     const res = await request(serverUrl)
@@ -374,21 +360,17 @@ describe('API Route Coverage', () => {
       .auth('localAdmin', 'localAdmin')
       .send([{ _id: bulkId }])
     expect(res.status).to.equal(200)
-    expect(res.body).to.satisfy(val => Array.isArray(val) || [true, false, null].includes(val))
+    expect(res.body).to.satisfy((val) => Array.isArray(val) || [true, false, null].includes(val))
   })
 
   it('DELETE /api/articles/:id should delete the article', async () => {
-    const delRes = await request(serverUrl)
-      .delete(`/api/articles/${createdId}`)
-      .auth('localAdmin', 'localAdmin')
+    const delRes = await request(serverUrl).delete(`/api/articles/${createdId}`).auth('localAdmin', 'localAdmin')
     expect(delRes.status).to.equal(200)
     expect([true, 1, 'OK', null]).to.include(delRes.body)
   })
 
   it('GET /api/articles should return 0 articles', async () => {
-    const res = await request(serverUrl)
-      .get('/api/articles')
-      .auth('localAdmin', 'localAdmin')
+    const res = await request(serverUrl).get('/api/articles').auth('localAdmin', 'localAdmin')
     expect(res.status).to.equal(200)
     expect(res.body).to.be.an('array')
     expect(res.body.length).to.equal(0)
@@ -416,9 +398,7 @@ describe('API Route Coverage', () => {
   })
 
   it('GET /api/articles/:id should return the created article', async () => {
-    const res = await request(serverUrl)
-      .get(`/api/articles/${createdId}`)
-      .auth('localAdmin', 'localAdmin')
+    const res = await request(serverUrl).get(`/api/articles/${createdId}`).auth('localAdmin', 'localAdmin')
     expect(res.status).to.equal(200)
     expect(res.body).to.be.an('object')
     expect(res.body._id).to.equal(createdId)
@@ -471,9 +451,7 @@ describe('API Route Coverage', () => {
   })
 
   it('DELETE /api/articles/:id should remove the article', async () => {
-    const res = await request(serverUrl)
-      .delete(`/api/articles/${createdId}`)
-      .auth('localAdmin', 'localAdmin')
+    const res = await request(serverUrl).delete(`/api/articles/${createdId}`).auth('localAdmin', 'localAdmin')
     expect(res.status).to.equal(200)
     expect([true, false, null]).to.include(res.body)
   })

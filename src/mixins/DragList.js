@@ -1,5 +1,5 @@
 export default {
-  data () {
+  data() {
     return {
       key: crypto.randomUUID(),
       dragOptions: {
@@ -9,13 +9,13 @@ export default {
         ghostClass: 'ghost',
         delay: 150,
         delayOnTouchOnly: false,
-        touchStartThreshold: 10
-      }
+        touchStartThreshold: 10,
+      },
     }
   },
   methods: {
-    getKey (elem) {
+    getKey(elem) {
       return `${elem._filename}-${elem._id || elem._createdAt || elem._md5sum || elem._size}`
-    }
-  }
+    },
+  },
 }

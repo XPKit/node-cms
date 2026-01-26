@@ -1,4 +1,3 @@
-
 const CMS = require('../')
 const options = {
   ns: [],
@@ -15,17 +14,17 @@ const options = {
   disableAuthentication: true,
   wsRecordUpdates: true,
   auth: {
-    secret: '$C&F)J@NcRfUjXn2r5u8x/A?D*G-KaPd'
+    secret: '$C&F)J@NcRfUjXn2r5u8x/A?D*G-KaPd',
   },
   disableAnonymous: false,
   session: {
     secret: 'MdjIwFRi9ezT',
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true,
   },
   syslog: {
     method: 'file',
-    path: './syslog.log'
+    path: './syslog.log',
   },
   smartCrop: true,
   defaultPaging: 12,
@@ -34,9 +33,9 @@ const options = {
     peers: [9991, 9992],
     peersByResource: {
       articles: ['http://localhost:9991'],
-      authors: ['http://localhost:9992']
-    }
-  }
+      authors: ['http://localhost:9992'],
+    },
+  },
 }
 
 function getCMSInstance() {

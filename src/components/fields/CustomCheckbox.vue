@@ -16,25 +16,25 @@
 </template>
 
 <script>
-  import _ from 'lodash'
-  import AbstractField from '@m/AbstractField'
+import _ from 'lodash'
+import AbstractField from '@m/AbstractField'
 
-  export default {
-    mixins: [AbstractField],
-    methods: {
-      getValue () {
-        const value = _.get(this.model, this.schema.model, false)
-        return _.isNull(value) ? false : value
-      },
-      onChange () {
-        if (this.disabled) {
-          return
-        }
-        this._value = !this.getValue()
-        this.$emit('input', this._value, this.schema.model)
+export default {
+  mixins: [AbstractField],
+  methods: {
+    getValue() {
+      const value = _.get(this.model, this.schema.model, false)
+      return _.isNull(value) ? false : value
+    },
+    onChange() {
+      if (this.disabled) {
+        return
       }
-    }
-  }
+      this._value = !this.getValue()
+      this.$emit('input', this._value, this.schema.model)
+    },
+  },
+}
 </script>
 
 <style lang="scss" scoped>

@@ -1,9 +1,8 @@
-
 const request = require('supertest')
 const chai = require('chai')
 const expect = chai.expect
 const fs = require('fs-extra')
-const path = require('path')
+const path = require('node:path')
 const serverUrl = 'http://localhost:9990'
 const isoCodes = ['AUS', 'NZL', 'PHL', 'THA', 'VNM', 'ZAF', 'KOR', 'QAT', 'BHR', 'MYS', 'SAU', 'KHM', 'ARE']
 
@@ -13,7 +12,7 @@ function createMockXlsx(filePath) {
   const ws = xlsx.utils.aoa_to_sheet([
     ['id', 'name'],
     ['1', 'Test User'],
-    ['2', 'Another User']
+    ['2', 'Another User'],
   ])
   const wb = xlsx.utils.book_new()
   xlsx.utils.book_append_sheet(wb, ws, 'users')
@@ -61,9 +60,7 @@ describe('Import Plugin API', () => {
     after(() => fs.removeSync(tmpXlsx))
 
     it('should return import status for XLSX file', async () => {
-      const res = await request(serverUrl)
-        .post('/import/statusXlsx')
-        .attach('xlsx', tmpXlsx)
+      const res = await request(serverUrl).post('/import/statusXlsx').attach('xlsx', tmpXlsx)
       expect(res.status).to.be.equal(200)
       expect(res.body).to.be.an('object')
       // If the users resource exists, expect keys for users.create, users.update, etc.
@@ -76,9 +73,7 @@ describe('Import Plugin API', () => {
     after(() => fs.removeSync(tmpXlsx))
 
     it('should execute XLSX import and return status', async () => {
-      const res = await request(serverUrl)
-        .post('/import/executeXlsx')
-        .attach('xlsx', tmpXlsx)
+      const res = await request(serverUrl).post('/import/executeXlsx').attach('xlsx', tmpXlsx)
       expect(res.status).to.be.equal(200)
       expect(res.body).to.be.an('object')
       // If import is successful, expect keys for users.create, users.update, etc.
@@ -87,14 +82,11 @@ describe('Import Plugin API', () => {
 
   describe('Error handling', () => {
     it('should return error for malformed XLSX', async () => {
-      const res = await request(serverUrl)
-        .post('/import/statusXlsx')
-        .attach('xlsx', __filename) // Not a real XLSX
+      const res = await request(serverUrl).post('/import/statusXlsx').attach('xlsx', __filename) // Not a real XLSX
       expect(res.status).to.be.oneOf([400, 500, 404])
     })
     it('should return error for missing file', async () => {
-      const res = await request(serverUrl)
-        .post('/import/statusXlsx')
+      const res = await request(serverUrl).post('/import/statusXlsx')
       expect(res.status).to.be.oneOf([400, 500, 404])
     })
   })

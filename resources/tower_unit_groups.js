@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   group: '3. Towers',
   displayname: '3.1. Towers - Unit Groups',
   schema: [
@@ -18,31 +18,31 @@ exports = module.exports = {
         '3-bedroom-multigen',
         '4-bedroom',
         '4-bedroom-deluxe',
-        'penthouse'
-      ]
+        'penthouse',
+      ],
     },
     {
       label: 'Long Name',
       field: 'longName',
       localised: true,
       required: true,
-      input: 'string'
+      input: 'string',
     },
     {
       label: 'Short Name',
       field: 'shortName',
       localised: true,
       required: true,
-      input: 'string'
+      input: 'string',
     },
     {
       label: 'Order',
       field: 'order',
       localised: false,
       required: true,
-      input: 'integer'
-    }
+      input: 'integer',
+    },
   ],
   locales: ['enUS', 'zhCN'],
-  type: 'normal'
+  type: 'normal',
 }

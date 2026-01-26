@@ -1,8 +1,8 @@
-const path = require('path')
+const path = require('node:path')
 const fs = require('fs-extra')
 const _ = require('lodash')
 
-exports = module.exports = (config, auth) => {
+module.exports = (config, auth) => {
   config.protocol = config.protocol || 'http://'
   const schemaMap = {}
   return (resource) => {
@@ -12,18 +12,21 @@ exports = module.exports = (config, auth) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            ...auth
+            ...auth,
           },
-          body: JSON.stringify(item)
+          body: JSON.stringify(item),
         })
         return response.json()
       },
       list: async (query) => {
-        const response = await fetch(`${config.protocol}${config.host}${config.prefix}/api/${resource}?query=${JSON.stringify(query) || ''}`, {
-          headers: {
-            ...auth
-          }
-        })
+        const response = await fetch(
+          `${config.protocol}${config.host}${config.prefix}/api/${resource}?query=${JSON.stringify(query) || ''}`,
+          {
+            headers: {
+              ...auth,
+            },
+          },
+        )
         return response.json()
       },
       update: async (id, item) => {
@@ -31,9 +34,9 @@ exports = module.exports = (config, auth) => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            ...auth
+            ...auth,
           },
-          body: JSON.stringify(item)
+          body: JSON.stringify(item),
         })
         return response.json()
       },
@@ -41,59 +44,63 @@ exports = module.exports = (config, auth) => {
         const response = await fetch(`${config.protocol}${config.host}${config.prefix}/api/${resource}/${id}`, {
           method: 'DELETE',
           headers: {
-            ...auth
-          }
+            ...auth,
+          },
         })
         return response.json()
       },
       createAttachment: async (id, fieldname, filepath) => {
-        let message
-        message = `uploading ${path.relative(path.resolve('.'), path.normalize(filepath))} ... ....`
+        const message = `uploading ${path.relative(path.resolve('.'), path.normalize(filepath))} ... ....`
         console.log(message)
         const formData = new FormData()
         formData.append(fieldname, fs.createReadStream(filepath))
-        const response = await fetch(`${config.protocol}${config.host}${config.prefix}/api/${resource}/${id}/attachments`, {
-          method: 'POST',
-          headers: {
-            ...auth
+        const response = await fetch(
+          `${config.protocol}${config.host}${config.prefix}/api/${resource}/${id}/attachments`,
+          {
+            method: 'POST',
+            headers: {
+              ...auth,
+            },
+            body: formData,
           },
-          body: formData
-        })
+        )
         return response.json()
       },
       removeAttachment: async (id, aid) => {
-        let message
-        message = 'remove ' + aid + ' ... ....'
+        const message = `remove ${aid} ... ....`
         console.log(message)
-        const response = await fetch(`${config.protocol}${config.host}${config.prefix}/api/${resource}/${id}/attachments/${aid}`, {
-          method: 'DELETE',
-          headers: {
-            ...auth
-          }
-        })
+        const response = await fetch(
+          `${config.protocol}${config.host}${config.prefix}/api/${resource}/${id}/attachments/${aid}`,
+          {
+            method: 'DELETE',
+            headers: {
+              ...auth,
+            },
+          },
+        )
         const body = await response.json()
-        console.log(message + 'done')
+        console.log(`${message} done`)
         return body
       },
       resources: async () => {
         const response = await fetch(`${config.protocol}${config.host}${config.prefix}/admin/resources`, {
           headers: {
-            ...auth
-          }
+            ...auth,
+          },
         })
         const resources = await response.json()
-        _.each(resources, resource => {
+        _.each(resources, (resource) => {
           schemaMap[resource.name] = resource.schema
         })
         return resources
       },
-      getUniqueKeys () {
-        const uniqueKeyField = _.filter(schemaMap[resource], item => item.unique || item.xlsxKey)
+      getUniqueKeys() {
+        const uniqueKeyField = _.filter(schemaMap[resource], (item) => item.unique || item.xlsxKey)
         if (_.isEmpty(uniqueKeyField)) {
           throw new Error(`${this.name} didn't have unique key field`)
         }
         return _.map(uniqueKeyField, 'field')
-      }
+      },
     }
   }
 }

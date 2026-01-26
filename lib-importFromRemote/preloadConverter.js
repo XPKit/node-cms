@@ -1,4 +1,4 @@
-const path = require('path')
+const path = require('node:path')
 const _ = require('lodash')
 const fs = require('fs-extra')
 const { getFilename, findMatches, getAttachmentFields } = require('./utils')
@@ -15,7 +15,13 @@ function getPreloadAttachmentPath(importer, record, resource, uniqueKey, match, 
       return path.join(importer.assetsPath, regroupedId, attachmentFilename)
     }
   }
-  return path.join(importer.assetsPath, resource, recordKey, `${match.path}${locale ? `.${locale}` : ''}`, attachmentFilename)
+  return path.join(
+    importer.assetsPath,
+    resource,
+    recordKey,
+    `${match.path}${locale ? `.${locale}` : ''}`,
+    attachmentFilename,
+  )
 }
 
 function copyAttachmentToPreloads(importer, record, resource, uniqueKey, match, locale, attachment) {
@@ -23,7 +29,13 @@ function copyAttachmentToPreloads(importer, record, resource, uniqueKey, match, 
     if (_.isString(attachment) && _.startsWith(attachment, '_attachment://')) {
       return attachment
     }
-    const filePath = path.join('./cached', resource, _.get(record, uniqueKey), `${match.path}${locale ? `.${locale}` : ''}`, _.get(attachment, '_id', attachment))
+    const filePath = path.join(
+      './cached',
+      resource,
+      _.get(record, uniqueKey),
+      `${match.path}${locale ? `.${locale}` : ''}`,
+      _.get(attachment, '_id', attachment),
+    )
     if (!fs.existsSync(filePath)) {
       throw new Error(`Attachment file does not exist: ${filePath}`)
     }
@@ -75,7 +87,7 @@ function convertAttachmentsForPreload(importer, resource, locales, uniqueKey, re
             }
           })
         } else {
-          let value = match.value
+          const value = match.value
           const links = []
           _.each(value, (v) => {
             const newUrl = copyAttachmentToPreloads(importer, record, resource, uniqueKey, match, null, v)
@@ -89,7 +101,15 @@ function convertAttachmentsForPreload(importer, resource, locales, uniqueKey, re
 }
 
 function convertRecordForPreload(importer, resource, locales, uniqueKey, record, attachmentFields) {
-  record = _.omit(record, ['_local', '_id', '_createdAt', '_updatedAt', '_publishedAt', '_preloadedVersion', '_updatedBy'])
+  record = _.omit(record, [
+    '_local',
+    '_id',
+    '_createdAt',
+    '_updatedAt',
+    '_publishedAt',
+    '_preloadedVersion',
+    '_updatedBy',
+  ])
   const schema = _.get(importer.remoteSchemaMap, [resource, 'schema'], [])
   _.each(schema, (field) => {
     if (_.isString(field.source)) {
@@ -103,7 +123,7 @@ function convertRecordForPreload(importer, resource, locales, uniqueKey, record,
         if (relatedUniqueKeys.length === 1) {
           uniqueId = _.get(found, relatedUniqueKeys[0])
         } else {
-          uniqueId = relatedUniqueKeys.map(k => _.get(found, k)).join('__')
+          uniqueId = relatedUniqueKeys.map((k) => _.get(found, k)).join('__')
         }
         return `${relatedResource}://${uniqueId}`
       }
@@ -135,10 +155,10 @@ function getAllFiles(dir, baseDir = null) {
     baseDir = path.resolve('./preloads/assets')
   }
   const list = fs.readdirSync(dir)
-  _.each(list, filename => {
+  _.each(list, (filename) => {
     const filePath = path.join(dir, filename)
     const stat = fs.statSync(filePath)
-    if (stat && stat.isDirectory()) {
+    if (stat?.isDirectory()) {
       results = results.concat(getAllFiles(filePath, baseDir))
     } else {
       results.push({ filePath: path.relative(baseDir, filePath).replace(/\\/g, '/'), filename })
@@ -159,25 +179,27 @@ async function convertDataToPreload(importer) {
     importer.preloadAssetsMap.push(v)
   })
   for (const resource of importer.config.resources) {
-    let jsonPath = path.join(__dirname, 'cached', `${resource}.json`)
+    const jsonPath = path.join(__dirname, 'cached', `${resource}.json`)
     if (!fs.existsSync(jsonPath)) {
       throw new Error(`${jsonPath} doesn't exist`)
     }
     let items = fs.readJsonSync(jsonPath)
     const filePath = path.join(preloadPath, `${resource}.json`)
     let uniqueKeys = []
-    if (importer.remoteApi && importer.remoteApi(resource) && importer.remoteApi(resource).getUniqueKeys) {
+    if (importer.remoteApi?.(resource)?.getUniqueKeys) {
       uniqueKeys = importer.remoteApi(resource).getUniqueKeys()
     }
     const uniqueKey = _.first(uniqueKeys) || '_id'
     const attachmentFields = getAttachmentFields(resource, importer.remoteSchemaMap)
     const locales = _.get(importer.remoteSchemaMap[resource], 'locales', [])
-    items = _.map(items, record => convertRecordForPreload(importer, resource, locales, uniqueKey, record, attachmentFields))
+    items = _.map(items, (record) =>
+      convertRecordForPreload(importer, resource, locales, uniqueKey, record, attachmentFields),
+    )
     fs.writeJsonSync(filePath, { version: 1, forced: true, items }, { spaces: 2 })
     bar.increment()
   }
 }
 
 module.exports = {
-  convertDataToPreload
+  convertDataToPreload,
 }

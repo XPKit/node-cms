@@ -5,12 +5,11 @@
 </template>
 
 <script>
-
-  export default {
-    props: {
-      plugin: { type: Object, default: () => ({}) }
-    }
-  }
+export default {
+  props: {
+    plugin: { type: Object, default: () => ({}) },
+  },
+}
 </script>
 <style lang="scss" scoped>
 @use '@a/scss/variables.scss' as *;

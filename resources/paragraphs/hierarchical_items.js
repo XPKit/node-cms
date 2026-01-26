@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: 'Item',
   schema: [
     {
@@ -6,16 +6,16 @@ exports = module.exports = {
       field: 'title',
       input: 'string',
       localised: true,
-      required: true
+      required: true,
     },
     {
       label: 'Value',
       field: 'value',
       input: 'wysiwyg',
       options: {
-        buttons: ['bullet-list', 'bold', 'clear-format', 'undo', 'redo']
+        buttons: ['bullet-list', 'bold', 'clear-format', 'undo', 'redo'],
       },
-      localised: true
-    }
-  ]
+      localised: true,
+    },
+  ],
 }

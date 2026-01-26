@@ -29,19 +29,15 @@
 <script>
 // import RequestService from '@s/RequestService'
 // import _ from 'lodash'
-  export default {
-    data () {
-      return {
-
-      }
-    },
-    async mounted () {
-      console.warn('MOUNTED')
-    },
-    methods: {
-
-    }
-  }
+export default {
+  data() {
+    return {}
+  },
+  async mounted() {
+    console.warn('MOUNTED')
+  },
+  methods: {},
+}
 </script>
 
 <style lang="scss" scoped>

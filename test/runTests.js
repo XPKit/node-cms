@@ -1,4 +1,3 @@
-
 // Only require test files, do not initialize CMS or SmartCrop here
 require('./smart-cropping.test.js')
 // require('./api_routes.test.js')

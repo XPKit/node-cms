@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   group: 'CMS',
   displayname: 'Admin Settings',
   schema: [
@@ -6,9 +6,9 @@ exports = module.exports = {
       label: 'Reboot Server',
       field: 'rebootServer',
       input: 'checkbox',
-      localised: false
-    }
+      localised: false,
+    },
   ],
   type: 'normal',
-  maxCount: 1
+  maxCount: 1,
 }

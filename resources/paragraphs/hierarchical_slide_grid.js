@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: 'Slide - Grid',
   schema: [
     {
@@ -6,10 +6,10 @@ exports = module.exports = {
       field: 'items',
       input: 'paragraph',
       options: {
-        types: ['hierarchical_items']
+        types: ['hierarchical_items'],
       },
       localised: false,
-      required: true
-    }
-  ]
+      required: true,
+    },
+  ],
 }

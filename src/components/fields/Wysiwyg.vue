@@ -15,15 +15,16 @@
 </template>
 
 <script>
-  import _ from 'lodash'
-  import { Editor, EditorContent } from '@tiptap/vue-3'
-  import StarterKit from '@tiptap/starter-kit'
-  import Superscript from '@tiptap/extension-superscript'
-  import { createLowlight } from 'lowlight'
-  import CustomHighlight from '@m/CustomHighlight'
   import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
-  import TiptapMenuBar from './TiptapMenuBar.vue'
+  import Superscript from '@tiptap/extension-superscript'
+  import StarterKit from '@tiptap/starter-kit'
+  import { Editor, EditorContent } from '@tiptap/vue-3'
+  import _ from 'lodash'
+  import { createLowlight } from 'lowlight'
   import AbstractField from '@m/AbstractField'
+  import CustomHighlight from '@m/CustomHighlight'
+  import TiptapMenuBar from './TiptapMenuBar.vue'
+
   const lowlight = createLowlight()
   lowlight.register('javascript', CustomHighlight)
 

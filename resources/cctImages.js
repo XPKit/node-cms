@@ -1,9 +1,9 @@
 module.exports = {
   displayname: {
-    enUS: 'CCT Images'
+    enUS: 'CCT Images',
   },
   group: {
-    enUS: 'Configurations'
+    enUS: 'Configurations',
   },
   schema: [
     {
@@ -14,8 +14,8 @@ module.exports = {
       required: true,
       input: 'string',
       options: {
-        hint: 'A unique key to identify this image configuration.'
-      }
+        hint: 'A unique key to identify this image configuration.',
+      },
     },
     {
       label: 'Image',
@@ -23,10 +23,10 @@ module.exports = {
       localised: false,
       required: true,
       options: {
-        maxCount: 1
+        maxCount: 1,
       },
-      input: 'image'
-    }
+      input: 'image',
+    },
   ],
   type: 'normal',
 }

@@ -27,32 +27,32 @@
 </template>
 
 <script>
-  import TranslateService from '@s/TranslateService'
-  import _ from 'lodash'
+import _ from 'lodash'
+import TranslateService from '@s/TranslateService'
 
-  export default {
-    props: {
-      fileType: { type: String, default: 'image' },
-      schema: { type: Object, default: () => {} },
-      isForMultipleImages: { type: Function, default: () => {} },
-      getMaxCount: { type: Function, default: () => {} }
+export default {
+  props: {
+    fileType: { type: String, default: 'image' },
+    schema: { type: Object, default: () => {} },
+    isForMultipleImages: { type: Function, default: () => {} },
+    getMaxCount: { type: Function, default: () => {} },
+  },
+  computed: {
+    hasSizeOptions() {
+      return _.get(this.schema, 'options.width', false) && _.get(this.schema, 'options.height', false)
     },
-    computed: {
-      hasSizeOptions () {
-        return _.get(this.schema, 'options.width', false) && _.get(this.schema, 'options.height', false)
-      },
-      maxCountMsg () {
-        return TranslateService.get(`TL_MAX_NUMBER_OF_${_.toUpper(this.fileType)}S`, { num: this.getMaxCount() })
-      },
-      unlimitedMsg() {
-        return TranslateService.get(`TL_UNLIMITED_NUMBER_OF_${_.toUpper(this.fileType)}S`)
-      }
+    maxCountMsg() {
+      return TranslateService.get(`TL_MAX_NUMBER_OF_${_.toUpper(this.fileType)}S`, { num: this.getMaxCount() })
     },
-    methods: {
-      getFileSizeLimit (limit) {
-        const kbLimit = limit / 1024
-        return kbLimit > 1000 ? `${kbLimit / 1000} MB` : `${kbLimit} KB`
-      }
-    }
-  }
+    unlimitedMsg() {
+      return TranslateService.get(`TL_UNLIMITED_NUMBER_OF_${_.toUpper(this.fileType)}S`)
+    },
+  },
+  methods: {
+    getFileSizeLimit(limit) {
+      const kbLimit = limit / 1024
+      return kbLimit > 1000 ? `${kbLimit / 1000} MB` : `${kbLimit} KB`
+    },
+  },
+}
 </script>

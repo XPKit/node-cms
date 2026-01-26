@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: 'Comparison Item',
   schema: [
     {
@@ -8,8 +8,8 @@ exports = module.exports = {
       localised: true,
       required: true,
       options: {
-        hint: 'Maximum 2 lines'
-      }
+        hint: 'Maximum 2 lines',
+      },
     },
     {
       label: 'Item B',
@@ -18,8 +18,8 @@ exports = module.exports = {
       localised: true,
       required: true,
       options: {
-        hint: 'Maximum 2 lines'
-      }
-    }
-  ]
+        hint: 'Maximum 2 lines',
+      },
+    },
+  ],
 }

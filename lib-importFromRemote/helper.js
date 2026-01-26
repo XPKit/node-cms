@@ -3,7 +3,7 @@ const duration = require('dayjs/plugin/duration')
 Dayjs.extend(duration)
 const _ = require('lodash')
 
-const toNumber = function (value) {
+const toNumber = (value) => {
   if (_.isString(value)) {
     return _.toNumber(value)
   } else if (_.isNumber(value)) {
@@ -12,13 +12,14 @@ const toNumber = function (value) {
   return null
 }
 
-let convertData = function (value, type) {
+const convertData = (value, type) => {
   if (_.includes(['multiselect', 'pillbox'], type)) {
     if (!_.isString(value)) {
       return []
     }
     value = value.split(',')
-    return value = _.compact(_.map(value, _.trim))
+    value = _.compact(_.map(value, _.trim))
+    return value
   } else if (_.includes(['number', 'integer'], type)) {
     return toNumber(value)
   } else if (type === 'checkbox') {
@@ -31,7 +32,6 @@ let convertData = function (value, type) {
   return _.trim(value)
 }
 
-exports = module.exports = {
-  convertData: convertData
+module.exports = {
+  convertData: convertData,
 }
-

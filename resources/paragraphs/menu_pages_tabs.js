@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: 'Menu - Page Tabs',
   schema: [
     {
@@ -6,32 +6,30 @@ exports = module.exports = {
       field: 'key',
       input: 'string',
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'Name',
       field: 'name',
       input: 'string',
       localised: true,
-      required: false
+      required: false,
     },
     {
       label: 'Is Button Squared?',
       field: 'isButtonSquared',
       input: 'checkbox',
       localised: false,
-      required: false
+      required: false,
     },
     {
       label: 'Pages',
       field: 'pages',
       input: 'paragraph',
       options: {
-        types: [
-          'menu_pages'
-        ]
+        types: ['menu_pages'],
       },
-      localised: false
-    }
-  ]
+      localised: false,
+    },
+  ],
 }

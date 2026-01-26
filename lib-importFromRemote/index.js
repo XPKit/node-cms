@@ -10,7 +10,7 @@ const { createDummyRecords, deleteUnusedRecords, updateRecords } = require('./re
 const { downloadBinaries } = require('./attachmentHandler')
 
 class ImportWrapper {
-  constructor () {
+  constructor() {
     this.progressCallback = null
     this.ongoingImport = false
     this.logger = logger
@@ -46,27 +46,36 @@ class ImportWrapper {
     this.attachmentsToIgnore = ['.DS_Store', 'desktop.ini', 'Icon\r']
     this.remoteToLocalIdMap = {}
     this.originalRemoteRecords = {}
-    this.multibar = new cliProgress.MultiBar({
-      clearOnComplete: false,
-      hideCursor: true,
-      format: ' {bar} | {name} | {value}/{total}'
-    }, cliProgress.Presets.shades_classic)
+    this.multibar = new cliProgress.MultiBar(
+      {
+        clearOnComplete: false,
+        hideCursor: true,
+        format: ' {bar} | {name} | {value}/{total}',
+      },
+      cliProgress.Presets.shades_classic,
+    )
     //  NOTE: For paragraphs to work, '/admin/paragraphs' should be in config.cms.routesToAuth for both local & remote CMS
   }
 
-  async deleteAllLocalRecords () {
+  async deleteAllLocalRecords() {
     const bar = this.multibar.create(this.config.resources.length, 0, { name: 'Deleting local records' })
-    await pAll(_.map(this.config.resources, (resource) => {
-      return async () => {
-        const records = await this.localApi(resource).list({})
-        await pAll(_.map(records, (record) => {
-          return async () => {
-            await this.localApi(resource).remove(record._id)
-          }
-        }), { concurrency: 20 })
-        bar.increment()
-      }
-    }), { concurrency: 5 })
+    await pAll(
+      _.map(this.config.resources, (resource) => {
+        return async () => {
+          const records = await this.localApi(resource).list({})
+          await pAll(
+            _.map(records, (record) => {
+              return async () => {
+                await this.localApi(resource).remove(record._id)
+              }
+            }),
+            { concurrency: 20 },
+          )
+          bar.increment()
+        }
+      }),
+      { concurrency: 5 },
+    )
   }
 
   startImport = async (config, options, askConfirmation) => {
@@ -81,12 +90,20 @@ class ImportWrapper {
       if (!this.noPrompt) {
         await this.askConfirmation()
       }
-      await pAll(_.map(['local', 'remote'], (key) => {
-        return async () => {
-          await this.checkConnection(_.get(this, `${key}Api`), key === 'remote')
-          await this.getSchemaMap(_.get(this, `${key}Api`), _.get(this, `${key}SchemaMap`), _.get(this, `${key}ParagraphMap`), key === 'remote')
-        }
-      }), { concurrency: 2 })
+      await pAll(
+        _.map(['local', 'remote'], (key) => {
+          return async () => {
+            await this.checkConnection(_.get(this, `${key}Api`), key === 'remote')
+            await this.getSchemaMap(
+              _.get(this, `${key}Api`),
+              _.get(this, `${key}SchemaMap`),
+              _.get(this, `${key}ParagraphMap`),
+              key === 'remote',
+            )
+          }
+        }),
+        { concurrency: 2 },
+      )
       this.config.resources = determineResourceOrder(this.config.resources, this.remoteSchemaMap)
       await loadData(this)
       if (this.convertToPreload) {
@@ -112,9 +129,9 @@ class ImportWrapper {
     }
   }
 
-  async checkDuplicatedRecord () {
+  async checkDuplicatedRecord() {
     const bar = this.multibar.create(1, 0, { name: 'Checking duplicated records' })
-    let duplicatedMap = {}
+    const duplicatedMap = {}
     _.each(this.data, (data, resource) => {
       const uniqueKeys = this.remoteApi(resource).getUniqueKeys()
       let dataMap = _.countBy(data, (item) => JSON.stringify(_.pick(item, uniqueKeys)))
@@ -125,24 +142,24 @@ class ImportWrapper {
     })
     if (!_.isEmpty(duplicatedMap)) {
       _.each(duplicatedMap, (list, key) => {
-        _.each(list, item => logger.warn`resource (${key}) has duplicate record (${item})`)
+        _.each(list, (item) => logger.warn`resource (${key}) has duplicate record (${item})`)
       })
       throw new Error('Duplicated records')
     }
     bar.increment()
   }
 
-  async checkConnection (api, isRemote = false) {
+  async checkConnection(api, isRemote = false) {
     const bar = this.multibar.create(1, 0, { name: `Checking ${isRemote ? 'remote' : 'local'} server connection` })
     await api().login()
     bar.increment()
   }
 
-  formatSchema (map, resourcesOrParagraphs) {
-    _.each(resourcesOrParagraphs, item => {
-      let schema = item.schema
+  formatSchema(map, resourcesOrParagraphs) {
+    _.each(resourcesOrParagraphs, (item) => {
+      const schema = item.schema
       if (_.isArray(item.locales)) {
-        _.each(schema, field => {
+        _.each(schema, (field) => {
           if (field.localised || _.isUndefined(field.localised)) {
             field.locales = item.locales
           }
@@ -155,7 +172,7 @@ class ImportWrapper {
     })
   }
 
-  async getSchemaMap (api, schemaMap, paragraphMap, isRemote = false) {
+  async getSchemaMap(api, schemaMap, paragraphMap, isRemote = false) {
     const bar = this.multibar.create(1, 0, { name: `Getting schema map from ${isRemote ? 'remote' : 'local'} server` })
     this.formatSchema(schemaMap, await api().resources())
     this.formatSchema(paragraphMap, await api().paragraphs())
@@ -164,4 +181,3 @@ class ImportWrapper {
 }
 
 module.exports = ImportWrapper
-

@@ -38,299 +38,303 @@
 </template>
 
 <script>
-  import _ from 'lodash'
-  import sift from 'sift'
-  import JSON5 from 'json5'
-  import stripAnsi from 'strip-ansi'
+import JSON5 from 'json5'
+import _ from 'lodash'
+import sift from 'sift'
+import stripAnsi from 'strip-ansi'
 
-  export default {
-    data () {
-      return {
-        timer: null,
-        isLoading: true,
-        sysLog: [],
-        error: false,
-        scrollBottom: true,
-        data: '',
-        count: 0,
-        destroyed: false,
-        autoscroll: true,
-        lastId: -1,
-        tempId: 0,
-        logLines: [],
-        filterOutLines: 0,
-        searchKey: '',
-        warningQty: 0,
-        errorQty: 0,
-        ignoreNextScrollEvent: false,
-        fakeData: [],
-        eventSource: false,
-        processTimeout: null,
-        currentDisplayableLines: [],
-        targetLogIdAfterClear: null,
-        isHandlingGutterClick: false,
-        selectedLineId: null,
-        shouldScrollToSelectedLine: false,
-        reconnectAttempts: 0,
-        maxReconnectAttempts: 10,
-        colors: {
-          1: '#A00', // error
-          3: '#d1a600', // warn
-          5: '#A0A', // debug
-          6: '#0AA', // info
-          8: '#555', // trace/verbose
+export default {
+  data() {
+    return {
+      timer: null,
+      isLoading: true,
+      sysLog: [],
+      error: false,
+      scrollBottom: true,
+      data: '',
+      count: 0,
+      destroyed: false,
+      autoscroll: true,
+      lastId: -1,
+      tempId: 0,
+      logLines: [],
+      filterOutLines: 0,
+      searchKey: '',
+      warningQty: 0,
+      errorQty: 0,
+      ignoreNextScrollEvent: false,
+      fakeData: [],
+      eventSource: false,
+      processTimeout: null,
+      currentDisplayableLines: [],
+      targetLogIdAfterClear: null,
+      isHandlingGutterClick: false,
+      selectedLineId: null,
+      shouldScrollToSelectedLine: false,
+      reconnectAttempts: 0,
+      maxReconnectAttempts: 10,
+      colors: {
+        1: '#A00', // error
+        3: '#d1a600', // warn
+        5: '#A0A', // debug
+        6: '#0AA', // info
+        8: '#555', // trace/verbose
+      },
+    }
+  },
+  async mounted() {
+    await this.$nextTick()
+    this.connectToLogStream()
+    await this.$nextTick()
+  },
+  async unmounted() {
+    this.destroyed = true
+    this.disconnectFromLogStream()
+  },
+  methods: {
+    onLineNumberClick(id) {
+      this.selectedLineId = id
+      this.autoscroll = false
+      this.searchKey = ''
+      this.shouldScrollToSelectedLine = true
+      this.updateSysLog()
+    },
+    highlightLogLine(lineOrItem) {
+      return lineOrItem ? _.get(lineOrItem, 'html', _.get(lineOrItem, 'line', lineOrItem)) : ''
+    },
+    disconnectFromLogStream() {
+      try {
+        clearTimeout(this.timer)
+        if (this.eventSource) {
+          this.eventSource.close()
         }
+      } catch (error) {
+        console.error(`Error disconnecting from log stream: ${error.message}`)
       }
     },
-    async mounted () {
-      await this.$nextTick()
-      this.connectToLogStream()
-      await this.$nextTick()
-    },
-    async unmounted () {
-      this.destroyed = true
-      this.disconnectFromLogStream()
-    },
-    methods: {
-      onLineNumberClick(id) {
-        this.selectedLineId = id
-        this.autoscroll = false
-        this.searchKey = ''
-        this.shouldScrollToSelectedLine = true
-        this.updateSysLog()
-      },
-      highlightLogLine(lineOrItem) {
-        return lineOrItem ? _.get(lineOrItem, 'html', _.get(lineOrItem, 'line', lineOrItem)) : ''
-      },
-      disconnectFromLogStream () {
-        try {
-          clearTimeout(this.timer)
-          if (this.eventSource) {
-            this.eventSource.close()
-          }
-        } catch (error) {
-          console.error(`Error disconnecting from log stream: ${error.message}`)
-        }
-      },
-      scrollToBottomIfEnabled () {
-        if (this.isHandlingGutterClick) {
-          return
-        }
-        if (this.shouldScrollToLastLog()) {
-          this.ignoreNextScrollEvent = true
-          this.$nextTick(() => {
-            const lastIndex = this.currentDisplayableLines.length - 1
-            try {
-              this.$refs.virtualScroller.scrollToItem(lastIndex)
-            } catch (error) {
-              console.error('Failed to scroll to bottom:', error)
-            }
-          })
-        }
-      },
-      connectToLogStream () {
-        this.$loading.start('_syslog')
-        this.disconnectFromLogStream()
-        this.timer = setTimeout(() => {
-          this.eventSource = new EventSource(`${window.location.pathname}../api/_syslog`)
-          this.eventSource.onmessage = async (event) => {
-            this.$loading.stop('_syslog')
-            this.reconnectAttempts = 0
-            try {
-              const json = JSON.parse(event.data)
-              if (_.get(json, 'id', false) && _.get(json, 'line', false)) {
-                json.size = _.get(`${this.calculateLineNumberSpacing(json.id)} ${json.line}`, 'length', 0)
-                if (json.size > 0) {
-                  this.logLines.push(json)
-                  this.error = false
-                }
-              }
-            } catch (error) {
-              console.error('Failed to parse SSE:', error)
-            }
-            if (!this.isHandlingGutterClick) {
-              if (this.autoscroll) {
-                this.ignoreNextScrollEvent = true
-                this.scrollToBottomIfEnabled()
-              }
-              this.updateSysLog()
-            }
-          }
-          this.eventSource.addEventListener('end', () => {
-            this.$loading.stop('_syslog')
-            this.eventSource.close()
-            console.warn('Log stream ended')
-          })
-          this.eventSource.onerror = (error) => {
-            this.$loading.stop('_syslog')
-            this.error = "Error in SSE connection"
-            console.error(`${this.error}:`, error)
-            this.eventSource.close()
-            if (this.reconnectAttempts < this.maxReconnectAttempts) {
-              this.reconnectAttempts++
-              const reconnectDelay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000)
-              console.warn(`Attempting to reconnect in ${reconnectDelay}ms (attempt ${this.reconnectAttempts})`)
-              setTimeout(() => this.connectToLogStream(), reconnectDelay)
-            } else {
-              this.error = 'Failed to connect to syslog stream after multiple attempts.'
-              console.error(this.error)
-            }
-          }
-        }, 1000)
-      },
-      filterLevel (level) {
-        this.searchKey = `sift:{level: {$gte: ${level}}}`
-        this.updateSysLog()
-      },
-      async detectScroll () {
-        if (this.ignoreNextScrollEvent) {
-          this.ignoreNextScrollEvent = false
-          return
-        }
-        if (this.isHandlingGutterClick) {
-          return
-        }
-        const scrollerEl = this.$refs.virtualScroller?.$el
-        if (!scrollerEl) {
-          return
-        }
-        const scrollHeight = scrollerEl.scrollHeight
-        const scrollTop = scrollerEl.scrollTop
-        const clientHeight = scrollerEl.clientHeight
-        await this.$nextTick()
-        if (scrollTop + clientHeight >= scrollHeight - 1) {
-          if (_.isEmpty(this.searchKey) && !this.isHandlingGutterClick) {
-            this.autoscroll = true
-          }
-        } else {
-          if (!this.isHandlingGutterClick) {
-            this.autoscroll = false
-          }
-        }
-      },
-      onInputSearch () {
-        this.selectedLineId = null
-        this.updateSysLog()
-      },
-      clearFiltering() {
-        this.searchKey = ''
-        this.isHandlingGutterClick = false
-      },
-      onClickRefresh () {
-        this.error = false
-        this.logLines = []
-        this.sysLog = []
-        this.clearFiltering()
-        this.updateSysLog()
-        this.lastId = -1
-      },
-      onClickClearSearch () {
-        this.clearFiltering()
-        this.updateSysLog()
-      },
-      shouldScrollToLastLog() {
-        return this.autoscroll && this.$refs.virtualScroller && _.isArray(this.currentDisplayableLines) && this.currentDisplayableLines.length > 0
-      },
-      onClickAutoscroll () {
-        this.autoscroll = !this.autoscroll
-        if (this.shouldScrollToLastLog()) {
-          this.$nextTick(() => {
-            const lastIndex = this.currentDisplayableLines.length - 1
-            try {
-              this.$refs.virtualScroller.scrollToItem(lastIndex)
-            } catch (error) {
-              console.error('Failed to scroll to bottom on autoscroll:', error)
-            }
-          })
-        }
-      },
-      onClickClear () {
-        this.logLines = []
-        this.sysLog = []
-        this.clearFiltering()
-        this.updateSysLog()
-      },
-      calculateLineNumberSpacing (line) {
-        return _.padStart(line, 8, '0') + ' |'
-      },
-      filterLinesBySearch(lines) {
-        const lowerSearchKey = _.toLower(this.searchKey)
-        if (this.searchKey && this.searchKey.search('sift:') === 0) {
+    scrollToBottomIfEnabled() {
+      if (this.isHandlingGutterClick) {
+        return
+      }
+      if (this.shouldScrollToLastLog()) {
+        this.ignoreNextScrollEvent = true
+        this.$nextTick(() => {
+          const lastIndex = this.currentDisplayableLines.length - 1
           try {
-            const query = JSON5.parse(this.searchKey.substr(5))
-            return lines.filter(sift(query))
+            this.$refs.virtualScroller.scrollToItem(lastIndex)
           } catch (error) {
-            console.error('Error parsing sift query:', error)
+            console.error('Failed to scroll to bottom:', error)
           }
-        } else if (!_.isEmpty(this.searchKey)) {
-          return _.filter(lines, lineItem => {
-            const lineContent = _.isString(lineItem.line) ? lineItem.line : ''
-            const strippedLine = stripAnsi(lineContent)
-            return _.includes(_.toLower(strippedLine), lowerSearchKey)
-          })
-        }
-      },
-      async updateSysLog () {
-        clearTimeout(this.processTimeout)
-        this.processTimeout = setTimeout(async () => {
-          let lines = _.uniqBy(this.logLines, 'id')
-          const byLevel = _.groupBy(this.logLines, 'level')
-          this.warningQty = _.get(byLevel, '[1].length', 0)
-          this.errorQty = _.get(byLevel, '[2].length', 0)
-          let shouldPositionToTarget = this.targetLogIdAfterClear !== null
-          let targetLogId = this.targetLogIdAfterClear
-          let selectedLogId = null
-          if (shouldPositionToTarget && targetLogId !== null) {
-            selectedLogId = targetLogId
-            this.targetLogIdAfterClear = null
-          } else if (this.selectedLineId) {
-            selectedLogId = this.selectedLineId
-          }
-          if (!_.isEmpty(this.searchKey)) {
-            lines = this.filterLinesBySearch(lines)
-          }
-          this.currentDisplayableLines = lines
-          this.filterOutLines = _.get(this.logLines, 'length', 0) - _.get(this.currentDisplayableLines, 'length', 0)
-          if (!this.$refs.virtualScroller) {
-            return this.$forceUpdate()
-          }
-          if (this.isHandlingGutterClick && !shouldPositionToTarget) {
-            return
-          }
-          if (selectedLogId) {
-            await this.$nextTick()
-            let targetIdx = _.findIndex(this.currentDisplayableLines, {id: selectedLogId})
-            if (targetIdx === -1) {
-              this.currentDisplayableLines = _.uniqBy(this.logLines, 'id')
-              await this.$nextTick()
-              targetIdx = _.findIndex(this.currentDisplayableLines, {id: selectedLogId})
-            }
-            if (targetIdx !== -1) {
-              try {
-                this.selectedLineId = selectedLogId
-                if (this.shouldScrollToSelectedLine) {
-                  this.$refs.virtualScroller.scrollToItem(targetIdx - 15)
-                  this.shouldScrollToSelectedLine = false
-                }
-                setTimeout(() => {
-                  if (shouldPositionToTarget) {
-                    this.isHandlingGutterClick = false
-                  }
-                }, 50)
-              } catch (error) {
-                console.error('Error scrolling to selected line after update:', error)
-              }
-            }
-          }
-          if (!selectedLogId || !this.isHandlingGutterClick) {
-            this.scrollToBottomIfEnabled()
-          }
-          this.$forceUpdate()
-        }, 300)
+        })
       }
     },
-  }
-
+    connectToLogStream() {
+      this.$loading.start('_syslog')
+      this.disconnectFromLogStream()
+      this.timer = setTimeout(() => {
+        this.eventSource = new EventSource(`${window.location.pathname}../api/_syslog`)
+        this.eventSource.onmessage = async (event) => {
+          this.$loading.stop('_syslog')
+          this.reconnectAttempts = 0
+          try {
+            const json = JSON.parse(event.data)
+            if (_.get(json, 'id', false) && _.get(json, 'line', false)) {
+              json.size = _.get(`${this.calculateLineNumberSpacing(json.id)} ${json.line}`, 'length', 0)
+              if (json.size > 0) {
+                this.logLines.push(json)
+                this.error = false
+              }
+            }
+          } catch (error) {
+            console.error('Failed to parse SSE:', error)
+          }
+          if (!this.isHandlingGutterClick) {
+            if (this.autoscroll) {
+              this.ignoreNextScrollEvent = true
+              this.scrollToBottomIfEnabled()
+            }
+            this.updateSysLog()
+          }
+        }
+        this.eventSource.addEventListener('end', () => {
+          this.$loading.stop('_syslog')
+          this.eventSource.close()
+          console.warn('Log stream ended')
+        })
+        this.eventSource.onerror = (error) => {
+          this.$loading.stop('_syslog')
+          this.error = 'Error in SSE connection'
+          console.error(`${this.error}:`, error)
+          this.eventSource.close()
+          if (this.reconnectAttempts < this.maxReconnectAttempts) {
+            this.reconnectAttempts++
+            const reconnectDelay = Math.min(1000 * 2 ** this.reconnectAttempts, 30000)
+            console.warn(`Attempting to reconnect in ${reconnectDelay}ms (attempt ${this.reconnectAttempts})`)
+            setTimeout(() => this.connectToLogStream(), reconnectDelay)
+          } else {
+            this.error = 'Failed to connect to syslog stream after multiple attempts.'
+            console.error(this.error)
+          }
+        }
+      }, 1000)
+    },
+    filterLevel(level) {
+      this.searchKey = `sift:{level: {$gte: ${level}}}`
+      this.updateSysLog()
+    },
+    async detectScroll() {
+      if (this.ignoreNextScrollEvent) {
+        this.ignoreNextScrollEvent = false
+        return
+      }
+      if (this.isHandlingGutterClick) {
+        return
+      }
+      const scrollerEl = this.$refs.virtualScroller?.$el
+      if (!scrollerEl) {
+        return
+      }
+      const scrollHeight = scrollerEl.scrollHeight
+      const scrollTop = scrollerEl.scrollTop
+      const clientHeight = scrollerEl.clientHeight
+      await this.$nextTick()
+      if (scrollTop + clientHeight >= scrollHeight - 1) {
+        if (_.isEmpty(this.searchKey) && !this.isHandlingGutterClick) {
+          this.autoscroll = true
+        }
+      } else {
+        if (!this.isHandlingGutterClick) {
+          this.autoscroll = false
+        }
+      }
+    },
+    onInputSearch() {
+      this.selectedLineId = null
+      this.updateSysLog()
+    },
+    clearFiltering() {
+      this.searchKey = ''
+      this.isHandlingGutterClick = false
+    },
+    onClickRefresh() {
+      this.error = false
+      this.logLines = []
+      this.sysLog = []
+      this.clearFiltering()
+      this.updateSysLog()
+      this.lastId = -1
+    },
+    onClickClearSearch() {
+      this.clearFiltering()
+      this.updateSysLog()
+    },
+    shouldScrollToLastLog() {
+      return (
+        this.autoscroll &&
+        this.$refs.virtualScroller &&
+        _.isArray(this.currentDisplayableLines) &&
+        this.currentDisplayableLines.length > 0
+      )
+    },
+    onClickAutoscroll() {
+      this.autoscroll = !this.autoscroll
+      if (this.shouldScrollToLastLog()) {
+        this.$nextTick(() => {
+          const lastIndex = this.currentDisplayableLines.length - 1
+          try {
+            this.$refs.virtualScroller.scrollToItem(lastIndex)
+          } catch (error) {
+            console.error('Failed to scroll to bottom on autoscroll:', error)
+          }
+        })
+      }
+    },
+    onClickClear() {
+      this.logLines = []
+      this.sysLog = []
+      this.clearFiltering()
+      this.updateSysLog()
+    },
+    calculateLineNumberSpacing(line) {
+      return _.padStart(line, 8, '0') + ' |'
+    },
+    filterLinesBySearch(lines) {
+      const lowerSearchKey = _.toLower(this.searchKey)
+      if (this.searchKey && this.searchKey.search('sift:') === 0) {
+        try {
+          const query = JSON5.parse(this.searchKey.substr(5))
+          return lines.filter(sift(query))
+        } catch (error) {
+          console.error('Error parsing sift query:', error)
+        }
+      } else if (!_.isEmpty(this.searchKey)) {
+        return _.filter(lines, (lineItem) => {
+          const lineContent = _.isString(lineItem.line) ? lineItem.line : ''
+          const strippedLine = stripAnsi(lineContent)
+          return _.includes(_.toLower(strippedLine), lowerSearchKey)
+        })
+      }
+    },
+    async updateSysLog() {
+      clearTimeout(this.processTimeout)
+      this.processTimeout = setTimeout(async () => {
+        let lines = _.uniqBy(this.logLines, 'id')
+        const byLevel = _.groupBy(this.logLines, 'level')
+        this.warningQty = _.get(byLevel, '[1].length', 0)
+        this.errorQty = _.get(byLevel, '[2].length', 0)
+        const shouldPositionToTarget = this.targetLogIdAfterClear !== null
+        const targetLogId = this.targetLogIdAfterClear
+        let selectedLogId = null
+        if (shouldPositionToTarget && targetLogId !== null) {
+          selectedLogId = targetLogId
+          this.targetLogIdAfterClear = null
+        } else if (this.selectedLineId) {
+          selectedLogId = this.selectedLineId
+        }
+        if (!_.isEmpty(this.searchKey)) {
+          lines = this.filterLinesBySearch(lines)
+        }
+        this.currentDisplayableLines = lines
+        this.filterOutLines = _.get(this.logLines, 'length', 0) - _.get(this.currentDisplayableLines, 'length', 0)
+        if (!this.$refs.virtualScroller) {
+          return this.$forceUpdate()
+        }
+        if (this.isHandlingGutterClick && !shouldPositionToTarget) {
+          return
+        }
+        if (selectedLogId) {
+          await this.$nextTick()
+          let targetIdx = _.findIndex(this.currentDisplayableLines, { id: selectedLogId })
+          if (targetIdx === -1) {
+            this.currentDisplayableLines = _.uniqBy(this.logLines, 'id')
+            await this.$nextTick()
+            targetIdx = _.findIndex(this.currentDisplayableLines, { id: selectedLogId })
+          }
+          if (targetIdx !== -1) {
+            try {
+              this.selectedLineId = selectedLogId
+              if (this.shouldScrollToSelectedLine) {
+                this.$refs.virtualScroller.scrollToItem(targetIdx - 15)
+                this.shouldScrollToSelectedLine = false
+              }
+              setTimeout(() => {
+                if (shouldPositionToTarget) {
+                  this.isHandlingGutterClick = false
+                }
+              }, 50)
+            } catch (error) {
+              console.error('Error scrolling to selected line after update:', error)
+            }
+          }
+        }
+        if (!selectedLogId || !this.isHandlingGutterClick) {
+          this.scrollToBottomIfEnabled()
+        }
+        this.$forceUpdate()
+      }, 300)
+    },
+  },
+}
 </script>
 
 <style lang="scss" scoped>

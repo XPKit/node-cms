@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: 'Menu - Page',
   schema: [
     {
@@ -6,14 +6,14 @@ exports = module.exports = {
       field: 'key',
       input: 'string',
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'Name',
       field: 'name',
       input: 'string',
       localised: true,
-      required: false
-    }
-  ]
+      required: false,
+    },
+  ],
 }

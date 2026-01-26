@@ -1,9 +1,9 @@
-exports = module.exports = {
+module.exports = {
   displayname: {
-    enUS: 'Cities'
+    enUS: 'Cities',
   },
   group: {
-    enUS: 'Dealerships'
+    enUS: 'Dealerships',
   },
   schema: [
     {
@@ -11,21 +11,21 @@ exports = module.exports = {
       field: 'key',
       input: 'string',
       localised: false,
-      unique: true
+      unique: true,
     },
     {
       label: 'Name',
       field: 'name',
-      input: 'string'
+      input: 'string',
     },
     {
       label: 'Province',
       field: 'province',
       input: 'select',
       source: 'provinces',
-      localised: false
-    }
+      localised: false,
+    },
   ],
   locales: ['en', 'zh', 'th', 'vi', 'ko', 'ar', 'kh'],
-  type: 'downstream'
+  type: 'downstream',
 }

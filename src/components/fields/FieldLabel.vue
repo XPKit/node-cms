@@ -5,18 +5,18 @@
 </template>
 
 <script>
-  import _ from 'lodash'
+import _ from 'lodash'
 
-  export default {
-    props: {
-      schema: { type: Object, default: () => {} },
+export default {
+  props: {
+    schema: { type: Object, default: () => {} },
+  },
+  methods: {
+    getHint() {
+      return _.get(this.schema, 'hint', '')
     },
-    methods: {
-      getHint () {
-        return _.get(this.schema, 'hint', '')
-      }
-    }
-  }
+  },
+}
 </script>
 
 <style lang="scss" scoped>

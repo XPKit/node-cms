@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   group: '1. BKK109',
   displayname: '1.3. Web Apps Users',
   schema: [
@@ -8,20 +8,20 @@ exports = module.exports = {
       input: 'string',
       required: true,
       localised: false,
-      index: 1
+      index: 1,
     },
     {
       label: 'Password',
       field: 'password',
       localised: false,
-      input: 'password'
+      input: 'password',
     },
     {
       label: 'Host Name',
       field: 'hostName',
       input: 'string',
       required: true,
-      localised: false
+      localised: false,
     },
     // {
     //   label: 'Email',
@@ -35,13 +35,13 @@ exports = module.exports = {
       field: 'defaultLocale',
       input: 'select',
       localised: false,
-      source: ['enUS', 'zhCN']
+      source: ['enUS', 'zhCN'],
     },
     {
       field: 'isAdmin',
       input: 'checkbox',
-      localised: false
-    }
+      localised: false,
+    },
   ],
-  type: 'normal'
+  type: 'normal',
 }

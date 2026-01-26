@@ -1,5 +1,5 @@
 const fs = require('fs-extra')
-const path = require('path')
+const path = require('node:path')
 const _ = require('lodash')
 
 const preloadDir = path.resolve(__dirname, 'preloads')
@@ -30,7 +30,9 @@ class ComparePreloads {
     this.printDiff(dataA, dataB)
     console.log('--- END DIFF ---\n')
   }
-  append(line) { this.diffOutput += line + '\n' }
+  append(line) {
+    this.diffOutput += `${line}\n`
+  }
   listJsonFiles(dir) {
     const results = []
     function walk(current, relBase) {
@@ -57,7 +59,7 @@ class ComparePreloads {
       return {
         isEqual: _.isEqual(dataA, dataB),
         dataA,
-        dataB
+        dataB,
       }
     } catch (err) {
       console.error(`Error reading or parsing files: ${fileA}, ${fileB}`, err)
@@ -67,7 +69,7 @@ class ComparePreloads {
   compareAllFiles() {
     const preloadFiles = this.listJsonFiles(preloadDir)
     const oldPreloadFiles = this.listJsonFiles(oldPreloadDir)
-    const oldPreloadSet = new Set(oldPreloadFiles.map(f => f.replace(/\\/g, '/')))
+    const oldPreloadSet = new Set(oldPreloadFiles.map((f) => f.replace(/\\/g, '/')))
     const report = []
     let allMatch = true
     this.diffOutput = ''
@@ -99,7 +101,7 @@ class ComparePreloads {
     }
     for (const relPath of oldPreloadFiles) {
       const relNorm = relPath.replace(/\\/g, '/')
-      if (!preloadFiles.map(f => f.replace(/\\/g, '/')).includes(relNorm)) {
+      if (!preloadFiles.map((f) => f.replace(/\\/g, '/')).includes(relNorm)) {
         report.push(`MISSING in preload: ${relNorm}`)
         allMatch = false
       }
@@ -128,7 +130,9 @@ class ComparePreloads {
     } else if (typeof objA !== typeof objB) {
       return logDiff(`  Type mismatch at ${path}:\n    preload=${typeof objA}\n    old_preload=${typeof objB}`)
     } else if (_.isArray(objA) !== _.isArray(objB)) {
-      return logDiff(`  Structure mismatch at ${path}:\n    preload is ${_.isArray(objA) ? 'array' : typeof objA}\n    old_preload is ${_.isArray(objB) ? 'array' : typeof objB}`)
+      return logDiff(
+        `  Structure mismatch at ${path}:\n    preload is ${_.isArray(objA) ? 'array' : typeof objA}\n    old_preload is ${_.isArray(objB) ? 'array' : typeof objB}`,
+      )
     } else if (_.isArray(objA) && _.isArray(objB)) {
       return this._compareArrays(objA, objB, path, logFn)
     } else if (_.isObject(objA) && _.isObject(objB)) {
@@ -136,22 +140,30 @@ class ComparePreloads {
       const keysB = Object.keys(objB)
       for (const key of keysA) {
         if (!(key in objB)) {
-          logDiff(`  Key '${path ? path + '.' : ''}${key}' missing in old_preload. Value in preload: ${JSON.stringify(objA[key])}`)
+          logDiff(
+            `  Key '${path ? `${path}.` : ''}${key}' missing in old_preload. Value in preload: ${JSON.stringify(objA[key])}`,
+          )
         } else {
-          this._printDiff(objA[key], objB[key], `${path ? path + '.' : ''}${key}`, logFn)
+          this._printDiff(objA[key], objB[key], `${path ? `${path}.` : ''}${key}`, logFn)
         }
       }
       for (const key of keysB) {
         if (!(key in objA)) {
-          logDiff(`  Key '${path ? path + '.' : ''}${key}' missing in preload. Value in old_preload: ${JSON.stringify(objB[key])}`)
+          logDiff(
+            `  Key '${path ? `${path}.` : ''}${key}' missing in preload. Value in old_preload: ${JSON.stringify(objB[key])}`,
+          )
         }
       }
       return
     } else if (objA !== objB) {
-      logDiff(`  Value differs at ${path}:\n    preload=${JSON.stringify(objA)}\n    old_preload=${JSON.stringify(objB)}`)
+      logDiff(
+        `  Value differs at ${path}:\n    preload=${JSON.stringify(objA)}\n    old_preload=${JSON.stringify(objB)}`,
+      )
       return
     } else if (!differenceLogged && !_.isEqual(objA, objB)) {
-      logDiff(`  Difference at ${path || '[root]'}:\n    preload=${JSON.stringify(objA)}\n    old_preload=${JSON.stringify(objB)}`)
+      logDiff(
+        `  Difference at ${path || '[root]'}:\n    preload=${JSON.stringify(objA)}\n    old_preload=${JSON.stringify(objB)}`,
+      )
     }
   }
   allItemsHaveKey(arr, key) {
@@ -218,5 +230,4 @@ class ComparePreloads {
   }
 }
 
-const tester = new ComparePreloads(argFile)
-
+const _tester = new ComparePreloads(argFile)

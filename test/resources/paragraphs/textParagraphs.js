@@ -4,17 +4,17 @@ module.exports = {
     {
       label: 'Text field',
       field: 'text',
-      input: 'text'
+      input: 'text',
     },
     {
       label: 'Wysiwyg',
       field: 'wysiwyg',
-      input: 'wysiwyg'
+      input: 'wysiwyg',
     },
     {
       field: 'comment',
       input: 'select',
-      source: 'comments'
-    }
-  ]
+      source: 'comments',
+    },
+  ],
 }

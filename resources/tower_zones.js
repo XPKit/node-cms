@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   group: '3. Towers',
   displayname: '3.4. Towers - Zones',
   schema: [
@@ -9,30 +9,21 @@ exports = module.exports = {
       required: true,
       unique: true,
       input: 'select',
-      source: [
-        'uh-low',
-        'uh-mid',
-        'uh-high',
-        'wr-low',
-        'wr-mid-1',
-        'wr-mid-2',
-        'wr-high-1',
-        'wr-high-2'
-      ]
+      source: ['uh-low', 'uh-mid', 'uh-high', 'wr-low', 'wr-mid-1', 'wr-mid-2', 'wr-high-1', 'wr-high-2'],
     },
     {
       label: 'Long Name',
       field: 'longName',
       localised: true,
       required: true,
-      input: 'string'
+      input: 'string',
     },
     {
       label: 'Short Name',
       field: 'shortName',
       localised: true,
       required: true,
-      input: 'string'
+      input: 'string',
     },
     {
       label: 'Floor Plans',
@@ -40,17 +31,17 @@ exports = module.exports = {
       localised: false,
       required: true,
       input: 'multiselect',
-      source: 'tower_floor_plans'
+      source: 'tower_floor_plans',
     },
     {
       label: 'Order',
       field: 'order',
       localised: false,
       required: true,
-      input: 'integer'
-    }
+      input: 'integer',
+    },
   ],
   locales: ['enUS', 'zhCN'],
   type: 'normal',
-  maxCount: 2
+  maxCount: 2,
 }

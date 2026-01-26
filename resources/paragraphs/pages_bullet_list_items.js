@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: 'Bullet Item',
   schema: [
     {
@@ -6,7 +6,7 @@ exports = module.exports = {
       field: 'bulletItem',
       input: 'string',
       localised: true,
-      required: true
-    }
-  ]
+      required: true,
+    },
+  ],
 }

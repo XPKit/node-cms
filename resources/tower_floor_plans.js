@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   group: '3. Towers',
   displayname: '3.3. Towers - Floor Plans',
   schema: [
@@ -33,15 +33,15 @@ exports = module.exports = {
         'wr-fp-high-3-67',
         'wr-fp-high-3-68',
         'wr-fp-high-3-69',
-        'wr-fp-high-3-70'
-      ]
+        'wr-fp-high-3-70',
+      ],
     },
     {
       label: 'Levels',
       field: 'levels',
       localised: false,
       required: true,
-      input: 'pillbox'
+      input: 'pillbox',
     },
     {
       label: 'Units',
@@ -49,7 +49,7 @@ exports = module.exports = {
       localised: false,
       required: true,
       input: 'multiselect',
-      source: 'tower_units'
+      source: 'tower_units',
     },
     {
       label: 'Floorplan',
@@ -57,18 +57,18 @@ exports = module.exports = {
       input: 'paragraph',
       options: {
         types: ['tower_floorplan_assets'],
-        maxCount: 1
+        maxCount: 1,
       },
-      localised: false
+      localised: false,
     },
     {
       label: 'Order',
       field: 'order',
       localised: false,
       required: true,
-      input: 'integer'
-    }
+      input: 'integer',
+    },
   ],
   locales: ['enUS', 'zhCN'],
-  type: 'normal'
+  type: 'normal',
 }

@@ -1,19 +1,19 @@
-import _ from 'lodash'
 import { filesize } from 'filesize'
+import _ from 'lodash'
 import TranslateService from '@s/TranslateService'
 
 export default {
-  data () {
+  data() {
     return {
       dragover: false,
-      attachments: []
+      attachments: [],
     }
   },
-  mounted () {
+  mounted() {
     this.attachments = _.cloneDeep(this._value) || []
   },
   methods: {
-    onEndDrag () {
+    onEndDrag() {
       const attachments = _.map(this.getAttachments(), (item, i) => {
         if (item.order !== i + 1) {
           item.order = i + 1
@@ -23,22 +23,22 @@ export default {
       })
       this._value = attachments
     },
-    getImageSrc (attachment = false) {
+    getImageSrc(attachment = false) {
       const a = attachment || this.attachment()
       return a.data ? a.data : this.getPreviewUrl(a)
     },
-    isImage (attachment = false) {
+    isImage(attachment = false) {
       const a = attachment || this.attachment()
       const attachmentFilename = this.getAttachmentFilename(a)
       if (attachmentFilename) {
-        const isAnImage = _.find(['jpg', 'jpeg', 'png', 'svg'], (type)=> _.endsWith(attachmentFilename, type))
+        const isAnImage = _.find(['jpg', 'jpeg', 'png', 'svg'], (type) => _.endsWith(attachmentFilename, type))
         if (isAnImage) {
           return true
         }
       }
       return a && /image/g.test(a._contentType || _.get(a, 'file.type', false))
     },
-    getPreviewUrl (attachment = false) {
+    getPreviewUrl(attachment = false) {
       const a = attachment || this.attachment()
       const contentType = _.get(a, '_contentType', false)
       if (_.isString(contentType) && contentType.indexOf('svg') !== -1) {
@@ -46,27 +46,27 @@ export default {
       }
       return `${a.url}?resize=autox100`
     },
-    attachment () {
+    attachment() {
       return _.first(this.attachments)
     },
-    getAttachments () {
+    getAttachments() {
       return this._value || this.attachments
     },
-    imageSize (attachment = false) {
+    imageSize(attachment = false) {
       const a = attachment || this.attachment()
       return this.bytesToSize(_.get(a, '_size', _.get(a, 'file.size', false)))
     },
-    bytesToSize (bytes) {
-      return filesize(bytes, {standard: 'jedec'})
+    bytesToSize(bytes) {
+      return filesize(bytes, { standard: 'jedec' })
     },
-    isForMultipleImages () {
+    isForMultipleImages() {
       if (this.schema.width && this.schema.height) {
         return false
       }
       const maxCount = this.getMaxCount()
       return maxCount === -1 ? true : maxCount > 1
     },
-    isFieldDisabled () {
+    isFieldDisabled() {
       const maxCount = this.getMaxCount()
       if (maxCount === -1) {
         return false
@@ -75,13 +75,13 @@ export default {
       }
       return this.disabled || _.get(this.schema, 'disabled', false)
     },
-    getFieldType () {
+    getFieldType() {
       return _.toUpper(_.get(this.schema, 'type', 'ImageView') === 'ImageView' ? 'image' : 'file')
     },
-    getRules () {
+    getRules() {
       const rules = []
       if (this.schema.required) {
-        rules.push(v => {
+        rules.push((v) => {
           const attachmentsLength = _.get(this.getAttachments(), 'length', 0)
           const valueLength = _.get(v, 'length', 0)
           if ((v instanceof Object || v instanceof File) && _.get(v, 'name', false)) {
@@ -89,16 +89,19 @@ export default {
           } else if (attachmentsLength === 0 && valueLength === 0) {
             return TranslateService.get(`TL_${this.getFieldType()}_IS_MANDATORY`)
           }
-          if ((valueLength !== 0 || v instanceof FileList) || attachmentsLength !== 0) {
+          if (valueLength !== 0 || v instanceof FileList || attachmentsLength !== 0) {
             return true
           }
           return TranslateService.get(`TL_${this.getFieldType()}_IS_MANDATORY`)
         })
       }
       if (this.isForMultipleImages()) {
-        rules.push(files => {
+        rules.push((files) => {
           const maxCount = this.getMaxCount()
-          if (maxCount === -1 || _.get(this.getAttachments(), 'length', 0) + _.get(files, 'length', 0) <= maxCount + 1) {
+          if (
+            maxCount === -1 ||
+            _.get(this.getAttachments(), 'length', 0) + _.get(files, 'length', 0) <= maxCount + 1
+          ) {
             return true
           }
           return TranslateService.get(`TL_TOO_MANY_${this.getFieldType()}S`)
@@ -115,7 +118,9 @@ export default {
           for (const file of files) {
             if (file.size > this.schema.options.limit) {
               const fieldType = this.getFieldType()
-              console.warn(`${fieldType} ${_.get(file, 'name', 'undefined-filename')} is too big: ${this.bytesToSize(file.size)}(${file.size}bytes) > ${this.bytesToSize(this.schema.options.limit)}(${this.schema.options.limit}bytes)`)
+              console.warn(
+                `${fieldType} ${_.get(file, 'name', 'undefined-filename')} is too big: ${this.bytesToSize(file.size)}(${file.size}bytes) > ${this.bytesToSize(this.schema.options.limit)}(${this.schema.options.limit}bytes)`,
+              )
               return TranslateService.get(`TL_${fieldType}_IS_TOO_BIG`)
             }
           }
@@ -124,7 +129,7 @@ export default {
       }
       if (_.get(this.schema, 'options.accept', false)) {
         const acceptedTypes = this.schema.options.accept.split(',')
-        rules.push(files => {
+        rules.push((files) => {
           if (!files) {
             return true
           }
@@ -169,17 +174,19 @@ export default {
       }
       return rules
     },
-    getPlaceholder () {
-      return TranslateService.get(`TL_CLICK_OR_DRAG_AND_DROP_TO_ADD_${this.getFieldType()}${this.isForMultipleImages() ? 'S' : ''}`)
+    getPlaceholder() {
+      return TranslateService.get(
+        `TL_CLICK_OR_DRAG_AND_DROP_TO_ADD_${this.getFieldType()}${this.isForMultipleImages() ? 'S' : ''}`,
+      )
     },
-    getMaxCount () {
+    getMaxCount() {
       return _.get(this.schema, 'options.maxCount', -1)
     },
     getAttachmentFilename(attachment) {
       return attachment._filename || (attachment._fields && attachment._fields._filename)
     },
-    removeImage (attachment, index) {
-      _.remove(this.attachments, (val, i)=> i === index)
+    removeImage(attachment, index) {
+      _.remove(this.attachments, (val, i) => i === index)
       this._value = this.attachments
       this.$forceUpdate()
       // work around to force label update
@@ -187,26 +194,32 @@ export default {
       this.schema.label = null
       this.schema.label = dummy
     },
-    onDrop (event) {
+    onDrop(event) {
       this.dragover = false
       const maxCount = this.getMaxCount()
       let files = _.get(event, 'dataTransfer.files', [])
       if (maxCount !== -1 && maxCount <= 1 && files.length > 1) {
         files = _.last(files)
-        console.info(`Only one file can be uploaded at a time for field '${this.schema.originalModel}', will take the last one:`, files)
+        console.info(
+          `Only one file can be uploaded at a time for field '${this.schema.originalModel}', will take the last one:`,
+          files,
+        )
       } else if (_.isObject(files)) {
         files = _.toArray(files)
       }
       this.onUploadChanged(files)
     },
-    async onUploadChanged (files) {
+    async onUploadChanged(files) {
       let maxCount = this.getMaxCount()
       if (_.get(event, 'target.files.length', 0) !== 0) {
         files = event.target.files
         // dragAndDrop = true
         if (maxCount !== -1 && maxCount <= 1 && files.length > 1) {
           files = _.last(files)
-          console.info(`Only one file can be uploaded at a time for field '${this.schema.originalModel}', will take the last one:`, files)
+          console.info(
+            `Only one file can be uploaded at a time for field '${this.schema.originalModel}', will take the last one:`,
+            files,
+          )
         } else if (_.isObject(files)) {
           files = _.toArray(files)
         }
@@ -226,7 +239,11 @@ export default {
       }
       const totalNbFiles = this.getAttachments().length + files.length
       if (maxCount >= 1 && totalNbFiles > maxCount) {
-        console.info(`Reached max number of files for ${this.schema.paragraphKey || this.schema.model}`, totalNbFiles, maxCount)
+        console.info(
+          `Reached max number of files for ${this.schema.paragraphKey || this.schema.model}`,
+          totalNbFiles,
+          maxCount,
+        )
         files = _.take(files, files.length - (totalNbFiles - maxCount))
       }
       if (_.get(this.$refs, 'input', false)) {
@@ -246,7 +263,7 @@ export default {
       }
       return this.schema.paragraphKey || this.schema.model
     },
-    addAttachment (file, element) {
+    addAttachment(file, element) {
       const { locale } = this.getKeyLocale()
       const newAttachment = {
         _isAttachment: true,
@@ -254,20 +271,20 @@ export default {
         field: this.getFieldKey(),
         localised: this.schema.localised,
         file: _.get(file, '[0]', file),
-        data: element.target.result
+        data: element.target.result,
       }
       if (!_.isUndefined(locale)) {
-        newAttachment._fields = {locale}
+        newAttachment._fields = { locale }
       }
       this.attachments.push(newAttachment)
     },
-    async readAllFiles (files) {
+    async readAllFiles(files) {
       let nbFilesToRead = _.get(files, 'length', 1)
       return new Promise((resolve) => {
         _.each(files, (file) => {
           const reader = new FileReader()
           if (_.get(file, 'type', false).indexOf('video/') !== -1) {
-            this.addAttachment(file, {target: {result: URL.createObjectURL(file)}})
+            this.addAttachment(file, { target: { result: URL.createObjectURL(file) } })
             this.$forceUpdate()
             nbFilesToRead--
             if (nbFilesToRead === 0) {
@@ -306,6 +323,6 @@ export default {
           }
         })
       })
-    }
-  }
+    },
+  },
 }

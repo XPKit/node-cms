@@ -1,37 +1,37 @@
-exports = module.exports = {
+module.exports = {
   group: '2. Content',
   displayname: '2.1. Menu - Global',
   groups: {
     theProject: {
-      label: 'The project'
+      label: 'The project',
     },
     theUpperHouse: {
-      label: 'The Upper House'
+      label: 'The Upper House',
     },
     wirelessPlace: {
-      label: 'Wireless Place'
+      label: 'Wireless Place',
     },
     compareUnits: {
-      label: 'Compare Units'
+      label: 'Compare Units',
     },
     team: {
-      label: 'Team'
+      label: 'Team',
     },
     film: {
-      label: 'Film'
+      label: 'Film',
     },
     faq: {
-      label: 'FAQ'
+      label: 'FAQ',
     },
     dashboard: {
-      label: 'Dashboard'
+      label: 'Dashboard',
     },
     calendar: {
-      label: 'Calendar'
+      label: 'Calendar',
     },
     settings: {
-      label: 'Settings'
-    }
+      label: 'Settings',
+    },
   },
   schema: [
     {
@@ -40,14 +40,14 @@ exports = module.exports = {
       input: 'string',
       localised: false,
       required: true,
-      disabled: true
+      disabled: true,
     },
     {
       label: 'Name',
       field: 'theProject.name',
       input: 'string',
       localised: true,
-      required: true
+      required: true,
     },
     {
       label: 'Image',
@@ -57,28 +57,25 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 522 × 400',
         accept: '.png,.svg',
         limit: 5 * 1024 * 1024, // 5 MB
-        maxCount: 1
+        maxCount: 1,
       },
       localised: false,
-      required: false
+      required: false,
     },
     {
       label: 'Pages',
       field: 'theProject.pages',
       input: 'paragraph',
       options: {
-        types: [
-          'menu_pages',
-          'menu_pages_tabs'
-        ]
+        types: ['menu_pages', 'menu_pages_tabs'],
       },
-      localised: false
+      localised: false,
     },
     {
       label: 'Is Folder?',
       field: 'theProject.isFolder',
       input: 'checkbox',
-      localised: false
+      localised: false,
     },
     {
       label: 'Key',
@@ -86,7 +83,7 @@ exports = module.exports = {
       input: 'string',
       localised: false,
       required: true,
-      readOnly: true
+      readOnly: true,
     },
     {
       label: 'Tower',
@@ -95,14 +92,14 @@ exports = module.exports = {
       source: 'tower_buildings',
       localised: false,
       required: true,
-      readOnly: true
+      readOnly: true,
     },
     {
       label: 'Name',
       field: 'theUpperHouse.name',
       input: 'string',
       localised: true,
-      required: true
+      required: true,
     },
     {
       label: 'Image',
@@ -112,29 +109,25 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 522 × 400',
         accept: '.png,.svg',
         limit: 5 * 1024 * 1024, // 5 MB
-        maxCount: 1
+        maxCount: 1,
       },
       localised: false,
-      required: false
+      required: false,
     },
     {
       label: 'Pages',
       field: 'theUpperHouse.pages',
       input: 'paragraph',
       options: {
-        types: [
-          'menu_pages',
-          'menu_pages_tabs',
-          'menu_special_pages'
-        ]
+        types: ['menu_pages', 'menu_pages_tabs', 'menu_special_pages'],
       },
-      localised: false
+      localised: false,
     },
     {
       label: 'Is Folder?',
       field: 'theUpperHouse.isFolder',
       input: 'checkbox',
-      localised: false
+      localised: false,
     },
     {
       label: 'Key',
@@ -142,7 +135,7 @@ exports = module.exports = {
       input: 'string',
       localised: false,
       required: true,
-      readOnly: true
+      readOnly: true,
     },
     {
       label: 'Tower',
@@ -151,14 +144,14 @@ exports = module.exports = {
       source: 'tower_buildings',
       localised: false,
       required: true,
-      readOnly: true
+      readOnly: true,
     },
     {
       label: 'Name',
       field: 'wirelessPlace.name',
       input: 'string',
       localised: true,
-      required: true
+      required: true,
     },
     {
       label: 'Image',
@@ -168,29 +161,25 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 522 × 400',
         accept: '.png,.svg',
         limit: 5 * 1024 * 1024, // 5 MB
-        maxCount: 1
+        maxCount: 1,
       },
       localised: false,
-      required: false
+      required: false,
     },
     {
       label: 'Pages',
       field: 'wirelessPlace.pages',
       input: 'paragraph',
       options: {
-        types: [
-          'menu_pages',
-          'menu_pages_tabs',
-          'menu_special_pages'
-        ]
+        types: ['menu_pages', 'menu_pages_tabs', 'menu_special_pages'],
       },
-      localised: false
+      localised: false,
     },
     {
       label: 'Is Folder?',
       field: 'wirelessPlace.isFolder',
       input: 'checkbox',
-      localised: false
+      localised: false,
     },
     {
       label: 'Key',
@@ -198,14 +187,14 @@ exports = module.exports = {
       input: 'string',
       localised: false,
       required: true,
-      readOnly: true
+      readOnly: true,
     },
     {
       label: 'Name',
       field: 'compareUnits.name',
       input: 'string',
       localised: true,
-      required: true
+      required: true,
     },
     {
       label: 'Image',
@@ -215,22 +204,20 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 522 × 400',
         accept: '.png,.svg',
         limit: 5 * 1024 * 1024, // 5 MB
-        maxCount: 1
+        maxCount: 1,
       },
       localised: false,
-      required: false
+      required: false,
     },
     {
       label: 'Pages',
       field: 'compareUnits.pages',
       input: 'paragraph',
       options: {
-        types: [
-          'menu_special_pages'
-        ],
-        maxCount: 1
+        types: ['menu_special_pages'],
+        maxCount: 1,
       },
-      localised: false
+      localised: false,
     },
     {
       label: 'Key',
@@ -238,14 +225,14 @@ exports = module.exports = {
       input: 'string',
       localised: false,
       required: true,
-      readOnly: true
+      readOnly: true,
     },
     {
       label: 'Name',
       field: 'team.name',
       input: 'string',
       localised: true,
-      required: true
+      required: true,
     },
     {
       label: 'Image',
@@ -255,28 +242,25 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 522 × 400',
         accept: '.png,.svg',
         limit: 5 * 1024 * 1024, // 5 MB
-        maxCount: 1
+        maxCount: 1,
       },
       localised: false,
-      required: false
+      required: false,
     },
     {
       label: 'Pages',
       field: 'team.pages',
       input: 'paragraph',
       options: {
-        types: [
-          'menu_pages',
-          'menu_pages_tabs'
-        ]
+        types: ['menu_pages', 'menu_pages_tabs'],
       },
-      localised: false
+      localised: false,
     },
     {
       label: 'Is Folder?',
       field: 'team.isFolder',
       input: 'checkbox',
-      localised: false
+      localised: false,
     },
     {
       label: 'Key',
@@ -284,14 +268,14 @@ exports = module.exports = {
       input: 'string',
       localised: false,
       required: true,
-      readOnly: true
+      readOnly: true,
     },
     {
       label: 'Name',
       field: 'film.name',
       input: 'string',
       localised: true,
-      required: true
+      required: true,
     },
     {
       label: 'Image',
@@ -301,28 +285,25 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 522 × 400',
         accept: '.png,.svg',
         limit: 5 * 1024 * 1024, // 5 MB
-        maxCount: 1
+        maxCount: 1,
       },
       localised: false,
-      required: false
+      required: false,
     },
     {
       label: 'Pages',
       field: 'film.pages',
       input: 'paragraph',
       options: {
-        types: [
-          'menu_pages',
-          'menu_pages_tabs'
-        ]
+        types: ['menu_pages', 'menu_pages_tabs'],
       },
-      localised: false
+      localised: false,
     },
     {
       label: 'Is Folder?',
       field: 'film.isFolder',
       input: 'checkbox',
-      localised: false
+      localised: false,
     },
     {
       label: 'Key',
@@ -330,14 +311,14 @@ exports = module.exports = {
       input: 'string',
       localised: false,
       required: true,
-      readOnly: true
+      readOnly: true,
     },
     {
       label: 'Name',
       field: 'faq.name',
       input: 'string',
       localised: true,
-      required: true
+      required: true,
     },
     {
       label: 'Image',
@@ -347,28 +328,25 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 522 × 400',
         accept: '.png,.svg',
         limit: 5 * 1024 * 1024, // 5 MB
-        maxCount: 1
+        maxCount: 1,
       },
       localised: false,
-      required: false
+      required: false,
     },
     {
       label: 'Pages',
       field: 'faq.pages',
       input: 'paragraph',
       options: {
-        types: [
-          'menu_pages',
-          'menu_pages_tabs'
-        ]
+        types: ['menu_pages', 'menu_pages_tabs'],
       },
-      localised: false
+      localised: false,
     },
     {
       label: 'Is Folder?',
       field: 'faq.isFolder',
       input: 'checkbox',
-      localised: false
+      localised: false,
     },
     {
       label: 'Key',
@@ -376,14 +354,14 @@ exports = module.exports = {
       input: 'string',
       localised: false,
       required: true,
-      readOnly: true
+      readOnly: true,
     },
     {
       label: 'Name',
       field: 'dashboard.name',
       input: 'string',
       localised: true,
-      required: true
+      required: true,
     },
     // {
     //   label: 'Image',
@@ -403,11 +381,9 @@ exports = module.exports = {
       field: 'dashboard.pages',
       input: 'paragraph',
       options: {
-        types: [
-          'menu_special_pages'
-        ]
+        types: ['menu_special_pages'],
       },
-      localised: false
+      localised: false,
     },
     {
       label: 'Key',
@@ -415,14 +391,14 @@ exports = module.exports = {
       input: 'string',
       localised: false,
       required: true,
-      readOnly: true
+      readOnly: true,
     },
     {
       label: 'Name',
       field: 'calendar.name',
       input: 'string',
       localised: true,
-      required: true
+      required: true,
     },
     // {
     //   label: 'Image',
@@ -442,11 +418,9 @@ exports = module.exports = {
       field: 'calendar.pages',
       input: 'paragraph',
       options: {
-        types: [
-          'menu_special_pages'
-        ]
+        types: ['menu_special_pages'],
       },
-      localised: false
+      localised: false,
     },
     {
       label: 'Key',
@@ -454,17 +428,17 @@ exports = module.exports = {
       input: 'string',
       localised: false,
       required: true,
-      readOnly: true
+      readOnly: true,
     },
     {
       label: 'Name',
       field: 'settings.name',
       input: 'string',
       localised: true,
-      required: true
-    }
+      required: true,
+    },
   ],
   locales: ['enUS', 'zhCN'],
   type: 'normal',
-  maxCount: 1
+  maxCount: 1,
 }

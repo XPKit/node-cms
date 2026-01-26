@@ -1,4 +1,4 @@
-exports = {
+module.exports = {
   ns: [],
   resources: './test/resources',
   data: './test/data',
@@ -13,17 +13,17 @@ exports = {
   disableAuthentication: true,
   wsRecordUpdates: true,
   auth: {
-    secret: '$C&F)J@NcRfUjXn2r5u8x/A?D*G-KaPd'
+    secret: '$C&F)J@NcRfUjXn2r5u8x/A?D*G-KaPd',
   },
   disableAnonymous: false,
   session: {
     secret: 'MdjIwFRi9ezT',
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true,
   },
   syslog: {
     method: 'file',
-    path: './syslog.log'
+    path: './syslog.log',
   },
   smartCrop: false,
   defaultPaging: 12,
@@ -32,7 +32,7 @@ exports = {
     peers: [], // Will be set dynamically in the test
     peersByResource: {
       articles: ['http://localhost:9991'],
-      authors: ['http://localhost:9992']
-    }
-  }
+      authors: ['http://localhost:9992'],
+    },
+  },
 }

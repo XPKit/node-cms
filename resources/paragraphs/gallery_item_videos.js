@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: 'Gallery Image Item',
   schema: [
     {
@@ -6,7 +6,7 @@ exports = module.exports = {
       field: 'title',
       input: 'text',
       required: false,
-      localised: true
+      localised: true,
     },
     {
       label: 'Thumbnail',
@@ -16,10 +16,10 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 720 × 405',
         accept: '.jpg',
         limit: 1 * 1024 * 1024, // 1 MB
-        maxCount: 1
+        maxCount: 1,
       },
       required: true,
-      localised: true
+      localised: true,
     },
     {
       label: 'Fullscreen Thumbnail',
@@ -29,16 +29,16 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 3840 × 2160',
         accept: '.jpg',
         limit: 2 * 1024 * 1024, // 2 MB
-        maxCount: 1
+        maxCount: 1,
       },
       required: true,
-      localised: true
+      localised: true,
     },
     {
       label: 'Disclaimer',
       field: 'disclaimer',
       input: 'checkbox',
-      required: false
+      required: false,
     },
     {
       label: 'Video',
@@ -48,10 +48,10 @@ exports = module.exports = {
         accept: '.mp4,.webm',
         hint: 'Recommended canvas size: 3840 × 2160',
         limit: 1 * 1024 * 1024 * 1024, // 1 GB
-        maxCount: 1
+        maxCount: 1,
       },
       required: true,
-      localised: true
-    }
-  ]
+      localised: true,
+    },
+  ],
 }

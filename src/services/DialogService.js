@@ -1,15 +1,15 @@
 import Emitter from 'tiny-emitter'
 
 class DialogService {
-  constructor () {
+  constructor() {
     this.events = new Emitter()
   }
 
-  send (isEditing) {
+  send(isEditing) {
     this.events.emit('dialog', isEditing)
   }
 
-  show (data) {
+  show(data) {
     /*
       {
         event: 'selectRecord',
@@ -23,7 +23,7 @@ class DialogService {
     this.events.emit('dialog:show', data)
   }
 
-  confirm (data) {
+  confirm(data) {
     this.events.emit('dialog:confirm', data)
   }
 }

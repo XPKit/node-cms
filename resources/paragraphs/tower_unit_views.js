@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: 'View',
   schema: [
     {
@@ -11,8 +11,8 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 1080 × 608',
         accept: '.jpg',
         limit: 1 * 1024 * 1024, // 1 MB
-        maxCount: 1
-      }
+        maxCount: 1,
+      },
     },
     {
       label: 'Fullscreen',
@@ -24,8 +24,8 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 3840 × 2160',
         accept: '.jpg',
         limit: 2 * 1024 * 1024, // 2 MB
-        maxCount: 1
-      }
+        maxCount: 1,
+      },
     },
     {
       label: 'Daytime',
@@ -37,8 +37,8 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 7680 × 3840',
         accept: '.jpg',
         limit: 5 * 1024 * 1024, // 5 MB
-        maxCount: 1
-      }
+        maxCount: 1,
+      },
     },
     {
       label: 'Nighttime',
@@ -50,22 +50,22 @@ exports = module.exports = {
         hint: 'Recommended canvas size: 7680 × 3840',
         accept: '.jpg',
         limit: 5 * 1024 * 1024, // 5 MB
-        maxCount: 1
-      }
+        maxCount: 1,
+      },
     },
     {
       label: 'Level',
       field: 'qtvr.level',
       input: 'integer',
       localised: false,
-      required: true
+      required: true,
     },
     {
       label: 'Show Disclaimer',
       field: 'showDisclaimer',
       localised: false,
       required: false,
-      input: 'checkbox'
-    }
-  ]
+      input: 'checkbox',
+    },
+  ],
 }
