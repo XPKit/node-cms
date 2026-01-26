@@ -21,7 +21,7 @@ You have two options for enabling dynamic layout:
 **Option A: Explicit Configuration**
 ```javascript
 // resources/gallery.js
-exports = module.exports = {
+module.exports = {
   displayname: 'Gallery',
   schema: [
     {
@@ -40,7 +40,7 @@ exports = module.exports = {
 **Option B: Automatic Detection (Recommended)**
 ```javascript
 // resources/gallery.js
-exports = module.exports = {
+module.exports = {
   displayname: 'Gallery',
   schema: [
     {
@@ -61,7 +61,7 @@ You can create a paragraph type that acts as a layout container with slots:
 
 ```javascript
 // resources/paragraphs/gallery_section.js
-exports = module.exports = {
+module.exports = {
   displayname: 'Gallery Section',
   schema: [
     {
@@ -98,7 +98,7 @@ Create any paragraph type - dynamic layout will work if items have a `width` fie
 
 ```javascript
 // resources/paragraphs/gallery_item.js
-exports = module.exports = {
+module.exports = {
   displayname: 'Gallery Item',
   schema: [
     {
@@ -174,7 +174,7 @@ The container uses flexbox with:
 
 ```javascript
 // resources/gallery.js
-exports = module.exports = {
+module.exports = {
   displayname: 'Gallery',
   schema: [
     {
@@ -196,7 +196,7 @@ Any paragraph type can participate in dynamic layout by simply including a `slot
 
 ```javascript
 // resources/paragraphs/gallery_item.js
-exports = module.exports = {
+module.exports = {
   displayname: 'Gallery Item',
   schema: [
     {

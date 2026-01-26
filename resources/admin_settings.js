@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   group: 'CMS',
   displayname: 'Admin Settings',
   schema: [

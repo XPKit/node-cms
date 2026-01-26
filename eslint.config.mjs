@@ -4,11 +4,10 @@ import pluginVue from 'eslint-plugin-vue'
 export default [
   // Base JavaScript configuration
   js.configs.recommended,
-
   // Vue configuration
   ...pluginVue.configs['flat/recommended'],
   {
-    files: ['resources/**/*.js'],
+    files: ['resources/**/*.js', 'docs/resourceExamples/**/*.js'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'commonjs',
@@ -84,7 +83,6 @@ export default [
       ]
     }
   },
-
   {
     files: ['src/**/*.js'],
     languageOptions: {
@@ -139,7 +137,6 @@ export default [
       ]
     }
   },
-
   {
     files: ['src/**/*.vue'],
     languageOptions: {
@@ -188,7 +185,6 @@ export default [
       }]
     }
   },
-
   {
     ignores: [
       'node_modules/**',

@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: '1 Column - Bullet List + Image',
   schema: [
     {

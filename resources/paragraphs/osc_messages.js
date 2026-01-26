@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: 'OSC Message',
   schema: [
     {

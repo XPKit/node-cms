@@ -66,7 +66,7 @@ let convertKeyToId = function (value, type, records, name, uniqueKeys, errors) {
   return value
 }
 
-exports = module.exports = {
+module.exports = {
   startProcess: startProcess,
   convertData: convertData,
   convertKeyToId: convertKeyToId
