@@ -123,6 +123,7 @@
   import SchemaService from '@s/SchemaService'
   import FieldSelectorService from '@s/FieldSelectorService'
   import ResourceService from '@s/ResourceService'
+  import TranslateService from '@s/TranslateService'
   import DragList from '@m/DragList'
   import pAll from 'p-all'
 
@@ -387,7 +388,42 @@
         let extraSources = _.isString(item.source) ? _.get(ResourceService.getSchema(item.source), 'extraSources', {}) : {}
         const fields = SchemaService.getSchemaFields(schemaItems, resource, locale, userLocale, disabled, extraSources, this.schema.rootView || this)
         const groups = SchemaService.getNestedGroups(resource, fields, 0, null, '_value.')
-        return {fields: groups}
+        const schema = this.formatSchemaLayout({
+          fields: groups,
+          layout: item.layout
+        })
+        return schema
+      },
+      formatSchemaLayout (schema) {
+        if (!_.get(schema, 'layout.lines', false)) {
+          return schema
+        }
+        const alreadyPlacedFields = []
+        _.each(schema.layout.lines, (line) => {
+          line.slots = line.slots || _.get(line, 'fields.length', 1)
+          let modelKey = ''
+          _.each(line.fields, (field) => {
+            field.schema = _.find(schema.fields, f =>{
+              const locale = TranslateService.getLocales()
+              modelKey = f.localised ? `_value.${field.model}.${locale[0]}` : `_value.${field.model}`
+              return modelKey === f.model
+            })
+            if (_.isUndefined(field.schema)) {
+              field.schema = _.find(schema.fields, {originalModel: field.model})
+            }
+            if (_.isUndefined(field.schema)) {
+              console.error(`Couldn't find schema for field ${field.model}`)
+            } else {
+              alreadyPlacedFields.push(modelKey)
+            }
+          })
+        })
+        _.each(schema.fields, (field) => {
+          if (!_.includes(alreadyPlacedFields, field.model) && !_.includes(alreadyPlacedFields, field.originalModel)) {
+            schema.layout.lines.push({fields: [{model: field.model, schema: field}]})
+          }
+        })
+        return schema
       },
       getAttachment (fileItemId, field) {
         const attach = _.find(this.model._attachments, {_fields: {fileItemId}})
