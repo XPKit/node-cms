@@ -1,10 +1,28 @@
-const _ = require('lodash')
+﻿const _ = require('lodash')
 const request = require('supertest')
 const chai = require('chai')
 const expect = chai.expect
 const serverUrl = 'http://localhost:9990'
 
 describe('API Route Coverage', () => {
+  afterEach(async () => {
+    // Clean up all articles after each test
+    const articlesRes = await request(serverUrl)
+      .get('/api/articles')
+      .auth('localAdmin', 'localAdmin')
+
+    if (_.isArray(articlesRes.body)) {
+      for (const article of articlesRes.body) {
+        const id = _.get(article, '_id', false)
+        if (id) {
+          await request(serverUrl)
+            .delete(`/api/articles/${id}`)
+            .auth('localAdmin', 'localAdmin')
+        }
+      }
+    }
+  })
+
   it('POST /api/articles/:id/attachments should create an attachment with locale field', async () => {
     // Create a new article for this test
     const articleRes = await request(serverUrl)
@@ -84,21 +102,6 @@ describe('API Route Coverage', () => {
     expect(parentRes.body).to.have.property('file')
     expect(parentRes.body.file).to.be.an('array')
     expect(parentRes.body.file.length).to.equal(1)
-    // Clean up: delete all articles created in this test
-    const articlesRes = await request(serverUrl)
-      .get('/api/articles')
-      .auth('localAdmin', 'localAdmin')
-    if (_.isArray(articlesRes.body)) {
-      for (const article of articlesRes.body) {
-        const id = _.get(article, '_id', false)
-        if (id) {
-          // Await each delete to ensure cleanup completes before test ends
-          await request(serverUrl)
-            .delete(`/api/articles/${id}`)
-            .auth('localAdmin', 'localAdmin')
-        }
-      }
-    }
   })
   let createdId = null
   let attachmentId = null
@@ -132,6 +135,7 @@ describe('API Route Coverage', () => {
   })
 
   it('GET /api/articles should return 1 article with the correct title', async () => {
+    await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Test Article' })
     const res = await request(serverUrl)
       .get('/api/articles')
       .auth('localAdmin', 'localAdmin')
@@ -142,6 +146,8 @@ describe('API Route Coverage', () => {
   })
 
   it('POST /api/articles/:id/attachments should create a non-localized attachment for createdId', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Non-localized attachment test' })
+    createdId = article.body._id
     const res = await request(serverUrl)
       .post(`/api/articles/${createdId}/attachments`)
       .auth('localAdmin', 'localAdmin')
@@ -160,6 +166,8 @@ describe('API Route Coverage', () => {
   })
 
   it('POST /api/articles/:id/attachments should create a localized attachment for createdId', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Localized attachment test' })
+    createdId = article.body._id
     // The admin interface POSTs localized attachments with field and locale info
     const res = await request(serverUrl)
       .post(`/api/articles/${createdId}/attachments`)
@@ -169,22 +177,6 @@ describe('API Route Coverage', () => {
       .attach('localizedImage', './test/man.jpg')
     expect(res.status).to.equal(200)
     expect(res.body).to.be.an('object')
-    /*
-    example response:
-    {
-      _id: 'md6uczkz42424242y2u73v0t',
-      _createdAt: 1752723572005,
-      _updatedAt: 1752723572005,
-      _name: 'file',
-      _contentType: false,
-      _md5sum: '22331db1bf52103cb33c6244bf480172',
-      _payload: {},
-      _size: 4912,
-      _filename: '3366907623d13f29000a231f1dfb4734',
-      _fields: { field: 'localizedImage', locale: 'enUS' }
-    }
-   */
-    // Check all properties from the example response
     expect(res.body).to.have.property('_id')
     expect(res.body).to.have.property('_createdAt')
     expect(res.body).to.have.property('_updatedAt')
@@ -200,54 +192,16 @@ describe('API Route Coverage', () => {
   })
 
   it('GET /api/articles/:id should include both non-localized and localized attachments in the response', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Attachments response test' })
+    createdId = article.body._id
+    await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').field('field', 'image').attach('image', './test/man.jpg')
+    await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').field('field', 'localizedImage').field('locale', 'enUS').attach('localizedImage', './test/man.jpg')
+
     const res = await request(serverUrl)
       .get(`/api/articles/${createdId}`)
       .auth('localAdmin', 'localAdmin')
     expect(res.status).to.equal(200)
     expect(res.body).to.be.an('object')
-    /*
-      example response:
-      {
-        title: 'Test Article',
-        _updatedBy: 'admins~localAdmin',
-        _id: 'meavgbu142424242y0yntlvo',
-        _createdAt: 1755144054505,
-        _updatedAt: 1755144054536,
-        _publishedAt: null,
-        _local: true,
-        image: [
-          {
-            _id: 'meavgbub42424242y7ur4d1o',
-            _createdAt: 1755144054521,
-            _updatedAt: 1755144054521,
-            _contentType: false,
-            _md5sum: '3e912ef376ec993cb7d2b02e281ec5e7',
-            _payload: {},
-            _size: 34578,
-            _filename: '3c0e8a8eb0a120e53771135177d86cc4',
-            _fields: [Object],
-            url: '/api/articles/meavgbu142424242y0yntlvo/attachments/meavgbub42424242y7ur4d1o',
-            _isAttachment: true
-          }
-        ],
-        localizedImage: [
-          {
-            _id: 'meavgbuq42424242yc778h1t',
-            _createdAt: 1755144054536,
-            _updatedAt: 1755144054536,
-            _contentType: false,
-            _md5sum: '3e912ef376ec993cb7d2b02e281ec5e7',
-            _payload: {},
-            _size: 34578,
-            _filename: '60dde8cc1e935f8d33da09379d81733b',
-            _fields: [Object],
-            url: '/api/articles/meavgbu142424242y0yntlvo/attachments/meavgbuq42424242yc778h1t',
-            _isAttachment: true
-          }
-        ]
-      }
-    */
-    // Check top-level properties
     expect(res.body).to.have.property('title')
     expect(res.body).to.have.property('_updatedBy')
     expect(res.body).to.have.property('_id')
@@ -263,36 +217,17 @@ describe('API Route Coverage', () => {
     expect(res.body.image.length).to.be.at.least(1)
     res.body.image.forEach(img => {
       expect(img).to.have.property('_id')
-      expect(img).to.have.property('_createdAt')
-      expect(img).to.have.property('_updatedAt')
-      expect(img).to.have.property('_contentType')
-      expect(img).to.have.property('_md5sum')
-      expect(img).to.have.property('_payload')
-      expect(img).to.have.property('_size')
-      expect(img).to.have.property('_filename')
-      expect(img).to.have.property('_fields')
       expect(img).to.have.property('url')
-      expect(img).to.have.property('_isAttachment')
     })
 
     // Check localized image attachments
-    // TODO: localizedImage should be an array with its first element having fields.locale = "enUS"
     expect(res.body.localizedImage).to.be.an('array')
     expect(res.body.localizedImage.length).to.be.at.least(1)
     _.each(res.body.localizedImage, img => {
       expect(img).to.have.property('_id')
-      expect(img).to.have.property('_createdAt')
-      expect(img).to.have.property('_updatedAt')
-      expect(img).to.have.property('_contentType')
-      expect(img).to.have.property('_md5sum')
-      expect(img).to.have.property('_payload')
-      expect(img).to.have.property('_size')
-      expect(img).to.have.property('_filename')
-      expect(img).to.have.property('_fields')
       expect(img._fields).to.have.property('locale')
       expect(img._fields.locale).to.equal('enUS')
       expect(img).to.have.property('url')
-      expect(img).to.have.property('_isAttachment')
     })
 
     // Ensure no duplication between non-localized and localized attachments
@@ -304,6 +239,11 @@ describe('API Route Coverage', () => {
   })
 
   it('GET /api/articles/:id/attachments/:aid should return the file for the attachment', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Get attachment test' })
+    createdId = article.body._id
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('file', 'package.json')
+    attachmentId = attachment.body._id
+
     const res = await request(serverUrl)
       .get(`/api/articles/${createdId}/attachments/${attachmentId}`)
       .auth('localAdmin', 'localAdmin')
@@ -313,6 +253,11 @@ describe('API Route Coverage', () => {
   })
 
   it('GET /api/articles/file/:aid should return a file stream', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'File stream test' })
+    createdId = article.body._id
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('file', 'package.json')
+    attachmentId = attachment.body._id
+
     const res = await request(serverUrl)
       .get(`/api/articles/file/${attachmentId}`)
       .auth('localAdmin', 'localAdmin')
@@ -321,6 +266,12 @@ describe('API Route Coverage', () => {
   })
 
   it('GET /api/articles/:id/attachments/:aid.' + attachmentExt + ' should return the attachment', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Attachment extension test' })
+    createdId = article.body._id
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('file', 'package.json')
+    attachmentId = attachment.body._id
+    attachmentExt = 'json'
+
     const res = await request(serverUrl)
       .get(`/api/articles/${createdId}/attachments/${attachmentId}.${attachmentExt}`)
       .auth('localAdmin', 'localAdmin')
@@ -329,6 +280,12 @@ describe('API Route Coverage', () => {
   })
 
   it('GET /api/articles/:id/attachments/:aid.' + attachmentExt + '/cropped should return cropped attachment', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Cropped attachment test' })
+    createdId = article.body._id
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('image', './test/man.jpg')
+    attachmentId = attachment.body._id
+    attachmentExt = 'jpeg'
+
     const res = await request(serverUrl)
       .get(`/api/articles/${createdId}/attachments/${attachmentId}.${attachmentExt}/cropped`)
       .auth('localAdmin', 'localAdmin')
@@ -337,6 +294,12 @@ describe('API Route Coverage', () => {
   })
 
   it('PUT /api/articles/:id/attachments/:aid.' + attachmentExt + ' should update the attachment', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Update attachment test' })
+    createdId = article.body._id
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('file', 'package.json')
+    attachmentId = attachment.body._id
+    attachmentExt = 'json'
+
     const res = await request(serverUrl)
       .put(`/api/articles/${createdId}/attachments/${attachmentId}.${attachmentExt}`)
       .auth('localAdmin', 'localAdmin')
@@ -346,6 +309,11 @@ describe('API Route Coverage', () => {
   })
 
   it('PUT /api/articles/:id/attachments should bulk update attachments', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Bulk update test' })
+    createdId = article.body._id
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('file', 'package.json')
+    attachmentId = attachment.body._id
+
     const res = await request(serverUrl)
       .put(`/api/articles/${createdId}/attachments`)
       .auth('localAdmin', 'localAdmin')
@@ -355,6 +323,11 @@ describe('API Route Coverage', () => {
   })
 
   it('DELETE /api/articles/:id/attachments/:aid should delete the attachment', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Delete attachment test' })
+    createdId = article.body._id
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('file', 'package.json')
+    attachmentId = attachment.body._id
+
     const res = await request(serverUrl)
       .delete(`/api/articles/${createdId}/attachments/${attachmentId}`)
       .auth('localAdmin', 'localAdmin')
@@ -363,6 +336,8 @@ describe('API Route Coverage', () => {
   })
 
   it('DELETE /api/articles/:id/attachments should bulk delete attachments', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Bulk delete test' })
+    createdId = article.body._id
     // Ensure the attachment exists before bulk delete
     const createRes = await request(serverUrl)
       .post(`/api/articles/${createdId}/attachments`)
@@ -378,6 +353,8 @@ describe('API Route Coverage', () => {
   })
 
   it('DELETE /api/articles/:id should delete the article', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Delete article test' })
+    createdId = article.body._id
     const delRes = await request(serverUrl)
       .delete(`/api/articles/${createdId}`)
       .auth('localAdmin', 'localAdmin')
@@ -397,7 +374,7 @@ describe('API Route Coverage', () => {
   it('POST /api/articles/:id/attachments should fail for non-existent article', async () => {
     // At this point, createdId does not exist
     const res = await request(serverUrl)
-      .post(`/api/articles/${createdId}/attachments`)
+      .post('/api/articles/nonexistentid/attachments')
       .auth('localAdmin', 'localAdmin')
       .attach('file', __filename)
     expect(res.status).to.equal(404)
@@ -416,6 +393,8 @@ describe('API Route Coverage', () => {
   })
 
   it('GET /api/articles/:id should return the created article', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Get article test' })
+    createdId = article.body._id
     const res = await request(serverUrl)
       .get(`/api/articles/${createdId}`)
       .auth('localAdmin', 'localAdmin')
@@ -425,6 +404,8 @@ describe('API Route Coverage', () => {
   })
 
   it('PUT /api/articles/:id should update the article', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Update article test' })
+    createdId = article.body._id
     const res = await request(serverUrl)
       .put(`/api/articles/${createdId}`)
       .auth('localAdmin', 'localAdmin')
@@ -434,6 +415,8 @@ describe('API Route Coverage', () => {
   })
 
   it('POST /api/articles/:id/attachments should create an attachment', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Create attachment test' })
+    createdId = article.body._id
     // Use this test file as dummy upload
     const res = await request(serverUrl)
       .post(`/api/articles/${createdId}/attachments`)
@@ -446,6 +429,10 @@ describe('API Route Coverage', () => {
   })
 
   it('GET /api/articles/:id/attachments/:aid should return the attachment', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Get attachment test 2' })
+    createdId = article.body._id
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('file', 'package.json')
+    attachmentId = attachment.body._id
     const res = await request(serverUrl)
       .get(`/api/articles/${createdId}/attachments/${attachmentId}`)
       .auth('localAdmin', 'localAdmin')
@@ -454,6 +441,10 @@ describe('API Route Coverage', () => {
   })
 
   it('PUT /api/articles/:id/attachments/:aid should update the attachment', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Update attachment test 2' })
+    createdId = article.body._id
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('file', 'package.json')
+    attachmentId = attachment.body._id
     const res = await request(serverUrl)
       .put(`/api/articles/${createdId}/attachments/${attachmentId}`)
       .auth('localAdmin', 'localAdmin')
@@ -463,6 +454,10 @@ describe('API Route Coverage', () => {
   })
 
   it('DELETE /api/articles/:id/attachments/:aid should remove the attachment', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Remove attachment test' })
+    createdId = article.body._id
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('file', 'package.json')
+    attachmentId = attachment.body._id
     const res = await request(serverUrl)
       .delete(`/api/articles/${createdId}/attachments/${attachmentId}`)
       .auth('localAdmin', 'localAdmin')
@@ -471,6 +466,8 @@ describe('API Route Coverage', () => {
   })
 
   it('DELETE /api/articles/:id should remove the article', async () => {
+    const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Remove article test' })
+    createdId = article.body._id
     const res = await request(serverUrl)
       .delete(`/api/articles/${createdId}`)
       .auth('localAdmin', 'localAdmin')

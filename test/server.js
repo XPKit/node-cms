@@ -1,17 +1,24 @@
-#!/usr/bin/env node
-
 const _ = require('lodash')
 const fs = require('fs-extra')
 const path = require('path')
 const express = require('express')
 const { spawn } = require('child_process')
 const logger = new (require('img-sh-logger'))()
-const { getCMSInstance, options } = require('./cmsInstance')
+const { getCMSInstance, options: cmsOptions } = require('./cmsInstance')
 const pkg = require('../package.json')
 
+// Define resources that should be public for anonymousRead tests
+const publicResources = ['publicData']
 
 // Clean test data directory before CMS initialization
 fs.removeSync('./test/data')
+
+// Modify CMS options to include anonymousRead plugin and public resources
+const options = {
+  ...cmsOptions,
+  anonymousRead: publicResources
+}
+
 
 /*
 node-cms A
@@ -44,7 +51,6 @@ const peerPorts = [9991, 9992]
 const peerProcesses = []
 const serverPath = path.join(__dirname, 'server.js')
 let started = 0
-
 
 // Helper to get a random available port in range 9000-9999
 function getRandomPort() {
@@ -81,16 +87,13 @@ function launchPeers(done) {
       articles: [`http://localhost:${peerPort}`],
       authors: [`http://localhost:${peerPort}`]
     }
-
     // Use a separate resource directory for each peer
     const path = require('path')
     peerConfig.resources = path.join(__dirname, `resources-peer-${peerPort}`)
-
     // Clean peer data directory before starting
     const peerDataDir = path.join(__dirname, `data-peer-${peerPort}`)
     fs.removeSync(peerDataDir)
     peerConfig.data = peerDataDir
-
     const proc = spawn('node', ['--no-deprecation', serverPath], {
       env: {
         ...process.env,
@@ -110,7 +113,6 @@ function launchPeers(done) {
     })
   }
 }
-
 
 function killPeers() {
   for (const proc of peerProcesses) {
@@ -136,51 +138,41 @@ process.on('exit', () => {
   killPeers()
 })
 
-let cms, app, port
+const spawnArgs = ['mocha', '--exit', '-R', 'spec', '-b', '-t', '40000', '--timeout', '60000', './test/runTests.js']
+
+function spawnRunTests(withPeers = false) {
+  const testProcess = spawn('npx', spawnArgs, { stdio: 'inherit', shell: true })
+  testProcess.on('exit', (code) => {
+    logger.info(`Test process exited with code ${code}`)
+    if (withPeers) {
+      killPeers()
+    }
+    process.exit(code)
+  })
+}
+
+const port = runPeerTests ? getRandomPort() : 9990
+console.warn('will create CMS with options: ', options)
+const cms = getCMSInstance(options)
+cms.options.port = port
+const app = express()
+app.use(cms.express())
 if (runPeerTests) {
-  port = getRandomPort()
-  cms = getCMSInstance()
-  cms.options.port = port
-  app = express()
-  app.use(cms.express())
-  launchPeers(() => {
+  return launchPeers(() => {
     const server = app.listen(port, async () => {
       await cms.bootstrap(server)
       logger.info('########### server started ###########')
       logger.info(`${pkg.name} started at http://localhost:${server.address().port}/admin`)
       if (!_.get(process, 'env.NODE_CMS_OVERRIDE_CONFIG', false)) {
-        // Run all tests via runTests.js
-        const testProcess = spawn('npx', ['mocha', '--exit', '-R', 'spec', '-b', '-t', '40000', '--timeout', '60000', './test/runTests.js'], {
-          stdio: 'inherit',
-          shell: true
-        })
-        testProcess.on('exit', (code) => {
-          logger.info(`Test process exited with code ${code}`)
-          killPeers()
-          process.exit(code)
-        })
+        spawnRunTests(true)
       }
     })
   })
-} else {
-  port = 9990
-  cms = getCMSInstance()
-  cms.options.port = port
-  app = express()
-  app.use(cms.express())
-  const server = app.listen(port, async () => {
-    await cms.bootstrap(server)
-    logger.info('########### server started ###########')
-    logger.info(`${pkg.name} started at http://localhost:${server.address().port}/admin`)
-    // Run all tests via runTests.js
-    const testProcess = spawn('npx', ['mocha', '--exit', '-R', 'spec', '-b', '-t', '40000', '--timeout', '60000', './test/runTests.js'], {
-      stdio: 'inherit',
-      shell: true
-    })
-    testProcess.on('exit', (code) => {
-      logger.info(`Test process exited with code ${code}`)
-      process.exit(code)
-    })
-  })
 }
+const server = app.listen(port, async () => {
+  await cms.bootstrap(server)
+  logger.info('########### server started ###########')
+  logger.info(`${pkg.name} started at http://localhost:${server.address().port}/admin`)
+  spawnRunTests()
+})
 

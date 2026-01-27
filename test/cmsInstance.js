@@ -1,4 +1,3 @@
-
 const CMS = require('../')
 const options = {
   ns: [],
@@ -12,7 +11,7 @@ const options = {
   disableAdmin: false,
   mountPath: '/',
   disableJwtLogin: false,
-  disableAuthentication: true,
+  disableAuthentication: false,
   wsRecordUpdates: true,
   auth: {
     secret: '$C&F)J@NcRfUjXn2r5u8x/A?D*G-KaPd'
@@ -39,8 +38,8 @@ const options = {
   }
 }
 
-function getCMSInstance() {
-  return new CMS(options)
+function getCMSInstance(customOptions = {}) {
+  return new CMS({ ...options, ...customOptions })
 }
 
 module.exports = { getCMSInstance, options }
