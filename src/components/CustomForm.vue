@@ -1,7 +1,6 @@
 <template>
   <div v-if="schema != null" class="vue-form-generator">
     <fieldset v-if="schema.fields">
-      <!-- TODO: hugo - fix the layout for the paragraphs (not dynamic but with the lines definitions) -->
       <template v-if="schema.layout && schema.layout.lines">
         <div v-for="(line, i) in schema.layout.lines" :id="`${formId}-${i}`" :key="i" class="line-wrapper" :class="getLineClasses(line)">
           <div v-for="field in line.fields" :id="getFieldId(field)" :key="field.model" class="field-wrapper" :data-model="field.model" :class="getFieldClasses(field)">
