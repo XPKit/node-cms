@@ -152,7 +152,6 @@ function spawnRunTests(withPeers = false) {
 }
 
 const port = runPeerTests ? getRandomPort() : 9990
-console.warn('will create CMS with options: ', options)
 const cms = getCMSInstance(options)
 cms.options.port = port
 const app = express()

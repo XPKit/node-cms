@@ -11,7 +11,7 @@ describe('Authentication Plugin API', () => {
       .post('/admin/login')
       .send({ username: 'localAdmin', password: 'localAdmin' })
     expect(res.status).to.equal(200)
-    expect(res.text).to.equal('success')
+    expect(res.body).to.have.property('username', 'localAdmin')
     // Check for JWT cookie
     const cookies = res.headers['set-cookie'] || []
     const jwtCookie = cookies.find(c => c.startsWith('nodeCmsJwt='))
@@ -29,8 +29,8 @@ describe('Authentication Plugin API', () => {
     const res = await request(serverUrl)
       .post('/admin/login')
       .send({ username: 'localAdmin', password: 'wrongPassword' })
-    expect(res.status).to.equal(500)
-    expect(res.text).to.equal('Username and password not match')
+    expect(res.status).to.equal(401)
+    expect(res.body).to.have.property('error', 'Not authenticated')
     // Should not set JWT cookie
     const cookies = res.headers['set-cookie'] || []
     const jwtCookie = cookies.find(c => c.startsWith('nodeCmsJwt='))

@@ -3,9 +3,15 @@ const chai = require('chai')
 const expect = chai.expect
 const serverUrl = 'http://localhost:9990'
 
+const login = async () => {
+  const res = await request(serverUrl)
+    .post('/admin/login')
+    .send({ username: 'localAdmin', password: 'localAdmin' })
+  return res.headers['set-cookie'] || []
+}
+
 describe('Resource API - CRUD Operations', () => {
   let createdId
-
   afterEach(async () => {
     // Clean up any created articles
     if (createdId) {
@@ -14,6 +20,21 @@ describe('Resource API - CRUD Operations', () => {
         .auth('localAdmin', 'localAdmin')
       createdId = null
     }
+  })
+
+  it('should list all resources', async () => {
+    const cookies = await login()
+    const res = await request(serverUrl).get('/resources')
+      .auth('localAdmin', 'localAdmin').set('Cookie', [...cookies])
+    expect(res.status).to.equal(200)
+    expect(res.body).to.be.an('array')
+    res.body.forEach(resource => {
+      expect(resource).to.have.property('name').that.is.a('string')
+      expect(resource).to.have.property('type').that.is.a('string')
+      expect(resource).to.have.property('schema').that.is.an('array')
+      expect(resource).to.have.property('title').that.is.a('string')
+      expect(resource).to.have.property('mid').that.is.a('string')
+    })
   })
 
   it('should create a new record', async () => {
@@ -180,7 +201,7 @@ describe('Resource API - Attachments', () => {
     const getRes = await request(serverUrl)
       .get(`/api/articles/${recordId}`)
       .auth('localAdmin', 'localAdmin')
-    const attachment = getRes.body.file ? getRes.body.file.find(a => a._id === attachmentId) : undefined
+    const attachment = getRes.body.file ? getRes.body.file.find({_id: attachmentId}) : undefined
     expect(attachment).to.be.undefined
   })
 })

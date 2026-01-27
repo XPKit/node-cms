@@ -66,7 +66,6 @@ describe('Helpers - Query Filtering', () => {
       .get('/api/articles')
       .query({ page: 0, limit: 1 })
       .auth('localAdmin', 'localAdmin')
-
     expect(res.status).to.equal(200)
     expect(res.body).to.be.an('array')
     expect(res.body.length).to.be.at.most(1)
