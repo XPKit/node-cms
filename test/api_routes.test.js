@@ -36,7 +36,8 @@ describe('API Route Coverage', () => {
       .post(`/api/articles/${articleId}/attachments`)
       .auth('localAdmin', 'localAdmin')
       .field('_locale', 'enUS')
-      .attach('file', './test/man.jpg')
+      .field('_filename', 'man.jpg')
+      .attach('image', './test/man.jpg', { contentType: 'image/jpeg' })
     expect(res.status).to.equal(200)
     expect(res.body).to.have.property('_id')
     expect(res.body).to.have.property('_filename')
@@ -81,13 +82,15 @@ describe('API Route Coverage', () => {
     const att1 = await request(serverUrl)
       .post(`/api/articles/${articleId}/attachments`)
       .auth('localAdmin', 'localAdmin')
-      .attach('file', 'package.json')
+      .field('_filename', 'package.json')
+      .attach('file', 'package.json', { contentType: 'application/json' })
     expect(att1.status).to.equal(200)
     // Add second attachment
     const att2 = await request(serverUrl)
       .post(`/api/articles/${articleId}/attachments`)
       .auth('localAdmin', 'localAdmin')
-      .attach('file', './test/man.jpg')
+      .field('_filename', 'man.jpg')
+      .attach('image', './test/man.jpg', { contentType: 'image/jpeg' })
     expect(att2.status).to.equal(200)
     // Delete the first attachment
     const delRes = await request(serverUrl)
@@ -99,9 +102,10 @@ describe('API Route Coverage', () => {
       .get(`/api/articles/${articleId}`)
       .auth('localAdmin', 'localAdmin')
     expect(parentRes.status).to.equal(200)
-    expect(parentRes.body).to.have.property('file')
-    expect(parentRes.body.file).to.be.an('array')
-    expect(parentRes.body.file.length).to.equal(1)
+    expect(parentRes.body).to.have.property('image')
+    expect(parentRes.body.image).to.be.an('array')
+    expect(parentRes.body.image.length).to.equal(1)
+    expect(parentRes.body.image[0]).to.have.all.keys('_id', '_createdAt', '_updatedAt', '_contentType', '_md5sum', '_payload', '_size', '_filename', '_fields', 'url', '_isAttachment')
   })
   let createdId = null
   let attachmentId = null
@@ -152,7 +156,8 @@ describe('API Route Coverage', () => {
       .post(`/api/articles/${createdId}/attachments`)
       .auth('localAdmin', 'localAdmin')
       .field('field', 'image')
-      .attach('image', './test/man.jpg')
+      .field('_filename', 'man.jpg')
+      .attach('image', './test/man.jpg', { contentType: 'image/jpeg' })
     expect(res.status).to.equal(200)
     expect(res.body).to.be.an('object')
     expect(res.body._id).to.be.a('string')
@@ -174,7 +179,8 @@ describe('API Route Coverage', () => {
       .auth('localAdmin', 'localAdmin')
       .field('field', 'localizedImage')
       .field('locale', 'enUS')
-      .attach('localizedImage', './test/man.jpg')
+      .field('_filename', 'man.jpg')
+      .attach('localizedImage', './test/man.jpg', { contentType: 'image/jpeg' })
     expect(res.status).to.equal(200)
     expect(res.body).to.be.an('object')
     expect(res.body).to.have.property('_id')
@@ -194,8 +200,8 @@ describe('API Route Coverage', () => {
   it('GET /api/articles/:id should include both non-localized and localized attachments in the response', async () => {
     const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Attachments response test' })
     createdId = article.body._id
-    await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').field('field', 'image').attach('image', './test/man.jpg')
-    await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').field('field', 'localizedImage').field('locale', 'enUS').attach('localizedImage', './test/man.jpg')
+    await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').field('field', 'image').field('_filename', 'man.jpg').attach('image', './test/man.jpg', { contentType: 'image/jpeg' })
+    await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').field('field', 'localizedImage').field('locale', 'enUS').field('_filename', 'man.jpg').attach('localizedImage', './test/man.jpg', { contentType: 'image/jpeg' })
 
     const res = await request(serverUrl)
       .get(`/api/articles/${createdId}`)
@@ -241,7 +247,7 @@ describe('API Route Coverage', () => {
   it('GET /api/articles/:id/attachments/:aid should return the file for the attachment', async () => {
     const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Get attachment test' })
     createdId = article.body._id
-    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('file', 'package.json')
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').field('_filename', 'package.json').attach('file', 'package.json', { contentType: 'application/json' })
     attachmentId = attachment.body._id
 
     const res = await request(serverUrl)
@@ -255,7 +261,7 @@ describe('API Route Coverage', () => {
   it('GET /api/articles/file/:aid should return a file stream', async () => {
     const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'File stream test' })
     createdId = article.body._id
-    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('file', 'package.json')
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').field('_filename', 'package.json').attach('file', 'package.json', { contentType: 'application/json' })
     attachmentId = attachment.body._id
 
     const res = await request(serverUrl)
@@ -268,7 +274,7 @@ describe('API Route Coverage', () => {
   it('GET /api/articles/:id/attachments/:aid.' + attachmentExt + ' should return the attachment', async () => {
     const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Attachment extension test' })
     createdId = article.body._id
-    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('file', 'package.json')
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').field('_filename', 'package.json').attach('file', 'package.json', { contentType: 'application/json' })
     attachmentId = attachment.body._id
     attachmentExt = 'json'
 
@@ -282,7 +288,7 @@ describe('API Route Coverage', () => {
   it('GET /api/articles/:id/attachments/:aid.' + attachmentExt + '/cropped should return cropped attachment', async () => {
     const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Cropped attachment test' })
     createdId = article.body._id
-    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('image', './test/man.jpg')
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').field('_filename', 'man.jpg').attach('image', './test/man.jpg', { contentType: 'image/jpeg' })
     attachmentId = attachment.body._id
     attachmentExt = 'jpeg'
 
@@ -296,7 +302,7 @@ describe('API Route Coverage', () => {
   it('PUT /api/articles/:id/attachments/:aid.' + attachmentExt + ' should update the attachment', async () => {
     const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Update attachment test' })
     createdId = article.body._id
-    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('file', 'package.json')
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').field('_filename', 'package.json').attach('file', 'package.json', { contentType: 'application/json' })
     attachmentId = attachment.body._id
     attachmentExt = 'json'
 
@@ -311,7 +317,7 @@ describe('API Route Coverage', () => {
   it('PUT /api/articles/:id/attachments should bulk update attachments', async () => {
     const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Bulk update test' })
     createdId = article.body._id
-    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('file', 'package.json')
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').field('_filename', 'package.json').attach('file', 'package.json', { contentType: 'application/json' })
     attachmentId = attachment.body._id
 
     const res = await request(serverUrl)
@@ -325,7 +331,7 @@ describe('API Route Coverage', () => {
   it('DELETE /api/articles/:id/attachments/:aid should delete the attachment', async () => {
     const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Delete attachment test' })
     createdId = article.body._id
-    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('file', 'package.json')
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').field('_filename', 'package.json').attach('file', 'package.json', { contentType: 'application/json' })
     attachmentId = attachment.body._id
 
     const res = await request(serverUrl)
@@ -342,7 +348,8 @@ describe('API Route Coverage', () => {
     const createRes = await request(serverUrl)
       .post(`/api/articles/${createdId}/attachments`)
       .auth('localAdmin', 'localAdmin')
-      .attach('file', 'package.json')
+      .field('_filename', 'package.json')
+      .attach('file', 'package.json', { contentType: 'application/json' })
     const bulkId = createRes.body._id
     const res = await request(serverUrl)
       .delete(`/api/articles/${createdId}/attachments`)
@@ -376,7 +383,8 @@ describe('API Route Coverage', () => {
     const res = await request(serverUrl)
       .post('/api/articles/nonexistentid/attachments')
       .auth('localAdmin', 'localAdmin')
-      .attach('file', __filename)
+      .field('_filename', 'api_routes.test.js')
+      .attach('file', __filename, { contentType: 'application/javascript' })
     expect(res.status).to.equal(404)
   })
 
@@ -421,7 +429,8 @@ describe('API Route Coverage', () => {
     const res = await request(serverUrl)
       .post(`/api/articles/${createdId}/attachments`)
       .auth('localAdmin', 'localAdmin')
-      .attach('file', 'package.json')
+      .field('_filename', 'package.json')
+      .attach('file', 'package.json', { contentType: 'application/json' })
     expect(res.status).to.equal(200)
     expect(res.body).to.be.an('object')
     expect(res.body._id).to.be.a('string')
@@ -431,7 +440,7 @@ describe('API Route Coverage', () => {
   it('GET /api/articles/:id/attachments/:aid should return the attachment', async () => {
     const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Get attachment test 2' })
     createdId = article.body._id
-    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('file', 'package.json')
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').field('_filename', 'package.json').attach('file', 'package.json', { contentType: 'application/json' })
     attachmentId = attachment.body._id
     const res = await request(serverUrl)
       .get(`/api/articles/${createdId}/attachments/${attachmentId}`)
@@ -443,7 +452,7 @@ describe('API Route Coverage', () => {
   it('PUT /api/articles/:id/attachments/:aid should update the attachment', async () => {
     const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Update attachment test 2' })
     createdId = article.body._id
-    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('file', 'package.json')
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').field('_filename', 'package.json').attach('file', 'package.json', { contentType: 'application/json' })
     attachmentId = attachment.body._id
     const res = await request(serverUrl)
       .put(`/api/articles/${createdId}/attachments/${attachmentId}`)
@@ -456,7 +465,7 @@ describe('API Route Coverage', () => {
   it('DELETE /api/articles/:id/attachments/:aid should remove the attachment', async () => {
     const article = await request(serverUrl).post('/api/articles').auth('localAdmin', 'localAdmin').send({ title: 'Remove attachment test' })
     createdId = article.body._id
-    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').attach('file', 'package.json')
+    const attachment = await request(serverUrl).post(`/api/articles/${createdId}/attachments`).auth('localAdmin', 'localAdmin').field('_filename', 'package.json').attach('file', 'package.json', { contentType: 'application/json' })
     attachmentId = attachment.body._id
     const res = await request(serverUrl)
       .delete(`/api/articles/${createdId}/attachments/${attachmentId}`)
