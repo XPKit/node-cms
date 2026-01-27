@@ -6,7 +6,7 @@
 `node-cms` resources are created on-demand, so `curl localhost/api/my-custom-resource` will create a new resource namespace and 2 corresponding database, from there on REST API with work out of the box, however in order for most extra features to work `resource` `definition` should be created:
 ``` Javascript
 /* resources/articles.js */
-exports = module.exports = {
+module.exports = {
   schema: [{...}, {...}, {...}], // Resource schema definition
   locales: [],                   // List of resource locales. when defined, enables localisation support
   type: 'normal'                 // replication type, when defined, enables replication support

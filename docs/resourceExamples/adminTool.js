@@ -1,4 +1,3 @@
-// Admin tool resource example
 module.exports = {
   displayname: { enUS: 'IT Admin Tool' },
   schema: [

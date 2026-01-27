@@ -4,6 +4,7 @@ export default {
     'src/main.js',
     // Resource files are dynamically loaded
     'resources/**/*.js',
+    'docs/resourceExamples/**/*.js',
     // Plugins that are conditionally loaded based on options
     'lib/plugins/rest/index.js',
     'lib/plugins/admin/index.js',
@@ -18,17 +19,16 @@ export default {
     // Test files may be run individually
     'test/**/*.js'
   ],
-
   project: [
     'src/**/*.{js,ts,vue}',
     'lib/**/*.js',
     'lib-import/**/*.js',
     'lib-importFromRemote/**/*.js',
     'resources/**/*.js',
+    'docs/resourceExamples/**/*.js',
     'test/**/*.js',
     '*.js'
   ],
-
   ignore: [
     'cached/**',
     'data/**',
@@ -50,7 +50,6 @@ export default {
     '@p/js/main.js',
     '@p/scss/main.scss'
   ],
-
   // Path mapping to resolve Vite aliases
   paths: {
     '@c/*': ['src/components/*'],
@@ -65,7 +64,6 @@ export default {
     '@static/*': ['src/static/*'],
     '@p/*': ['src/plugins/*']
   },
-
   ignoreDependencies: [
     // Vue component aliases not properly resolved by Knip (temporary workaround)
     '@c/SystemInfo',
@@ -79,7 +77,6 @@ export default {
     'colors',
     'debug'
   ],
-
   // Ignore binaries that are referenced in package.json but not installed
   ignoreBinaries: ['ulimit', 'mongod']
 }

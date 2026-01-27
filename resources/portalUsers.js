@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   group: '1. BKK109',
   displayname: '1.3. Web Apps Users',
   schema: [

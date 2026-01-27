@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   group: '2. Exploration App',
   displayname: '2.08. Slideshow [7B]',
   schema: [

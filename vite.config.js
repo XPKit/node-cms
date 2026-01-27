@@ -1,5 +1,3 @@
-// vite.config.js
-
 import { defineConfig } from 'vite'
 import path from 'path'
 import _ from 'lodash'

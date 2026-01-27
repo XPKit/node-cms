@@ -1,7 +1,7 @@
-const request = require('supertest')
-const chai = require('chai')
-const expect = chai.expect
-const serverUrl = 'http://localhost:9990'
+// const request = require('supertest')
+// const chai = require('chai')
+// const expect = chai.expect
+// const serverUrl = 'http://localhost:9990'
 
 describe('ImportFromRemote Plugin API', () => {
   it('GET /importFromRemote/status should return a valid response', function () {

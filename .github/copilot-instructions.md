@@ -165,7 +165,7 @@ These rules provide deep context for the `node-cms` repository.
 - **Resource Schema:** Resources are plain JS objects defining a data model.
   ```javascript
   // resources/articles.js
-  exports = module.exports = {
+  module.exports = {
     displayname: { enUS: 'Articles' },
     schema: [
       { field: 'title', input: 'text', required: true },

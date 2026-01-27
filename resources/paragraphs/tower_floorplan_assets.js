@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   displayname: 'Tower Floorplan Asset',
   schema: [
     {

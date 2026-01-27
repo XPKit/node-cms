@@ -1,4 +1,4 @@
-exports = module.exports = {
+module.exports = {
   group: '2. Content',
   displayname: '2.5. Hierarchical Listings',
   schema: [

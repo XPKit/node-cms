@@ -218,5 +218,5 @@ class ComparePreloads {
   }
 }
 
-const tester = new ComparePreloads(argFile)
+const _tester = new ComparePreloads(argFile)
 

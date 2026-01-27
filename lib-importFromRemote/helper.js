@@ -31,7 +31,7 @@ let convertData = function (value, type) {
   return _.trim(value)
 }
 
-exports = module.exports = {
+module.exports = {
   convertData: convertData
 }
 
