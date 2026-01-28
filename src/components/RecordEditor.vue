@@ -188,9 +188,18 @@
           console.error('First invalid field', firstInvalidField)
           formValid = false
           document.querySelector(`#${firstInvalidField.id}`).focus()
+        } else {
+          _.find(document.querySelectorAll('.wysiwyg-wrapper[data-val="<p></p>"]'), (elem) => {
+            if (elem.innerText && elem.innerText.length > 0) {
+              const element = elem.parentElement.querySelector('.tiptap.ProseMirror')
+              console.warn('first invalid WYSIWYG field', element)
+              element.focus()
+              formValid = false
+              return true
+            }
+          })
         }
         this.formValid = formValid
-        // TODO: hugo - check validation of fields which aren't part of vuetify i.e, WYSIWYG fields
         this.canCreateUpdate = true
         if (!this.formValid) {
           // const notificationText = this.editingRecord._id ? TranslateService.get('TL_ERROR_CREATING_RECORD_ID', { id: this.editingRecord._id }) : TranslateService.get('TL_ERROR_CREATING_RECORD')

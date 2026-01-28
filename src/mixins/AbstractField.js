@@ -117,7 +117,7 @@ export default {
           if (validateAsync) {
             results.push(validator(this._value, this.schema, this.model))
           } else {
-            let result = validator(this._value, this.schema, this.model)
+            const result = validator(this._value, this.schema, this.model)
             if (result && isFunction(result.then)) {
               result.then(err => {
                 if (err) {
@@ -132,7 +132,7 @@ export default {
           }
         })
       }
-      let handleErrors = (errors) => {
+      const handleErrors = (errors) => {
         let fieldErrors = []
         forEach(arrayUniq(errors), err => {
           if (isArray(err) && err.length > 0) {

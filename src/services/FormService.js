@@ -97,6 +97,12 @@ const customValidators = {
     }
     return true
   },
+  wysiwyg: (value, field) => {
+    if (_.get(field, 'required', false) && (!_.isString(value) || _.isEmpty(value)) || value === '<p></p>') {
+      return fieldIsRequired()
+    }
+    return true
+  },
   number: (value, field, model) => checkNumber(field, value, model, 'number'),
   double: (value, field, model) => checkNumber(field, value, model, 'double'),
   integer: (value, field, model) => {
@@ -268,7 +274,8 @@ let typeMapper = {
   },
   wysiwyg: {
     type: 'Wysiwyg',
-    overrideType: 'WysiwygField'
+    overrideType: 'WysiwygField',
+    validator: customValidators.wysiwyg
   },
   image: {
     type: 'ImageView',

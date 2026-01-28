@@ -1,11 +1,10 @@
 <template>
   <div class="custom-textarea">
     <v-textarea
-      ref="input" multi-line :class="[schema.labelClasses]" :type="getType()" :model-value="_value" :max-length="schema.max" :min-length="schema.min"
-      :density="get('density')" :flat="get('flat')" :disabled="schema.disabled ? true : false" :readonly="schema.readonly ? true : false" :rules="[validateField]"
-      hide-details :variant="getVariant()" rounded="get('rounded')" @update:model-value="onChangeData" @update:focused="onFieldFocus"
+      ref="input" :class="[schema.labelClasses]" :type="getType()" :model-value="_value" :max-length="schema.max" :min-length="schema.min" auto-grow :density="get('density')" :flat="get('flat')" :disabled="schema.disabled"
+      :readonly="schema.readonly" :rules="[validateField]" hide-details :variant="getVariant()" rounded="get('rounded')" @update:model-value="onChangeData" @update:focused="onFieldFocus"
     >
-      <template #prepend><field-label :schema="schema" /></template>
+      <!-- <template #prepend><field-label :schema="schema" /></template> -->
     </v-textarea>
     <div v-if="showHint()" class="help-block">
       <v-icon size="small" icon="$information" />

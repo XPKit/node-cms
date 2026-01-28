@@ -1,13 +1,14 @@
 <template>
-  <div ref="wysiwygWrapper" class="wysiwyg-wrapper">
+  <div ref="wysiwygWrapper" class="wysiwyg-wrapper" :data-val="schema.required ? getVal() : 'not-required'">
     <field-label :schema="schema" />
     <div class="border-wrapper">
       <v-card v-if="editor" class="editor" rounded elevation="0">
         <tiptap-menu-bar class="editor__header" :editor="editor" :buttons="getButtons()" />
         <editor-content class="editor-content" :editor="editor" />
       </v-card>
+      <div v-if="wysiwygError.length > 0" class="error-message">{{ wysiwygError }}</div>
     </div>
-    <div v-if="showHint()" class="help-block">
+    <div v-if="showHint() && wysiwygError.length === 0" class="help-block">
       <v-icon size="small" icon="$information" />
       <span>{{ schema.options.hint }}</span>
     </div>
@@ -34,7 +35,8 @@
       return {
         loaded: false,
         key: null,
-        editor: null
+        editor: null,
+        wysiwygError: ''
       }
     },
     watch: {
@@ -46,16 +48,15 @@
       this.editor = new Editor({
         content: this._value,
         extensions: [
-          StarterKit.configure({history: true, code: true, blockquote: true}),
+          StarterKit.configure({history: true, code: true, codeBlock: false, blockquote: true}),
           Superscript,
-          CodeBlockLowlight.configure({
-            lowlight
-          })
+          CodeBlockLowlight.configure({ lowlight })
         ],
         onUpdate: () => {
           const val = this.editor.getHTML()
           this.$emit('change', val)
           this._value = val
+          this.wysiwygError = this.validateField()
         },
         onFocus: ()=> {
           this.onFieldFocus(true)
@@ -67,18 +68,18 @@
       this.loaded = true
       this.updateObj()
     },
-    created () {
-    },
     methods: {
+      getVal() {
+        return this.editor ? this.editor.getHTML() : ''
+      },
       validateField () {
-        const val = this.editor ? this.editor.getHTML() : ''
-        if (this.schema.required && (_.isNull(val) || _.isUndefined(val) || val === '')) {
-          return false
-        }
-        if (_.isFunction(this.schema.validator)) {
+        const val = this.getVal()
+        if (this.schema.required && (_.isNull(val) || _.isUndefined(val) || val === '' || val === '<p></p>')) {
+          return 'T_FIELD_IS_REQUIRED'
+        } else if (_.isFunction(this.schema.validator)) {
           return !!this.schema.validator(val, this.schema.model, this.model)
         }
-        return true
+        return ''
       },
       getButtons() {
         return _.get(this.schema, 'options.buttons', [])
@@ -111,6 +112,7 @@
 </script>
 <style lang="scss">
 @use '@a/scss/variables.scss' as *;
+@use '@a/scss/mixins.scss' as *;
 .wysiwyg-wrapper .editor-content pre{
   background-color: #282a36 !important;
   border-radius:4px !important;
@@ -314,6 +316,10 @@
         list-style-position: inside;
       }
     }
+  }
+  .error-message {
+    @include error;
+    color: $imag-orange;
   }
 }
 .v-theme--dark {
