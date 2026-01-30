@@ -1,6 +1,6 @@
 {
   "name": "node-cms",
-  "version": "2.5.5",
+  "version": "2.5.6",
   "description": "Content management system, written in node.js, uses leveldb as an asset and content store.",
   "main": "index.js",
   "types": "index.d.ts",
@@ -59,6 +59,7 @@
     "@tiptap/vue-3": "^3.16.0",
     "@vuepic/vue-datepicker": "^9.0.2",
     "abstract-level": "^3.1.1",
+    "ali-oss": "^6.23.0",
     "ansi_up": "^6.0.6",
     "ansi-html": "0.0.9",
     "basic-auth-connect": "^1.0.0",
