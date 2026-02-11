@@ -328,7 +328,7 @@
         }))
       },
       getSchemaForItems() {
-        this.items = _.compact(_.map(this.items, (item)=> {
+        this.items = _.compact(_.map(_.compact(this.items), (item)=> {
           if (!_.get(item, 'input', false) || !_.get(item, 'label', false)) {
             if (this.schema.localised) {
               item.localised = true
@@ -343,7 +343,7 @@
               const fieldName = _.get(this.schema, 'originalModel', _.get(this.schema, 'model', 'not-found'))
               console.error(`Paragraph of type ${item._type} is not allowed in field '${fieldName}', will show option to convert to`,_.get(this, 'schema.types', []))
             } else {
-              console.error(`Couldn't determine paragraph type for item with label ${item.label || 'no-label'}, will show option to convert to`, _.get(this, 'schema.types', []))
+              console.error(`Couldn't determine paragraph type for item with label ${_.get(item, 'label', 'no-label')}, will show option to convert to`, _.get(this, 'schema.types', []))
             }
             item.showConvert = _.get(this.types, '[0].title', false)
             if (!item.showConvert) {
