@@ -328,26 +328,30 @@
         }))
       },
       getSchemaForItems() {
-        this.items = _.map(this.items, (item)=> {
+        this.items = _.compact(_.map(this.items, (item)=> {
           if (!_.get(item, 'input', false) || !_.get(item, 'label', false)) {
             if (this.schema.localised) {
               item.localised = true
             }
-            const foundParagraphType = _.find(this.types, {field: item._type})
-            if (!_.isUndefined(foundParagraphType)) {
-              return _.extend(_.omit(foundParagraphType, ['_value', '_type']), {
-                _value: _.omit(item, '_type')
-              })
+            if (_.get(item, '_type', false)) {
+              const foundParagraphType = _.find(this.types, {field: item._type})
+              if (!_.isUndefined(foundParagraphType)) {
+                return _.extend(_.omit(foundParagraphType, ['_value', '_type']), {
+                  _value: _.omit(item, '_type')
+                })
+              }
+              const fieldName = _.get(this.schema, 'originalModel', _.get(this.schema, 'model', 'not-found'))
+              console.error(`Paragraph of type ${item._type} is not allowed in field '${fieldName}', will show option to convert to`,_.get(this, 'schema.types', []))
+            } else {
+              console.error(`Couldn't determine paragraph type for item with label ${item.label || 'no-label'}, will show option to convert to`, _.get(this, 'schema.types', []))
             }
-            const fieldName = _.get(this.schema, 'originalModel', _.get(this.schema, 'model', 'not-found'))
-            console.error(`Paragraph of type ${item._type} is not allowed in field '${fieldName}', will show option to convert to`,_.get(this, 'schema.types', []))
             item.showConvert = _.get(this.types, '[0].title', false)
             if (!item.showConvert) {
               item.cannotConvert = true
             }
           }
           return item
-        })
+        }))
         this.items = _.toArray(this.items)
       },
       blockMoreItems() {
@@ -496,11 +500,15 @@
       },
       updateItems() {
         // console.warn('updateItems before ', _.cloneDeep(this.items))
-        const items = _.map(this.items, (item)=> {
+        const items = _.compact(_.map(this.items, (item)=> {
           const obj = _.get(item, '_value', {})
+          if (!_.get(item, 'title', false)) {
+            console.error(`Title not found for paragraph item, cannot determine type. Item:`, item)
+            return null
+          }
           obj._type = item.title
           return obj
-        })
+        }))
         this.$emit('input', items, this.schema.model)
       },
       toggleMultipleDropZone() {
