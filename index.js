@@ -24,6 +24,7 @@ const UpdatesManager = require('./lib/UpdatesManager')
 const escapeRegExp = require('./lib/util/escapeRegExp')
 const Resource = require('./lib/resource')
 const ResourceAPIWrapper = require('./lib/ResourceAPIWrapper')
+const OSSHelper = require('./lib/util/OSSHelper')
 const logger = new (require('img-sh-logger'))()
 
 /**
@@ -221,7 +222,16 @@ class CMS {
       } else if (_.get(secret, 'length', 0) <= this.requiredKeyLength) {
         throw new Error(`config.auth.secret isn't long enough, adjust the value to have minimum ${this.requiredKeyLength} characters`)
       }
-      this._app.use(session(_.extend({cookie: {}}, this.options.session)))
+      let sessionOptions = _.extend({ cookie: {} }, this.options.session)
+      if (process.env.NODE_ENV === 'production') {
+        const FileStore = require('session-file-store')(session)
+        sessionOptions.store = new FileStore({
+          path: path.resolve(this.options.data, '.sessions.json'),
+          retries: 1,
+          logFn: function(){}
+        })
+      }
+      this._app.use(session(sessionOptions))
     }
     if (!options.disableAuthentication) {
       // Enables session with basic auth
@@ -307,6 +317,7 @@ class CMS {
     }
     this._processAttachmentFields()
     this._processSourceFields()
+    this.oss = new OSSHelper()
   }
 
   async _closeDatabase() {

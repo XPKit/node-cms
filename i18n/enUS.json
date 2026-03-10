@@ -177,5 +177,6 @@
     "TL_WS_UPDATES_RESOURCE_DESCRIPTION": "Resource {{ resourceName }} was updated by another user,<br>do you wish to reload?",
     "TL_WS_UPDATES_RECORD_DESCRIPTION": "Record was updated by another user,<br>do you wish to reload?",
     "TL_WS_UPDATES_RELOAD": "Reload",
-    "TL_WS_UPDATES_CLOSE": "Close"
+    "TL_WS_UPDATES_CLOSE": "Close",
+    "TL_LOADING_ERROR": "Error loading image"
   }

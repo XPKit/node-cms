@@ -103,8 +103,8 @@ module.exports = {
       {
         slots: 2,
         fields: [
-          { model: 'nameA', width: 1 },
-          { model: 'nameB', width: 1 }
+          { model: 'logoA', width: 1 },
+          { model: 'logoB', width: 1 }
         ]
       },
       {

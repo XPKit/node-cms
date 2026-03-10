@@ -176,7 +176,7 @@ export default {
       return _.get(this.schema, 'options.maxCount', -1)
     },
     getAttachmentFilename(attachment) {
-      return attachment._filename || (attachment._fields && attachment._fields._filename)
+      return _.get(attachment, '_filename', false) || _.get(attachment, '_fields._filename', false)
     },
     removeImage (attachment, index) {
       _.remove(this.attachments, (val, i)=> i === index)

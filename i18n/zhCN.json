@@ -168,5 +168,6 @@
     "TL_WS_UPDATES_RESOURCE_UPDATED": "资源 {{ resourceName }} 已更新，您是否要重新加载？",
     "TL_WS_UPDATES_RECORD": "您正在编辑的记录已被另一用户更新，您是否要重新加载？",
     "TL_WS_UPDATES_RELOAD": "重新加载",
-    "TL_WS_UPDATES_CLOSE": "Close"
+    "TL_WS_UPDATES_CLOSE": "Close",
+    "TL_LOADING_ERROR": "Error loading image"
   }

@@ -45,8 +45,8 @@ export default {
       }
       const elem = objGet(this.$refs, 'input', false)
       const fieldType = objGet(this.schema, 'type', false)
-      if (!elem && !includes(['Wysiwyg', 'ImageView', 'AttachmentView'], fieldType)) {
-        return console.error('no input ref for ', this.schema)
+      if (!elem && !includes(['Wysiwyg', 'ImageView', 'AttachmentView', 'switch'], fieldType)) {
+        return console.error('no input ref for ', fieldType, this.schema)
       }
       if (!isFunction(objGet(elem, 'focus'))) {
         return

@@ -1,8 +1,8 @@
 <template>
   <div class="row-handle">
     <div v-if="isImage(attachment)" class="image-wrapper">
-      <v-img v-if="attachment._id" cover :src="getImageSrc(attachment)" class="clickable" @click="viewFile()" />
-      <v-img v-else cover :src="getImageSrc(attachment)" />
+      <v-img v-if="attachment._id" cover :src="getImageSrc(attachment)" class="clickable" @click="viewFile()" @load="setLoadingError(false)" @error="setLoadingError(true)" />
+      <v-img v-else cover :src="getImageSrc(attachment)" @load="setLoadingError(false)" @error="setLoadingError(true)" />
       <!-- Cropped image -->
       <v-dialog v-if="attachment && schema.crop" class="crop-dialog">
         <template #activator="{ props: activatorProps }">
@@ -77,6 +77,7 @@
       </v-dialog>
     </div>
     <v-btn v-else-if="attachment._id" :theme="theme" size="small" rounded elevation="0" @click="viewFile()">{{ $filters.translate('TL_VIEW') }}</v-btn>
+    <div v-if="isImage(attachment) && loadingError" class="loading-error">{{ $filters.translate('TL_LOADING_ERROR') }}</div>
   </div>
 </template>
 
@@ -103,6 +104,7 @@
         firstCropUpdate: true,
         customWidth: null,
         customHeight: null,
+        loadingError: false,
         stencilProps: {
           class: 'cropper-stencil',
           previewClass: 'cropper-stencil__preview',
@@ -122,6 +124,9 @@
       this.customHeight = _.get(this.schema, 'crop.height', 500)
     },
     methods: {
+      setLoadingError(val) {
+        this.loadingError = val
+      },
       viewFile() {
         if (!this.attachment) { return }
         const filenameComponents = _.get(this.attachment, '_filename', '').split('.')
@@ -240,5 +245,9 @@
       }
     }
   }
+}
+.loading-error {
+  color: red;
+  font-size: vw(16px);
 }
 </style>

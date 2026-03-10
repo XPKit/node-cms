@@ -92,7 +92,10 @@ export default {
       })
       _.each(schema.fields, (field) => {
         if (!_.includes(alreadyPlacedFields, field.model) && !_.includes(alreadyPlacedFields, field.originalModel)) {
+          console.warn(`not placed field ${field.model} in layout, placing at the end`)
           schema.layout.lines.push({fields: [{model: field.model, schema: field}]})
+        } else {
+          console.info(`field ${field.model} already placed in layout, skipping`)
         }
       })
       return schema

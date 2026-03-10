@@ -2,12 +2,8 @@
   <div class="paragraph-view" :class="{'can-add-more': !blockMoreItems()}" :style="{ '--paragraph-level': getParagraphLevel() }">
     <div v-if="!blockMoreItems()" class="paragraph-header-bar">
       <v-autocomplete
-        ref="input"
-        :ripple="false" :menu-props="menuProps"
-        :theme="theme" transition="none"
-        :model-value="selectedType" :items="types" :item-title="getLabel" item-value="title"
-        hide-details rounded density="compact" persistent-placeholder variant="solo-filled" flat :rules="[validateField]"
-        :disabled="disabled || schema.disabled" menu-icon="$chevronDown" @update:model-value="onChangeType"
+        ref="input" :ripple="false" :menu-props="menuProps" :theme="theme" transition="none" :model-value="selectedType" :items="types" :item-title="getLabel" item-value="title" hide-details
+        rounded density="compact" persistent-placeholder variant="solo-filled" flat :rules="[validateField]" :disabled="disabled || schema.disabled" menu-icon="$chevronDown" @update:model-value="onChangeType"
       >
         <template #prepend><field-label :schema="schema" /></template>
         <template #label />
@@ -19,16 +15,7 @@
         </v-btn>
       </div>
     </div>
-    <div
-      v-if="showMultipleDropZone"
-      class="multiple-drop-zone"
-      :class="{ 'drag-over': isDragOver }"
-      @click="$refs.fileInput.click()"
-      @drop="onDropFiles"
-      @dragover.prevent="onDragOver"
-      @dragenter.prevent="onDragEnter"
-      @dragleave.prevent="onDragLeave"
-    >
+    <div v-if="showMultipleDropZone" class="multiple-drop-zone" :class="{ 'drag-over': isDragOver }" @click="$refs.fileInput.click()" @drop="onDropFiles" @dragover.prevent="onDragOver" @dragenter.prevent="onDragEnter" @dragleave.prevent="onDragLeave">
       <div class="drop-zone-content">
         <v-icon size="48" icon="$cloudUpload" />
         <div class="drop-zone-text">
@@ -44,39 +31,14 @@
     </div>
     <div class="paragraph-content">
       <draggable
-        v-if="schema && subResourcesLoaded"
-        :key="`${schema.model}-${key}`"
-        :list="items"
-        :class="{disabled, 'dynamic-layout-container': isDynamicLayoutContainer}"
-        draggable=".item"
-        v-bind="dragOptions"
-        handle=".handle"
-        :group="`${schema.model}-${key}`"
-        ghost-class="ghost"
-        :force-fallback="true"
+        v-if="schema && subResourcesLoaded" :key="`${schema.model}-${key}`" :list="items" :class="{disabled, 'dynamic-layout-container': isDynamicLayoutContainer}" draggable=".item" v-bind="dragOptions" handle=".handle" :group="`${schema.model}-${key}`" ghost-class="ghost" :force-fallback="true"
         @end="onEndDrag"
       >
-        <v-card
-          v-for="(item, idx) in items"
-          :key="`paragraph-item-${idx}`"
-          :theme="theme"
-          elevation="0"
-          :class="getItemClasses(idx, item)"
-          :style="getItemStyles(item)"
-          :data-index="`${idx + 1}/${items.length}`"
-        >
+        <v-card v-for="(item, idx) in items" :key="`paragraph-item-${idx}`" :theme="theme" elevation="0" :class="getItemClasses(idx, item)" :style="getItemStyles(item)" :data-index="`${idx + 1}/${items.length}`">
           <v-card-title class="handle paragraph-header">
             <div class="paragraph-title">{{ getLabel(item) }}</div>
             <div class="add-btn-wrapper">
-              <v-btn
-                class="remove-item"
-                :disabled="disabled || schema.disabled"
-                variant="text"
-                icon
-                rounded
-                size="small"
-                @click="onClickRemoveItem(item)"
-              >
+              <v-btn class="remove-item" :disabled="disabled || schema.disabled" variant="text" icon rounded size="small" @click="onClickRemoveItem(item)">
                 <v-icon icon="$trashCanOutline" />
               </v-btn>
             </div>
@@ -90,16 +52,7 @@
                 <template v-if="item.showConvert">
                   <div class="convert-action">
                     <v-select
-                      :model-value="item.showConvert"
-                      :menu-props="menuProps"
-                      :theme="theme"
-                      transition="none"
-                      :items="types"
-                      hide-details
-                      rounded
-                      density="compact"
-                      persistent-placeholder
-                      variant="solo-filled"
+                      :model-value="item.showConvert" :menu-props="menuProps" :theme="theme" transition="none" :items="types" hide-details rounded density="compact" persistent-placeholder variant="solo-filled"
                       flat
                     >
                       <template #prepend><field-label :schema="{label: $filters.translate('TL_CONVERT_TO')}" /></template>
@@ -424,7 +377,8 @@
         })
         _.each(schema.fields, (field) => {
           if (!_.includes(alreadyPlacedFields, field.model) && !_.includes(alreadyPlacedFields, field.originalModel)) {
-            schema.layout.lines.push({fields: [{model: field.model, schema: field}]})
+            console.warn(`Layout doesn't contain field ${field.model}, will not display it. To fix this, add the field to the layout of the paragraph resource.`)
+            // schema.layout.lines.push({fields: [{model: field.model, schema: field}]})
           }
         })
         return schema
