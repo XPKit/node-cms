@@ -105,7 +105,7 @@ describe('API Route Coverage', () => {
     expect(parentRes.body).to.have.property('image')
     expect(parentRes.body.image).to.be.an('array')
     expect(parentRes.body.image.length).to.equal(1)
-    expect(parentRes.body.image[0]).to.have.all.keys('_id', '_createdAt', '_updatedAt', '_contentType', '_md5sum', '_payload', '_size', '_filename', '_fields', 'url', '_isAttachment')
+    expect(parentRes.body.image[0]).to.have.all.keys('_id', '_createdAt', '_updatedAt', '_contentType', '_md5sum', '_payload', '_size', '_filename', '_fields', 'url', '_isAttachment', '_meta')
   })
   let createdId = null
   let attachmentId = null
