@@ -23,8 +23,12 @@ module.exports = {
       field: 'rate',
       input: 'number',
       localised: false
+    },
+    {
+      field: 'file',
+      input: 'file',
+      localised: false
     }
-    // ... (other fields omitted for brevity, same as normal)
   ],
   type: 'downstream',
   locales: [
