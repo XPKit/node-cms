@@ -127,7 +127,7 @@
     "vue-virtual-scroller": "^2.0.0-beta.8",
     "vue3-shortkey": "git+ssh://github.com/Zegfault/vue3-shortkey",
     "vuetify": "^3.10.9",
-    "ws": "^8.18.0"
+    "ws": "^8.20.1"
   },
   "config": {
     "port": 9990
