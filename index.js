@@ -25,7 +25,7 @@ const escapeRegExp = require('./lib/util/escapeRegExp')
 const Resource = require('./lib/resource')
 const ResourceAPIWrapper = require('./lib/ResourceAPIWrapper')
 const OSSHelper = require('./lib/util/OSSHelper')
-const logger = new (require('img-sh-logger'))()
+const logger = new (require('./lib/logger'))()
 
 /**
  * Recursively loads all .js files in a directory as modules (synchronously).

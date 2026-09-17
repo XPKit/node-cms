@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const Api = require('./api')
-const logger = new (require('img-sh-logger'))()
+const logger = new (require('../lib/logger'))()
 const pAll = require('p-all')
 const cliProgress = require('cli-progress')
 const { determineResourceOrder } = require('./utils')

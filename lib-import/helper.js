@@ -1,5 +1,5 @@
 const util = require('util')
-const logger = new (require('img-sh-logger'))()
+const logger = new (require('../lib/logger'))()
 const Dayjs = require('dayjs')
 const duration = require('dayjs/plugin/duration')
 Dayjs.extend(duration)
