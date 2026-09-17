@@ -151,6 +151,25 @@ async function seedXlsxToken() {
   }
 }
 
+// The sync plugin guards every route on a token held in the _sync resource, so without one seeded
+// each endpoint answers before it reaches a handler. Seeded through the API for the same reason as
+// the xlsx token above.
+async function seedSyncConfig() {
+  if (!options.sync) {
+    return
+  }
+  const api = cms.api()
+  const existing = await api('_sync').list()
+  if (_.isEmpty(existing)) {
+    await api('_sync').create({
+      allows: ['read', 'write'],
+      local: { token: 'sync-test-token', url: `http://localhost:${pkg.config.port}` },
+      remote: { token: 'sync-test-token', url: `http://localhost:${pkg.config.port}` },
+      resources: ['articles']
+    })
+  }
+}
+
 const spawnArgs = ['mocha', '--exit', '-R', 'spec', '-b', '-t', '40000', '--timeout', '60000', './test/runTests.js']
 
 function spawnRunTests(withPeers = false) {
@@ -174,6 +193,7 @@ if (runPeerTests) {
     const server = app.listen(port, async () => {
       await cms.bootstrap(server)
       await seedXlsxToken()
+      await seedSyncConfig()
       logger.info('########### server started ###########')
       logger.info(`${pkg.name} started at http://localhost:${server.address().port}/admin`)
       if (!_.get(process, 'env.NODE_CMS_OVERRIDE_CONFIG', false)) {
@@ -185,6 +205,7 @@ if (runPeerTests) {
 const server = app.listen(port, async () => {
   await cms.bootstrap(server)
   await seedXlsxToken()
+  await seedSyncConfig()
   logger.info('########### server started ###########')
   logger.info(`${pkg.name} started at http://localhost:${server.address().port}/admin`)
   spawnRunTests()

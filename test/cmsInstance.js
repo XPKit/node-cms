@@ -27,6 +27,11 @@ const options = {
     path: './syslog.log'
   },
   smartCrop: true,
+  // Mounts the import plugin's routes. The Google Sheets side needs oauth credentials, so only the
+  // XLSX endpoints are exercised; see test/import.test.js.
+  import: { resources: ['markets'] },
+  // Mounts the sync plugin under /sync; see test/sync.test.js.
+  sync: { resources: ['articles'] },
   xlsx: true,
   defaultPaging: 12,
   test: true,

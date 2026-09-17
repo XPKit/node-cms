@@ -1,90 +1,62 @@
 const request = require('supertest')
 const chai = require('chai')
+const _ = require('lodash')
 const expect = chai.expect
 const serverUrl = 'http://localhost:9990'
+const auth = ['localAdmin', 'localAdmin']
+const token = 'sync-test-token'
 
+// Every route in the sync plugin runs behind checkToken or checkEnvironmentToken, and every handler
+// used to be registered unbound, so `this` was undefined and the guards threw before they could
+// answer. The suite that would have caught it asserted `oneOf([200, 204, 404])`, which a crash
+// satisfies, so these assert what each route actually returns instead.
 describe('Sync Plugin API', () => {
-  it('GET /local/articles/status should return a valid response', async () => {
-    const res = await request(serverUrl).get('/local/articles/status')
-    console.log('GET /sync/local/articles/status response:', res.body)
-    console.log('GET /sync/local/articles/status status:', res.status)
-    expect(res.status).to.be.oneOf([200, 204, 404])
-    expect(res.body).to.be.an('object')
-    // Actual response: {}
-    // Status: 404
+  const probe = async (path, query = {}) => {
+    return request(serverUrl).get(path).query(query).auth(...auth)
+  }
+
+  it('rejects a request with no token', async () => {
+    const res = await probe('/sync/articles')
+    expect(res.status).to.equal(500)
+    expect(_.get(res.body, 'error'), 'a guard answered, rather than a handler crashing').to.equal('token is not match')
   })
 
-  it('GET /local/articles should return a valid response', async () => {
-    const res = await request(serverUrl).get('/local/articles')
-    console.log('GET /sync/local/articles response:', res.body)
-    console.log('GET /sync/local/articles status:', res.status)
-    expect(res.status).to.be.oneOf([200, 204, 404])
-    expect(res.body).to.be.an('object')
-    // Actual response: {}
-    // Status: 404
+  it('rejects a request with the wrong token', async () => {
+    const res = await probe('/sync/articles', { token: 'not-the-token' })
+    expect(res.status).to.equal(500)
+    expect(_.get(res.body, 'error')).to.equal('token is not match')
   })
 
-  it('POST /articles/from/local/to/remote should return a valid response', async () => {
-    const res = await request(serverUrl)
-      .post('/articles/from/local/to/remote')
-      .send({ test: 'value' })
-    console.log('POST /sync/articles/from/local/to/remote response:', res.body)
-    console.log('POST /sync/articles/from/local/to/remote status:', res.status)
-    expect(res.status).to.be.oneOf([200, 204, 404])
-    expect(res.body).to.be.an('object')
-    // Actual response: {}
-    // Status: 404
+  it('rejects a resource the sync config does not list', async () => {
+    const res = await probe('/sync/countries', { token })
+    expect(res.status).to.equal(500)
+    expect(_.get(res.body, 'error')).to.contain('countries')
   })
 
-  it('GET /articles/from/local/to/remote should return a valid response', async () => {
-    const res = await request(serverUrl).get('/articles/from/local/to/remote')
-    console.log('GET /sync/articles/from/local/to/remote response:', res.body)
-    console.log('GET /sync/articles/from/local/to/remote status:', res.status)
-    expect(res.status).to.be.oneOf([200, 204, 404])
-    expect(res.body).to.be.an('object')
-    // Actual response: {}
-    // Status: 404
+  // The listing hands back normalised records for the sync protocol rather than stored ones, so this
+  // asserts that it tracks the resource rather than pinning a shape this test should not own.
+  it('lists a synced resource, and follows it as records are added', async () => {
+    const before = await probe('/sync/articles', { token })
+    expect(before.status).to.equal(200)
+    expect(before.body).to.be.an('array')
+    const created = await request(serverUrl)
+      .post('/api/articles')
+      .auth(...auth)
+      .send({ title: 'Sync listing test' })
+    expect(created.status, 'seed').to.equal(200)
+    try {
+      const after = await probe('/sync/articles', { token })
+      expect(after.status).to.equal(200)
+      expect(after.body.length, 'one more record than before').to.equal(before.body.length + 1)
+    } finally {
+      await request(serverUrl).delete(`/api/articles/${created.body._id}`).auth(...auth)
+    }
   })
 
-  it('GET /articles should return a valid response', async () => {
-    const res = await request(serverUrl).get('/articles')
-    console.log('GET /sync/articles response:', res.body)
-    console.log('GET /sync/articles status:', res.status)
-    expect(res.status).to.be.oneOf([200, 204, 404])
+  it('reports the sync status of a resource', async () => {
+    const res = await probe('/sync/articles/status', { token })
+    expect(res.status).to.equal(200)
     expect(res.body).to.be.an('object')
-    // Actual response: {}
-    // Status: 404
-  })
-
-  it('GET /articles/status should return a valid response', async () => {
-    const res = await request(serverUrl).get('/articles/status')
-    console.log('GET /sync/articles/status response:', res.body)
-    console.log('GET /sync/articles/status status:', res.status)
-    expect(res.status).to.be.oneOf([200, 204, 404])
-    expect(res.body).to.be.an('object')
-    // Actual response: {}
-    // Status: 404
-  })
-
-  it('PUT /articles should return a valid response', async () => {
-    const res = await request(serverUrl)
-      .put('/articles')
-      .send({ test: 'value' })
-    console.log('PUT /sync/articles response:', res.body)
-    console.log('PUT /sync/articles status:', res.status)
-    expect(res.status).to.be.oneOf([200, 204, 404])
-    expect(res.body).to.be.an('object')
-    // Actual response: {}
-    // Status: 404
-  })
-
-  it('GET /articles/1/attachments/1 should return a valid response', async () => {
-    const res = await request(serverUrl).get('/articles/1/attachments/1')
-    console.log('GET /sync/articles/1/attachments/1 response:', res.body)
-    console.log('GET /sync/articles/1/attachments/1 status:', res.status)
-    expect(res.status).to.be.oneOf([200, 204, 404])
-    expect(res.body).to.be.an('object')
-    // Actual response: {}
-    // Status: 404
+    expect(res.body).to.have.property('status')
   })
 })
