@@ -48,10 +48,7 @@ export default {
     'lib/jsdoc-types.js',
     // Files with dynamic exports that Knip can't properly analyze
     'lib/helpers.js',
-    'lib/plugins/rest/routes.js',
-    // Plugin alias imports that Knip can't resolve
-    '@p/js/main.js',
-    '@p/scss/main.scss'
+    'lib/plugins/rest/routes.js'
   ],
   // Path mapping to resolve Vite aliases
   paths: {
@@ -65,7 +62,9 @@ export default {
     '@m/*': ['src/mixins/*'],
     '@a/*': ['src/assets/*'],
     '@static/*': ['src/static/*'],
-    '@p/*': ['src/plugins/*']
+    // src/plugins is a gitignored symlink that vite.utils.mjs creates at build time and skips during
+    // static analysis, so resolve the alias to the committed fallback it points at instead.
+    '@p/*': ['src/.plugins/*']
   },
   ignoreDependencies: [
     // Vue component aliases not properly resolved by Knip (temporary workaround)
