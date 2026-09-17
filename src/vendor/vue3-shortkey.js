@@ -13,6 +13,11 @@
  *
  * Local changes, all at the edges: the two IE polyfill imports are dropped, the listener guard checks for
  * a DOM instead of process.env, and the UMD tail is an ES module default export.
+ *
+ * One upstream defect is fixed rather than copied: the dedupe in bindValue compared `!itm === el`, which
+ * is a boolean against an element and so never matches, emptying objAvoided on every bind and leaving only
+ * the most recently bound element avoided. It now compares `itm !== el`, the behaviour the line intends.
+ * Nothing in this admin uses the `avoid` modifier, so the fix changes no behaviour here.
  */
 let ShortKey = {}
 let mapFunctions = {}
@@ -36,7 +41,7 @@ const bindValue = (value, el, binding, vnode) => {
   const propagte = binding.modifiers.propagte === true
   if (avoid) {
     objAvoided = objAvoided.filter((itm) => {
-      return !itm === el;
+      return itm !== el
     })
     objAvoided.push(el)
   } else {
