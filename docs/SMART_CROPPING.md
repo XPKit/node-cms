@@ -1,12 +1,23 @@
 # Smart Cropping Feature
 
+> **Status: detection is disabled in the code.** `SmartCrop.initialize()` returns without loading any
+> model, and `loadModels()` along with every `require` it makes is commented out
+> (`lib/util/smartcrop.js`). Face and object detection therefore never become available and every crop
+> falls back to a centre crop, whatever `smartCrop` is set to. None of the packages below ship as
+> dependencies of node-cms, and installing them changes nothing on its own: the commented-out loader
+> has to be restored first. The rest of this document describes the feature as designed, for whoever
+> picks that up.
+
 ## Overview
 
 The smart cropping feature provides AI-powered intelligent image cropping with automatic face detection and object detection. It uses TensorFlow.js with BlazeFace and COCO-SSD models to create optimal crops that preserve important visual elements, especially faces and objects.
 
 ## Installation
 
-The following npm packages are required for smart cropping:
+Restoring the feature needs the commented-out model loading in `lib/util/smartcrop.js` put back, plus
+these packages installed in the host project. They are deliberately not dependencies of node-cms:
+`canvas` was removed because it pulled a native build and a critical `tar` advisory into every install
+while only ever being referenced from the commented-out code.
 
 ```bash
 npm install @tensorflow-models/blazeface @tensorflow-models/coco-ssd @tensorflow/tfjs-node canvas
@@ -281,11 +292,13 @@ Test files are organized in the `test/` folder:
 
 ### Files
 1. **`lib/util/smartcrop.js`** - Core smart cropping utility with AI models
-2. **`lib/util/imagemin.js`** - Integration with image processing pipeline
+2. **`lib/util/imageOptimization.js`** - Integration with image processing pipeline
 3. **`lib/util/driver/index.js`** - Attachment API integration
 4. **`index.js`** - CMS bootstrap integration for model initialization
 
 ### Dependencies
+None of these are installed with node-cms; see the status note at the top of this document.
+
 - **`@tensorflow-models/blazeface`** - Face detection model
 - **`@tensorflow-models/coco-ssd`** - Object detection model
 - **`@tensorflow/tfjs-node`** - TensorFlow.js Node.js backend

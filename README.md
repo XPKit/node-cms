@@ -74,22 +74,10 @@ See [RestHelper Documentation](docs/REST_HELPER.md) for detailed usage patterns 
 
 #### Dependencies
 
-Some features require additional system dependencies:
-
-- **Python v3.x** (required for native modules)
-- **[tensorflow](https://www.npmjs.com/package/@tensorflow/tfjs-node)**
-
-**Linux (Debian/Ubuntu):**
-
-```sh
-sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
-```
-
-**Windows:**
-
-- Follow the official [node-canvas Windows installation guide](https://github.com/Automattic/node-canvas/wiki/Installation:-Windows)
-
-Make sure Python and all build tools are available in your PATH.
+The only native module, [sharp](https://sharp.pixelplumbing.com/install) (image processing), ships prebuilt
+binaries for the supported platforms, so a normal install needs no compiler toolchain. npm falls back to a
+source build only when no prebuilt binary exists for your platform; that build needs Python 3 and a C++
+toolchain (`build-essential` on Debian/Ubuntu).
 
 #### Development
 
@@ -97,6 +85,14 @@ Make sure Python and all build tools are available in your PATH.
     $ cd node-cms
     $ npm install
     $ npm test
+
+#### Releasing
+
+The built admin UI (`dist/`) is committed so that consumers installing from git get a working admin without
+building it themselves. Rebuild and stage it with every version bump: `npm version <patch|minor|major>` runs
+`npm run build` and force-adds `dist/` to the version commit through the `version` script (forced so a global
+`dist` ignore rule cannot drop new chunk files). A consumer that ships its own `node-cms/plugins` folder still
+rebuilds inside `node_modules/node-cms` to include it.
 
 #### As a dependency in existing `nodejs` project
 

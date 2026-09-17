@@ -74,6 +74,12 @@ declare module 'node-cms' {
    */
   interface ResourceAPI {
     /**
+     * Resource definition (schema, locales, type, ...) as passed to cms.resource()
+     * @example const schema = api('articles').options.schema
+     */
+    readonly options: any;
+
+    /**
      * List all records matching query
      * @example const articles = await api('articles').list()
      * @example const published = await api('articles').list({ published: true })

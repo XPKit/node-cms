@@ -13,7 +13,6 @@ logs/*
 ssl/*
 /lib/xptoolkitRequest
 stats.html
-dist
 src/plugins
 lib-importFromRemote/logs
 lib-importFromRemote/cached

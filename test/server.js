@@ -138,6 +138,19 @@ process.on('exit', () => {
   killPeers()
 })
 
+// The xlsx plugin authorises downloads with the token stored in the _xlsx resource. It is seeded here
+// through the API because a REST body with a "token" field is read as a JWT by the REST authorize middleware.
+async function seedXlsxToken() {
+  if (!options.xlsx) {
+    return
+  }
+  const api = cms.api()
+  const existing = await api('_xlsx').list()
+  if (_.isEmpty(existing)) {
+    await api('_xlsx').create({ token: 'xlsx-test-token' })
+  }
+}
+
 const spawnArgs = ['mocha', '--exit', '-R', 'spec', '-b', '-t', '40000', '--timeout', '60000', './test/runTests.js']
 
 function spawnRunTests(withPeers = false) {
@@ -160,6 +173,7 @@ if (runPeerTests) {
   return launchPeers(() => {
     const server = app.listen(port, async () => {
       await cms.bootstrap(server)
+      await seedXlsxToken()
       logger.info('########### server started ###########')
       logger.info(`${pkg.name} started at http://localhost:${server.address().port}/admin`)
       if (!_.get(process, 'env.NODE_CMS_OVERRIDE_CONFIG', false)) {
@@ -170,6 +184,7 @@ if (runPeerTests) {
 }
 const server = app.listen(port, async () => {
   await cms.bootstrap(server)
+  await seedXlsxToken()
   logger.info('########### server started ###########')
   logger.info(`${pkg.name} started at http://localhost:${server.address().port}/admin`)
   spawnRunTests()
