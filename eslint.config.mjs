@@ -193,6 +193,7 @@ export default [
       'logs/**',
       '.vite/**',
       'src/plugins/**',
+      'src/vendor/**',
       'resources/**/*.min.js',
       'coverage/**'
     ]
