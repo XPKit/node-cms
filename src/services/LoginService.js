@@ -35,7 +35,13 @@ class LoginService {
         return await this.logout()
       }
       this.user = data
-      const remoteUptime = _.get(this.user, 'uptime', +new Date())
+      // Only a response that actually carried the server's boot time can tell us whether it restarted.
+      // Logged out, /login answers {}, and treating that as a brand new server reloads the page on
+      // every other poll, which wipes whatever has been typed into the login form.
+      const remoteUptime = _.get(this.user, 'uptime', false)
+      if (!_.isNumber(remoteUptime)) {
+        return this.user
+      }
       const localUptime = _.parseInt(VueCookies.get('uptime') || -1)
       if (localUptime <= -1) {
         VueCookies.set('uptime', `${remoteUptime}`)
