@@ -18,19 +18,19 @@ describe('Sync Plugin API', () => {
   it('rejects a request with no token', async () => {
     const res = await probe('/sync/articles')
     expect(res.status).to.equal(500)
-    expect(_.get(res.body, 'error'), 'a guard answered, rather than a handler crashing').to.equal('token is not match')
+    expect(_.get(res.body, 'error', false), 'a guard answered, rather than a handler crashing').to.equal('token is not match')
   })
 
   it('rejects a request with the wrong token', async () => {
     const res = await probe('/sync/articles', { token: 'not-the-token' })
     expect(res.status).to.equal(500)
-    expect(_.get(res.body, 'error')).to.equal('token is not match')
+    expect(_.get(res.body, 'error', false)).to.equal('token is not match')
   })
 
   it('rejects a resource the sync config does not list', async () => {
     const res = await probe('/sync/countries', { token })
     expect(res.status).to.equal(500)
-    expect(_.get(res.body, 'error')).to.contain('countries')
+    expect(_.get(res.body, 'error', false)).to.contain('countries')
   })
 
   // The listing hands back normalised records for the sync protocol rather than stored ones, so this
