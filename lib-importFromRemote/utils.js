@@ -124,8 +124,6 @@ module.exports = {
   getAttachmentFields,
   getAttachments,
   convertKeyToId,
-  buildUrl,
-  deepMerge,
   filterAttachments,
   md5FileAsync
 }
