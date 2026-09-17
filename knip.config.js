@@ -27,7 +27,7 @@ export default {
     'resources/**/*.js',
     'docs/resourceExamples/**/*.js',
     'test/**/*.js',
-    '*.js'
+    '*.{js,mjs}'
   ],
   ignore: [
     'cached/**',

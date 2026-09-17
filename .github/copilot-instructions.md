@@ -151,7 +151,7 @@ These rules provide deep context for the `node-cms` repository.
 - `lib/resource.js`: Core data operations (CRUD) and attachment handling.
 - `lib/plugins/rest/index.js`: REST API implementation.
 - `server.js`: Example server startup, database configuration.
-- `vite.config.js`: Frontend build and development server configuration.
+- `vite.config.mjs`: Frontend build and development server configuration.
 - `resources/`: Directory containing all resource schema definitions.
 
 ### 3.3. Critical Patterns

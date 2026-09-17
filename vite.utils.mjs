@@ -1,22 +1,22 @@
-const path = require('path')
-const fs = require('fs')
-const _ = require('lodash')
-const crypto = require('crypto')
+import path from 'path'
+import fs from 'fs'
+import _ from 'lodash'
+import crypto from 'crypto'
 
 
 class ViteUtils {
   constructor () {
-    this.isInNodeModules = __dirname.includes('/node_modules/node-cms') || __dirname.includes('\\node_modules\\node-cms')
-    this.rootPath = path.join(__dirname, this.isInNodeModules ? '../../' : './')
+    this.isInNodeModules = import.meta.dirname.includes('/node_modules/node-cms') || import.meta.dirname.includes('\\node_modules\\node-cms')
+    this.rootPath = path.join(import.meta.dirname, this.isInNodeModules ? '../../' : './')
     const pkgPath = path.join(this.rootPath, 'package.json')
-    const pkg = require(pkgPath)
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'))
     this.serverPort = _.get(pkg, 'config.port', 9990)
     this.devPort = 10000 + this.serverPort
     this.baseUrl = 'http://localhost'
     this.websocketBaseUrl = 'ws://localhost'
     this.nodeCmsMountPath = _.get(pkg, 'config.mountPath', '/')
     console.log(`Node-cms mount path is: ${this.nodeCmsMountPath}`)
-    this.nodeCmsSrcPath = path.resolve(__dirname, 'src')
+    this.nodeCmsSrcPath = path.resolve(import.meta.dirname, 'src')
     this.plugins = {
       toBuild: path.resolve(this.nodeCmsSrcPath, 'plugins'),
       source: path.resolve(this.rootPath, 'node-cms', 'plugins'),
@@ -124,7 +124,7 @@ class ViteUtils {
   }
 }
 
-module.exports = {
+export default {
   self: null,
   id: null,
   getInstance (baseUrl, pkg) {
