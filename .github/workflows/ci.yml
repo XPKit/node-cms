@@ -29,8 +29,10 @@ jobs:
       - name: Knip
         run: npm run knip
 
+      # Runs the unit suite and then the integration suite, both under c8. The coverage summary is
+      # printed rather than gated: a threshold set at today's number would only freeze it there.
       - name: Test
-        run: npm test
+        run: npm run coverage
 
       - name: Build
         run: npm run build
