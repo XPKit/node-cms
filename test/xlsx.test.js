@@ -35,7 +35,7 @@ const remove = async (resource, id) => {
 const rows = (workbook, sheetName) => xlsx.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 })
 
 describe('XLSX Plugin API', () => {
-  const created = { provinces: [], cities: [] }
+  const created = { provinces: [], cities: [], notes: [] }
   let tmpDir
   let exported
 
@@ -47,9 +47,14 @@ describe('XLSX Plugin API', () => {
     const c1 = await create('cities', { key: 'c1', name: { en: 'City 1', zh: '城市一' }, province: p1._id })
     const c2 = await create('cities', { key: 'c2', name: { en: 'City 2' }, province: p1._id })
     created.cities = [c1._id, c2._id]
+    const n1 = await create('notes', { key: 'n1', body: '<p>Real <b>rich text</b> content</p>' })
+    created.notes = [n1._id]
   })
 
   after(async () => {
+    for (const id of created.notes) {
+      await remove('notes', id)
+    }
     for (const id of created.cities) {
       await remove('cities', id)
     }
@@ -108,5 +113,24 @@ describe('XLSX Plugin API', () => {
     expect(res.body, 'only the edited row is an update').to.deep.equal({ create: 0, update: 1 })
     const city = await request(serverUrl).get(`/api/cities/${created.cities[1]}`).auth(...auth)
     expect(city.body.province).to.equal(created.provinces[1])
+  })
+
+  it('exports an empty cell for a wysiwyg field so a round trip cannot overwrite its markup', async () => {
+    const markup = '<p>Real <b>rich text</b> content</p>'
+    const res = await download('notes')
+    expect(res.status).to.equal(200)
+    const wb = xlsx.read(res.body, { type: 'buffer' })
+    const sheet = rows(wb, 'notes')
+    const column = _.indexOf(sheet[1], 'body')
+    expect(column, 'the wysiwyg column is still exported').to.be.greaterThan(-1)
+    expect(sheet[2][column], 'but its cell carries no value').to.equal(undefined)
+    const filePath = path.join(tmpDir, 'notes.xlsx')
+    xlsx.writeFile(wb, filePath)
+    const status = await request(serverUrl).post(`/xlsx/notes/status?token=${token}`).attach('xlsx', filePath)
+    expect(status.status).to.equal(200)
+    expect(status.body, 'an untouched export proposes no change').to.deep.equal({ create: 0, update: 0 })
+    await request(serverUrl).post(`/xlsx/notes/import?token=${token}`).attach('xlsx', filePath)
+    const note = await request(serverUrl).get(`/api/notes/${created.notes[0]}`).auth(...auth)
+    expect(note.body.body, 'the stored markup survives the round trip').to.equal(markup)
   })
 })
