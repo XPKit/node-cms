@@ -1,0 +1,34 @@
+# Dependabot configuration.
+#
+# This repository is reviewed every few months rather than weekly, so the aim here is a small number
+# of pull requests waiting whenever someone next looks, not a steady drip of one per dependency.
+#
+# Note that `schedule` only governs version updates. Security updates are raised as soon as an
+# advisory lands, ignore the schedule, and are exempt from `open-pull-requests-limit`. Grouping is
+# therefore the only thing that limits how many security pull requests appear, which is why the
+# groups below cover both kinds.
+#
+# Merging any of these changes package-lock.json, and this repository commits its built admin in
+# dist/. The bundle is rebuilt at release time by `npm version` (see README, "Releasing"), so dist/
+# may sit briefly out of date after a lockfile merge.
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: quarterly
+    open-pull-requests-limit: 5
+    groups:
+      production:
+        applies-to: version-updates
+        dependency-type: production
+      development:
+        applies-to: version-updates
+        dependency-type: development
+      security-production:
+        applies-to: security-updates
+        dependency-type: production
+      security-development:
+        applies-to: security-updates
+        dependency-type: development
