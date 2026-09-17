@@ -1,9 +1,8 @@
 import { defineConfig } from 'vite'
 import path from 'path'
-import _ from 'lodash'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-import ViteUtils from './vite.utils.js'
+import ViteUtils from './vite.utils.mjs'
 import vuetify from 'vite-plugin-vuetify'
 import rollupNodePolyFill from 'rollup-plugin-node-polyfills'
 import { visualizer } from 'rollup-plugin-visualizer'
@@ -37,7 +36,7 @@ const cacheControl = () => ({
 
 export default defineConfig(({ mode }) => {
   return {
-    root: mode === 'development' ? __dirname : viteUtils.nodeCmsSrcPath,
+    root: mode === 'development' ? import.meta.dirname : viteUtils.nodeCmsSrcPath,
     base: './',
     publicDir: `${mode === 'development' ? '.' : '..'}/public`,
     css: {
@@ -93,16 +92,16 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks: (id) => {
             if (id.includes('node_modules') && !id.includes('node-cms/src')) {
-              const moduleName = _.get(path.dirname(id).split('/node_modules/').pop().split('/'), '[0]', false)
+              const moduleName = path.dirname(id).split('/node_modules/').pop().split('/')[0] ?? false
               if (!moduleName) {
                 return defaultVendorsFilename
               }
-              const shouldRegroupModule = _.find(regroupModulesStartingWith, (startingWith) => id.includes(startingWith))
-              if (!_.isUndefined(shouldRegroupModule)) {
+              const shouldRegroupModule = regroupModulesStartingWith.find((startingWith) => id.includes(startingWith))
+              if (shouldRegroupModule !== undefined) {
                 return shouldRegroupModule
               }
-              const foundSeperatedVendor = _.find(separatedVendors, (separatedVendor) => id.includes(`node_modules/${separatedVendor}`))
-              return !_.isUndefined(foundSeperatedVendor) ? moduleName : defaultVendorsFilename
+              const foundSeperatedVendor = separatedVendors.find((separatedVendor) => id.includes(`node_modules/${separatedVendor}`))
+              return foundSeperatedVendor !== undefined ? moduleName : defaultVendorsFilename
             }
             return null
           }
