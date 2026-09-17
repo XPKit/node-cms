@@ -3,7 +3,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const express = require('express')
 const { spawn } = require('child_process')
-const logger = new (require('img-sh-logger'))()
+const logger = new (require('../lib/logger'))()
 const { getCMSInstance, options: cmsOptions } = require('./cmsInstance')
 const pkg = require('../package.json')
 

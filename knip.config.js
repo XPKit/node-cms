@@ -44,8 +44,6 @@ export default {
     // Files with dynamic exports that Knip can't properly analyze
     'lib/helpers.js',
     'lib/plugins/rest/routes.js',
-    // Logger dependencies
-    'lib/logger.js',
     // Plugin alias imports that Knip can't resolve
     '@p/js/main.js',
     '@p/scss/main.scss'
@@ -72,10 +70,7 @@ export default {
     '@c/Omnibar',
     '@c/ThemeSwitch',
     '@c/PreviewMultiple',
-    '@c/FileInputErrors',
-    // Logger dependencies used in lib/logger.js (which is ignored)
-    'colors',
-    'debug'
+    '@c/FileInputErrors'
   ],
   // Ignore binaries that are referenced in package.json but not installed
   ignoreBinaries: ['ulimit', 'mongod']

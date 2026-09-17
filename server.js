@@ -3,7 +3,7 @@
 const express = require('express')
 const CMS = require('./')
 const pkg = require('./package.json')
-const logger = new (require('img-sh-logger'))()
+const logger = new (require('./lib/logger'))()
 // start with leveldb
 // let options = {
 //   // debug: true,
