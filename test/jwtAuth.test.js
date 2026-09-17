@@ -60,6 +60,17 @@ describe('JWT authentication', () => {
     expect(res.text).to.contain('<title>node-cms</title>')
   })
 
+  // rest/middleware/authorize stores {} as the session user for an anonymous request, and an empty
+  // object is not a session worth keeping: a later request holding a real token has to rehydrate.
+  it('rehydrates a session that an anonymous request left empty', async () => {
+    const anonymous = await request(serverUrl).get('/api/regions')
+    const staleSession = cookie(anonymous.headers['set-cookie'], 'connect.sid')
+    expect(staleSession, 'the anonymous request started a session').to.be.a('string')
+    const res = await request(serverUrl).get('/api/regions').set('Cookie', [jwtCookie, staleSession].join('; '))
+    expect(res.status).to.equal(200)
+    expect(_.map(res.body, 'key')).to.include('jwt-auth-test')
+  })
+
   it('leaves the logged-in session intact after an authorised read', async () => {
     const both = [jwtCookie, sessionCookie].join('; ')
     const read = await request(serverUrl).get('/api/regions').set('Cookie', both)
