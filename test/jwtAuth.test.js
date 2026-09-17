@@ -60,9 +60,11 @@ describe('JWT authentication', () => {
     expect(res.text).to.contain('<title>node-cms</title>')
   })
 
-  // rest/middleware/authorize stores {} as the session user for an anonymous request, and an empty
-  // object is not a session worth keeping: a later request holding a real token has to rehydrate.
-  it('rehydrates a session that an anonymous request left empty', async () => {
+  // An anonymous request leaves a session user behind that is neither absent nor empty:
+  // rest/middleware/authorize sets {} and then authorize() mutates that same object, assigning the
+  // anonymous group id onto it. Only a username marks a session worth keeping, so a later request
+  // holding a real token still has to rehydrate over it.
+  it('rehydrates a session left holding only the anonymous group', async () => {
     const anonymous = await request(serverUrl).get('/api/regions')
     const staleSession = cookie(anonymous.headers['set-cookie'], 'connect.sid')
     expect(staleSession, 'the anonymous request started a session').to.be.a('string')
