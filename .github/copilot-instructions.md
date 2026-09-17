@@ -126,7 +126,9 @@ These rules apply to all projects unless overridden by project-specific instruct
 - **Nesting:** Use SCSS nesting to reflect the HTML structure and scope styles logically.
 
 ### 2.4. Testing
-- **Test Filenames:** Test script filenames must be prefixed with `test-` (e.g., `test-user-api.js`).
+- **Test Filenames:** Tests live under `test/` and are named `*.test.js` (e.g. `test/resource.test.js`,
+  `test/unit/jsonStore.read.test.js`). Do not prefix them with `test-`: `.gitignore` excludes
+  `test-*.js`, so a file named that way would never be committed or reach CI.
 
 ### 2.5. Terminal Commands
 - **Environment:** Assume all commands are run on **Windows 11** using **PowerShell**.

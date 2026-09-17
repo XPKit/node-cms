@@ -16,9 +16,9 @@
     "knip": "knip",
     "knip-lint": "knip && npm run lint",
     "test": "node --inspect --no-deprecation test/server.js",
-    "unit": "mocha --exit -R spec -t 5000 'test/unit/**/*.test.js'",
+    "unit": "mocha --exit -R spec -t 5000 \"test/unit/**/*.test.js\"",
     "test:all": "npm run unit && npm test",
-    "coverage": "c8 --all --include 'lib/**/*.js' --include 'index.js' --reporter=text-summary npm run test:all",
+    "coverage": "c8 --all --include \"lib/**/*.js\" --include \"index.js\" --reporter=text-summary npm run test:all",
     "old-tests": "mocha --exit -R spec -b -t 40000 old_tests/spec.js",
     "mongodb": "ulimit -n 1000 && mongod --ipv6 --dbpath=../node-cms-mongodb-data",
     "mongodb-auth": "ulimit -n 1000 && mongod --tlsMode requireTLS --tlsCertificateKeyFile ./ssl/server.pem --tlsCAFile ./ssl/ca.pem --bind_ip localhost --dbpath=../node-cms-mongodb-data"
