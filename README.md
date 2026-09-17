@@ -86,6 +86,14 @@ toolchain (`build-essential` on Debian/Ubuntu).
     $ npm install
     $ npm test
 
+#### Releasing
+
+The built admin UI (`dist/`) is committed so that consumers installing from git get a working admin without
+building it themselves. Rebuild and stage it with every version bump: `npm version <patch|minor|major>` runs
+`npm run build` and force-adds `dist/` to the version commit through the `version` script (forced so a global
+`dist` ignore rule cannot drop new chunk files). A consumer that ships its own `node-cms/plugins` folder still
+rebuilds inside `node_modules/node-cms` to include it.
+
 #### As a dependency in existing `nodejs` project
 
 ```

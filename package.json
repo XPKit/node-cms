@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "del-cli --force ./src/plugins && cross-env VITE_CJS_IGNORE_WARNING=true vite",
     "build": "vite build --emptyOutDir",
+    "version": "npm run build && git add -f -A dist",
     "preview": "vite preview",
     "serve-prod": "cross-env NODE_ENV=production node server.js",
     "serve-backend": "cross-env VITE_DEV_MODE=true node --inspect --no-deprecation server.js",
