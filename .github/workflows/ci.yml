@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      # Not `npm run lint`: that script is `eslint --fix`, which rewrites files rather than
+      # reporting, so it would pass on code it had just edited.
+      - name: Lint
+        run: npx eslint lib src
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      # dist/ is committed (see README, "Releasing"). A dependency change can alter the bundle, so
+      # without this a lockfile-only merge silently leaves the shipped admin built from older
+      # versions. The build is deterministic, so a clean tree here is a stable signal.
+      - name: Committed dist/ matches the build
+        run: |
+          if [ -n "$(git status --porcelain --untracked-files=all -- dist)" ]; then
+            echo "::error::dist/ is out of date. Run 'npm run build' and commit the result."
+            git status --porcelain --untracked-files=all -- dist
+            git diff --stat -- dist
+            exit 1
+          fi
+          echo "dist/ matches the build."
