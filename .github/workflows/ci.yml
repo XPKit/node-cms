@@ -20,9 +20,14 @@ jobs:
       - run: npm ci
 
       # Not `npm run lint`: that script is `eslint --fix`, which rewrites files rather than
-      # reporting, so it would pass on code it had just edited.
+      # reporting, so it would pass on code it had just edited. lint:check is the reporting one.
       - name: Lint
-        run: npx eslint lib src
+        run: npm run lint:check
+
+      # Blocking on purpose. It reports nothing today, and a job nobody is required to read is a job
+      # nobody reads. An intentional standalone script belongs in knip.config.js as an entry point.
+      - name: Knip
+        run: npm run knip
 
       - name: Test
         run: npm test

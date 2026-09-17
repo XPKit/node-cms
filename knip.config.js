@@ -17,7 +17,10 @@ export default {
     'lib/plugins/import/index.js',
     'lib/plugins/importFromRemote/index.js',
     // Test files may be run individually
-    'test/**/*.js'
+    'test/**/*.js',
+    // Standalone scripts, run by hand rather than imported
+    'smartcrop-api.js',
+    'compare-preload-jsons.js'
   ],
   project: [
     'src/**/*.{js,ts,vue}',
@@ -41,6 +44,8 @@ export default {
     'dist/**',
     // Files we know are unused but want to keep
     'src/.plugins/js/main.js',
+    // Type definitions for the JSDoc in index.js, which links to it rather than importing it
+    'lib/jsdoc-types.js',
     // Files with dynamic exports that Knip can't properly analyze
     'lib/helpers.js',
     'lib/plugins/rest/routes.js',
