@@ -60,6 +60,22 @@ describe('Query filtering combined with paging', () => {
     expect(await list({ 'name.zh': 'shared' }, { page: keys.length, limit: 1 })).to.be.empty
   })
 
+  // #85: nothing applied the offset for a query-less read. filterResults returns early when there is
+  // no query, and the store limited without skipping, so every page returned the first one.
+  it('pages through a resource with no query', async () => {
+    const all = await list({})
+    expect(all.length, 'fixture').to.be.at.least(keys.length)
+    const limit = 2
+    const seen = []
+    for (let page = 0; page * limit < all.length; page++) {
+      const results = await list({}, { page, limit })
+      expect(results.length, `page ${page} size`).to.equal(Math.min(limit, all.length - page * limit))
+      seen.push(...results)
+    }
+    expect(_.map(seen, '_id'), 'the pages concatenate back into the full list').to.deep.equal(_.map(all, '_id'))
+    expect(await list({}, { page: Math.ceil(all.length / limit), limit }), 'past the end').to.be.empty
+  })
+
   // checkUniqueFields resolves duplicates through find({query}), so it silently stopped rejecting
   // them once more than one record was present.
   it('rejects a duplicate value in a unique field', async () => {
