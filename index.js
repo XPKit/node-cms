@@ -215,6 +215,10 @@ class CMS {
         return req.headers['x-no-compression'] ? false : compression.filter(req, res)
       }
     }))
+    // Both auth paths read req.cookies: the rest plugin's authorize middleware looks for the JWT
+    // there, and so does getTokenFromReq. dispatchAuth picks between them per request, so the parser
+    // cannot live inside either branch below.
+    this._app.use(cookieParser())
     if (!options.disableAuthentication || !options.disableJwtLogin) {
       const secret = _.get(this.options, 'auth.secret')
       if (_.isEmpty(secret)) {
@@ -243,7 +247,6 @@ class CMS {
       })
     } else if (!options.disableJwtLogin) {
       // Enables session with jwt token auth
-      this._app.use(cookieParser())
       this._app.use((req, res, next) => {
         if (!req.headers.authorization) {
           const token = _.get(req, 'session.nodeCmsUser.token', false)

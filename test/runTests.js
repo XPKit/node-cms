@@ -5,6 +5,7 @@ require('./helpers.test.js')
 require('./anonymousRead.test.js')
 require('./db.test.js')
 require('./query.test.js')
+require('./jwtAuth.test.js')
 require('./api_routes.test.js')
 
 // require('./smart-cropping.test.js')
