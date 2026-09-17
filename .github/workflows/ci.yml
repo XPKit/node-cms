@@ -17,19 +17,6 @@ jobs:
           node-version: '22'
           cache: npm
 
-      # img-sh-logger is a private repository and the lockfile resolves it over SSH, so a default
-      # runner cannot install this project. Rewriting that one prefix to an authenticated HTTPS URL
-      # is enough; nothing else in the tree is private.
-      - name: Authenticate to the private img-sh-logger dependency
-        env:
-          TOKEN: ${{ secrets.PRIVATE_PACKAGES_TOKEN }}
-        run: |
-          if [ -z "$TOKEN" ]; then
-            echo "::error::PRIVATE_PACKAGES_TOKEN is not set. It needs read access to imagination-tech-studio/img-sh-logger, which package.json depends on. Without it npm ci cannot resolve that dependency."
-            exit 1
-          fi
-          git config --global url."https://x-access-token:${TOKEN}@github.com/".insteadOf "ssh://git@github.com/"
-
       - run: npm ci
 
       # Not `npm run lint`: that script is `eslint --fix`, which rewrites files rather than
