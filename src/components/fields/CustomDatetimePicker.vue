@@ -66,12 +66,13 @@
         return this.schema.locale === 'enUS' ? 'en' : 'zh'
       }
     },
-    created () {
-      this.schema.format = _.get(this.schema, 'format', 'YYYY/MM/DD h:i:s')
-    },
     methods: {
+      // `schema.format` arrives from FormService.typeMapper through SchemaService, which carries one
+      // for every date, time and datetime field. Read it defensively rather than substituting a
+      // default here: a format invented at this level is one nothing else in the admin agrees with,
+      // and the one that used to live here was PHP's date syntax rather than dayjs's (#102).
       isInFormat(toFind) {
-        return this.schema.format.indexOf(toFind) !== -1
+        return (_.get(this.schema, 'format') || '').indexOf(toFind) !== -1
       },
       getDayClass (date) {
         const tomorrow = Dayjs().startOf('day').add(1, 'day')
