@@ -94,6 +94,10 @@ building it themselves. Rebuild and stage it with every version bump: `npm versi
 `dist` ignore rule cannot drop new chunk files). A consumer that ships its own `node-cms/plugins` folder still
 rebuilds inside `node_modules/node-cms` to include it.
 
+Pushing the tag (`git push --follow-tags`) triggers `.github/workflows/release.yml`, which drafts a GitHub
+Release for it with notes generated from every pull request merged since the previous tag, grouped by
+`.github/release.yml`. Read the draft on the Releases page and publish it there — nothing goes out on its own.
+
 #### As a dependency in existing `nodejs` project
 
 ```

@@ -1,0 +1,50 @@
+name: Release
+
+# Fires on the tag `npm version` creates, once it is pushed: `git push --follow-tags`.
+on:
+  push:
+    tags: ['*']
+
+jobs:
+  notes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      # gh release create writes to the repository; the default token is read-only.
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The previous tag is read out of history below, which a shallow clone does not carry.
+          fetch-depth: 0
+
+      # Left as a draft on purpose: the notes are assembled from every PR merged since the last
+      # tag, and nobody has read them yet at this point. Review the draft on the Releases page and
+      # publish it there. Drop `--draft` below to publish straight away instead.
+      - name: Draft the release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME}"
+          # The nearest version tag along the first-parent path back from the tagged commit, which
+          # is the mainline: --first-parent steps over merges rather than into them, so a tag cut
+          # on a branch that was later merged is not a candidate. That matters here — three of the
+          # repository's 217 tags are not on master, so a reachability listing would surface such a
+          # tag and a date sort could then pick it, starting the notes in the wrong place. --match
+          # keeps it to version-shaped tags, so the stray lightweight `list` tag cannot win, and
+          # --abbrev=0 prints the tag on its own. describe exits non-zero when it finds nothing,
+          # which the check below turns into a readable failure.
+          previous="$(git describe --first-parent --tags --abbrev=0 \
+            --match 'v[0-9]*' --match '[0-9]*' "${tag}^" 2>/dev/null || true)"
+          if [ -z "${previous}" ]; then
+            # Unreachable from master, where every commit has 2.6.1 or older behind it. If it does
+            # happen, stop: letting `--generate-notes` pick its own baseline is the one behaviour
+            # this step exists to avoid, and it would do so silently.
+            echo "::error::No tag reachable from ${tag}^, so there is no baseline for the notes." \
+              "Create the release by hand with an explicit --notes-start-tag."
+            exit 1
+          fi
+          echo "Generating notes for ${tag} against ${previous}."
+          gh release create "${tag}" --draft --verify-tag --title "${tag}" \
+            --generate-notes --notes-start-tag "${previous}"
