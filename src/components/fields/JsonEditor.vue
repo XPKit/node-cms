@@ -315,10 +315,17 @@
         _.set(this.model, this.schema.model, value)
       })
       this.editor.on('change', () => {
-        // Only this one goes through _value: it is the user's edit, and the emit it carries is
-        // what arms the unsaved-changes guard. The two writes above seed the field - from defaults
-        // on open, and on a locale switch - and announcing those would open every form dirty.
-        this._value = this.editor.getValue()
+        const value = this.editor.getValue()
+        // The editor fires `change` for a programmatic setValue as well as for a keystroke, and it
+        // fires it from inside a requestAnimationFrame - so a flag set around the seeding calls
+        // would be cleared before the event arrived. Comparing values needs no timing assumption:
+        // both seeding paths write the record immediately after setValue, so the change they
+        // provoke already matches and stops here. Only a value that has moved away from the record
+        // is the user's, and only that announces itself and arms the unsaved-changes guard.
+        if (_.isEqual(value, _.get(this.model, this.schema.model))) {
+          return
+        }
+        this._value = value
       })
     },
     methods: {
