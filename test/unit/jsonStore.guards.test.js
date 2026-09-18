@@ -38,6 +38,19 @@ describe('JsonStore ownership guards', () => {
     }
   }
 
+  // The store's half of the ownership question: it defers to helpers.isOwnRecord, which the admin's
+  // `_local` flag asks too. The predicate's own edges live in test/unit/helpers.isOwnRecord.test.js;
+  // what matters here is that the store asks it and nothing else (#105).
+  describe('owns', () => {
+    it('accepts an id whose timestamp overlaps the machine id, which it used to disown', () => {
+      expect(store.owns('mu6vn64242424242ytw1vgr9')).to.equal(true)
+    })
+
+    it('still refuses an id carrying another server\'s machine id', () => {
+      expect(store.owns(foreignId)).to.equal(false)
+    })
+  })
+
   describe('remove', () => {
     it('deletes a record of its own and says so', async () => {
       expect(await store.remove(ownId)).to.equal(true)

@@ -214,7 +214,10 @@ describe('API Route Coverage', () => {
     expect(res.body).to.have.property('_createdAt')
     expect(res.body).to.have.property('_updatedAt')
     expect(res.body).to.have.property('_publishedAt')
-    expect(res.body).to.have.property('_local')
+    // Not just present: this server created the record, so it owns it, and the admin freezes
+    // editing on anything that answers false. The same check that refused the write refused this
+    // too, so both halves used to go wrong together (#105).
+    expect(res.body._local, 'the server disowned a record it created').to.equal(true)
     expect(res.body).to.have.property('image')
     expect(res.body).to.have.property('localizedImage')
 
