@@ -106,12 +106,19 @@ export default {
       let results = []
       if (this.schema.validator && this.schema.readonly !== true && this.disabled !== true) {
         let validators = []
+        // convertValidator answers null for a name it cannot resolve, having already warned about
+        // it. Skipping it is what its comment asked for: a typo in a schema costs that one rule,
+        // not the whole field.
+        const addValidator = (validator) => {
+          const resolved = convertValidator(validator)
+          if (resolved) {
+            validators.push(resolved.bind(this))
+          }
+        }
         if (!isArray(this.schema.validator)) {
-          validators.push(convertValidator(this.schema.validator).bind(this))
+          addValidator(this.schema.validator)
         } else {
-          forEach(this.schema.validator, validator => {
-            validators.push(convertValidator(validator).bind(this))
-          })
+          forEach(this.schema.validator, addValidator)
         }
         forEach(validators, validator => {
           if (validateAsync) {

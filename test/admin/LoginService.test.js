@@ -108,10 +108,10 @@ describe('LoginService', () => {
   })
 
   describe('checkStatus', () => {
-    // Defect, not intent (#115): both layers handle the vanished session. getStatus logs out and
-    // returns undefined; checkStatus reads that undefined as 'empty' and logs out again. Counting
+    // #115: both layers used to handle the vanished session - getStatus logs out and returns
+    // undefined, and checkStatus read that undefined as 'empty' and logged out again. Counted
     // rather than checking that /logout merely appears, because appearing is what hid it.
-    it('logs out twice when the session has gone, reloading twice', async () => {
+    it('logs out once when the session has gone', async () => {
       const callback = vi.fn()
       LoginService.onLogout(callback)
       LoginService.user = { username: 'someone' }
@@ -119,7 +119,7 @@ describe('LoginService', () => {
       await LoginService.checkStatus()
       expect(LoginService.user).to.equal(null)
       const logouts = RequestService.get.mock.calls.filter(call => call[0] === '/logout').length
-      expect({ logouts, reloads, callbacks: callback.mock.calls.length }).to.deep.equal({ logouts: 2, reloads: 2, callbacks: 2 })
+      expect({ logouts, reloads, callbacks: callback.mock.calls.length }).to.deep.equal({ logouts: 1, reloads: 1, callbacks: 1 })
     })
 
     it('does nothing when there was no user to begin with', async () => {

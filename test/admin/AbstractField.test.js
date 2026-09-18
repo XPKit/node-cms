@@ -144,12 +144,19 @@ describe('AbstractField', () => {
       expect(await field.vm.validate()).to.deep.equal(['late'])
     })
 
-    // Defect, not intent (#109): convertValidator returns null for a name it cannot resolve, with the
-    // comment 'caller need to handle null' — and the caller calls .bind() on it straight away. So
-    // a schema naming a validator that does not exist takes the field down rather than warning.
-    it('throws when the schema names a validator that does not exist', async () => {
+    // #109: a name convertValidator cannot resolve costs that one rule, not the whole field. It
+    // used to bind null and take the field down with a TypeError.
+    it('skips a validator the schema names but nothing provides, and says so', async () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
       const field = mountField({ model: 'title', validator: 'no-such-validator' }, {})
-      await expect(field.vm.validate()).rejects.toThrow(TypeError)
+      expect(await field.vm.validate()).to.deep.equal([])
+      expect(warn).toHaveBeenCalledWith("'no-such-validator' is not a validator function!")
+    })
+
+    it('keeps the validators either side of an unresolvable one', async () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const field = mountField({ model: 'title', validator: ['no-such-validator', () => ['a problem']] }, {})
+      expect(await field.vm.validate()).to.deep.equal(['a problem'])
     })
   })
 

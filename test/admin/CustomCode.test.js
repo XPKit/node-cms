@@ -67,15 +67,14 @@ describe('CustomCode', () => {
     })
   })
 
-  // Defect, not intent (#119): every other field emits `input`, which is what drives
-  // RecordEditor.checkDirty and therefore the unsaved-changes guard. This one writes the record
-  // behind it, so editing a code field and then clicking another record discards the edit without
-  // asking. Pinned as it behaves; fixing #119 inverts the second assertion.
-  it('writes the record directly, announcing nothing, so the form never learns it is dirty', () => {
+  // #119: the emit is what drives RecordEditor.checkDirty and therefore the unsaved-changes
+  // guard. This field used to write the record behind it, so editing a code field and clicking
+  // another record discarded the edit without asking.
+  it('writes the record and announces it, so the form knows it is dirty', () => {
     const model = { snippet: 'before' }
     const field = mountField({ model: 'snippet' }, model)
     field.vm.onChangeData('after')
     expect(model.snippet).to.equal('after')
-    expect(field.emitted('input')).to.equal(undefined)
+    expect(field.emitted('input')[0]).to.deep.equal(['after', 'snippet'])
   })
 })
