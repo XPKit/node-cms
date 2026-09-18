@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { markRaw } from 'vue'
 
 // The record list down the middle of the admin: searching, sorting and multi-selecting. The search
 // is the interesting part - it matches a record on its searchable fields, on its id, or on a sift
@@ -23,17 +24,16 @@ const mountList = (props = {}) => mount(RecordList, {
   }
 })
 
+// markRaw, and not for tidiness: `filteredList` is a computed that stamps `_searchable` onto every
+// record it reads, so with reactive records it invalidates itself and Vue aborts the render with
+// 'Maximum recursive updates exceeded' - which vitest reports as an unhandled rejection and which
+// makes the run exit non-zero. Keeping the records raw stops the mutation being tracked.
 const records = [
-  { _id: 'r1', title: 'Alpha', _updatedAt: 3000, _updatedBy: 'admins~alice' },
-  { _id: 'r2', title: 'beta', _updatedAt: 1000, _updatedBy: '~API' },
-  { _id: 'r3', title: 'Gamma', _updatedAt: 2000 }
+  markRaw({ _id: 'r1', title: 'Alpha', _updatedAt: 3000, _updatedBy: 'admins~alice' }),
+  markRaw({ _id: 'r2', title: 'beta', _updatedAt: 1000, _updatedBy: '~API' }),
+  markRaw({ _id: 'r3', title: 'Gamma', _updatedAt: 2000 })
 ]
 
-// Vue may log 'Maximum recursive updates exceeded' while these run. It is a consequence of
-// `filteredList` being a computed that *mutates* what it reads - it stamps `_searchable` onto every
-// record - so reading it repeatedly in one tick, as several cases here do, invalidates it. Checked
-// against the real paths: a plain render and typing into the search box both produce none, so it
-// is an artefact of driving the computed directly rather than something a user meets.
 describe('RecordList', () => {
   beforeEach(() => vi.clearAllMocks())
 
