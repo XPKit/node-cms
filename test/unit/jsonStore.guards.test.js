@@ -5,7 +5,6 @@ const chai = require('chai')
 const _ = require('lodash')
 const expect = chai.expect
 const createJsonStore = require('../../lib/db/json_store')
-const UUID = require('../../lib/util/uuid')
 
 // A record whose id does not carry this server's machine id belongs to another instance, and the
 // store refuses to touch it. It used to refuse by *returning* `{error}`, which every caller passed
@@ -39,46 +38,16 @@ describe('JsonStore ownership guards', () => {
     }
   }
 
-  // The check itself, which is what decides all of the above. It used to be `id.indexOf(mid) === 8`
-  // under the name startsWith - a different question, because indexOf answers with the first
-  // occurrence rather than the one at that offset (#105).
+  // The store's half of the ownership question: it defers to helpers.isOwnRecord, which the admin's
+  // `_local` flag asks too. The predicate's own edges live in test/unit/helpers.isOwnRecord.test.js;
+  // what matters here is that the store asks it and nothing else (#105).
   describe('owns', () => {
-    // Shaped from the producer, not from the guard: if uuid.js ever moves the machine id, this
-    // fails here rather than leaving the sweep below quietly testing the wrong layout.
-    it('agrees with the id generator about where the machine id sits', () => {
-      const generated = UUID(mid)()
-      expect(generated.slice(8, 16)).to.equal(mid)
-      expect(store.owns(generated)).to.equal(true)
-    })
-
-    // The id from the CI run that finally caught it. indexOf finds '42424242' at 6, because the
-    // timestamp 'mu6vn642' ends in the same two characters the machine id starts with.
-    it('accepts the record the server disowned in the run that caught this', () => {
-      expect('mu6vn64242424242ytw1vgr9'.indexOf(mid), 'the trap, as the old check saw it').to.equal(6)
+    it('accepts an id whose timestamp overlaps the machine id, which it used to disown', () => {
       expect(store.owns('mu6vn64242424242ytw1vgr9')).to.equal(true)
-    })
-
-    // 1296 consecutive milliseconds is every two-character ending base36 can produce, so every
-    // timestamp that can overlap the machine id is in here - roughly one of them used to be
-    // refused, which is the one write in 1296 the flake was made of.
-    it('accepts its own record whatever the timestamp ends in', () => {
-      const base = Date.now()
-      const ids = _.times(1296, (ms) => `${(base + ms).toString(36)}${mid}ytw1vgr9`)
-      expect(_.reject(ids, (id) => store.owns(id)), 'ids the server disowned').to.deep.equal([])
     })
 
     it('still refuses an id carrying another server\'s machine id', () => {
       expect(store.owns(foreignId)).to.equal(false)
-    })
-
-    // Carrying the mark somewhere else is not carrying it: only the offset uuid.js writes to counts.
-    it('refuses an id that holds the machine id anywhere but that offset', () => {
-      expect(store.owns(`${mid}mu5abcdeyaaaaaa`)).to.equal(false)
-    })
-
-    it('answers false for an id that is not a string, rather than throwing', () => {
-      expect(store.owns(undefined)).to.equal(false)
-      expect(store.owns(null)).to.equal(false)
     })
   })
 
