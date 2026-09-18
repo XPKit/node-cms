@@ -81,14 +81,32 @@ describe('FormService', () => {
       expect(validatorFor('string')('ABC', field({ regex }), {})).to.equal('TL_INVALID_FORMAT (TL_LOWERCASE_ONLY)')
     })
 
-    // Defect, not intent (#108): `customValidators.text` reads the locale from the *first* segment
-    // of the model, but SchemaService builds a localised model as `title.enUS` and `getKeyLocale`,
-    // two dozen lines up the same file, pops the *last*. So a per-locale regex is looked up under
-    // the field's own name, misses, and no pattern is applied at all. The model shape below is the
-    // one SchemaService actually produces; fixing #108 inverts this case.
-    it('ignores a per-locale regex on a field shaped the way SchemaService builds it', () => {
+    // #108: the locale is the model's last segment, the way SchemaService builds it and the way
+    // getKeyLocale reads it. Reading the first segment looked the pattern up under the field's own
+    // name, missed, and left the field validated against nothing at all.
+    it('applies a per-locale regex on a field shaped the way SchemaService builds it', () => {
       const localised = field({ localised: true, model: 'title.enUS', regex: { enUS: { value: '/^[0-9]+$/' } } })
-      expect(validatorFor('string')('abc', localised, {})).to.equal(true)
+      expect(validatorFor('string')('abc', localised, {})).to.equal('TL_INVALID_FORMAT (/^[0-9]+$/)')
+      expect(validatorFor('string')('123', localised, {})).to.equal(true)
+    })
+
+    it('picks the pattern for the locale the field is in, not another locale\'s', () => {
+      const perLocale = { enUS: { value: '/^[0-9]+$/' }, frFR: { value: '/^[a-z]+$/' } }
+      expect(validatorFor('string')('abc', field({ localised: true, model: 'title.frFR', regex: perLocale }), {})).to.equal(true)
+      expect(validatorFor('string')('abc', field({ localised: true, model: 'title.enUS', regex: perLocale }), {})).to.equal('TL_INVALID_FORMAT (/^[0-9]+$/)')
+    })
+
+    it('prefers the locale pattern over the plain one when the field has both', () => {
+      const both = field({ localised: true, model: 'title.enUS', regex: { value: '/^[a-z]+$/', enUS: { value: '/^[0-9]+$/' } } })
+      expect(validatorFor('string')('abc', both, {})).to.equal('TL_INVALID_FORMAT (/^[0-9]+$/)')
+      expect(validatorFor('string')('123', both, {})).to.equal(true)
+    })
+
+    // A field that is not localised has no locale segment to read, so its model is left alone and
+    // only a plain regex can apply.
+    it('leaves a field that is not localised to its plain regex', () => {
+      expect(validatorFor('string')('ABC', field({ model: 'meta.title', regex }), {})).to.equal('TL_INVALID_FORMAT (TL_LOWERCASE_ONLY)')
+      expect(validatorFor('string')('abc', field({ model: 'meta.title', regex: { enUS: { value: '/^[0-9]+$/' } } }), {})).to.equal(true)
     })
 
     it('still applies a plain regex to that same localised field', () => {

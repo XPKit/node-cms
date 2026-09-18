@@ -160,6 +160,33 @@ describe('AbstractField', () => {
     })
   })
 
+  // The rule vuetify runs as you type, as opposed to validate() above, which the form runs. Both
+  // ask the validator the same question; only the shape of the answer differs (#116).
+  describe('runInlineValidator', () => {
+    const inline = (validator, model = {}) => mountField({ model: 'title', validator }, model).vm
+
+    it('calls the validator with the value, the schema and the record', () => {
+      const validator = vi.fn(() => true)
+      const field = mountField({ model: 'title', validator }, { title: 'stored' })
+      expect(field.vm.runInlineValidator('typed')).to.equal(true)
+      expect(validator).toHaveBeenCalledWith('typed', field.vm.schema, field.vm.model)
+    })
+
+    it('hands a returned message through as the failure, rather than coercing it to a pass', () => {
+      expect(inline(() => 'TL_SOMETHING_WRONG').runInlineValidator('x')).to.equal('TL_SOMETHING_WRONG')
+    })
+
+    it('reads a list of messages as one failure, and an empty list as a pass', () => {
+      expect(inline(() => ['first', 'second']).runInlineValidator('x')).to.equal('first, second')
+      expect(inline(() => []).runInlineValidator('x')).to.equal(true)
+    })
+
+    it('leaves a validator that answers in booleans alone', () => {
+      expect(inline(() => false).runInlineValidator('x')).to.equal(false)
+      expect(inline(() => true).runInlineValidator('x')).to.equal(true)
+    })
+  })
+
   describe('reading the schema', () => {
     it('reads a key and an option, each with a default', () => {
       const field = mountField({ model: 'title', rows: 5, options: { hint: 'a hint' } }, {})

@@ -73,6 +73,22 @@ describe('CustomInputTag', () => {
     })
   })
 
+  // #116: the rule vuetify runs as you type. The validator is given the field's schema, and the
+  // message it returns is what the rule reports - it used to be coerced to `true`, a pass.
+  describe('validating inline', () => {
+    it('fails an empty required field and passes an empty optional one', () => {
+      expect(mountField({ required: true }).vm.validateField('')).to.equal(false)
+      expect(mountField().vm.validateField('')).to.equal(true)
+    })
+
+    it('reports what the validator says, with the schema it was given', () => {
+      const validator = vi.fn(() => 'TL_SOMETHING_WRONG')
+      const field = mountField({ validator })
+      expect(field.vm.validateField(['a'])).to.equal('TL_SOMETHING_WRONG')
+      expect(validator).toHaveBeenCalledWith(['a'], field.vm.schema, field.vm.model)
+    })
+  })
+
   describe('copying', () => {
     it('writes the tag to the clipboard and says so', async () => {
       const writeText = vi.fn()

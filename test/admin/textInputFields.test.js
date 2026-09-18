@@ -3,7 +3,8 @@ import { mount } from '@vue/test-utils'
 
 // CustomInput and CustomTextarea are twins: the same getType and the same inline validateField,
 // which is the rule vuetify runs as you type. That rule is separate from AbstractField.validate,
-// which the form runs, and the two do not agree — see the last case here and #116.
+// which the form runs, and since #116 the two agree on what they ask the validator and on what
+// they do with its answer.
 vi.mock('@s/FieldSelectorService', () => ({ default: { highlightParagraph: vi.fn() } }))
 
 const { default: CustomInput } = await import('@c/fields/CustomInput.vue')
@@ -28,23 +29,39 @@ describe.each([['CustomInput', CustomInput], ['CustomTextarea', CustomTextarea]]
     expect(field({}).validateField('')).to.equal(true)
   })
 
-  // The second half of #116: the result is coerced with `!!`, and the admin's validators report a
-  // failure by *returning the message*. A non-empty string is truthy, so every failure they report
-  // is read as a pass. Only a validator that returns `false` can fail this rule, and typeMapper
-  // wires the string-returning kind to every text field.
-  it('reads a returned error message as a pass, because it only coerces the result', () => {
+  // The second half of #116: the admin's validators report a failure by *returning the message*,
+  // and so does a vuetify rule, so the message travels through to the user. `!!` used to coerce it
+  // to `true` - a pass - which left only a validator returning `false` able to fail this rule,
+  // while typeMapper wires the string-returning kind to every text field.
+  it('reports a returned error message as the rule failing, and says so in words', () => {
     expect(field({ validator: () => true }).validateField('x')).to.equal(true)
-    expect(field({ validator: () => 'TL_SOMETHING_WRONG' }).validateField('x')).to.equal(true)
+    expect(field({ validator: () => 'TL_SOMETHING_WRONG' }).validateField('x')).to.equal('TL_SOMETHING_WRONG')
     expect(field({ validator: () => false }).validateField('x')).to.equal(false)
   })
 
-  // Defect, not intent (#116): the inline rule calls the validator with `this.schema.model` - the
-  // model path, a string - where AbstractField.validate passes `this.schema`, and where every
-  // validator expects the field schema. So the validator cannot see `regex`, `required` or
-  // `localised`, and a value the form rejects passes inline without a word.
-  it('hands the validator a model path instead of the schema, so a regex never fires inline', () => {
+  // validators.js answers with a list of messages rather than one, so the rule reads an empty list
+  // as a pass rather than as the truthy object it is.
+  it('reads a list of messages as one failure, and an empty list as a pass', () => {
+    expect(field({ validator: () => [] }).validateField('x')).to.equal(true)
+    expect(field({ validator: () => ['first', 'second'] }).validateField('x')).to.equal('first, second')
+  })
+
+  // #116: the inline rule hands the validator `this.schema`, the same thing AbstractField.validate
+  // hands it. It used to pass `this.schema.model` - the model path, a string - so the validator
+  // could not see `regex`, `required` or `localised`, and a value the form rejected passed inline
+  // without a word. The third assertion is the form's own call, for comparison.
+  it('hands the validator the schema, so a regex fires inline as well as on the form', () => {
     const schema = { model: 'title', regex: { value: '/^[0-9]+$/' }, validator: FormService.typeMapper.string.validator }
-    expect(field(schema).validateField('abc')).to.equal(true)
+    expect(field(schema).validateField('abc')).to.equal('TL_INVALID_FORMAT (/^[0-9]+$/)')
+    expect(field(schema).validateField('123')).to.equal(true)
     expect(FormService.typeMapper.string.validator('abc', schema, {})).to.equal('TL_INVALID_FORMAT (/^[0-9]+$/)')
+  })
+
+  it('calls the validator with the value, the schema and the record', () => {
+    const validator = vi.fn(() => true)
+    const mounted = mountField(component, { validator }, { title: 'stored' })
+    mounted.vm.validateField('typed')
+    expect(validator).toHaveBeenCalledWith('typed', mounted.vm.schema, mounted.vm.model)
+    expect(validator.mock.calls[0][1]).to.include({ model: 'title' })
   })
 })

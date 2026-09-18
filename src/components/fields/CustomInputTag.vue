@@ -33,7 +33,7 @@
           return false
         }
         if (_.isFunction(this.schema.validator)) {
-          return !!this.schema.validator(val, this.schema.model, this.model)
+          return this.runInlineValidator(val)
         }
         return true
       },

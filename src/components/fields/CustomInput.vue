@@ -31,7 +31,7 @@
         if (this.schema.required && (_.isNull(val) || _.isUndefined(val) || val === '')) {
           return false
         } else if (_.isFunction(this.schema.validator)) {
-          return !!this.schema.validator(val, this.schema.model, this.model)
+          return this.runInlineValidator(val)
         }
         return true
       }

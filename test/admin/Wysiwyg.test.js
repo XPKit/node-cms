@@ -47,14 +47,14 @@ describe('Wysiwyg', () => {
   })
 
   describe('validation', () => {
-    // Two defects in one function, both part of #116. The message key is `T_FIELD_IS_REQUIRED`,
-    // one letter short of the `TL_` prefix every other key uses and absent from both translation
-    // files - and it is rendered raw, so the user is shown the key itself.
-    it('reports a required empty field with a key that does not exist', () => {
+    // #116: the key was `T_FIELD_IS_REQUIRED`, one letter short of the `TL_` prefix every other
+    // key uses and in neither translation file, and the template renders the result raw. The
+    // translation is what is asserted here; with no dictionary loaded it comes back as the key.
+    it('reports a required empty field with the message the rest of the admin uses', () => {
       html = ''
-      expect(mountField({ required: true }).vm.validateField()).to.equal('T_FIELD_IS_REQUIRED')
+      expect(mountField({ required: true }).vm.validateField()).to.equal('TL_FIELD_IS_REQUIRED')
       html = '<p></p>'
-      expect(mountField({ required: true }).vm.validateField()).to.equal('T_FIELD_IS_REQUIRED')
+      expect(mountField({ required: true }).vm.validateField()).to.equal('TL_FIELD_IS_REQUIRED')
     })
 
     it('accepts a required field that has content', () => {
@@ -62,13 +62,25 @@ describe('Wysiwyg', () => {
       expect(mountField({ required: true }).vm.validateField()).to.equal('')
     })
 
-    // The template shows the result only when it has a length, but the validator branch returns a
-    // boolean - `true.length` is undefined - so a validator failure displays nothing at all.
-    it('returns a boolean from the validator branch, which the template can never display', () => {
+    // The template shows wysiwygError only when it has a length, so every branch here has to end
+    // in a string. The validator branch used to hand back a boolean - `true.length` is undefined -
+    // and a failure displayed nothing at all (#116).
+    it('answers the validator branch in strings, so the template can show what it says', () => {
       html = '<p>Something</p>'
-      const failing = mountField({ validator: () => 'TL_SOMETHING_WRONG' })
-      expect(failing.vm.validateField()).to.equal(true)
-      expect(mountField({ validator: () => false }).vm.validateField()).to.equal(false)
+      expect(mountField({ validator: () => 'TL_SOMETHING_WRONG' }).vm.validateField()).to.equal('TL_SOMETHING_WRONG')
+      expect(mountField({ validator: () => true }).vm.validateField()).to.equal('')
+      // A validator that fails without a message still has to say something, or the field goes red
+      // with nothing next to it.
+      expect(mountField({ validator: () => false }).vm.validateField()).to.equal('TL_INVALID_FORMAT')
+    })
+
+    it('hands the validator the schema, not the model path', () => {
+      html = '<p>Something</p>'
+      const validator = vi.fn(() => true)
+      const field = mountField({ validator }, { body: '<p>Something</p>' })
+      field.vm.validateField()
+      expect(validator).toHaveBeenCalledWith('<p>Something</p>', field.vm.schema, field.vm.model)
+      expect(validator.mock.calls[0][1]).to.include({ model: 'body' })
     })
 
     it('says nothing about an optional field that is empty', () => {
@@ -96,7 +108,7 @@ describe('Wysiwyg', () => {
       const field = mountField({ required: true }, { body: '<p>Something</p>' })
       html = '<p></p>'
       editorOptions.onUpdate()
-      expect(field.vm.wysiwygError).to.equal('T_FIELD_IS_REQUIRED')
+      expect(field.vm.wysiwygError).to.equal('TL_FIELD_IS_REQUIRED')
     })
 
     it('passes focus and blur to the field selector', () => {
