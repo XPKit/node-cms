@@ -99,13 +99,25 @@ describe('RecordList', () => {
       expect(list.vm.filteredList.map(record => record._id)).to.deep.equal(['r3'])
     })
 
-    it('filters by a sift query when one has been typed instead of a search', () => {
+    // Driven through the box rather than by setting `sift` and `query`: the watcher on `search` is
+    // what recognises the `sift:` prefix and parses the rest as JSON5, and setting its results by
+    // hand would leave a regression in that watcher invisible.
+    it('filters by a sift query when one has been typed into the search box', async () => {
       const list = mountList({ list: records })
-      list.vm.sift = { isQuery: true, isValid: true }
-      list.vm.query = { title: 'beta' }
+      list.vm.search = 'sift:{title: "beta"}'
+      await list.vm.$nextTick()
+      expect(list.vm.sift).to.deep.equal({ isQuery: true, isValid: true })
       const found = list.vm.filteredList
       expect(found.map(record => record._id)).to.deep.equal(['r2'])
       expect(found[0]._searchable.query).to.equal(true)
+    })
+
+    it('marks a sift query it cannot parse as invalid, and matches nothing on it', async () => {
+      const list = mountList({ list: records })
+      list.vm.search = 'sift:{not json5'
+      await list.vm.$nextTick()
+      expect(list.vm.sift.isValid).to.equal(false)
+      expect(list.vm.query).to.deep.equal({})
     })
   })
 
@@ -130,13 +142,23 @@ describe('RecordList', () => {
   })
 
   describe('selecting several', () => {
-    it('adds every record the current filter shows, and none twice', () => {
+    it('adds every record, and none twice', () => {
       const list = mountList({ list: records })
       list.vm.onClickSelectAll()
       expect(list.vm.getSelectedRecordIds()).to.deep.equal(['r1', 'r3', 'r2'])
       list.vm.onClickSelectAll()
       expect(list.vm.getSelectedRecordIds()).to.have.length(3)
       expect(list.emitted('changeMultiselectItems')).to.have.length(2)
+    })
+
+    // With a search in force it must take the visible records only - an implementation reaching
+    // for the whole list instead of `filteredList` would pass the case above and fail this one.
+    it('adds only what the current filter shows', async () => {
+      const list = mountList({ list: records })
+      list.vm.search = 'Alpha'
+      await list.vm.$nextTick()
+      list.vm.onClickSelectAll()
+      expect(list.vm.getSelectedRecordIds()).to.deep.equal(['r1'])
     })
 
     it('knows when everything on screen is selected', () => {
@@ -183,6 +205,14 @@ describe('RecordList', () => {
       expect(mountList({ selectedItem: { title: 'new' } }).vm.isCreatingNewRecord()).to.equal(true)
       expect(mountList({ selectedItem: { _id: 'r1' } }).vm.isCreatingNewRecord()).to.equal(false)
       expect(mountList({ selectedItem: false }).vm.isCreatingNewRecord()).to.equal(false)
+    })
+
+    // Dead code: nothing calls it, and `_.get` with a single argument returns undefined whatever
+    // it is handed, so it could not work if anything did. Pinned because the PR says it is.
+    it('has a getFirstKey that returns undefined however it is called', () => {
+      const { vm } = mountList()
+      expect(vm.getFirstKey([{ title: 'Alpha' }])).to.equal(undefined)
+      expect(vm.getFirstKey(undefined)).to.equal(undefined)
     })
 
     it('copies an id and says so', () => {

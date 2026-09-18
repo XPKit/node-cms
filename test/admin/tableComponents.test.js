@@ -68,9 +68,21 @@ describe('RecordTable', () => {
       expect(confirm.mock.calls[1][0]).to.equal('translated(TL_ARE_YOU_SURE_TO_DELETE_SELECTED_RECORDS)')
     })
 
-    it('deletes nothing when the question is declined', async () => {
+    // removeRecords works from `selectedRecords`, not from the record list, so a case that fills
+    // only the list would pass with the deletion path broken - there would be nothing to delete.
+    it('deletes every selected record once the question is accepted', async () => {
+      vi.stubGlobal('confirm', vi.fn(() => true))
+      const view = table()
+      view.vm.selectedRecords = ['r1', 'r2']
+      await view.vm.removeRecords()
+      expect(deletes).to.deep.equal(['../api/articles/r1', '../api/articles/r2'])
+    })
+
+    it('leaves a real selection untouched when the question is declined', async () => {
       vi.stubGlobal('confirm', vi.fn(() => false))
-      await table({ recordList: [{ _id: 'r1' }] }).vm.removeRecords()
+      const view = table()
+      view.vm.selectedRecords = ['r1', 'r2']
+      await view.vm.removeRecords()
       expect(deletes).to.deep.equal([])
     })
   })
@@ -107,9 +119,14 @@ describe('VueTableGenerator', () => {
   const generator = (schema, resource = { locales: ['enUS', 'zhCN'] }) =>
     mountIt(VueTableGenerator, { schema, resource, items: [] }).vm
 
-  it('keeps the schema as it is when no field asks for a column index', () => {
-    const fields = [{ model: 'title', originalModel: 'title' }]
-    expect(generator({ fields })).to.have.property('schemaFields').that.deep.equals(fields)
+  // Asserted on a snapshot of the order taken before mounting, not on the array that was passed
+  // in: schemaFields mutates the fields it walks and returns that same array, so comparing the two
+  // compares the result with itself and could not notice a reordering or a dropped column.
+  it('keeps the columns in schema order when no field asks for an index', () => {
+    const fields = [{ model: 'title', originalModel: 'title' }, { model: 'body', originalModel: 'body' }]
+    const orderBefore = fields.map(field => field.model)
+    expect(generator({ fields: fields.map(field => ({ ...field })) }).schemaFields.map(field => field.model))
+      .to.deep.equal(orderBefore)
   })
 
   it('orders the columns by the index each field declares', () => {

@@ -3,9 +3,14 @@ import { mount } from '@vue/test-utils'
 
 // The admin shell: grouping resources and plugins for the sidebar, the unsaved-changes guard that
 // stands between a click and losing an edit, and the notification snackbar.
-vi.mock('@s/TranslateService', () => ({ default: { get: key => key, locale: 'enUS', init: vi.fn(async () => ({})) } }))
+vi.mock('@s/TranslateService', () => ({ default: { get: key => key, locale: 'enUS', init: vi.fn(async () => ({})), config: { locales: ['enUS', 'zhCN'] } } }))
 vi.mock('@s/ConfigService', () => ({ default: { config: {}, init: vi.fn(async () => ({})) } }))
-vi.mock('@s/ResourceService', () => ({ default: { get: vi.fn(() => []), cache: vi.fn(async () => []), schemas: [], init: vi.fn(async () => ({})) } }))
+vi.mock('@s/ResourceService', () => ({
+  default: {
+    get: vi.fn(() => []), cache: vi.fn(async () => []), schemas: [], init: vi.fn(async () => ({})),
+    getAll: vi.fn(async () => [{ title: 'articles' }]), getAllParagraphs: vi.fn(async () => []), setSchemas: vi.fn()
+  }
+}))
 vi.mock('@s/RequestService', () => ({ default: { get: vi.fn(async () => ({})), post: vi.fn(), put: vi.fn(), delete: vi.fn() } }))
 vi.mock('@s/LoginService', () => ({ default: { events: { on: vi.fn(), off: vi.fn() }, user: { theme: 'light' }, init: vi.fn(), getPlugins: vi.fn(async () => []), onLogout: vi.fn(), logout: vi.fn(), getStatus: vi.fn(async () => ({ username: 'localAdmin', group: 'admins' })) } }))
 vi.mock('@s/NotificationsService', () => ({ default: { send: vi.fn(), sendOmnibarDisplayStatus: vi.fn(), events: { on: vi.fn(), off: vi.fn() } } }))
@@ -15,13 +20,28 @@ vi.mock('@s/LoadingService', () => ({ default: { events: { on: vi.fn(), off: vi.
 const { default: App } = await import('@c/App.vue')
 const { default: ConfigService } = await import('@s/ConfigService')
 
+// Everything `mounted` reaches for is supplied, including `$route`: without them the hook takes
+// its catch branch, and every case below would then be asserting against a shell that failed to
+// boot rather than one that came up.
 const app = () => mount(App, {
   shallow: true,
   global: {
     stubs: { RecycleScroller: { template: '<div />' } },
-    mocks: { $filters: { translate: key => key }, $loading: { start: vi.fn(), stop: vi.fn() }, $vuetify: { theme: { dark: false } } }
+    mocks: {
+      $filters: { translate: key => key },
+      $loading: { start: vi.fn(), stop: vi.fn() },
+      $vuetify: { theme: { dark: false } },
+      $route: { query: {} },
+      $router: { push: vi.fn(() => Promise.resolve()) }
+    }
   }
 }).vm
+
+const mounted = async () => {
+  const view = app()
+  await new Promise(resolve => setTimeout(resolve, 0))
+  return view
+}
 
 describe('App', () => {
   beforeEach(() => {
@@ -62,6 +82,16 @@ describe('App', () => {
       view.allowedPlugins = []
       // The heading disappears with its contents rather than sitting there empty.
       expect(view.groupedList.find(group => group.name === 'TL_PLUGINS')).to.equal(undefined)
+    })
+  })
+
+  describe('bootstrapping', () => {
+    it('comes up with the resources the server offered, without taking its error path', async () => {
+      const error = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const view = await mounted()
+      expect(view.resourceList.map(resource => resource.title)).to.deep.equal(['articles'])
+      expect(view.localeList).to.deep.equal(['enUS', 'zhCN'])
+      expect(error).not.toHaveBeenCalled()
     })
   })
 
@@ -133,6 +163,30 @@ describe('App', () => {
       view.onGetRecordEdition(true)
       view.selectRecord(view.selectedRecord)
       expect(window.DialogService.show).not.toHaveBeenCalled()
+    })
+
+    it('guards switching resource the same way, and switches once forced', async () => {
+      const view = await mounted()
+      const other = { title: 'cities' }
+      view.onGetRecordEdition(true)
+      await view.selectResource(other)
+      expect(window.DialogService.show).toHaveBeenCalled()
+      expect(window.DialogService.show.mock.calls[0][0].event).to.equal('selectResource')
+      expect(view.selectedResource).to.equal(null)
+
+      // Confirming is two steps in the real flow: the service reports the edit abandoned, which
+      // clears isEditing, and only then does the dialog's callback run. Doing only the second
+      // would put selectResource straight back into the guard it just came out of.
+      view.onGetRecordEdition(false)
+      await window.DialogService.show.mock.calls[0][0].callback()
+      expect(view.selectedResource.title).to.equal('cities')
+    })
+
+    it('switches resource straight away when nothing is being edited', async () => {
+      const view = await mounted()
+      await view.selectResource({ title: 'cities' })
+      expect(window.DialogService.show).not.toHaveBeenCalled()
+      expect(view.selectedResource.title).to.equal('cities')
     })
 
     it('guards entering multiselect the same way', () => {

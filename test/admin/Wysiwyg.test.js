@@ -14,9 +14,15 @@ const editor = {
   isActive: () => false,
   can: () => ({ chain: () => ({ focus: () => ({ toggleBold: () => ({ run: () => true }) }) }) })
 }
-// `new Editor(...)`, so the stub has to be constructible - a constructor returning an object
-// hands that object back, which keeps every instance pointing at the one stub above.
-vi.mock('@tiptap/vue-3', () => ({ Editor: class { constructor () { return editor } }, EditorContent: { name: 'EditorContent', template: '<div />' } }))
+// `new Editor(...)`, so the stub has to be constructible - a constructor returning an object hands
+// that object back, which keeps every instance pointing at the one stub above. The options are
+// kept rather than discarded: `onUpdate` is where the component does its own work, and a stub that
+// drops it would stay green if the field stopped emitting, writing or revalidating on a keystroke.
+let editorOptions = null
+vi.mock('@tiptap/vue-3', () => ({
+  Editor: class { constructor (options) { editorOptions = options; return editor } },
+  EditorContent: { name: 'EditorContent', template: '<div />' }
+}))
 vi.mock('@tiptap/starter-kit', () => ({ default: { configure: () => ({}) } }))
 vi.mock('@tiptap/extension-superscript', () => ({ default: {} }))
 vi.mock('@tiptap/extension-code-block-lowlight', () => ({ default: { configure: () => ({}) } }))
@@ -67,6 +73,36 @@ describe('Wysiwyg', () => {
     it('says nothing about an optional field that is empty', () => {
       html = ''
       expect(mountField().vm.validateField()).to.equal('')
+    })
+  })
+
+  describe('when the editor reports a change', () => {
+    it('announces it, writes it to the record and revalidates', () => {
+      html = '<p>Before</p>'
+      const model = { body: '<p>Before</p>' }
+      const field = mountField({ required: true }, model)
+
+      html = '<p>After</p>'
+      editorOptions.onUpdate()
+
+      expect(field.emitted('change')[0]).to.deep.equal(['<p>After</p>'])
+      expect(model.body).to.equal('<p>After</p>')
+      expect(field.vm.wysiwygError).to.equal('')
+    })
+
+    it('puts the required error up the moment the content is emptied', () => {
+      html = '<p>Something</p>'
+      const field = mountField({ required: true }, { body: '<p>Something</p>' })
+      html = '<p></p>'
+      editorOptions.onUpdate()
+      expect(field.vm.wysiwygError).to.equal('T_FIELD_IS_REQUIRED')
+    })
+
+    it('passes focus and blur to the field selector', () => {
+      const field = mountField()
+      editorOptions.onFocus()
+      editorOptions.onBlur()
+      expect(field.vm.errors).to.deep.equal([])
     })
   })
 
