@@ -51,9 +51,21 @@ describe('JsonStore ownership guards', () => {
       expect(outcome.threw.message).to.contain('foreign')
     })
 
-    it('leaves the record where it is when it refuses', async () => {
+    // The foreign record has to exist for this to mean anything: the guard refuses before the
+    // database is touched, so without it `find` would answer undefined either way and the case
+    // would pass with the store deleting everything in sight.
+    it('leaves a foreign record that does exist exactly where it is', async () => {
+      await store.create(foreignId, { _id: foreignId, name: 'theirs' })
+      expect(_.get(await store.find(foreignId), 'name')).to.equal('theirs')
+
       await rejection(store.remove(foreignId))
-      expect(_.get(await store.find(ownId), 'name')).to.equal('ours')
+      expect(_.get(await store.find(foreignId), 'name')).to.equal('theirs')
+    })
+
+    it('leaves a foreign record unchanged when an update is refused', async () => {
+      await store.create(foreignId, { _id: foreignId, name: 'theirs' })
+      await rejection(store.update(foreignId, { _id: foreignId, name: 'renamed' }))
+      expect(_.get(await store.find(foreignId), 'name')).to.equal('theirs')
     })
   })
 

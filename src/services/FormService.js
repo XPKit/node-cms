@@ -48,7 +48,9 @@ const invalidFormat = () => {
 }
 
 const checkNumber = (field, value, model, type) => {
-  if (_.get(field, 'required', false) && !_.isNumber(value)) {
+  // Required means 'not empty', not 'already a number': an <input> hands its value over as a
+  // string, so testing isNumber here reported every number the user typed as missing (#106).
+  if (_.get(field, 'required', false) && (_.isNil(value) || value === '')) {
     return TranslateService.get('TL_FIELD_IS_REQUIRED')
   }
   const func = _.get(validators, type, false)

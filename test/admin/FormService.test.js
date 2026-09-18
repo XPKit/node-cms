@@ -57,6 +57,14 @@ describe('FormService', () => {
       expect(validatorFor('integer')('42', field(), {})).to.equal(true)
     })
 
+    // #106 again, on the required gate: it asked whether the value was already a number, so a
+    // required field reported the number the user had just typed as missing.
+    it('accepts a typed number on a required field rather than calling it missing', () => {
+      expect(validatorFor('number')('42', field({ required: true }), {})).to.equal(true)
+      expect(validatorFor('number')('', field({ required: true }), {})).to.equal('TL_FIELD_IS_REQUIRED')
+      expect(validatorFor('number')(undefined, field({ required: true }), {})).to.equal('TL_FIELD_IS_REQUIRED')
+    })
+
     it('rejects a decimal on an integer field before it reaches the number check', () => {
       expect(validatorFor('integer')('1.5', field(), {})).to.equal(false)
     })

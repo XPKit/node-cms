@@ -57,6 +57,11 @@ describe('validators', () => {
       expect(validators.integer(3, field(), {})).to.deep.equal([])
     })
 
+    it('takes a numeric string too, so all three agree', () => {
+      expect(validators.integer('5', field(), {})).to.deep.equal([])
+      expect(validators.integer('5.5', field(), {})).to.deep.equal(['The value is not an integer'])
+    })
+
     it('adds its own complaint on top of the number ones', () => {
       expect(validators.integer(1.5, field(), {})).to.deep.equal(['The value is not an integer'])
       expect(validators.integer(0.5, field({ min: 1 }), {})).to.deep.equal([
