@@ -41,9 +41,16 @@ describe('ResourceList', () => {
     expect(list({ selectedItem }).isSelected({ type: 'plugin', pluginComponent: 'Other' })).to.equal(false)
   })
 
-  it('sorts case- and punctuation-insensitively, and numerically', () => {
+  it('sorts without minding case, and numerically rather than by digit', () => {
     const sorted = list().orderedList([{ title: 'item10' }, { title: 'Item2' }, { title: 'apple' }])
     expect(sorted.map(item => item.title)).to.deep.equal(['apple', 'Item2', 'item10'])
+  })
+
+  // The pair matters: leading punctuation sorts *before* letters when it is counted, so
+  // '-zebra' would come first. Only a title whose position moves proves `ignorePunctuation`.
+  it('ignores punctuation, so a leading dash does not jump the queue', () => {
+    const sorted = list().orderedList([{ title: '-zebra' }, { title: 'apple' }])
+    expect(sorted.map(item => item.title)).to.deep.equal(['apple', '-zebra'])
   })
 
   // Worth pinning rather than filing: Array.sort is in place, so the caller's array is reordered
