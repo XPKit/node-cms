@@ -128,13 +128,13 @@ const validators = {
     if (!isNil(field.min)) {
       let min = new Date(field.min)
       if (m.valueOf() < min.valueOf()) {
-        err.push(msg(messages.dateIsEarly, Dayjs.format(m), Dayjs.format(min)))
+        err.push(msg(messages.dateIsEarly, Dayjs(m).format(), Dayjs(min).format()))
       }
     }
     if (!isNil(field.max)) {
       let max = new Date(field.max)
       if (m.valueOf() > max.valueOf()) {
-        err.push(msg(messages.dateIsLate, Dayjs.format(m), Dayjs.format(max)))
+        err.push(msg(messages.dateIsLate, Dayjs(m).format(), Dayjs(max).format()))
       }
     }
     return err
