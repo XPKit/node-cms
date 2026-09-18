@@ -113,15 +113,20 @@ describe('RequestService', () => {
     })
 
     // A proxy answering with an HTML error page, say. Parsing it throws, which used to be the error
-    // the caller saw instead of the 502.
-    it('reports the status when the error body is not json at all', async () => {
+    // the caller saw instead of the 502. The parse failure is logged rather than swallowed - the
+    // status says the request failed, but only this says the body could not be read.
+    it('reports the status when the error body is not json at all, and logs why', async () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const parseError = new SyntaxError('Unexpected token <')
       fetchMock.mockResolvedValue({
         ok: false,
         status: 502,
         statusText: 'Bad Gateway',
-        json: async () => { throw new SyntaxError('Unexpected token <') }
+        json: async () => { throw parseError }
       })
       await expect(RequestService.get('/api/articles')).rejects.toEqual({ code: 502, message: 'Bad Gateway' })
+      expect(warn).toHaveBeenCalledWith('Failed to parse the error body of a 502 response:', parseError)
+      warn.mockRestore()
     })
 
     it('keeps an error body that is not an object, under data', async () => {

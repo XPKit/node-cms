@@ -40,7 +40,11 @@ class RequestService {
     let body = null
     try {
       body = await response.json()
-    } catch {
+    } catch (parseError) {
+      // A proxy's HTML error page, a truncated body. The status still describes the failure, but
+      // the parse error is the only account of why the body was unreadable, so it is logged rather
+      // than dropped.
+      console.warn(`Failed to parse the error body of a ${_.get(response, 'status', 0)} response:`, parseError)
       body = null
     }
     let error = {}
