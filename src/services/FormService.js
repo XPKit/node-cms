@@ -75,7 +75,11 @@ const customValidators = {
     if (_.get(field, 'required', false) && (!_.isString(value) || _.isEmpty(value))) {
       return fieldIsRequired()
     }
-    const locale = _.head(_.get(field, 'model', '').split('.'))
+    // The locale is the model's *last* segment - SchemaService builds the model as
+    // `${field.field}.${locale}` - which is what getKeyLocale above already reads. Reading the
+    // first segment looked a per-locale regex up under the field's own name, missed, and left
+    // the field with no pattern applied at all (#108).
+    const locale = _.get(getKeyLocale(field), 'locale', false)
     if (_.get(field, 'regex.value', false) === false && _.get(field, `regex['${locale}'].value`, false) === false) {
       return true
     }

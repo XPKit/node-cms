@@ -100,6 +100,21 @@ export default {
     onChangeData (data) {
       this._value = data
     },
+    /*
+     * The rule vuetify runs inline, as the user types. A validator takes the field's *schema* - the
+     * same thing validate() hands it, never the model path - and reports a failure by returning the
+     * message, so coercing the result with `!!` read every reported failure as a pass (#116).
+     *
+     * @param {*} val, the value being edited
+     * @return {Boolean|String} true when it passes, or the message to show
+     */
+    runInlineValidator (val) {
+      const result = this.schema.validator(val, this.schema, this.model)
+      if (isArray(result)) {
+        return result.length === 0 ? true : join(result, ', ')
+      }
+      return isString(result) ? result : !!result
+    },
     async validate (calledParent) {
       this.clearValidationErrors()
       let validateAsync = objGet(this.formOptions, 'validateAsync', false)

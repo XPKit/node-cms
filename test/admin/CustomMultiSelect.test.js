@@ -28,6 +28,15 @@ describe('CustomMultiSelect', () => {
       expect(mountField({ required: true }).vm.validateField([])).to.equal(false)
       expect(mountField().vm.validateField([])).to.equal(true)
     })
+
+    // #116: a value that is not empty goes to the validator, which is given the schema and whose
+    // message is what the rule reports.
+    it('reports what the validator says about a value it does have', () => {
+      const validator = vi.fn(() => 'TL_SOMETHING_WRONG')
+      const field = mountField({ validator })
+      expect(field.vm.validateField(['a'])).to.equal('TL_SOMETHING_WRONG')
+      expect(validator).toHaveBeenCalledWith(['a'], field.vm.schema, field.vm.model)
+    })
   })
 
   describe('reading an option', () => {

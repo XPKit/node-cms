@@ -8,8 +8,8 @@ const { default: RequestService } = await import('@s/RequestService')
 const fetchMock = vi.fn()
 vi.stubGlobal('fetch', fetchMock)
 
-const answers = (body, { ok = true, status = 200 } = {}) =>
-  fetchMock.mockResolvedValue({ ok, status, json: async () => body })
+const answers = (body, { ok = true, status = 200, statusText } = {}) =>
+  fetchMock.mockResolvedValue({ ok, status, statusText, json: async () => body })
 
 const sentOptions = () => fetchMock.mock.calls[0][1]
 
@@ -65,29 +65,77 @@ describe('RequestService', () => {
     })
   })
 
+  // #113: the response decides whether the request failed, and the body is only ever data. The
+  // cases below used to run the other way round - the body was read for a `code` and that decided.
   describe('what it treats as a failure', () => {
     it('returns the parsed body of a successful request', async () => {
       answers({ _id: 'a1', title: 'a title' })
       expect(await RequestService.get('/api/articles/a1')).to.deep.equal({ _id: 'a1', title: 'a title' })
     })
 
-    it('throws the body when it carries a status outside the 2xx range', async () => {
-      answers({ code: 404, message: 'not found' })
+    // A country code, a product code, an error code stored as data. The request succeeded, so the
+    // record comes back however its own fields are named.
+    it('returns a record whose own code field is not a 2xx number', async () => {
+      answers({ _id: 'a1', title: 'Berlin', code: 100 })
+      expect(await RequestService.get('/api/cities/a1')).to.deep.equal({ _id: 'a1', title: 'Berlin', code: 100 })
+    })
+
+    it('returns a record whose code is a string, and one whose code looks like a status', async () => {
+      answers({ _id: 'a1', code: 'DE' })
+      expect(await RequestService.get('/api/cities/a1')).to.deep.equal({ _id: 'a1', code: 'DE' })
+      fetchMock.mockReset()
+      answers({ _id: 'a2', code: 204 })
+      expect(await RequestService.get('/api/cities/a2')).to.deep.equal({ _id: 'a2', code: 204 })
+    })
+
+    it('throws what the server sent when the request failed', async () => {
+      answers({ code: 404, message: 'not found' }, { ok: false, status: 404 })
       await expect(RequestService.get('/api/articles/nope')).rejects.toEqual({ code: 404, message: 'not found' })
     })
 
-    // The status comes from `_.get(json, 'code', response.status)` and the *body* is what gets
-    // thrown, so a 500 carrying no body throws a bare `{}` — the caller cannot tell what failed,
-    // or even that it was a 500. The `throw response` branch below it needs `code === 0`, which
-    // only happens when the response has no status at all.
-    it('throws the parsed body on a failed request, even when that body is empty', async () => {
-      answers({}, { ok: false, status: 500 })
-      await expect(RequestService.get('/api/articles')).rejects.toEqual({})
+    // The failure keeps its status even when the body has nothing to say. An empty body used to be
+    // thrown bare - `{}` - leaving the caller unable to tell what failed, or that it was a 500.
+    it('still says what went wrong when the error body is empty', async () => {
+      answers({}, { ok: false, status: 500, statusText: 'Internal Server Error' })
+      await expect(RequestService.get('/api/articles')).rejects.toEqual({ code: 500, message: 'Internal Server Error' })
     })
 
-    it('throws the response itself only when there is no status to read anywhere', async () => {
-      answers({}, { ok: false, status: 0 })
-      await expect(RequestService.get('/api/articles')).rejects.toMatchObject({ status: 0 })
+    it('names the status itself when nothing else supplies a message', async () => {
+      answers({}, { ok: false, status: 500 })
+      await expect(RequestService.get('/api/articles')).rejects.toEqual({ code: 500, message: 'Request failed with status 500' })
+    })
+
+    // The other direction of the same defect: a failed request whose body happens to carry a 2xx
+    // code used to be handed back as a success. The body's message survives, its code does not.
+    it('reports the status the response carried, not the one its body claims', async () => {
+      answers({ code: 200, message: 'service unavailable' }, { ok: false, status: 503 })
+      await expect(RequestService.get('/api/articles')).rejects.toEqual({ code: 503, message: 'service unavailable' })
+    })
+
+    // A proxy answering with an HTML error page, say. Parsing it throws, which used to be the error
+    // the caller saw instead of the 502. The parse failure is logged rather than swallowed - the
+    // status says the request failed, but only this says the body could not be read.
+    it('reports the status when the error body is not json at all, and logs why', async () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const parseError = new SyntaxError('Unexpected token <')
+      fetchMock.mockResolvedValue({
+        ok: false,
+        status: 502,
+        statusText: 'Bad Gateway',
+        json: async () => { throw parseError }
+      })
+      await expect(RequestService.get('/api/articles')).rejects.toEqual({ code: 502, message: 'Bad Gateway' })
+      expect(warn).toHaveBeenCalledWith('Failed to parse the error body of a 502 response:', parseError)
+      warn.mockRestore()
+    })
+
+    it('keeps an error body that is not an object, under data', async () => {
+      answers('everything is broken', { ok: false, status: 500 })
+      await expect(RequestService.get('/api/articles')).rejects.toEqual({
+        data: 'everything is broken',
+        code: 500,
+        message: 'Request failed with status 500'
+      })
     })
 
     it('hands back the raw response, unparsed, when the caller does not want json', async () => {
@@ -100,34 +148,6 @@ describe('RequestService', () => {
     it('throws the raw response when the caller does not want json and the request failed', async () => {
       answers({}, { ok: false, status: 403 })
       await expect(RequestService.get('/api/articles', false)).rejects.toMatchObject({ status: 403 })
-    })
-
-    // Defect, not intent: the status is read as `_.get(json, 'code', response.status)`, so a record
-    // that happens to carry its own `code` field has it read as an HTTP status. A CMS resource with
-    // a numeric `code` - a country code, a product code - therefore throws its own record on a
-    // request that succeeded. Reachable from RecordEditor.vue:487 and :457, which fetch and save a
-    // single record (#113). Pinned as it behaves; fixing it inverts these.
-    it('throws a successful record whose own code field is not a 2xx number', async () => {
-      answers({ _id: 'a1', title: 'Berlin', code: 100 })
-      await expect(RequestService.get('/api/cities/a1')).rejects.toMatchObject({ code: 100 })
-    })
-
-    it('is unbothered by a non-numeric code, which no comparison can place outside 2xx', async () => {
-      answers({ _id: 'a1', code: 'DE' })
-      expect(await RequestService.get('/api/cities/a1')).to.deep.equal({ _id: 'a1', code: 'DE' })
-    })
-
-    it('lets a record through when its code happens to look like a success status', async () => {
-      answers({ _id: 'a1', code: 204 })
-      expect(await RequestService.get('/api/cities/a1')).to.deep.equal({ _id: 'a1', code: 204 })
-    })
-
-    // The other direction of the same defect (#113): the body's code is consulted before
-    // response.ok is, so a genuinely failed request whose body happens to carry a 2xx code is
-    // handed back to the caller as a success.
-    it('returns a failed request as a success when its body carries a 2xx code', async () => {
-      answers({ code: 200, message: 'service unavailable' }, { ok: false, status: 503 })
-      expect(await RequestService.get('/api/articles')).to.deep.equal({ code: 200, message: 'service unavailable' })
     })
   })
 })

@@ -25,6 +25,7 @@
   import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
   import TiptapMenuBar from './TiptapMenuBar.vue'
   import AbstractField from '@m/AbstractField'
+  import TranslateService from '@s/TranslateService'
   const lowlight = createLowlight()
   lowlight.register('javascript', CustomHighlight)
 
@@ -74,10 +75,17 @@
       },
       validateField () {
         const val = this.getVal()
+        // wysiwygError is rendered as it stands and measured by its length, so a failure has to
+        // arrive here as a message and a pass as the empty string. 'T_FIELD_IS_REQUIRED' was
+        // neither translated nor a key i18n carries, so the template showed it raw (#116).
         if (this.schema.required && (_.isNull(val) || _.isUndefined(val) || val === '' || val === '<p></p>')) {
-          return 'T_FIELD_IS_REQUIRED'
+          return TranslateService.get('TL_FIELD_IS_REQUIRED')
         } else if (_.isFunction(this.schema.validator)) {
-          return !!this.schema.validator(val, this.schema.model, this.model)
+          const result = this.runInlineValidator(val)
+          if (_.isString(result)) {
+            return result
+          }
+          return result ? '' : TranslateService.get('TL_INVALID_FORMAT')
         }
         return ''
       },

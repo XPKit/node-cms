@@ -73,7 +73,7 @@
         if (this.valEmpty(val)) {
           return this.schema.required ? false : true
         } else if (_.isFunction(this.schema.validator)) {
-          return !!this.schema.validator(val, this.schema.model, this.model)
+          return this.runInlineValidator(val)
         }
         return true
       },
