@@ -70,10 +70,20 @@ describe('FormService', () => {
       expect(validatorFor('string')('ABC', field({ regex }), {})).to.equal('TL_INVALID_FORMAT (TL_LOWERCASE_ONLY)')
     })
 
-    it('takes the pattern for the field locale when the field is localised', () => {
-      const localised = field({ localised: true, model: 'enUS.title', regex: { enUS: { value: '/^[0-9]+$/' } } })
-      expect(validatorFor('string')('123', localised, {})).to.equal(true)
+    // Defect, not intent (#108): `customValidators.text` reads the locale from the *first* segment
+    // of the model, but SchemaService builds a localised model as `title.enUS` and `getKeyLocale`,
+    // two dozen lines up the same file, pops the *last*. So a per-locale regex is looked up under
+    // the field's own name, misses, and no pattern is applied at all. The model shape below is the
+    // one SchemaService actually produces; fixing #108 inverts this case.
+    it('ignores a per-locale regex on a field shaped the way SchemaService builds it', () => {
+      const localised = field({ localised: true, model: 'title.enUS', regex: { enUS: { value: '/^[0-9]+$/' } } })
+      expect(validatorFor('string')('abc', localised, {})).to.equal(true)
+    })
+
+    it('still applies a plain regex to that same localised field', () => {
+      const localised = field({ localised: true, model: 'title.enUS', regex: { value: '/^[0-9]+$/' } })
       expect(validatorFor('string')('abc', localised, {})).to.equal('TL_INVALID_FORMAT (/^[0-9]+$/)')
+      expect(validatorFor('string')('123', localised, {})).to.equal(true)
     })
   })
 
