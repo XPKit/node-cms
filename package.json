@@ -25,7 +25,7 @@
     "mongodb-auth": "ulimit -n 1000 && mongod --tlsMode requireTLS --tlsCertificateKeyFile ./ssl/server.pem --tlsCAFile ./ssl/ca.pem --bind_ip localhost --dbpath=../node-cms-mongodb-data"
   },
   "engines": {
-    "node": "^22.12"
+    "node": "^22.12 || >=24"
   },
   "repository": {
     "type": "git",
