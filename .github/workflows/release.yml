@@ -27,12 +27,16 @@ jobs:
         run: |
           set -euo pipefail
           tag="${GITHUB_REF_NAME}"
-          # Tags reachable from the tagged commit's parent, newest first — so the tag being
-          # released cannot pick itself, and a tag cut on another branch cannot interfere.
-          # `sed -n 1p` rather than `head -n1`: head closes the pipe after one line, and once the
-          # tag list outgrows the 64K pipe buffer git would take a SIGPIPE and exit 141, which
-          # under `pipefail` fails the job. sed reads the stream to the end.
-          previous="$(git tag --sort=-creatordate --merged "${tag}^" | sed -n '1p')"
+          # The nearest version tag along the first-parent path back from the tagged commit, which
+          # is the mainline: --first-parent steps over merges rather than into them, so a tag cut
+          # on a branch that was later merged is not a candidate. That matters here — three of the
+          # repository's 217 tags are not on master, so a reachability listing would surface such a
+          # tag and a date sort could then pick it, starting the notes in the wrong place. --match
+          # keeps it to version-shaped tags, so the stray lightweight `list` tag cannot win, and
+          # --abbrev=0 prints the tag on its own. describe exits non-zero when it finds nothing,
+          # which the check below turns into a readable failure.
+          previous="$(git describe --first-parent --tags --abbrev=0 \
+            --match 'v[0-9]*' --match '[0-9]*' "${tag}^" 2>/dev/null || true)"
           if [ -z "${previous}" ]; then
             # Unreachable from master, where every commit has 2.6.1 or older behind it. If it does
             # happen, stop: letting `--generate-notes` pick its own baseline is the one behaviour
