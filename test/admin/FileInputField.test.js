@@ -133,8 +133,13 @@ describe('FileInputField', () => {
       expect(accept([{ name: 'a.gif', type: 'image/gif' }])).to.equal('TL_INVALID_IMAGE_TYPE')
     })
 
-    it('caps how many files may be added at once', () => {
+    // Defect, not intent (#112): the rule accepts a total of `maxCount + 1` (`:101`), while the
+    // upload path truncates the selection to `maxCount` (`:227`). So the middle case below
+    // validates and then silently loses a file, with only a console.info to show for it. Pinned as
+    // it behaves; fixing #112 turns that middle assertion into TL_TOO_MANY_IMAGES.
+    it('accepts one more than maxCount, which the upload path then drops', () => {
       const [tooMany] = mountField({ options: { maxCount: 2 } }, { photo: [stored()] }).vm.getRules()
+      expect(tooMany([{ name: 'a.png' }])).to.equal(true)
       expect(tooMany([{ name: 'a.png' }, { name: 'b.png' }])).to.equal(true)
       expect(tooMany([{ name: 'a.png' }, { name: 'b.png' }, { name: 'c.png' }])).to.equal('TL_TOO_MANY_IMAGES')
     })
