@@ -9,12 +9,18 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      # Both ends of what package.json admits: the version the consumers run, and the LTS that
+      # `>=24` opens the door to. A range nothing exercises is a claim, not a guarantee.
+      matrix:
+        node: ['22', '24']
     steps:
       - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v7
         with:
-          node-version: '22'
+          node-version: ${{ matrix.node }}
           cache: npm
 
       - run: npm ci
@@ -40,7 +46,12 @@ jobs:
       # dist/ is committed (see README, "Releasing"). A dependency change can alter the bundle, so
       # without this a lockfile-only merge silently leaves the shipped admin built from older
       # versions. The build is deterministic, so a clean tree here is a stable signal.
+      #
+      # One leg only. dist/ is built and committed on a developer's machine, and this asks whether
+      # that build is current - not whether two node majors emit identical bytes, which is a
+      # different claim and not one the committed bundle needs to satisfy.
       - name: Committed dist/ matches the build
+        if: matrix.node == '22'
         run: |
           if [ -n "$(git status --porcelain --untracked-files=all -- dist)" ]; then
             echo "::error::dist/ is out of date. Run 'npm run build' and commit the result."
