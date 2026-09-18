@@ -2,7 +2,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 
 // The table view of a resource, and the generator that turns a schema into its columns.
-vi.mock('@s/TranslateService', () => ({ default: { get: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key), locale: 'enUS' } }))
+vi.mock('@s/TranslateService', () => ({
+  // Marked rather than passed through, so an assertion proves the translator was actually asked
+  // instead of the component handing back the key it was given.
+  default: { get: (key, params) => (params ? `translated(${key}):${JSON.stringify(params)}` : `translated(${key})`), locale: 'enUS' }
+}))
 vi.mock('@s/NotificationsService', () => ({ default: { send: vi.fn(), sendOmnibarDisplayStatus: vi.fn(), events: { on: vi.fn(), off: vi.fn() } } }))
 vi.mock('@s/ResourceService', () => ({ default: { get: vi.fn(() => []), cache: vi.fn(async () => []) } }))
 const deletes = []
@@ -40,7 +44,7 @@ describe('RecordTable', () => {
 
   describe('naming and grouping', () => {
     it('titles a resource by its display name, translated, or its title', () => {
-      expect(table().vm.getResourceTitle({ displayname: 'TL_ARTICLES', title: 'articles' })).to.equal('TL_ARTICLES')
+      expect(table().vm.getResourceTitle({ displayname: 'TL_ARTICLES', title: 'articles' })).to.equal('translated(TL_ARTICLES)')
       expect(table().vm.getResourceTitle({ title: 'articles' })).to.equal('articles')
     })
 
@@ -59,9 +63,9 @@ describe('RecordTable', () => {
       vi.stubGlobal('confirm', confirm)
       const view = table()
       view.vm.askConfirmation()
-      expect(confirm.mock.calls[0][0]).to.equal('TL_ARE_YOU_SURE_TO_DELETE')
+      expect(confirm.mock.calls[0][0]).to.equal('translated(TL_ARE_YOU_SURE_TO_DELETE)')
       view.vm.askConfirmation(true)
-      expect(confirm.mock.calls[1][0]).to.equal('TL_ARE_YOU_SURE_TO_DELETE_SELECTED_RECORDS')
+      expect(confirm.mock.calls[1][0]).to.equal('translated(TL_ARE_YOU_SURE_TO_DELETE_SELECTED_RECORDS)')
     })
 
     it('deletes nothing when the question is declined', async () => {
@@ -122,7 +126,7 @@ describe('VueTableGenerator', () => {
     const fields = [{ model: 'title.enUS', originalModel: 'title', localised: true, options: { index: 1, breakdown: true } }]
     const columns = generator({ fields }).schemaFields
     expect(columns.map(column => column.model)).to.deep.equal(['title.enUS', 'title.zhCN'])
-    expect(columns[1].label).to.equal('title (TL_ZHCN)')
+    expect(columns[1].label).to.equal('translated(title) (translated(TL_ZHCN))')
   })
 
   it('disables every column, since the table only shows them', () => {

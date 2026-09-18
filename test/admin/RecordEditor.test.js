@@ -4,7 +4,11 @@ import { mount } from '@vue/test-utils'
 // The record editor. These cover the pure helpers it is built from - what counts as a value, what
 // counts as a changed attachment, and how it decides the form is dirty - rather than the save
 // choreography, which is mostly the server's.
-vi.mock('@s/TranslateService', () => ({ default: { get: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key), locale: 'enUS' } }))
+vi.mock('@s/TranslateService', () => ({
+  // Marked rather than passed through, so an assertion proves the translator was actually asked
+  // instead of the component handing back the key it was given.
+  default: { get: (key, params) => (params ? `translated(${key}):${JSON.stringify(params)}` : `translated(${key})`), locale: 'enUS' }
+}))
 vi.mock('@s/NotificationsService', () => ({ default: { send: vi.fn(), sendOmnibarDisplayStatus: vi.fn(), events: { on: vi.fn(), off: vi.fn() } } }))
 vi.mock('@s/ResourceService', () => ({ default: { get: vi.fn(() => []), cache: vi.fn(async () => []) } }))
 vi.mock('@s/RequestService', () => ({ default: { get: vi.fn(), post: vi.fn(), put: vi.fn(), delete: vi.fn() } }))
@@ -33,9 +37,9 @@ describe('RecordEditor', () => {
   describe('what the button says', () => {
     it('offers to create a record with no id, and to update one that has it', () => {
       const view = editor()
-      expect(view.getActionText()).to.equal('TL_CREATE')
+      expect(view.getActionText()).to.equal('translated(TL_CREATE)')
       view.editingRecord = { _id: 'r1' }
-      expect(view.getActionText()).to.equal('TL_UPDATE')
+      expect(view.getActionText()).to.equal('translated(TL_UPDATE)')
     })
   })
 
@@ -137,7 +141,7 @@ describe('RecordEditor', () => {
 
   describe('locales', () => {
     it('names a locale through the translator', () => {
-      expect(editor().getLocaleTranslation('zhCN')).to.equal('TL_ZHCN')
+      expect(editor().getLocaleTranslation('zhCN')).to.equal('translated(TL_ZHCN)')
     })
 
     it('splits the locale off a localised model, and leaves a plain one whole', () => {

@@ -3,7 +3,12 @@ import { mount } from '@vue/test-utils'
 
 // Three of the smaller components around the edges of the admin: the resource list down the side,
 // the locale toggle in the top bar, and the hints shown under a file field.
-vi.mock('@s/TranslateService', () => ({ default: { get: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key), locale: 'enUS' } }))
+// The mock deliberately does not return the key unchanged. With a passthrough, an assertion that a
+// title equals 'TL_ARTICLES' passes whether the component asked the translator or simply handed
+// back the key it was given - so the marker is what proves the translation actually happened.
+vi.mock('@s/TranslateService', () => ({
+  default: { get: (key, params) => (params ? `translated(${key}):${JSON.stringify(params)}` : `translated(${key})`), locale: 'enUS' }
+}))
 
 const { default: ResourceList } = await import('@c/ResourceList.vue')
 const { default: TopBarLocaleList } = await import('@c/TopBarLocaleList.vue')
@@ -16,7 +21,9 @@ describe('ResourceList', () => {
   const list = (props = {}) => mountIt(ResourceList, { groupedList: [], selectedItem: {}, ...props }).vm
 
   it('titles a resource by its display name when it has one, translated', () => {
-    expect(list().getResourceTitle({ displayname: 'TL_ARTICLES', title: 'articles' })).to.equal('TL_ARTICLES')
+    expect(list().getResourceTitle({ displayname: 'TL_ARTICLES', title: 'articles' })).to.equal('translated(TL_ARTICLES)')
+    // A resource with no display name keeps its raw title, untranslated - which is the other half
+    // of the claim, and only distinguishable because the mock marks what it touched.
     expect(list().getResourceTitle({ title: 'articles' })).to.equal('articles')
   })
 
@@ -69,7 +76,7 @@ describe('ResourceList', () => {
 
 describe('TopBarLocaleList', () => {
   it('names a locale through the translator, upper-cased', () => {
-    expect(mountIt(TopBarLocaleList).vm.getLocaleTranslation('enUS')).to.equal('TL_ENUS')
+    expect(mountIt(TopBarLocaleList).vm.getLocaleTranslation('enUS')).to.equal('translated(TL_ENUS)')
   })
 
   it('toggles to the first locale that is not the current one', () => {
@@ -108,7 +115,7 @@ describe('FileInputErrors', () => {
 
   it('names the count messages after the kind of file it is showing', () => {
     const vm = errors({ fileType: 'image', getMaxCount: () => 3 })
-    expect(vm.maxCountMsg).to.equal('TL_MAX_NUMBER_OF_IMAGES:{"num":3}')
-    expect(vm.unlimitedMsg).to.equal('TL_UNLIMITED_NUMBER_OF_IMAGES')
+    expect(vm.maxCountMsg).to.equal('translated(TL_MAX_NUMBER_OF_IMAGES):{"num":3}')
+    expect(vm.unlimitedMsg).to.equal('translated(TL_UNLIMITED_NUMBER_OF_IMAGES)')
   })
 })

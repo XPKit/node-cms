@@ -3,7 +3,11 @@ import { mount } from '@vue/test-utils'
 
 // The chrome around the record editor: the nav bar, the multiselect page and the websocket banner
 // that says another session has changed something.
-vi.mock('@s/TranslateService', () => ({ default: { get: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key), locale: 'enUS' } }))
+vi.mock('@s/TranslateService', () => ({
+  // Marked rather than passed through, so an assertion proves the translator was actually asked
+  // instead of the component handing back the key it was given.
+  default: { get: (key, params) => (params ? `translated(${key}):${JSON.stringify(params)}` : `translated(${key})`), locale: 'enUS' }
+}))
 const cache = vi.fn(async () => [{ title: 'My CMS', logo: [{ url: '/logo.png' }] }])
 vi.mock('@s/ResourceService', () => ({ default: { cache, get: vi.fn(() => []), getSchema: vi.fn() } }))
 const deletes = []
@@ -57,7 +61,7 @@ describe('NavBar', () => {
   })
 
   it('names the selected item by its display name, translated, or its name', () => {
-    expect(mountIt(NavBar, { selectedItem: { displayname: 'TL_ARTICLES', name: 'articles' } }).vm.getSelectedItemName()).to.equal('TL_ARTICLES')
+    expect(mountIt(NavBar, { selectedItem: { displayname: 'TL_ARTICLES', name: 'articles' } }).vm.getSelectedItemName()).to.equal('translated(TL_ARTICLES)')
     expect(mountIt(NavBar, { selectedItem: { name: 'articles' } }).vm.getSelectedItemName()).to.equal('articles')
   })
 })
