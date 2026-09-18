@@ -315,8 +315,10 @@
         _.set(this.model, this.schema.model, value)
       })
       this.editor.on('change', () => {
-        const value = this.editor.getValue()
-        _.set(this.model, this.schema.model, value)
+        // Only this one goes through _value: it is the user's edit, and the emit it carries is
+        // what arms the unsaved-changes guard. The two writes above seed the field - from defaults
+        // on open, and on a locale switch - and announcing those would open every form dirty.
+        this._value = this.editor.getValue()
       })
     },
     methods: {

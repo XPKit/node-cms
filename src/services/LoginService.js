@@ -59,12 +59,14 @@ class LoginService {
 
   async checkStatus () {
     let status
-    const userBefore = _.cloneDeep(this.user)
     try {
       status = await this.getStatus()
     } catch {
     }
-    if (_.isEmpty(status) && !_.isEmpty(userBefore)) {
+    // Against the user we are holding *now*, not the one we held before the call: getStatus logs
+    // out by itself when the session has gone, and testing the earlier value logged the same
+    // session out a second time - two requests, two reloads, every callback twice.
+    if (_.isEmpty(status) && !_.isEmpty(this.user)) {
       console.info('will logout')
       await this.logout()
     }

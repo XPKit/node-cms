@@ -76,7 +76,10 @@
         return _.merge({height, width}, _.get(this.schema, 'options.css', {}))
       },
       onChangeData(data) {
-        _.set(this.model, _.get(this.schema, 'model', false), data)
+        // Through _value rather than straight at the model: the setter writes the record *and*
+        // emits input, which is what RecordEditor.checkDirty listens for. Writing behind it left
+        // the unsaved-changes guard unarmed and the edit discarded on the next click.
+        this._value = data
       }
     }
   }
