@@ -44,14 +44,17 @@ describe('FormService', () => {
       expect(validatorFor('integer')(42, field(), {})).to.equal(true)
     })
 
-    // Defect, not intent: `checkNumber` coerces with `Number(value || 0)` and then asks
-    // lodash `isNumber`, which is type-strict and answers true for NaN. So a number field accepts
-    // any text at all. `integer` and `double` escape it because isInteger(NaN) and the
-    // `n === +n` test both reject NaN. Pinned here; fixing it inverts this case.
-    it('accepts text on a number field, because NaN is a number to lodash', () => {
-      expect(validatorFor('number')('abc', field(), {})).to.equal(true)
+    // #106: checkNumber coerces with Number(value || 0), and NaN was a number to lodash isNumber,
+    // so a number field took any text at all. isFinite settles it.
+    it('rejects text on a number field, as on a double or an integer field', () => {
+      expect(validatorFor('number')('abc', field(), {})).to.equal(false)
       expect(validatorFor('double')('abc', field(), {})).to.equal(false)
       expect(validatorFor('integer')('abc', field(), {})).to.equal(false)
+    })
+
+    it('still takes a number the user typed, which arrives as a string', () => {
+      expect(validatorFor('number')('42', field(), {})).to.equal(true)
+      expect(validatorFor('integer')('42', field(), {})).to.equal(true)
     })
 
     it('rejects a decimal on an integer field before it reaches the number check', () => {
