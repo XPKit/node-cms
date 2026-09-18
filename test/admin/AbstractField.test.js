@@ -67,12 +67,24 @@ describe('AbstractField', () => {
       expect(field.emitted('input')).to.equal(undefined)
     })
 
-    it('validates after the change only when the form asks it to', async () => {
+    it('validates after the change when the form asks it to', async () => {
       const field = mountField({ model: 'title', validator: 'required', required: true }, {}, { formOptions: { validateAfterChanged: true } })
       field.vm._value = ''
       await field.vm.$nextTick()
       await field.vm.$nextTick()
       expect(field.vm.errors).to.deep.equal(['This field is required!'])
+    })
+
+    // The same field and the same empty value, with the option left at its default: writing the
+    // value must not validate on its own, or a field would report itself invalid the moment it was
+    // cleared rather than when the form got round to asking.
+    it('leaves validation to the form when the option is not set', async () => {
+      const field = mountField({ model: 'title', validator: 'required', required: true }, {})
+      field.vm._value = ''
+      await field.vm.$nextTick()
+      await field.vm.$nextTick()
+      expect(field.vm.errors).to.deep.equal([])
+      expect(field.emitted('validated')).to.equal(undefined)
     })
   })
 
