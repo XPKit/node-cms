@@ -120,15 +120,21 @@ describe('validators', () => {
       expect(validators.date('', field({ required: true }), {})).to.deep.equal(['This field is required!'])
     })
 
-    // Defect, not intent: the message path calls `Dayjs.format(m)`, but `format` lives on a dayjs
-    // instance, not on the factory — it should be `Dayjs(m).format()`. So a date that breaks a
-    // bound throws instead of returning the message, and only the out-of-range path is affected,
-    // which is why nothing noticed. Pinned here so the fix has a failing test to turn green.
-    it('throws instead of reporting when a date falls outside its bounds', () => {
-      expect(() => validators.date('2020-01-01', field({ min: '2021-01-01' }), {}))
-        .to.throw(TypeError, /format is not a function/)
-      expect(() => validators.date('2022-01-01', field({ max: '2021-01-01' }), {}))
-        .to.throw(TypeError, /format is not a function/)
+    // The two bound messages are the only ones that format a date, and they were unreachable until
+    // #98: the path called `Dayjs.format(m)`, and `format` lives on a dayjs instance rather than on
+    // the factory, so it threw a TypeError instead of reporting. The timestamps below are UTC
+    // because vitest pins TZ; `new Date('2020-01-01')` is UTC midnight, so under a negative offset
+    // the same input would format as the previous day.
+    it('reports a date that falls before its minimum', () => {
+      expect(validators.date('2020-01-01', field({ min: '2021-01-01' }), {})).to.deep.equal([
+        'The date is too early! Current: 2020-01-01T00:00:00+00:00, Minimum: 2021-01-01T00:00:00+00:00'
+      ])
+    })
+
+    it('reports a date that falls after its maximum', () => {
+      expect(validators.date('2022-01-01', field({ max: '2021-01-01' }), {})).to.deep.equal([
+        'The date is too late! Current: 2022-01-01T00:00:00+00:00, Maximum: 2021-01-01T00:00:00+00:00'
+      ])
     })
 
     it('stays quiet when the date is inside its bounds, which is the path that works', () => {

@@ -32,6 +32,10 @@ export default defineConfig({
     include: ['test/admin/**/*.test.js'],
     environment: 'happy-dom',
     restoreMocks: true,
+    // Pinned so a formatted date reads the same here as on CI: dayjs renders in the local zone,
+    // and `new Date('2020-01-01')` is UTC midnight, which under a negative offset is a different
+    // calendar day. Without this the bound messages in validators.test.js are machine-dependent.
+    env: { TZ: 'UTC' },
     // On by default so `npm run coverage` reports both halves from one command: c8 measures
     // lib/ and index.js around the whole run, and this measures src/ from inside it. The two
     // never overlap, because c8's --include list does not mention src/.
