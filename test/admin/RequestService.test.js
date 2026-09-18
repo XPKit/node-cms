@@ -40,10 +40,18 @@ describe('RequestService', () => {
       expect(sentOptions().headers).to.equal(undefined)
     })
 
-    it('keeps its own returnJson flag out of what it sends', async () => {
+    it('keeps its own returnJson flag out of what it sends, but only when it is true', async () => {
       answers({})
       await RequestService.get('/api/articles')
       expect('returnJson' in sentOptions()).to.equal(false)
+
+      // The delete is guarded by the flag's own truthiness, so opting out of json leaves the flag
+      // sitting in the options handed to fetch. Harmless, since fetch ignores what it does not
+      // recognise, but it is the service's own bookkeeping travelling with the request.
+      fetchMock.mockReset()
+      answers({})
+      await RequestService.get('/api/articles', false)
+      expect(sentOptions().returnJson).to.equal(false)
     })
 
     it('carries the method through for put and delete', async () => {
@@ -112,6 +120,14 @@ describe('RequestService', () => {
     it('lets a record through when its code happens to look like a success status', async () => {
       answers({ _id: 'a1', code: 204 })
       expect(await RequestService.get('/api/cities/a1')).to.deep.equal({ _id: 'a1', code: 204 })
+    })
+
+    // The other direction of the same defect (#113): the body's code is consulted before
+    // response.ok is, so a genuinely failed request whose body happens to carry a 2xx code is
+    // handed back to the caller as a success.
+    it('returns a failed request as a success when its body carries a 2xx code', async () => {
+      answers({ code: 200, message: 'service unavailable' }, { ok: false, status: 503 })
+      expect(await RequestService.get('/api/articles')).to.deep.equal({ code: 200, message: 'service unavailable' })
     })
   })
 })
