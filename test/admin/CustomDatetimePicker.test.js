@@ -67,4 +67,14 @@ describe('CustomDatetimePicker', () => {
     expect(p.props('format')(when)).to.equal('2020-01-01T13:45:07+00:00')
     expect(p.props('enableMinutes')).to.equal(false)
   })
+
+  // Present but null is a different case from absent, and it is why `isInFormat` ends in `|| ''`
+  // rather than taking lodash's default-value argument: lodash substitutes a default only for
+  // `undefined`, so a null would reach `.indexOf` and throw. A resource schema reaches this
+  // shape through `options`, every key of which SchemaService copies onto the field schema.
+  it('survives a format that is present but null', () => {
+    const p = picker(mountPicker('datetime', { format: null }))
+    expect(p.props('enableMinutes')).to.equal(false)
+    expect(p.props('format')(when)).to.equal('2020-01-01T13:45:07+00:00')
+  })
 })
