@@ -30,7 +30,9 @@ const validators = {
       return false
     }
   },
-  number: (n) => _.isNumber(n),
+  // isFinite, not isNumber: checkNumber hands this the result of Number(value), and NaN is a
+  // number to lodash - which is how a number field came to accept 'abc' (#106).
+  number: (n) => _.isFinite(n),
   integer: (n) => _.isNumber(n) && _.isInteger(n),
   double: (n) => _.isNumber(n) && (_.isInteger(n) || (n === +n && n !== (n | 0))),
   text: (t) => _.isString(t),
@@ -46,7 +48,9 @@ const invalidFormat = () => {
 }
 
 const checkNumber = (field, value, model, type) => {
-  if (_.get(field, 'required', false) && !_.isNumber(value)) {
+  // Required means 'not empty', not 'already a number': an <input> hands its value over as a
+  // string, so testing isNumber here reported every number the user typed as missing (#106).
+  if (_.get(field, 'required', false) && (_.isNil(value) || value === '')) {
     return TranslateService.get('TL_FIELD_IS_REQUIRED')
   }
   const func = _.get(validators, type, false)

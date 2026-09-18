@@ -34,10 +34,16 @@ describe('validators', () => {
       expect(validators.number(11, field({ max: 10 }), {})).to.deep.equal(['The number is too big! Maximum: 10'])
     })
 
-    // lodash isFinite is type-strict, so a numeric string is not a number here. An <input> hands
-    // its value over as a string unless something coerces it first, which is worth knowing.
-    it('rejects a numeric string', () => {
-      expect(validators.number('5', field(), {})).to.deep.equal(['Invalid number'])
+    // #106: an <input> hands its value over as a string, so the check is on what the value is
+    // numerically rather than on its type. It used to call every number a user typed invalid.
+    it('accepts a numeric string, which is what an input hands over', () => {
+      expect(validators.number('5', field(), {})).to.deep.equal([])
+      expect(validators.number('5', field({ max: 4 }), {})).to.deep.equal(['The number is too big! Maximum: 4'])
+    })
+
+    it('still rejects something that is not a number in any form', () => {
+      expect(validators.number('abc', field(), {})).to.deep.equal(['Invalid number'])
+      expect(validators.number('5 apples', field(), {})).to.deep.equal(['Invalid number'])
     })
 
     it('rejects NaN and Infinity', () => {
@@ -49,6 +55,11 @@ describe('validators', () => {
   describe('integer', () => {
     it('accepts a whole number', () => {
       expect(validators.integer(3, field(), {})).to.deep.equal([])
+    })
+
+    it('takes a numeric string too, so all three agree', () => {
+      expect(validators.integer('5', field(), {})).to.deep.equal([])
+      expect(validators.integer('5.5', field(), {})).to.deep.equal(['The value is not an integer'])
     })
 
     it('adds its own complaint on top of the number ones', () => {
@@ -65,8 +76,12 @@ describe('validators', () => {
       expect(validators.double(1.5, field(), {})).to.equal(undefined)
     })
 
+    it('takes a numeric string, as the number validator does', () => {
+      expect(validators.double('1.5', field(), {})).to.equal(undefined)
+    })
+
     it('rejects a non-number', () => {
-      expect(validators.double('1.5', field(), {})).to.deep.equal(['Invalid number'])
+      expect(validators.double('one and a half', field(), {})).to.deep.equal(['Invalid number'])
       expect(validators.double(NaN, field(), {})).to.deep.equal(['Invalid number'])
     })
   })
@@ -195,7 +210,7 @@ describe('validators', () => {
 
     it('falls back to the default text for anything not overridden', () => {
       const translated = validators.number.locale({ fieldIsRequired: 'Pflichtfeld!' })
-      expect(translated('5', field(), {})).to.deep.equal(['Invalid number'])
+      expect(translated('abc', field(), {})).to.deep.equal(['Invalid number'])
     })
 
     it('is attached to every validator function', () => {

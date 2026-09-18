@@ -1,4 +1,4 @@
-import { defaults, isNil, isNumber, isInteger, isString, isArray, isFunction, isFinite } from 'lodash'
+import { defaults, isNil, isInteger, isString, isArray, isFunction, isFinite, toNumber } from 'lodash'
 import Dayjs from 'dayjs'
 
 let resources = {
@@ -52,11 +52,15 @@ const validators = {
       return res
     }
     let err = []
-    if (isFinite(value)) {
-      if (!isNil(field.min) && value < field.min) {
+    // Judged on what the value is numerically rather than on its type (#106). An <input> hands its
+    // value over as a string, so a type-strict check called every number a user typed invalid.
+    // 'abc' is still not a number; '5' is.
+    const numeric = toNumber(value)
+    if (isFinite(numeric)) {
+      if (!isNil(field.min) && numeric < field.min) {
         err.push(msg(messages.numberTooSmall, field.min))
       }
-      if (!isNil(field.max) && value > field.max) {
+      if (!isNil(field.max) && numeric > field.max) {
         err.push(msg(messages.numberTooBig, field.max))
       }
     } else {
@@ -70,7 +74,7 @@ const validators = {
       return res
     }
     let errs = validators.number(value, field, model, messages)
-    if (!isInteger(value)) {
+    if (!isInteger(toNumber(value))) {
       errs.push(msg(messages.invalidInteger))
     }
     return errs
@@ -79,7 +83,7 @@ const validators = {
     let res = checkEmpty(value, field.required, messages)
     if (res != null) {
       return res
-    } else if (!isNumber(value) || isNaN(value)) {
+    } else if (!isFinite(toNumber(value))) {
       return [msg(messages.invalidNumber)]
     }
   },

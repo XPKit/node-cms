@@ -63,6 +63,17 @@ describe('Database Operations via API', () => {
       expect(getRes.body).to.be.null
     })
 
+    // Existence is settled before ownership: the middleware that loads the record answers 404 for
+    // an id nothing holds, whoever it would have belonged to. The ownership refusal added for #105
+    // is only reachable for a foreign record this server actually has - one that arrived by
+    // replication - and is covered in test/unit/jsonStore.guards.test.js, which can create one.
+    it('reports a record it does not have as missing, whoever it belongs to', async () => {
+      const res = await request(serverUrl)
+        .delete('/api/articles/mu6lgxwl99999999ye4td04g')
+        .auth('localAdmin', 'localAdmin')
+      expect(res.status).to.equal(404)
+    })
+
     it('should query records with filters', async () => {
       const res1 = await request(serverUrl)
         .post('/api/articles')
