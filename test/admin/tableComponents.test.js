@@ -107,9 +107,9 @@ describe('RecordTable', () => {
     })
   })
 
-  it('offers its shortcut only while the omnibar is closed', () => {
+  it('offers escape and its opening chord while the omnibar is closed, and nothing once it opens', () => {
     const view = table()
-    expect(view.vm.getShortcuts()).to.be.an('object')
+    expect(view.vm.getShortcuts()).to.deep.equal({ esc: ['esc'], open: ['ctrl', '/'] })
     view.vm.onGetOmnibarDisplayStatus(true)
     expect(view.vm.getShortcuts()).to.deep.equal({})
   })

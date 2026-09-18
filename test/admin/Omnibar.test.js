@@ -119,11 +119,21 @@ describe('Omnibar', () => {
       expect(bar.vm.showOmnibar).to.equal(false)
     })
 
-    it('offers a different shortcut set depending on whether it is open', () => {
+    it('offers only the opening chord while closed, and the full set once open', () => {
       const bar = mountBar()
-      const closed = bar.vm.getShortcuts()
+      expect(bar.vm.getShortcuts()).to.deep.equal({ open: ['ctrl', 'p'] })
+
       bar.vm.showOmnibar = true
-      expect(bar.vm.getShortcuts()).to.not.equal(closed)
+      expect(bar.vm.getShortcuts()).to.deep.equal({
+        esc: ['esc'],
+        open: ['ctrl', 'p'],
+        'arrow-up': ['arrowup'],
+        'arrow-down': ['arrowdown'],
+        enter: ['enter'],
+        all: ['shift', 'a'],
+        resource: ['shift', 'r'],
+        field: ['shift', 'f']
+      })
     })
 
     it('notices when the results have been scrolled to the bottom', () => {

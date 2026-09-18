@@ -148,11 +148,34 @@ describe('ParagraphView', () => {
       expect(mountField({ options: { dynamicLayout: true } }, { slots: 6 }).vm.parentSlots).to.equal(6)
     })
 
-    it('takes an item width from the item, then from its paragraph schema', () => {
+    // Asserting the width itself: every branch here returns an object, including the one that
+    // returns an empty one, so `to.be.an('object')` could not tell a correct calculation from a
+    // skipped fallback. Four slots of twelve is a third of the row, less its share of the 16px
+    // gaps between the three items that fit on it - written out at full float precision, which is
+    // what reaches the style attribute.
+    it('sizes an item from the slots it carries', () => {
       const field = mountField({ options: { dynamicLayout: true } })
-      expect(field.vm.getItemStyles({ _value: { slots: 4 } })).to.be.an('object')
+      expect(field.vm.getItemStyles({ _value: { slots: 4 } })).to.deep.equal({
+        flexBasis: 'calc(33.33333333333333% - 10.666666666666666px)',
+        maxWidth: 'calc(33.33333333333333% - 10.666666666666666px)',
+        width: 'calc(33.33333333333333% - 10.666666666666666px)'
+      })
+    })
+
+    it('falls back to the slots its paragraph schema declares', () => {
+      const field = mountField({ options: { dynamicLayout: true } })
       ResourceService.getParagraphSchema.mockReturnValueOnce({ layout: { slots: 3 } })
-      expect(field.vm.getItemStyles({ _type: 'hero' })).to.be.an('object')
+      expect(field.vm.getItemStyles({ _type: 'hero' }).flexBasis).to.equal('calc(25% - 12px)')
+    })
+
+    it('falls back again to two slots when nothing declares any', () => {
+      const field = mountField({ options: { dynamicLayout: true } })
+      ResourceService.getParagraphSchema.mockReturnValueOnce(undefined)
+      expect(field.vm.getItemStyles({ _type: 'hero' }).flexBasis).to.equal('calc(16.666666666666664% - 13.333333333333334px)')
+    })
+
+    it('sizes nothing at all when the container is not a dynamic one', () => {
+      expect(mountField().vm.getItemStyles({ _value: { slots: 4 } })).to.deep.equal({})
     })
   })
 })

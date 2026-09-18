@@ -3,7 +3,8 @@ import { mount } from '@vue/test-utils'
 
 // The rich-text field. tiptap is stubbed to a minimal editor, because what is worth testing is the
 // component's own validation and toolbar decisions, not the editor's behaviour.
-vi.mock('@s/FieldSelectorService', () => ({ default: { highlightParagraph: vi.fn() } }))
+const highlightParagraph = vi.fn()
+vi.mock('@s/FieldSelectorService', () => ({ default: { highlightParagraph } }))
 
 let html = ''
 const editor = {
@@ -30,9 +31,9 @@ vi.mock('lowlight', () => ({ createLowlight: () => ({ register: vi.fn() }) }))
 
 const { default: Wysiwyg } = await import('@c/fields/Wysiwyg.vue')
 
-const mountField = (schema = {}, model = {}) =>
+const mountField = (schema = {}, model = {}, props = {}) =>
   mount(Wysiwyg, {
-    props: { schema: { model: 'body', ...schema }, model },
+    props: { schema: { model: 'body', ...schema }, model, ...props },
     shallow: true,
     global: { mocks: { $filters: { translate: key => key }, $vuetify: { theme: { dark: false } } } }
   })
@@ -99,10 +100,12 @@ describe('Wysiwyg', () => {
     })
 
     it('passes focus and blur to the field selector', () => {
-      const field = mountField()
+      highlightParagraph.mockClear()
+      mountField({}, {}, { paragraphLevel: 2, paragraphIndex: 3 })
       editorOptions.onFocus()
+      expect(highlightParagraph).toHaveBeenLastCalledWith(1, 3)
       editorOptions.onBlur()
-      expect(field.vm.errors).to.deep.equal([])
+      expect(highlightParagraph).toHaveBeenLastCalledWith(-1, -1)
     })
   })
 
