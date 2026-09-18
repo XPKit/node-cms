@@ -1,0 +1,40 @@
+name: Release
+
+# Fires on the tag `npm version` creates, once it is pushed: `git push --follow-tags`.
+on:
+  push:
+    tags: ['*']
+
+jobs:
+  notes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      # gh release create writes to the repository; the default token is read-only.
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The previous tag is read out of history below, which a shallow clone does not carry.
+          fetch-depth: 0
+
+      # Left as a draft on purpose: the notes are assembled from every PR merged since the last
+      # tag, and nobody has read them yet at this point. Review the draft on the Releases page and
+      # publish it there. Drop `--draft` below to publish straight away instead.
+      - name: Draft the release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME}"
+          # Tags reachable from the tagged commit's parent, newest first — so the tag being
+          # released cannot pick itself, and a tag cut on another branch cannot interfere.
+          previous="$(git tag --sort=-creatordate --merged "${tag}^" | head -n1)"
+          if [ -z "${previous}" ]; then
+            echo "No earlier tag found; generating notes from the start of history."
+            gh release create "${tag}" --draft --verify-tag --title "${tag}" --generate-notes
+          else
+            echo "Generating notes for ${tag} against ${previous}."
+            gh release create "${tag}" --draft --verify-tag --title "${tag}" \
+              --generate-notes --notes-start-tag "${previous}"
+          fi

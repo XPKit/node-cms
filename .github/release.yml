@@ -1,0 +1,10 @@
+# Categories for the notes GitHub generates from merged pull requests. Read from the default
+# branch, not from the tag, so a change here only takes effect once it is on master.
+changelog:
+  categories:
+    # Dependabot applies `dependencies` itself, so this bucket fills without anyone labelling
+    # anything. Everything else in the repo goes unlabelled today and lands in the catch-all.
+    - title: Dependency updates
+      labels: [dependencies]
+    - title: Changes
+      labels: ['*']
