@@ -27,15 +27,15 @@ jobs:
         run: |
           set -euo pipefail
           tag="${GITHUB_REF_NAME}"
-          # The nearest version tag along the first-parent path back from the tagged commit, which
-          # is the mainline: --first-parent steps over merges rather than into them, so a tag cut
-          # on a branch that was later merged is not a candidate. That matters here — three of the
-          # repository's 217 tags are not on master, so a reachability listing would surface such a
-          # tag and a date sort could then pick it, starting the notes in the wrong place. --match
-          # keeps it to version-shaped tags, so the stray lightweight `list` tag cannot win, and
-          # --abbrev=0 prints the tag on its own. describe exits non-zero when it finds nothing,
+          # The version tag nearest the tagged commit's parent, by commits walked. Not --first-parent:
+          # a version commit reaches master through a merge-commit PR, so each release tag sits on
+          # the merged-in side, and following first parents from master steps straight past it —
+          # 3.0.1 found 2.6.1 rather than 3.0.0 that way (#132). The tags that are not on master
+          # (1.0.1, 1.0.2, 1.1.26) are not reachable from it either, so they cannot be picked.
+          # --match keeps it to version-shaped tags, so the stray lightweight `list` tag cannot win,
+          # and --abbrev=0 prints the tag on its own. describe exits non-zero when it finds nothing,
           # which the check below turns into a readable failure.
-          previous="$(git describe --first-parent --tags --abbrev=0 \
+          previous="$(git describe --tags --abbrev=0 \
             --match 'v[0-9]*' --match '[0-9]*' "${tag}^" 2>/dev/null || true)"
           if [ -z "${previous}" ]; then
             # Unreachable from master, where every commit has 2.6.1 or older behind it. If it does
